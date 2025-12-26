@@ -1,0 +1,385 @@
+package net.lab1024.sa.attendance.manager.scheduling;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
+import net.lab1024.sa.attendance.dao.WorkShiftDao;
+import net.lab1024.sa.attendance.solver.algorithm.AttendanceSchedulingSolver;
+import net.lab1024.sa.attendance.solver.model.*;
+import net.lab1024.sa.common.organization.entity.UserEntity;
+import org.springframework.stereotype.Component;
+
+import jakarta.annotation.Resource;
+import java.time.LocalDate;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+
+/**
+ * 智能排班管理器 - 业务编排层
+ *
+ * 核心职责:
+ * - 数据准备: 从数据库加载员工、班次数据
+ * - 问题构建: 构建AttendanceScheduleSolution
+ * - 求解执行: 调用OptaPlanner求解器
+ * - 结果存储: 保存排班方案到数据库
+ * - 导出功能: 导出排班计划
+ *
+ * @author IOE-DREAM
+ * @since 2025-12-26
+ */
+@Slf4j
+@Component
+public class SmartSchedulingManager {
+
+    @Resource
+    private WorkShiftDao workShiftDao;
+
+    @Resource
+    private AttendanceSchedulingSolver solver;
+
+    @Resource
+    private ObjectMapper objectMapper;
+
+    /**
+     * 求解进度缓存 (planId -> progress)
+     */
+    private final Map<Long, Map<String, Object>> solvingProgressCache = new ConcurrentHashMap<>();
+
+    /**
+     * 方案结果缓存 (planId -> solution)
+     */
+    private final Map<Long, AttendanceScheduleSolution> solutionCache = new ConcurrentHashMap<>();
+
+    /**
+     * 执行智能排班优化
+     */
+    public Long optimizeSchedule(String planName,
+                                 LocalDate startDate,
+                                 LocalDate endDate,
+                                 Integer solverDurationSeconds) {
+        log.info("[智能排班] 开始优化: planName={}, startDate={}, endDate={}, duration={}s",
+                planName, startDate, endDate, solverDurationSeconds);
+
+        try {
+            // 1. 准备数据
+            List<Employee> employees = loadEmployees();
+            List<Shift> shifts = loadShifts(startDate, endDate);
+            List<ShiftAssignment> assignments = createAssignments(shifts);
+
+            // 2. 构建问题
+            AttendanceScheduleSolution problem = AttendanceScheduleSolution.builder()
+                    .planId(System.currentTimeMillis()) // 临时ID
+                    .planName(planName)
+                    .planningHorizonStart(startDate)
+                    .planningHorizonEnd(endDate)
+                    .employees(employees)
+                    .shifts(shifts)
+                    .shiftAssignments(assignments)
+                    .build();
+
+            // 3. 生成方案ID
+            Long planId = System.currentTimeMillis();
+
+            // 4. 初始化求解进度
+            Map<String, Object> progress = new HashMap<>();
+            progress.put("planId", planId);
+            progress.put("status", "SOLVING");
+            progress.put("startTime", new Date());
+            progress.put("timeLimit", solverDurationSeconds);
+            progress.put("progressPercent", 0);
+            solvingProgressCache.put(planId, progress);
+
+            // 5. 异步求解
+            solveAsync(problem, planId, solverDurationSeconds);
+
+            return planId;
+
+        } catch (Exception e) {
+            log.error("[智能排班] 优化失败", e);
+            throw new RuntimeException("智能排班优化失败: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * 获取排班方案
+     */
+    public AttendanceScheduleSolution getScheduleSolution(Long planId) {
+        return solutionCache.get(planId);
+    }
+
+    /**
+     * 导出排班计划
+     */
+    public String exportSchedule(Long planId, String format) {
+        log.info("[智能排班] 导出方案: planId={}, format={}", planId, format);
+
+        AttendanceScheduleSolution solution = solutionCache.get(planId);
+        if (solution == null) {
+            throw new RuntimeException("方案不存在: planId=" + planId);
+        }
+
+        try {
+            switch (format.toLowerCase()) {
+                case "json":
+                    return exportToJson(solution);
+                case "ical":
+                    return exportToICal(solution);
+                case "excel":
+                    return exportToExcel(solution);
+                default:
+                    throw new RuntimeException("不支持的导出格式: " + format);
+            }
+        } catch (Exception e) {
+            log.error("[智能排班] 导出失败", e);
+            throw new RuntimeException("导出失败: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * 确认排班方案
+     */
+    public void confirmSchedule(Long planId) {
+        log.info("[智能排班] 确认方案: planId={}", planId);
+
+        AttendanceScheduleSolution solution = solutionCache.get(planId);
+        if (solution == null) {
+            throw new RuntimeException("方案不存在: planId=" + planId);
+        }
+
+        // TODO: 将方案保存到数据库 (t_smart_scheduling_plan, t_shift_assignment)
+
+        Map<String, Object> progress = solvingProgressCache.get(planId);
+        if (progress != null) {
+            progress.put("status", "CONFIRMED");
+            progress.put("confirmTime", new Date());
+        }
+
+        log.info("[智能排班] 方案已确认: planId={}", planId);
+    }
+
+    /**
+     * 取消排班方案
+     */
+    public void cancelSchedule(Long planId) {
+        log.info("[智能排班] 取消方案: planId={}", planId);
+
+        solutionCache.remove(planId);
+        solvingProgressCache.remove(planId);
+
+        // TODO: 从数据库删除方案
+
+        log.info("[智能排班] 方案已取消: planId={}", planId);
+    }
+
+    /**
+     * 获取求解进度
+     */
+    public Map<String, Object> getSolvingProgress(Long planId) {
+        return solvingProgressCache.get(planId);
+    }
+
+    // ============================================================
+    // 私有方法
+    // ============================================================
+
+    /**
+     * 加载员工数据
+     */
+    private List<Employee> loadEmployees() {
+        log.debug("[智能排班] 加载员工数据");
+
+        // TODO: 从数据库加载员工
+        // 简化实现：创建模拟数据
+        List<Employee> employees = new ArrayList<>();
+
+        for (int i = 1; i <= 10; i++) {
+            Employee employee = Employee.builder()
+                    .id((long) i)
+                    .name("员工" + i)
+                    .employeeCode("EMP" + String.format("%04d", i))
+                    .skills(Arrays.asList("门禁操作", "监控室"))
+                    .maxShiftsPerDay(3)
+                    .maxConsecutiveShifts(6)
+                    .minRestHours(11)
+                    .available(true)
+                    .employeeType("FULL_TIME")
+                    .costLevel(3)
+                    .build();
+
+            employees.add(employee);
+        }
+
+        log.info("[智能排班] 加载员工完成: count={}", employees.size());
+        return employees;
+    }
+
+    /**
+     * 加载班次数据
+     */
+    private List<Shift> loadShifts(LocalDate startDate, LocalDate endDate) {
+        log.debug("[智能排班] 加载班次数据: startDate={}, endDate={}", startDate, endDate);
+
+        // TODO: 从数据库加载班次
+        // 简化实现：创建模拟数据
+        List<Shift> shifts = new ArrayList<>();
+
+        LocalDate currentDate = startDate;
+        int shiftId = 1;
+
+        while (!currentDate.isAfter(endDate)) {
+            // 早班
+            shifts.add(Shift.builder()
+                    .id((long) shiftId++)
+                    .shiftName("早班")
+                    .startTime(currentDate.atTime(8, 0))
+                    .endTime(currentDate.atTime(16, 0))
+                    .shiftDate(currentDate)
+                    .shiftType("MORNING")
+                    .requiredSkills(Arrays.asList("门禁操作"))
+                    .requiredEmployees(2)
+                    .location("主入口")
+                    .build());
+
+            // 午班
+            shifts.add(Shift.builder()
+                    .id((long) shiftId++)
+                    .shiftName("午班")
+                    .startTime(currentDate.atTime(12, 0))
+                    .endTime(currentDate.atTime(20, 0))
+                    .shiftDate(currentDate)
+                    .shiftType("AFTERNOON")
+                    .requiredSkills(Arrays.asList("监控室"))
+                    .requiredEmployees(1)
+                    .location("监控中心")
+                    .build());
+
+            // 夜班
+            shifts.add(Shift.builder()
+                    .id((long) shiftId++)
+                    .shiftName("夜班")
+                    .startTime(currentDate.atTime(20, 0))
+                    .endTime(currentDate.plusDays(1).atTime(8, 0))
+                    .shiftDate(currentDate)
+                    .shiftType("NIGHT")
+                    .requiredSkills(Arrays.asList("门禁操作", "急救证书"))
+                    .requiredEmployees(1)
+                    .location("主入口")
+                    .isCrossDay(true)
+                    .build());
+
+            currentDate = currentDate.plusDays(1);
+        }
+
+        log.info("[智能排班] 加载班次完成: count={}", shifts.size());
+        return shifts;
+    }
+
+    /**
+     * 创建班次分配列表
+     */
+    private List<ShiftAssignment> createAssignments(List<Shift> shifts) {
+        log.debug("[智能排班] 创建班次分配: shiftCount={}", shifts.size());
+
+        List<ShiftAssignment> assignments = new ArrayList<>();
+        long assignmentId = 1;
+
+        for (Shift shift : shifts) {
+            // 为每个班次创建requiredEmployees个分配
+            for (int i = 0; i < shift.getRequiredEmployees(); i++) {
+                ShiftAssignment assignment = ShiftAssignment.builder()
+                        .id(assignmentId++)
+                        .shift(shift)
+                        .assignmentDate(shift.getShiftDate())
+                        .assignmentStatus("UNASSIGNED")
+                        .pinned(false)
+                        .build();
+
+                assignments.add(assignment);
+            }
+        }
+
+        log.info("[智能排班] 创建分配完成: count={}", assignments.size());
+        return assignments;
+    }
+
+    /**
+     * 异步求解
+     */
+    private void solveAsync(AttendanceScheduleSolution problem,
+                           Long planId,
+                           Integer solverDurationSeconds) {
+        new Thread(() -> {
+            try {
+                Map<String, Object> progress = solvingProgressCache.get(planId);
+                progress.put("progressPercent", 50);
+
+                // 求解
+                AttendanceScheduleSolution bestSolution = solver.solve(problem, solverDurationSeconds);
+
+                // 更新方案ID
+                bestSolution.setPlanId(planId);
+
+                // 缓存结果
+                solutionCache.put(planId, bestSolution);
+
+                // 更新进度
+                progress.put("status", "SUCCESS");
+                progress.put("progressPercent", 100);
+                progress.put("endTime", new Date());
+                progress.put("score", bestSolution.getScore().toString());
+
+                log.info("[智能排班] 求解完成: planId={}, score={}", planId, bestSolution.getScore());
+
+            } catch (Exception e) {
+                log.error("[智能排班] 求解异常: planId={}", planId, e);
+
+                Map<String, Object> progress = solvingProgressCache.get(planId);
+                progress.put("status", "FAILED");
+                progress.put("error", e.getMessage());
+                progress.put("endTime", new Date());
+            }
+        }).start();
+    }
+
+    /**
+     * 导出为JSON格式
+     */
+    private String exportToJson(AttendanceScheduleSolution solution) throws Exception {
+        return objectMapper.writerWithDefaultPrettyPrinter()
+                .writeValueAsString(solution);
+    }
+
+    /**
+     * 导出为iCal格式
+     */
+    private String exportToICal(AttendanceScheduleSolution solution) {
+        StringBuilder ical = new StringBuilder();
+        ical.append("BEGIN:VCALENDAR\n");
+        ical.append("VERSION:2.0\n");
+        ical.append("PRODID:-//IOE-DREAM//Smart Scheduling//CN\n");
+
+        for (ShiftAssignment assignment : solution.getShiftAssignments()) {
+            if (assignment.getEmployee() != null && assignment.getShift() != null) {
+                ical.append("BEGIN:VEVENT\n");
+                ical.append("SUMMARY:").append(assignment.getShift().getShiftName())
+                        .append(" - ").append(assignment.getEmployee().getName()).append("\n");
+                ical.append("DTSTART:").append(assignment.getShift().getStartTime()
+                        .format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss"))).append("\n");
+                ical.append("DTEND:").append(assignment.getShift().getEndTime()
+                        .format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss"))).append("\n");
+                ical.append("LOCATION:").append(assignment.getShift().getLocation()).append("\n");
+                ical.append("END:VEVENT\n");
+            }
+        }
+
+        ical.append("END:VCALENDAR\n");
+        return ical.toString();
+    }
+
+    /**
+     * 导出为Excel格式
+     */
+    private String exportToExcel(AttendanceScheduleSolution solution) {
+        // TODO: 实现Excel导出
+        return "Excel导出功能待实现";
+    }
+}

@@ -1,5 +1,7 @@
 package net.lab1024.sa.oa.workflow.config.wrapper;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.List;
 import java.util.Map;
 
@@ -7,8 +9,6 @@ import org.flowable.common.engine.impl.identity.Authentication;
 import org.flowable.engine.RuntimeService;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.engine.runtime.ProcessInstanceQuery;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 /**
@@ -22,9 +22,8 @@ import org.springframework.stereotype.Service;
  * @since 2025-01-16
  */
 @Service
+@Slf4j
 public class FlowableRuntimeService {
-
-    private static final Logger log = LoggerFactory.getLogger (FlowableRuntimeService.class);
 
     private final RuntimeService runtimeService;
 
@@ -409,3 +408,5 @@ public class FlowableRuntimeService {
         }
     }
 }
+
+

@@ -1,15 +1,26 @@
 package net.lab1024.sa.attendance.engine.conflict.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.attendance.engine.conflict.*;
-import net.lab1024.sa.attendance.engine.model.ScheduleData;
-import net.lab1024.sa.attendance.engine.model.ScheduleRecord;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
+
+
+import net.lab1024.sa.attendance.engine.conflict.BatchResolutionResult;
+import net.lab1024.sa.attendance.engine.conflict.CapacityConflict;
+import net.lab1024.sa.attendance.engine.conflict.ConflictDetectionResult;
+import net.lab1024.sa.attendance.engine.conflict.ConflictResolutionResult;
+import net.lab1024.sa.attendance.engine.conflict.ConflictResolver;
+import net.lab1024.sa.attendance.engine.conflict.ResolutionStatistics;
+import net.lab1024.sa.attendance.engine.conflict.ResolutionStrategy;
+import net.lab1024.sa.attendance.engine.conflict.SkillConflict;
+import net.lab1024.sa.attendance.engine.conflict.TimeConflict;
+import net.lab1024.sa.attendance.engine.conflict.WorkHourConflict;
+import net.lab1024.sa.attendance.engine.model.ScheduleData;
 
 /**
  * 冲突解决器实现类
@@ -25,12 +36,14 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ConflictResolverImpl implements ConflictResolver {
 
+
     // 解决策略配置
     private static final int MAX_RESOLUTION_ATTEMPTS = 3;
     private static final double MIN_RESOLUTION_QUALITY_SCORE = 70.0;
 
     @Override
-    public ConflictResolutionResult resolveConflicts(ConflictDetectionResult conflictResult, ScheduleData scheduleData) {
+    public ConflictResolutionResult resolveConflicts(ConflictDetectionResult conflictResult,
+            ScheduleData scheduleData) {
         log.info("[冲突解决] 开始解决冲突，总冲突数: {}", conflictResult.getTotalConflicts());
 
         ConflictResolutionResult result = ConflictResolutionResult.builder()
@@ -100,7 +113,8 @@ public class ConflictResolverImpl implements ConflictResolver {
             result.setResolutionDuration(ChronoUnit.MILLIS.between(result.getResolutionTime(), LocalDateTime.now()));
 
             log.info("[冲突解决] 解决完成，成功: {}, 质量评分: {}, 耗时: {}ms",
-                    result.getResolutionSuccessful(), result.getResolutionQualityScore(), result.getResolutionDuration());
+                    result.getResolutionSuccessful(), result.getResolutionQualityScore(),
+                    result.getResolutionDuration());
 
             return result;
 
@@ -200,7 +214,8 @@ public class ConflictResolverImpl implements ConflictResolver {
     }
 
     @Override
-    public ConflictResolutionResult resolveWorkHourConflict(WorkHourConflict workHourConflict, ScheduleData scheduleData) {
+    public ConflictResolutionResult resolveWorkHourConflict(WorkHourConflict workHourConflict,
+            ScheduleData scheduleData) {
         log.debug("[冲突解决] 解决工作时长冲突: {}", workHourConflict.getConflictId());
 
         ConflictResolutionResult result = ConflictResolutionResult.builder()
@@ -240,7 +255,8 @@ public class ConflictResolverImpl implements ConflictResolver {
     }
 
     @Override
-    public ConflictResolutionResult resolveCapacityConflict(CapacityConflict capacityConflict, ScheduleData scheduleData) {
+    public ConflictResolutionResult resolveCapacityConflict(CapacityConflict capacityConflict,
+            ScheduleData scheduleData) {
         log.debug("[冲突解决] 解决班次容量冲突: {}", capacityConflict.getConflictId());
 
         ConflictResolutionResult result = ConflictResolutionResult.builder()
@@ -280,7 +296,8 @@ public class ConflictResolverImpl implements ConflictResolver {
     }
 
     @Override
-    public BatchResolutionResult resolveBatchConflicts(List<ConflictDetectionResult> conflictResults, ScheduleData scheduleData) {
+    public BatchResolutionResult resolveBatchConflicts(List<ConflictDetectionResult> conflictResults,
+            ScheduleData scheduleData) {
         log.info("[冲突解决] 开始批量解决冲突，检测数量: {}", conflictResults.size());
 
         BatchResolutionResult batchResult = BatchResolutionResult.builder()
@@ -304,7 +321,8 @@ public class ConflictResolverImpl implements ConflictResolver {
 
         batchResult.setSuccessfulResolutions(successfulResolutions);
         batchResult.setTotalConflicts(totalConflicts);
-        batchResult.setSuccessRate(conflictResults.size() > 0 ? (double) successfulResolutions / conflictResults.size() * 100 : 0.0);
+        batchResult.setSuccessRate(
+                conflictResults.size() > 0 ? (double) successfulResolutions / conflictResults.size() * 100 : 0.0);
 
         log.info("[冲突解决] 批量解决完成，成功解决: {}/{}，成功率: {:.1f}%",
                 successfulResolutions, conflictResults.size(), batchResult.getSuccessRate());
@@ -341,7 +359,7 @@ public class ConflictResolverImpl implements ConflictResolver {
 
         // 验证解决质量
         if (resolutionResult.getResolutionQualityScore() != null &&
-            resolutionResult.getResolutionQualityScore() < MIN_RESOLUTION_QUALITY_SCORE) {
+                resolutionResult.getResolutionQualityScore() < MIN_RESOLUTION_QUALITY_SCORE) {
             return false;
         }
 
@@ -401,7 +419,8 @@ public class ConflictResolverImpl implements ConflictResolver {
             // 3. 创建修改记录
 
             // 简化实现：假设我们可以移动第一个排班
-            ConflictResolutionResult.ScheduleRecordModification modification = ConflictResolutionResult.ScheduleRecordModification.builder()
+            ConflictResolutionResult.ScheduleRecordModification modification = ConflictResolutionResult.ScheduleRecordModification
+                    .builder()
                     .recordId(timeConflict.getScheduleRecordId1())
                     .modificationType("UPDATE")
                     .modificationReason("时间调整解决冲突")
@@ -419,19 +438,135 @@ public class ConflictResolverImpl implements ConflictResolver {
 
     /**
      * 通过优先级策略解决冲突
+     * <p>
+     * 核心逻辑：
+     * 1. 比较两个冲突排班的优先级
+     * 2. 保留优先级高的排班
+     * 3. 删除或调整优先级低的排班
+     * </p>
      */
-    private boolean resolveByPriority(TimeConflict timeConflict, ScheduleData scheduleData, ConflictResolutionResult result) {
+    private boolean resolveByPriority(TimeConflict timeConflict, ScheduleData scheduleData,
+            ConflictResolutionResult result) {
         try {
-            // TODO: 实现优先级策略逻辑
-            // 1. 比较两个排班的优先级
-            // 2. 保留优先级高的排班
-            // 3. 调整或删除优先级低的排班
+            log.info("[冲突解决] 使用优先级策略: conflictId={}, record1={}, record2={}",
+                timeConflict.getConflictId(), timeConflict.getScheduleRecordId1(),
+                timeConflict.getScheduleRecordId2());
 
-            return false; // 简化实现：暂时返回false
+            // 1. 获取两个排班的优先级
+            Integer priority1 = getSchedulePriority(timeConflict.getScheduleRecordId1(), scheduleData);
+            Integer priority2 = getSchedulePriority(timeConflict.getScheduleRecordId2(), scheduleData);
+
+            if (priority1 == null || priority2 == null) {
+                log.warn("[冲突解决] 无法获取排班优先级，使用默认策略");
+                return false;
+            }
+
+            // 2. 比较优先级（数值越小优先级越高）
+            Long recordToKeep;
+            Long recordToDelete;
+            String reason;
+
+            if (priority1 < priority2) {
+                // record1优先级更高，保留record1
+                recordToKeep = timeConflict.getScheduleRecordId1();
+                recordToDelete = timeConflict.getScheduleRecordId2();
+                reason = String.format("优先级策略：保留优先级%d的排班，删除优先级%d的排班", priority1, priority2);
+                log.info("[冲突解决] 优先级比较: record1优先级({}) > record2优先级({}), 保留record1",
+                    priority1, priority2);
+            } else if (priority2 < priority1) {
+                // record2优先级更高，保留record2
+                recordToKeep = timeConflict.getScheduleRecordId2();
+                recordToDelete = timeConflict.getScheduleRecordId1();
+                reason = String.format("优先级策略：保留优先级%d的排班，删除优先级%d的排班", priority2, priority1);
+                log.info("[冲突解决] 优先级比较: record2优先级({}) > record1优先级({}), 保留record2",
+                    priority2, priority1);
+            } else {
+                // 优先级相同，使用其他策略（如保留较早的排班）
+                log.warn("[冲突解决] 两个排班优先级相同({}), 使用默认策略", priority1);
+                return false;
+            }
+
+            // 3. 创建删除操作
+            ConflictResolutionResult.ScheduleRecordModification modification =
+                ConflictResolutionResult.ScheduleRecordModification.builder()
+                    .recordId(recordToDelete)
+                    .modificationType("DELETE")
+                    .modificationReason(reason)
+                    .modificationTime(LocalDateTime.now())
+                    .build();
+
+            result.getModifications().add(modification);
+
+            // 4. 记录保留的排班
+            // result.getResolvedConflicts() - ConflictResolutionResult 没有此字段，已移除
+            // 如果需要记录已解决的冲突，应在 ConflictResolutionResult 中添加 resolvedConflicts 字段
+
+            log.info("[冲突解决] 优先级策略成功: 保留={}, 删除={}, reason={}",
+                recordToKeep, recordToDelete, reason);
+
+            return true;
         } catch (Exception e) {
             log.error("[冲突解决] 优先级策略失败", e);
             return false;
         }
+    }
+
+    /**
+     * 获取排班的优先级
+     * <p>
+     * 优先级规则：
+     * - 1-10: 重要排班（如关键岗位、特殊班次）
+     * - 11-50: 普通排班
+     * - 51-99: 备选排班
+     * </p>
+     *
+     * @param recordId 排班记录ID
+     * @param scheduleData 排班数据
+     * @return 优先级（1-99），如果无法获取返回null
+     */
+    private Integer getSchedulePriority(Long recordId, ScheduleData scheduleData) {
+        // 从排班数据中获取优先级
+        // 这里简化处理，实际应该从ScheduleData或数据库查询
+        // 默认优先级为50（普通排班）
+
+        if (scheduleData == null || scheduleData.getScheduleRecords() == null) {
+            return 50; // 默认优先级
+        }
+
+        // 查找对应排班的优先级
+        return scheduleData.getScheduleRecords().stream()
+            .filter(schedule -> schedule.getRecordId().equals(recordId))
+            .findFirst()
+            .map(schedule -> {
+                // 尝试从 recordAttributes 获取优先级
+                if (schedule.getRecordAttributes() != null) {
+                    Object priority = schedule.getRecordAttributes().get("priority");
+                    if (priority instanceof Number) {
+                        return ((Number) priority).intValue();
+                    }
+
+                    // 尝试从 recordAttributes 获取班次类型
+                    Object shiftType = schedule.getRecordAttributes().get("shiftType");
+                    if (shiftType instanceof Number) {
+                        int type = ((Number) shiftType).intValue();
+                        switch (type) {
+                            case 1: // 固定班次
+                                return 30; // 较高优先级
+                            case 2: // 弹性班次
+                                return 40; // 中等优先级
+                            case 3: // 轮班班次
+                                return 35; // 中高优先级
+                            case 4: // 临时班次
+                                return 60; // 较低优先级
+                            default:
+                                return 50; // 默认优先级
+                        }
+                    }
+                }
+
+                return 50; // 默认优先级
+            })
+            .orElse(50); // 未找到排班，返回默认优先级
     }
 
     /**
@@ -440,7 +575,8 @@ public class ConflictResolverImpl implements ConflictResolver {
     private boolean resolveByDeletion(TimeConflict timeConflict, ConflictResolutionResult result) {
         try {
             // 删除优先级较低的排班记录
-            ConflictResolutionResult.ScheduleRecordModification modification = ConflictResolutionResult.ScheduleRecordModification.builder()
+            ConflictResolutionResult.ScheduleRecordModification modification = ConflictResolutionResult.ScheduleRecordModification
+                    .builder()
                     .recordId(timeConflict.getScheduleRecordId2())
                     .modificationType("DELETE")
                     .modificationReason("删除低优先级排班解决冲突")
@@ -458,7 +594,8 @@ public class ConflictResolverImpl implements ConflictResolver {
     /**
      * 通过人员替换解决技能冲突
      */
-    private boolean resolveByEmployeeReplacement(SkillConflict skillConflict, ScheduleData scheduleData, ConflictResolutionResult result) {
+    private boolean resolveByEmployeeReplacement(SkillConflict skillConflict, ScheduleData scheduleData,
+            ConflictResolutionResult result) {
         try {
             // TODO: 实现人员替换逻辑
             // 1. 查找具备所需技能的员工
@@ -475,7 +612,8 @@ public class ConflictResolverImpl implements ConflictResolver {
     /**
      * 通过班次调整解决技能冲突
      */
-    private boolean resolveByShiftAdjustment(SkillConflict skillConflict, ScheduleData scheduleData, ConflictResolutionResult result) {
+    private boolean resolveByShiftAdjustment(SkillConflict skillConflict, ScheduleData scheduleData,
+            ConflictResolutionResult result) {
         try {
             // TODO: 实现班次调整逻辑
             return false;
@@ -522,7 +660,8 @@ public class ConflictResolverImpl implements ConflictResolver {
     /**
      * 通过容量优先级解决冲突
      */
-    private boolean resolveByCapacityPriority(CapacityConflict capacityConflict, ScheduleData scheduleData, ConflictResolutionResult result) {
+    private boolean resolveByCapacityPriority(CapacityConflict capacityConflict, ScheduleData scheduleData,
+            ConflictResolutionResult result) {
         try {
             // TODO: 实现容量优先级逻辑
             // 1. 评估每个员工的优先级
@@ -539,7 +678,8 @@ public class ConflictResolverImpl implements ConflictResolver {
     /**
      * 通过容量调整解决冲突
      */
-    private boolean resolveByCapacityAdjustment(CapacityConflict capacityConflict, ScheduleData scheduleData, ConflictResolutionResult result) {
+    private boolean resolveByCapacityAdjustment(CapacityConflict capacityConflict, ScheduleData scheduleData,
+            ConflictResolutionResult result) {
         try {
             // TODO: 实现容量调整逻辑
             // 1. 增加班次容量限制
@@ -600,7 +740,8 @@ public class ConflictResolverImpl implements ConflictResolver {
         List<ConflictResolutionResult.AlternativeSolution> alternatives = new ArrayList<>();
 
         // 生成替代方案1: 人工确认方案
-        ConflictResolutionResult.AlternativeSolution manualSolution = ConflictResolutionResult.AlternativeSolution.builder()
+        ConflictResolutionResult.AlternativeSolution manualSolution = ConflictResolutionResult.AlternativeSolution
+                .builder()
                 .solutionId(UUID.randomUUID().toString())
                 .solutionDescription("人工确认方案")
                 .solutionQualityScore(60.0)
@@ -609,7 +750,8 @@ public class ConflictResolverImpl implements ConflictResolver {
         alternatives.add(manualSolution);
 
         // 生成替代方案2: 自动重排方案
-        ConflictResolutionResult.AlternativeSolution autoRescheduleSolution = ConflictResolutionResult.AlternativeSolution.builder()
+        ConflictResolutionResult.AlternativeSolution autoRescheduleSolution = ConflictResolutionResult.AlternativeSolution
+                .builder()
                 .solutionId(UUID.randomUUID().toString())
                 .solutionDescription("自动重排方案")
                 .solutionQualityScore(75.0)

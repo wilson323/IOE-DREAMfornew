@@ -1,5 +1,7 @@
 package net.lab1024.sa.oa.workflow.controller;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,13 +17,12 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.domain.PageParam;
 import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.permission.annotation.PermissionCheck;
 import net.lab1024.sa.oa.workflow.domain.form.ApprovalConfigForm;
-import net.lab1024.sa.common.workflow.entity.ApprovalConfigEntity;
+import net.lab1024.sa.oa.workflow.entity.ApprovalConfigEntity;
 import net.lab1024.sa.oa.workflow.service.ApprovalConfigService;
 
 /**
@@ -38,11 +39,11 @@ import net.lab1024.sa.oa.workflow.service.ApprovalConfigService;
  * @version 1.0.0
  * @since 2025-01-30
  */
-@Slf4j
 @RestController
 @RequestMapping("/api/v1/workflow/approval-config")
 @Tag(name = "审批配置管理", description = "审批配置的CRUD操作，支持自定义审批类型和流程配置")
 @PermissionCheck(value = "OA_CONFIG", description = "审批配置管理模块权限")
+@Slf4j
 public class ApprovalConfigController {
 
     @Resource
@@ -118,8 +119,3 @@ public class ApprovalConfigController {
         return approvalConfigService.disableConfig(id);
     }
 }
-
-
-
-
-

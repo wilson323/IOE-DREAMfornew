@@ -1,0 +1,321 @@
+package net.lab1024.sa.common.monitoring;
+
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.Gauge;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
+import lombok.extern.slf4j.Slf4j;
+import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.common.exception.SystemException;
+import net.lab1024.sa.common.exception.ParamException;
+
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
+
+/**
+ * IOE-DREAM 异常处理指标收集器
+ * <p>
+ * 内存优化版本，减少对象创建和内存占用
+ * 提供企业级异常处理监控指标
+ * 纯Java类设计，通过构造函数注入依赖
+ * </p>
+ * <p>
+ * 迁移说明：从microservices-common-core迁移到microservices-common
+ * 原因：common-core应保持最小稳定内核，不包含Spring组件类
+ * </p>
+ *
+ * @author IOE-DREAM架构团队
+ * @version 2.0.0
+ * @since 2025-12-16
+ * @updated 2025-12-20 移除@Component注解，改为纯Java类
+ */
+public class ExceptionMetricsCollector {
+
+    private static final Logger log = LoggerFactory.getLogger(ExceptionMetricsCollector.class);
+
+    private final MeterRegistry meterRegistry;
+    private final ConcurrentHashMap<String, AtomicLong> exceptionCounters = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Timer> exceptionTimers = new ConcurrentHashMap<>();
+
+    // 构造函数注入依赖
+    public ExceptionMetricsCollector(MeterRegistry meterRegistry) {
+        this.meterRegistry = meterRegistry;
+        initializeMetrics();
+    }
+
+    /**
+     * 初始化指标收集器
+     */
+    private void initializeMetrics() {
+        // 注册全局异常计数器
+        Counter.builder("system.exception.total")
+                .description("系统异常总数")
+                .register(meterRegistry);
+
+        Counter.builder("business.exception.total")
+                .description("业务异常总数")
+                .register(meterRegistry);
+
+        Counter.builder("param.exception.total")
+                .description("参数异常总数")
+                .register(meterRegistry);
+
+        Counter.builder("general.exception.total")
+                .description("通用异常总数")
+                .register(meterRegistry);
+
+        // 注册异常处理时间指标
+        Timer.builder("system.exception.processing.time")
+                .description("系统异常处理时间")
+                .register(meterRegistry);
+
+        Timer.builder("business.exception.processing.time")
+                .description("业务异常处理时间")
+                .register(meterRegistry);
+
+        // 内存使用监控通过getMemoryUsage()方法提供，避免动态Gauge注册问题
+    }
+
+    /**
+     * 记录系统异常
+     */
+    public void recordSystemException(SystemException exception, long processingTimeMs) {
+        String exceptionName = exception.getClass().getSimpleName();
+
+        // 更新异常计数
+        AtomicLong counter = exceptionCounters.computeIfAbsent(exceptionName, k -> new AtomicLong(0));
+        counter.incrementAndGet();
+
+        // 记录处理时间
+        Timer timer = exceptionTimers.computeIfAbsent("system." + exceptionName, k ->
+            Timer.builder("system.exception.processing.time")
+                    .tag("type", exceptionName)
+                    .description("系统异常处理时间")
+                    .register(meterRegistry));
+
+        timer.record(processingTimeMs, java.util.concurrent.TimeUnit.MILLISECONDS);
+
+        // 更新全局计数器
+        meterRegistry.counter("system.exception.total").increment();
+
+        // 记录详细日志
+        log.error("[系统异常] type={}, code={}, message={}, processingTime={}ms",
+                exceptionName, exception.getCode(), exception.getMessage(), processingTimeMs);
+    }
+
+    /**
+     * 记录业务异常
+     */
+    public void recordBusinessException(BusinessException exception, long processingTimeMs) {
+        String exceptionName = exception.getClass().getSimpleName();
+
+        // 更新异常计数
+        AtomicLong counter = exceptionCounters.computeIfAbsent(exceptionName, k -> new AtomicLong(0));
+        counter.incrementAndGet();
+
+        // 记录处理时间
+        Timer timer = exceptionTimers.computeIfAbsent("business." + exceptionName, k ->
+            Timer.builder("business.exception.processing.time")
+                    .tag("type", exceptionName)
+                    .description("业务异常处理时间")
+                    .register(meterRegistry));
+
+        timer.record(processingTimeMs, java.util.concurrent.TimeUnit.MILLISECONDS);
+
+        // 更新全局计数器
+        meterRegistry.counter("business.exception.total").increment();
+
+        // 记录详细日志
+        log.warn("[业务异常] type={}, code={}, message={}, processingTime={}ms",
+                exceptionName, exception.getCode(), exception.getMessage(), processingTimeMs);
+    }
+
+    /**
+     * 记录参数异常
+     */
+    public void recordParamException(ParamException exception, long processingTimeMs) {
+        String exceptionName = exception.getClass().getSimpleName();
+
+        // 更新异常计数
+        AtomicLong counter = exceptionCounters.computeIfAbsent(exceptionName, k -> new AtomicLong(0));
+        counter.incrementAndGet();
+
+        // 更新全局计数器
+        meterRegistry.counter("param.exception.total").increment();
+
+        // 记录详细日志
+        log.warn("[参数异常] type={}, code={}, message={}, processingTime={}ms",
+                exceptionName, exception.getCode(), exception.getMessage(), processingTimeMs);
+    }
+
+    /**
+     * 获取异常总数
+     */
+    public long getTotalExceptionCount() {
+        return exceptionCounters.values().stream()
+                .mapToLong(AtomicLong::get)
+                .sum();
+    }
+
+    /**
+     * 获取指定类型异常数量
+     */
+    public long getExceptionCount(String exceptionType) {
+        AtomicLong counter = exceptionCounters.get(exceptionType);
+        return counter != null ? counter.get() : 0;
+    }
+
+    /**
+     * 记录通用异常
+     */
+    public void recordException(Exception exception, long processingTimeMs) {
+        String exceptionName = exception.getClass().getSimpleName();
+
+        // 更新异常计数
+        AtomicLong counter = exceptionCounters.computeIfAbsent(exceptionName, k -> new AtomicLong(0));
+        counter.incrementAndGet();
+
+        // 记录处理时间
+        Timer timer = exceptionTimers.computeIfAbsent("general." + exceptionName, k ->
+            Timer.builder("general.exception.processing.time")
+                    .tag("type", exceptionName)
+                    .description("通用异常处理时间")
+                    .register(meterRegistry));
+
+        timer.record(processingTimeMs, java.util.concurrent.TimeUnit.MILLISECONDS);
+
+        // 更新全局计数器
+        meterRegistry.counter("general.exception.total").increment();
+
+        // 记录详细日志
+        log.error("[通用异常] type={}, message={}, processingTime={}ms",
+                exceptionName, exception.getMessage(), processingTimeMs);
+    }
+
+    /**
+     * 获取内存使用量（字节）
+     */
+    private double getMemoryUsage() {
+        Runtime runtime = Runtime.getRuntime();
+        return runtime.totalMemory() - runtime.freeMemory();
+    }
+
+    /**
+     * 重置所有计数器
+     */
+    public void reset() {
+        exceptionCounters.values().forEach(counter -> counter.set(0));
+        log.info("[异常指标] 已重置所有异常计数器");
+    }
+
+    /**
+     * 获取异常统计信息
+     */
+    public ExceptionStatistics getStatistics() {
+        return ExceptionStatistics.builder()
+                .totalExceptions(getTotalExceptionCount())
+                .systemExceptions(getExceptionCount("SystemException"))
+                .businessExceptions(getExceptionCount("BusinessException"))
+                .paramExceptions(getExceptionCount("ParamException"))
+                .memoryUsage(getMemoryUsage())
+                .build();
+    }
+
+    /**
+     * 异常统计信息DTO
+     */
+    public static class ExceptionStatistics {
+        private long totalExceptions;
+        private long systemExceptions;
+        private long businessExceptions;
+        private long paramExceptions;
+        private double memoryUsage;
+
+        public static ExceptionStatisticsBuilder builder() {
+            return new ExceptionStatisticsBuilder();
+        }
+
+        public long getTotalExceptions() {
+            return totalExceptions;
+        }
+
+        public void setTotalExceptions(long totalExceptions) {
+            this.totalExceptions = totalExceptions;
+        }
+
+        public long getSystemExceptions() {
+            return systemExceptions;
+        }
+
+        public void setSystemExceptions(long systemExceptions) {
+            this.systemExceptions = systemExceptions;
+        }
+
+        public long getBusinessExceptions() {
+            return businessExceptions;
+        }
+
+        public void setBusinessExceptions(long businessExceptions) {
+            this.businessExceptions = businessExceptions;
+        }
+
+        public long getParamExceptions() {
+            return paramExceptions;
+        }
+
+        public void setParamExceptions(long paramExceptions) {
+            this.paramExceptions = paramExceptions;
+        }
+
+        public double getMemoryUsage() {
+            return memoryUsage;
+        }
+
+        public void setMemoryUsage(double memoryUsage) {
+            this.memoryUsage = memoryUsage;
+        }
+
+        public static class ExceptionStatisticsBuilder {
+            private long totalExceptions;
+            private long systemExceptions;
+            private long businessExceptions;
+            private long paramExceptions;
+            private double memoryUsage;
+
+            public ExceptionStatisticsBuilder totalExceptions(long totalExceptions) {
+                this.totalExceptions = totalExceptions;
+                return this;
+            }
+
+            public ExceptionStatisticsBuilder systemExceptions(long systemExceptions) {
+                this.systemExceptions = systemExceptions;
+                return this;
+            }
+
+            public ExceptionStatisticsBuilder businessExceptions(long businessExceptions) {
+                this.businessExceptions = businessExceptions;
+                return this;
+            }
+
+            public ExceptionStatisticsBuilder paramExceptions(long paramExceptions) {
+                this.paramExceptions = paramExceptions;
+                return this;
+            }
+
+            public ExceptionStatisticsBuilder memoryUsage(double memoryUsage) {
+                this.memoryUsage = memoryUsage;
+                return this;
+            }
+
+            public ExceptionStatistics build() {
+                ExceptionStatistics statistics = new ExceptionStatistics();
+                statistics.totalExceptions = this.totalExceptions;
+                statistics.systemExceptions = this.systemExceptions;
+                statistics.businessExceptions = this.businessExceptions;
+                statistics.paramExceptions = this.paramExceptions;
+                statistics.memoryUsage = this.memoryUsage;
+                return statistics;
+            }
+        }
+    }
+}

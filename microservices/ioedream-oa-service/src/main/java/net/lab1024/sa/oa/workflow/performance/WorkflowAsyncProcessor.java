@@ -1,24 +1,24 @@
 package net.lab1024.sa.oa.workflow.performance;
 
 import lombok.extern.slf4j.Slf4j;
+
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Supplier;
+
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
+
+import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
-import io.micrometer.core.instrument.Counter;
-import io.micrometer.core.instrument.Tags;
-
 import jakarta.annotation.Resource;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.function.Supplier;
-import java.time.Duration;
 
 /**
  * 工作流异步处理器
@@ -32,8 +32,8 @@ import java.time.Duration;
  * @version 1.0.0
  * @since 2025-01-16
  */
-@Slf4j
 @Component
+@Slf4j
 public class WorkflowAsyncProcessor {
 
     @Resource
@@ -64,11 +64,25 @@ public class WorkflowAsyncProcessor {
         }
 
         // Getters
-        public boolean isSuccess() { return success; }
-        public T getData() { return data; }
-        public String getError() { return error; }
-        public long getDuration() { return duration; }
-        public String getTraceId() { return traceId; }
+        public boolean isSuccess() {
+            return success;
+        }
+
+        public T getData() {
+            return data;
+        }
+
+        public String getError() {
+            return error;
+        }
+
+        public long getDuration() {
+            return duration;
+        }
+
+        public String getTraceId() {
+            return traceId;
+        }
     }
 
     public WorkflowAsyncProcessor(MeterRegistry meterRegistry) {
@@ -98,7 +112,7 @@ public class WorkflowAsyncProcessor {
      * 异步执行任务
      *
      * @param taskName 任务名称
-     * @param task 任务逻辑
+     * @param task     任务逻辑
      * @return 异步结果
      */
     @Async("workflowAsyncExecutor")
@@ -130,7 +144,10 @@ public class WorkflowAsyncProcessor {
                 log.debug("[工作流异步] 任务执行成功: taskName={}, traceId={}, duration={}ms",
                         taskName, traceId, duration);
 
-                return new AsyncResult<>(true, result, null, duration, traceId);
+                @SuppressWarnings("unchecked")
+                AsyncResult<T> successResult = (AsyncResult<T>) new AsyncResult<>(true, result, null, duration,
+                        traceId);
+                return successResult;
 
             } catch (Exception e) {
                 long duration = System.currentTimeMillis() - startTime;
@@ -144,7 +161,10 @@ public class WorkflowAsyncProcessor {
                 log.error("[工作流异步] 任务执行失败: taskName={}, traceId={}, duration={}ms, error={}",
                         taskName, traceId, duration, e.getMessage(), e);
 
-                return new AsyncResult<>(false, null, e.getMessage(), duration, traceId);
+                @SuppressWarnings("unchecked")
+                AsyncResult<T> errorResult = (AsyncResult<T>) new AsyncResult<>(false, null, e.getMessage(), duration,
+                        traceId);
+                return errorResult;
 
             } finally {
                 sample.stop(Timer.builder("workflow.async.task.duration")
@@ -158,7 +178,7 @@ public class WorkflowAsyncProcessor {
      * 批量异步执行任务
      *
      * @param taskName 任务名称
-     * @param tasks 任务列表
+     * @param tasks    任务列表
      * @return 异步结果列表
      */
     @Async("workflowAsyncExecutor")
@@ -196,7 +216,10 @@ public class WorkflowAsyncProcessor {
                     log.debug("[工作流异步] 批量任务执行成功: taskName={}, index={}, traceId={}, duration={}ms",
                             taskName, taskIndex, taskTraceId, duration);
 
-                    return new AsyncResult<>(true, result, null, duration, taskTraceId);
+                    @SuppressWarnings("unchecked")
+                    AsyncResult<T> successResult = (AsyncResult<T>) new AsyncResult<>(true, result, null, duration,
+                            taskTraceId);
+                    return successResult;
 
                 } catch (Exception e) {
                     long duration = System.currentTimeMillis() - taskStartTime;
@@ -204,7 +227,10 @@ public class WorkflowAsyncProcessor {
                     log.error("[工作流异步] 批量任务执行失败: taskName={}, index={}, traceId={}, duration={}ms, error={}",
                             taskName, taskIndex, taskTraceId, duration, e.getMessage(), e);
 
-                    return new AsyncResult<>(false, null, e.getMessage(), duration, taskTraceId);
+                    @SuppressWarnings("unchecked")
+                    AsyncResult<T> errorResult = (AsyncResult<T>) new AsyncResult<>(false, null, e.getMessage(),
+                            duration, taskTraceId);
+                    return errorResult;
                 }
             });
 
@@ -247,10 +273,10 @@ public class WorkflowAsyncProcessor {
     /**
      * 异步执行带回调的任务
      *
-     * @param taskName 任务名称
-     * @param task 任务逻辑
+     * @param taskName  任务名称
+     * @param task      任务逻辑
      * @param onSuccess 成功回调
-     * @param onError 失败回调
+     * @param onError   失败回调
      * @return 异步结果
      */
     @Async("workflowAsyncExecutor")
@@ -296,7 +322,10 @@ public class WorkflowAsyncProcessor {
                 log.debug("[工作流异步] 带回调任务执行成功: taskName={}, traceId={}, duration={}ms",
                         taskName, traceId, duration);
 
-                return new AsyncResult<>(true, result, null, duration, traceId);
+                @SuppressWarnings("unchecked")
+                AsyncResult<T> successResult = (AsyncResult<T>) new AsyncResult<>(true, result, null, duration,
+                        traceId);
+                return successResult;
 
             } catch (Exception e) {
                 long duration = System.currentTimeMillis() - startTime;
@@ -322,7 +351,10 @@ public class WorkflowAsyncProcessor {
                 log.error("[工作流异步] 带回调任务执行失败: taskName={}, traceId={}, duration={}ms, error={}",
                         taskName, traceId, duration, e.getMessage(), e);
 
-                return new AsyncResult<>(false, null, errorMessage, duration, traceId);
+                @SuppressWarnings("unchecked")
+                AsyncResult<T> errorResult = (AsyncResult<T>) new AsyncResult<>(false, null, errorMessage, duration,
+                        traceId);
+                return errorResult;
             }
         });
     }
@@ -331,8 +363,8 @@ public class WorkflowAsyncProcessor {
      * 延迟异步执行任务
      *
      * @param taskName 任务名称
-     * @param task 任务逻辑
-     * @param delay 延迟时间
+     * @param task     任务逻辑
+     * @param delay    延迟时间
      * @return 异步结果
      */
     @Async("workflowAsyncExecutor")
@@ -348,64 +380,70 @@ public class WorkflowAsyncProcessor {
                 taskName, delay.toMillis(), traceId);
 
         return CompletableFuture.supplyAsync(() -> {
-                    // 先等待延迟时间
-                    try {
-                        Thread.sleep(delay.toMillis());
-                    } catch (InterruptedException ie) {
-                        Thread.currentThread().interrupt();
-                        log.warn("[工作流异步] 延迟任务被中断: taskName={}, traceId={}", taskName, traceId);
-                        return new AsyncResult<T>(false, null, "任务被中断", 0L, traceId);
-                    }
+            // 先等待延迟时间
+            try {
+                Thread.sleep(delay.toMillis());
+            } catch (InterruptedException ie) {
+                Thread.currentThread().interrupt();
+                log.warn("[工作流异步] 延迟任务被中断: taskName={}, traceId={}", taskName, traceId);
+                return new AsyncResult<T>(false, null, "任务被中断", 0L, traceId);
+            }
 
-                    long actualStartTime = System.currentTimeMillis();
+            long actualStartTime = System.currentTimeMillis();
 
-                    log.debug("[工作流异步] 延迟时间结束，开始执行任务: taskName={}, traceId={}", taskName, traceId);
+            log.debug("[工作流异步] 延迟时间结束，开始执行任务: taskName={}, traceId={}", taskName, traceId);
 
-                    try {
-                        asyncProcessCounter.increment();
-                        Counter.builder("workflow.async.delayed.count")
-                                .tag("task", taskName)
-                                .register(meterRegistry)
-                                .increment();
+            try {
+                asyncProcessCounter.increment();
+                Counter.builder("workflow.async.delayed.count")
+                        .tag("task", taskName)
+                        .register(meterRegistry)
+                        .increment();
 
-                        T result = task.get();
-                        long duration = System.currentTimeMillis() - actualStartTime;
-                        long totalDuration = System.currentTimeMillis() - startTime;
+                T result = task.get();
+                long duration = System.currentTimeMillis() - actualStartTime;
+                long totalDuration = System.currentTimeMillis() - startTime;
 
-                        asyncSuccessCounter.increment();
-                        Counter.builder("workflow.async.delayed.success")
-                                .tag("task", taskName)
-                                .register(meterRegistry)
-                                .increment();
+                asyncSuccessCounter.increment();
+                Counter.builder("workflow.async.delayed.success")
+                        .tag("task", taskName)
+                        .register(meterRegistry)
+                        .increment();
 
-                        log.debug("[工作流异步] 延迟任务执行成功: taskName={}, delay={}, duration={}, total={}, traceId={}",
-                                taskName, delay.toMillis(), duration, totalDuration, traceId);
+                log.debug("[工作流异步] 延迟任务执行成功: taskName={}, delay={}, duration={}, total={}, traceId={}",
+                        taskName, delay.toMillis(), duration, totalDuration, traceId);
 
-                        return new AsyncResult<>(true, result, null, duration, traceId);
+                @SuppressWarnings("unchecked")
+                AsyncResult<T> successResult = (AsyncResult<T>) new AsyncResult<>(true, result, null, duration,
+                        traceId);
+                return successResult;
 
-                    } catch (Exception e) {
-                        long duration = System.currentTimeMillis() - actualStartTime;
-                        long totalDuration = System.currentTimeMillis() - startTime;
+            } catch (Exception e) {
+                long duration = System.currentTimeMillis() - actualStartTime;
+                long totalDuration = System.currentTimeMillis() - startTime;
 
-                        asyncErrorCounter.increment();
-                        Counter.builder("workflow.async.delayed.error")
-                                .tag("task", taskName)
-                                .register(meterRegistry)
-                                .increment();
+                asyncErrorCounter.increment();
+                Counter.builder("workflow.async.delayed.error")
+                        .tag("task", taskName)
+                        .register(meterRegistry)
+                        .increment();
 
-                        log.error("[工作流异步] 延迟任务执行失败: taskName={}, delay={}, duration={}, total={}, traceId={}, error={}",
-                                taskName, delay.toMillis(), duration, totalDuration, traceId, e.getMessage(), e);
+                log.error("[工作流异步] 延迟任务执行失败: taskName={}, delay={}, duration={}, total={}, traceId={}, error={}",
+                        taskName, delay.toMillis(), duration, totalDuration, traceId, e.getMessage(), e);
 
-                        return new AsyncResult<>(false, null, e.getMessage(), duration, traceId);
-                    }
-                });
+                @SuppressWarnings("unchecked")
+                AsyncResult<T> errorResult = (AsyncResult<T>) new AsyncResult<>(false, null, e.getMessage(), duration,
+                        traceId);
+                return errorResult;
+            }
+        });
     }
 
     /**
      * 事务提交后异步执行
      *
      * @param taskName 任务名称
-     * @param task 任务逻辑
+     * @param task     任务逻辑
      * @return 异步结果
      */
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
@@ -439,7 +477,10 @@ public class WorkflowAsyncProcessor {
                 log.debug("[工作流异步] 事务提交后任务执行成功: taskName={}, traceId={}, duration={}ms",
                         taskName, traceId, duration);
 
-                return new AsyncResult<>(true, result, null, duration, traceId);
+                @SuppressWarnings("unchecked")
+                AsyncResult<T> successResult = (AsyncResult<T>) new AsyncResult<>(true, result, null, duration,
+                        traceId);
+                return successResult;
 
             } catch (Exception e) {
                 long duration = System.currentTimeMillis() - startTime;
@@ -453,7 +494,10 @@ public class WorkflowAsyncProcessor {
                 log.error("[工作流异步] 事务提交后任务执行失败: taskName={}, traceId={}, duration={}ms, error={}",
                         taskName, traceId, duration, e.getMessage(), e);
 
-                return new AsyncResult<>(false, null, e.getMessage(), duration, traceId);
+                @SuppressWarnings("unchecked")
+                AsyncResult<T> errorResult = (AsyncResult<T>) new AsyncResult<>(false, null, e.getMessage(), duration,
+                        traceId);
+                return errorResult;
             }
         });
     }

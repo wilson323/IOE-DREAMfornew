@@ -1,0 +1,148 @@
+package net.lab1024.sa.attendance.controller.scheduling;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
+import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.attendance.service.scheduling.SmartSchedulingService;
+import org.springframework.web.bind.annotation.*;
+
+import jakarta.annotation.Resource;
+import java.time.LocalDate;
+import java.util.Map;
+
+/**
+ * 智能排班控制器 - REST API
+ *
+ * @author IOE-DREAM
+ * @since 2025-12-26
+ */
+@Slf4j
+@RestController
+@RequestMapping("/api/scheduling/smart")
+@Tag(name = "智能排班")
+public class SmartSchedulingController {
+
+    @Resource
+    private SmartSchedulingService smartSchedulingService;
+
+    /**
+     * 执行智能排班优化
+     */
+    @PostMapping("/optimize")
+    @Operation(summary = "执行智能排班优化")
+    public ResponseDTO<Long> optimizeSchedule(
+            @RequestParam String planName,
+            @RequestParam String startDate,
+            @RequestParam String endDate,
+            @RequestParam(defaultValue = "300") Integer solverDurationSeconds) {
+
+        log.info("[智能排班] 执行优化: planName={}, startDate={}, endDate={}, duration={}s",
+                planName, startDate, endDate, solverDurationSeconds);
+
+        LocalDate start = LocalDate.parse(startDate);
+        LocalDate end = LocalDate.parse(endDate);
+
+        Long planId = smartSchedulingService.optimizeSchedule(
+                planName,
+                start,
+                end,
+                solverDurationSeconds
+        );
+
+        return ResponseDTO.ok(planId);
+    }
+
+    /**
+     * 获取排班方案详情
+     */
+    @GetMapping("/{planId}")
+    @Operation(summary = "获取排班方案详情")
+    public ResponseDTO<Map<String, Object>> getScheduleDetail(@PathVariable Long planId) {
+        log.info("[智能排班] 查询方案详情: planId={}", planId);
+
+        Map<String, Object> detail = smartSchedulingService.getScheduleDetail(planId);
+
+        if (detail == null) {
+            return ResponseDTO.error("PLAN_NOT_FOUND", "方案不存在");
+        }
+
+        return ResponseDTO.ok(detail);
+    }
+
+    /**
+     * 获取排班结果列表
+     */
+    @GetMapping("/{planId}/assignments")
+    @Operation(summary = "获取班次分配列表")
+    public ResponseDTO<Map<String, Object>> getAssignments(@PathVariable Long planId) {
+        log.info("[智能排班] 查询班次分配: planId={}", planId);
+
+        Map<String, Object> assignments = smartSchedulingService.getAssignments(planId);
+
+        if (assignments == null) {
+            return ResponseDTO.error("PLAN_NOT_FOUND", "方案不存在");
+        }
+
+        return ResponseDTO.ok(assignments);
+    }
+
+    /**
+     * 导出排班计划
+     */
+    @PostMapping("/{planId}/export")
+    @Operation(summary = "导出排班计划")
+    public ResponseDTO<String> exportSchedule(
+            @PathVariable Long planId,
+            @RequestParam(defaultValue = "json") String format) {
+
+        log.info("[智能排班] 导出计划: planId={}, format={}", planId, format);
+
+        String content = smartSchedulingService.exportSchedule(planId, format);
+
+        return ResponseDTO.ok(content);
+    }
+
+    /**
+     * 确认排班方案
+     */
+    @PostMapping("/{planId}/confirm")
+    @Operation(summary = "确认排班方案")
+    public ResponseDTO<Void> confirmSchedule(@PathVariable Long planId) {
+        log.info("[智能排班] 确认方案: planId={}", planId);
+
+        smartSchedulingService.confirmSchedule(planId);
+
+        return ResponseDTO.ok();
+    }
+
+    /**
+     * 取消排班方案
+     */
+    @PostMapping("/{planId}/cancel")
+    @Operation(summary = "取消排班方案")
+    public ResponseDTO<Void> cancelSchedule(@PathVariable Long planId) {
+        log.info("[智能排班] 取消方案: planId={}", planId);
+
+        smartSchedulingService.cancelSchedule(planId);
+
+        return ResponseDTO.ok();
+    }
+
+    /**
+     * 获取求解进度
+     */
+    @GetMapping("/{planId}/progress")
+    @Operation(summary = "获取求解进度")
+    public ResponseDTO<Map<String, Object>> getSolvingProgress(@PathVariable Long planId) {
+        log.info("[智能排班] 查询求解进度: planId={}", planId);
+
+        Map<String, Object> progress = smartSchedulingService.getSolvingProgress(planId);
+
+        if (progress == null) {
+            return ResponseDTO.error("PROGRESS_NOT_FOUND", "进度信息不存在");
+        }
+
+        return ResponseDTO.ok(progress);
+    }
+}

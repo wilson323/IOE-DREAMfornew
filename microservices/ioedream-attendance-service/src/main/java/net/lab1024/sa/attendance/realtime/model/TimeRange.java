@@ -28,12 +28,12 @@ public class TimeRange {
     /**
      * 开始时间
      */
-    private LocalDateTime startTime;
+    private LocalDateTime workStartTime;
 
     /**
      * 结束时间
      */
-    private LocalDateTime endTime;
+    private LocalDateTime workEndTime;
 
     /**
      * 时间范围类型
@@ -97,8 +97,8 @@ public class TimeRange {
      * 计算时间范围长度（分钟）
      */
     public void calculateDurationMinutes() {
-        if (startTime != null && endTime != null) {
-            this.durationMinutes = java.time.Duration.between(startTime, endTime).toMinutes();
+        if (workStartTime != null && workEndTime != null) {
+            this.durationMinutes = java.time.Duration.between(workStartTime, workEndTime).toMinutes();
         } else {
             this.durationMinutes = null;
         }
@@ -108,14 +108,14 @@ public class TimeRange {
      * 检查指定时间是否在范围内
      */
     public boolean contains(LocalDateTime dateTime) {
-        if (startTime == null || endTime == null) {
+        if (workStartTime == null || workEndTime == null) {
             return false;
         }
 
         if (inclusiveBoundaries != null && inclusiveBoundaries) {
-            return !dateTime.isBefore(startTime) && !dateTime.isAfter(endTime);
+            return !dateTime.isBefore(workStartTime) && !dateTime.isAfter(workEndTime);
         } else {
-            return dateTime.isAfter(startTime) && dateTime.isBefore(endTime);
+            return dateTime.isAfter(workStartTime) && dateTime.isBefore(workEndTime);
         }
     }
 
@@ -130,40 +130,40 @@ public class TimeRange {
      * 获取格式化的时间范围描述
      */
     public String getFormattedRange() {
-        if (startTime == null && endTime == null) {
+        if (workStartTime == null && workEndTime == null) {
             return "无限制";
         }
 
-        if (startTime == null) {
-            return "截至 " + endTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+        if (workStartTime == null) {
+            return "截至 " + workEndTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
         }
 
-        if (endTime == null) {
-            return startTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")) + " 起";
+        if (workEndTime == null) {
+            return workStartTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")) + " 起";
         }
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd HH:mm");
-        return startTime.format(formatter) + " ~ " + endTime.format(formatter);
+        return workStartTime.format(formatter) + " ~ " + workEndTime.format(formatter);
     }
 
     /**
      * 获取完整格式化的时间范围描述
      */
     public String getFullFormattedRange() {
-        if (startTime == null && endTime == null) {
+        if (workStartTime == null && workEndTime == null) {
             return "无限制";
         }
 
-        if (startTime == null) {
-            return "截至 " + endTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        if (workStartTime == null) {
+            return "截至 " + workEndTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         }
 
-        if (endTime == null) {
-            return startTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) + " 起";
+        if (workEndTime == null) {
+            return workStartTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) + " 起";
         }
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        return startTime.format(formatter) + " ~ " + endTime.format(formatter);
+        return workStartTime.format(formatter) + " ~ " + workEndTime.format(formatter);
     }
 
     /**
@@ -172,8 +172,8 @@ public class TimeRange {
     public static TimeRange today() {
         LocalDateTime now = LocalDateTime.now();
         return TimeRange.builder()
-                .startTime(now.withHour(0).withMinute(0).withSecond(0).withNano(0))
-                .endTime(now.withHour(23).withMinute(59).withSecond(59).withNano(999999999))
+                .workStartTime(now.withHour(0).withMinute(0).withSecond(0).withNano(0))
+                .workEndTime(now.withHour(23).withMinute(59).withSecond(59).withNano(999999999))
                 .timeRangeType(TimeRangeType.TODAY)
                 .description("今天")
                 .inclusiveBoundaries(true)
@@ -186,8 +186,8 @@ public class TimeRange {
     public static TimeRange yesterday() {
         LocalDateTime yesterday = LocalDateTime.now().minusDays(1);
         return TimeRange.builder()
-                .startTime(yesterday.withHour(0).withMinute(0).withSecond(0).withNano(0))
-                .endTime(yesterday.withHour(23).withMinute(59).withSecond(59).withNano(999999999))
+                .workStartTime(yesterday.withHour(0).withMinute(0).withSecond(0).withNano(0))
+                .workEndTime(yesterday.withHour(23).withMinute(59).withSecond(59).withNano(999999999))
                 .timeRangeType(TimeRangeType.YESTERDAY)
                 .description("昨天")
                 .inclusiveBoundaries(true)
@@ -205,8 +205,8 @@ public class TimeRange {
                 .withHour(23).withMinute(59).withSecond(59).withNano(999999999);
 
         return TimeRange.builder()
-                .startTime(weekStart)
-                .endTime(weekEnd)
+                .workStartTime(weekStart)
+                .workEndTime(weekEnd)
                 .timeRangeType(TimeRangeType.THIS_WEEK)
                 .description("本周")
                 .inclusiveBoundaries(true)
@@ -224,8 +224,8 @@ public class TimeRange {
                 .withHour(23).withMinute(59).withSecond(59).withNano(999999999);
 
         return TimeRange.builder()
-                .startTime(monthStart)
-                .endTime(monthEnd)
+                .workStartTime(monthStart)
+                .workEndTime(monthEnd)
                 .timeRangeType(TimeRangeType.THIS_MONTH)
                 .description("本月")
                 .inclusiveBoundaries(true)
@@ -238,8 +238,8 @@ public class TimeRange {
     public static TimeRange last24Hours() {
         LocalDateTime now = LocalDateTime.now();
         return TimeRange.builder()
-                .startTime(now.minusHours(24))
-                .endTime(now)
+                .workStartTime(now.minusHours(24))
+                .workEndTime(now)
                 .timeRangeType(TimeRangeType.LAST_24_HOURS)
                 .description("最近24小时")
                 .inclusiveBoundaries(true)
@@ -254,8 +254,8 @@ public class TimeRange {
         LocalDateTime start = now.minusDays(7).withHour(0).withMinute(0).withSecond(0).withNano(0);
 
         return TimeRange.builder()
-                .startTime(start)
-                .endTime(now)
+                .workStartTime(start)
+                .workEndTime(now)
                 .timeRangeType(TimeRangeType.LAST_7_DAYS)
                 .description("最近7天")
                 .inclusiveBoundaries(true)
@@ -270,8 +270,8 @@ public class TimeRange {
         LocalDateTime start = now.minusDays(30).withHour(0).withMinute(0).withSecond(0).withNano(0);
 
         return TimeRange.builder()
-                .startTime(start)
-                .endTime(now)
+                .workStartTime(start)
+                .workEndTime(now)
                 .timeRangeType(TimeRangeType.LAST_30_DAYS)
                 .description("最近30天")
                 .inclusiveBoundaries(true)
@@ -284,8 +284,8 @@ public class TimeRange {
     public static TimeRange realtime() {
         LocalDateTime now = LocalDateTime.now();
         return TimeRange.builder()
-                .startTime(now.minusMinutes(15))
-                .endTime(now.plusMinutes(15))
+                .workStartTime(now.minusMinutes(15))
+                .workEndTime(now.plusMinutes(15))
                 .timeRangeType(TimeRangeType.REAL_TIME)
                 .description("实时")
                 .inclusiveBoundaries(true)
@@ -295,10 +295,10 @@ public class TimeRange {
     /**
      * 创建自定义时间范围
      */
-    public static TimeRange custom(LocalDateTime startTime, LocalDateTime endTime) {
+    public static TimeRange custom(LocalDateTime workStartTime, LocalDateTime workEndTime) {
         return TimeRange.builder()
-                .startTime(startTime)
-                .endTime(endTime)
+                .workStartTime(workStartTime)
+                .workEndTime(workEndTime)
                 .timeRangeType(TimeRangeType.CUSTOM_RANGE)
                 .description("自定义范围")
                 .inclusiveBoundaries(true)
@@ -313,8 +313,8 @@ public class TimeRange {
         LocalDateTime workEnd = date.withHour(18).withMinute(0).withSecond(0).withNano(0);
 
         return TimeRange.builder()
-                .startTime(workStart)
-                .endTime(workEnd)
+                .workStartTime(workStart)
+                .workEndTime(workEnd)
                 .timeRangeType(TimeRangeType.WORKING_HOURS)
                 .description("工作时间")
                 .inclusiveBoundaries(true)
@@ -325,12 +325,12 @@ public class TimeRange {
      * 检查时间范围是否有效
      */
     public boolean isValid() {
-        if (startTime == null && endTime == null) {
+        if (workStartTime == null && workEndTime == null) {
             return true; // 无限制范围
         }
 
-        if (startTime != null && endTime != null) {
-            return !startTime.isAfter(endTime);
+        if (workStartTime != null && workEndTime != null) {
+            return !workStartTime.isAfter(workEndTime);
         }
 
         return true; // 单边界范围
@@ -340,32 +340,32 @@ public class TimeRange {
      * 获取时间范围的中间点
      */
     public LocalDateTime getMidpoint() {
-        if (startTime == null && endTime == null) {
+        if (workStartTime == null && workEndTime == null) {
             return LocalDateTime.now();
         }
 
-        if (startTime == null) {
-            return endTime;
+        if (workStartTime == null) {
+            return workEndTime;
         }
 
-        if (endTime == null) {
-            return startTime;
+        if (workEndTime == null) {
+            return workStartTime;
         }
 
-        long totalMinutes = java.time.Duration.between(startTime, endTime).toMinutes();
-        return startTime.plusMinutes(totalMinutes / 2);
+        long totalMinutes = java.time.Duration.between(workStartTime, workEndTime).toMinutes();
+        return workStartTime.plusMinutes(totalMinutes / 2);
     }
 
     /**
      * 扩展时间范围
      */
     public TimeRange expand(long minutesToExpand) {
-        LocalDateTime newStart = startTime != null ? startTime.minusMinutes(minutesToExpand) : null;
-        LocalDateTime newEnd = endTime != null ? endTime.plusMinutes(minutesToExpand) : null;
+        LocalDateTime newStart = workStartTime != null ? workStartTime.minusMinutes(minutesToExpand) : null;
+        LocalDateTime newEnd = workEndTime != null ? workEndTime.plusMinutes(minutesToExpand) : null;
 
         return TimeRange.builder()
-                .startTime(newStart)
-                .endTime(newEnd)
+                .workStartTime(newStart)
+                .workEndTime(newEnd)
                 .timeRangeType(this.timeRangeType)
                 .description(this.description + " (扩展)")
                 .timezone(this.timezone)
@@ -380,13 +380,13 @@ public class TimeRange {
         LocalDateTime dayStart = date.withHour(0).withMinute(0).withSecond(0).withNano(0);
         LocalDateTime dayEnd = date.withHour(23).withMinute(59).withSecond(59).withNano(999999999);
 
-        LocalDateTime intersectStart = startTime != null && startTime.isAfter(dayStart) ? startTime : dayStart;
-        LocalDateTime intersectEnd = endTime != null && endTime.isBefore(dayEnd) ? endTime : dayEnd;
+        LocalDateTime intersectStart = workStartTime != null && workStartTime.isAfter(dayStart) ? workStartTime : dayStart;
+        LocalDateTime intersectEnd = workEndTime != null && workEndTime.isBefore(dayEnd) ? workEndTime : dayEnd;
 
         if (intersectStart.isBefore(intersectEnd) || intersectStart.equals(intersectEnd)) {
             return TimeRange.builder()
-                    .startTime(intersectStart)
-                    .endTime(intersectEnd)
+                    .workStartTime(intersectStart)
+                    .workEndTime(intersectEnd)
                     .timeRangeType(TimeRangeType.CUSTOM_RANGE)
                     .description("日期交集")
                     .timezone(this.timezone)

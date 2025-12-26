@@ -68,7 +68,8 @@
 |--------------|--------------|------|
 | `javax.annotation.Resource` | `jakarta.annotation.Resource` | 依赖注入 |
 | `javax.validation.Valid` | `jakarta.validation.Valid` | 参数验证 |
-| `javax.persistence.Entity` | `jakarta.persistence.Entity` | JPA实体 |
+| `javax.persistence.Entity` | `@Data
+@TableName("table_name")` | JPA实体 |
 | `javax.servlet.http.HttpServletRequest` | `jakarta.servlet.http.HttpServletRequest` | Servlet API |
 | `javax.transaction.Transactional` | `jakarta.transaction.Transactional` | 事务管理 |
 

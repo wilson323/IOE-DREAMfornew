@@ -1,18 +1,20 @@
 package net.lab1024.sa.oa.workflow.notification;
 
-import io.micrometer.core.instrument.Counter;
-import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.core.instrument.Timer;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Service;
 
-import jakarta.annotation.Resource;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
+
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
+
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
+import jakarta.annotation.Resource;
 import net.lab1024.sa.oa.workflow.websocket.WorkflowWebSocketController;
 
 /**
@@ -35,8 +37,8 @@ import net.lab1024.sa.oa.workflow.websocket.WorkflowWebSocketController;
  * @version 1.0.0
  * @since 2025-01-16
  */
-@Slf4j
 @Service
+@Slf4j
 public class WorkflowNotificationService {
 
     @Resource
@@ -56,7 +58,7 @@ public class WorkflowNotificationService {
     private Timer notificationProcessingTimer;
 
     // 用户订阅管理
-    private final Map<Long, UserSubscription> userSubscriptions = new ConcurrentHashMap<>();
+    private final Map<Long, UserSubscription> userSubscriptions = new HashMap<>();
     private final AtomicLong totalSubscriptions = new AtomicLong(0);
     private final AtomicLong totalNotifications = new AtomicLong(0);
 
@@ -136,7 +138,7 @@ public class WorkflowNotificationService {
                 totalNotifications.incrementAndGet();
 
                 log.info("[工作流通知] 新任务通知已发送 - 用户ID: {}, 任务ID: {}",
-                    userId, taskData.get("taskId"));
+                        userId, taskData.get("taskId"));
             } catch (Exception e) {
                 log.error("[工作流通知] 发送新任务通知失败 - 用户ID: {}, 错误: {}", userId, e.getMessage(), e);
             } finally {
@@ -158,14 +160,15 @@ public class WorkflowNotificationService {
                     return;
                 }
 
-                Map<String, Object> message = createNotificationMessage(NOTIFICATION_TYPE_TASK_STATUS_CHANGED, taskData);
+                Map<String, Object> message = createNotificationMessage(NOTIFICATION_TYPE_TASK_STATUS_CHANGED,
+                        taskData);
                 webSocketController.sendTaskStatusChangedNotification(userId, message);
 
                 taskNotificationCounter.increment();
                 totalNotifications.incrementAndGet();
 
                 log.info("[工作流通知] 任务状态变更通知已发送 - 用户ID: {}, 任务ID: {}, 状态: {}",
-                    userId, taskData.get("taskId"), taskData.get("status"));
+                        userId, taskData.get("taskId"), taskData.get("status"));
             } catch (Exception e) {
                 log.error("[工作流通知] 发送任务状态变更通知失败 - 用户ID: {}, 错误: {}", userId, e.getMessage(), e);
             } finally {
@@ -194,7 +197,7 @@ public class WorkflowNotificationService {
                 totalNotifications.incrementAndGet();
 
                 log.info("[工作流通知] 任务分配通知已发送 - 用户ID: {}, 任务ID: {}",
-                    userId, taskData.get("taskId"));
+                        userId, taskData.get("taskId"));
             } catch (Exception e) {
                 log.error("[工作流通知] 发送任务分配通知失败 - 用户ID: {}, 错误: {}", userId, e.getMessage(), e);
             } finally {
@@ -223,7 +226,7 @@ public class WorkflowNotificationService {
                 totalNotifications.incrementAndGet();
 
                 log.info("[工作流通知] 任务完成通知已发送 - 用户ID: {}, 任务ID: {}",
-                    userId, taskData.get("taskId"));
+                        userId, taskData.get("taskId"));
             } catch (Exception e) {
                 log.error("[工作流通知] 发送任务完成通知失败 - 用户ID: {}, 错误: {}", userId, e.getMessage(), e);
             } finally {
@@ -252,7 +255,7 @@ public class WorkflowNotificationService {
                 totalNotifications.incrementAndGet();
 
                 log.info("[工作流通知] 任务超时提醒已发送 - 用户ID: {}, 任务ID: {}",
-                    userId, taskData.get("taskId"));
+                        userId, taskData.get("taskId"));
             } catch (Exception e) {
                 log.error("[工作流通知] 发送任务超时提醒失败 - 用户ID: {}, 错误: {}", userId, e.getMessage(), e);
             } finally {
@@ -283,7 +286,7 @@ public class WorkflowNotificationService {
                 totalNotifications.incrementAndGet();
 
                 log.info("[工作流通知] 流程启动通知已发送 - 用户ID: {}, 流程实例ID: {}",
-                    userId, processData.get("instanceId"));
+                        userId, processData.get("instanceId"));
             } catch (Exception e) {
                 log.error("[工作流通知] 发送流程启动通知失败 - 用户ID: {}, 错误: {}", userId, e.getMessage(), e);
             } finally {
@@ -305,14 +308,15 @@ public class WorkflowNotificationService {
                     return;
                 }
 
-                Map<String, Object> message = createNotificationMessage(NOTIFICATION_TYPE_PROCESS_COMPLETED, processData);
+                Map<String, Object> message = createNotificationMessage(NOTIFICATION_TYPE_PROCESS_COMPLETED,
+                        processData);
                 webSocketController.sendInstanceStatusChangedNotification(userId, message);
 
                 processNotificationCounter.increment();
                 totalNotifications.incrementAndGet();
 
                 log.info("[工作流通知] 流程完成通知已发送 - 用户ID: {}, 流程实例ID: {}",
-                    userId, processData.get("instanceId"));
+                        userId, processData.get("instanceId"));
             } catch (Exception e) {
                 log.error("[工作流通知] 发送流程完成通知失败 - 用户ID: {}, 错误: {}", userId, e.getMessage(), e);
             } finally {
@@ -334,14 +338,15 @@ public class WorkflowNotificationService {
                     return;
                 }
 
-                Map<String, Object> message = createNotificationMessage(NOTIFICATION_TYPE_PROCESS_TERMINATED, processData);
+                Map<String, Object> message = createNotificationMessage(NOTIFICATION_TYPE_PROCESS_TERMINATED,
+                        processData);
                 webSocketController.sendInstanceStatusChangedNotification(userId, message);
 
                 processNotificationCounter.increment();
                 totalNotifications.incrementAndGet();
 
                 log.info("[工作流通知] 流程终止通知已发送 - 用户ID: {}, 流程实例ID: {}",
-                    userId, processData.get("instanceId"));
+                        userId, processData.get("instanceId"));
             } catch (Exception e) {
                 log.error("[工作流通知] 发送流程终止通知失败 - 用户ID: {}, 错误: {}", userId, e.getMessage(), e);
             } finally {
@@ -365,14 +370,15 @@ public class WorkflowNotificationService {
                     return;
                 }
 
-                Map<String, Object> message = createNotificationMessage(NOTIFICATION_TYPE_APPROVAL_REQUESTED, approvalData);
+                Map<String, Object> message = createNotificationMessage(NOTIFICATION_TYPE_APPROVAL_REQUESTED,
+                        approvalData);
                 webSocketController.sendNewTaskNotification(userId, message);
 
                 approvalNotificationCounter.increment();
                 totalNotifications.incrementAndGet();
 
                 log.info("[工作流通知] 审批请求通知已发送 - 用户ID: {}, 审批ID: {}",
-                    userId, approvalData.get("approvalId"));
+                        userId, approvalData.get("approvalId"));
             } catch (Exception e) {
                 log.error("[工作流通知] 发送审批请求通知失败 - 用户ID: {}, 错误: {}", userId, e.getMessage(), e);
             } finally {
@@ -394,14 +400,15 @@ public class WorkflowNotificationService {
                     return;
                 }
 
-                Map<String, Object> message = createNotificationMessage(NOTIFICATION_TYPE_APPROVAL_APPROVED, approvalData);
+                Map<String, Object> message = createNotificationMessage(NOTIFICATION_TYPE_APPROVAL_APPROVED,
+                        approvalData);
                 webSocketController.sendInstanceStatusChangedNotification(userId, message);
 
                 approvalNotificationCounter.increment();
                 totalNotifications.incrementAndGet();
 
                 log.info("[工作流通知] 审批通过通知已发送 - 用户ID: {}, 审批ID: {}",
-                    userId, approvalData.get("approvalId"));
+                        userId, approvalData.get("approvalId"));
             } catch (Exception e) {
                 log.error("[工作流通知] 发送审批通过通知失败 - 用户ID: {}, 错误: {}", userId, e.getMessage(), e);
             } finally {
@@ -423,14 +430,15 @@ public class WorkflowNotificationService {
                     return;
                 }
 
-                Map<String, Object> message = createNotificationMessage(NOTIFICATION_TYPE_APPROVAL_REJECTED, approvalData);
+                Map<String, Object> message = createNotificationMessage(NOTIFICATION_TYPE_APPROVAL_REJECTED,
+                        approvalData);
                 webSocketController.sendInstanceStatusChangedNotification(userId, message);
 
                 approvalNotificationCounter.increment();
                 totalNotifications.incrementAndGet();
 
                 log.info("[工作流通知] 审批驳回通知已发送 - 用户ID: {}, 审批ID: {}",
-                    userId, approvalData.get("approvalId"));
+                        userId, approvalData.get("approvalId"));
             } catch (Exception e) {
                 log.error("[工作流通知] 发送审批驳回通知失败 - 用户ID: {}, 错误: {}", userId, e.getMessage(), e);
             } finally {
@@ -452,14 +460,15 @@ public class WorkflowNotificationService {
                     return;
                 }
 
-                Map<String, Object> message = createNotificationMessage(NOTIFICATION_TYPE_APPROVAL_TIMEOUT, approvalData);
+                Map<String, Object> message = createNotificationMessage(NOTIFICATION_TYPE_APPROVAL_TIMEOUT,
+                        approvalData);
                 webSocketController.sendNewTaskNotification(userId, message);
 
                 approvalNotificationCounter.increment();
                 totalNotifications.incrementAndGet();
 
                 log.info("[工作流通知] 审批超时提醒已发送 - 用户ID: {}, 审批ID: {}",
-                    userId, approvalData.get("approvalId"));
+                        userId, approvalData.get("approvalId"));
             } catch (Exception e) {
                 log.error("[工作流通知] 发送审批超时提醒失败 - 用户ID: {}, 错误: {}", userId, e.getMessage(), e);
             } finally {
@@ -474,17 +483,17 @@ public class WorkflowNotificationService {
      * 发送系统错误通知
      */
     @Async("workflowNotificationExecutor")
-    public CompletableFuture<Void> sendSystemErrorNotification(String errorType, String errorMessage, Map<String, Object> errorData) {
+    public CompletableFuture<Void> sendSystemErrorNotification(String errorType, String errorMessage,
+            Map<String, Object> errorData) {
         return CompletableFuture.runAsync(() -> {
             Timer.Sample sample = Timer.start(meterRegistry);
             try {
                 Map<String, Object> message = Map.of(
-                    "type", NOTIFICATION_TYPE_SYSTEM_ERROR,
-                    "errorType", errorType,
-                    "errorMessage", errorMessage,
-                    "data", errorData,
-                    "timestamp", System.currentTimeMillis()
-                );
+                        "type", NOTIFICATION_TYPE_SYSTEM_ERROR,
+                        "errorType", errorType,
+                        "errorMessage", errorMessage,
+                        "data", errorData,
+                        "timestamp", System.currentTimeMillis());
 
                 webSocketController.broadcastMessage(message);
                 systemNotificationCounter.increment();
@@ -503,18 +512,18 @@ public class WorkflowNotificationService {
      * 发送系统维护通知
      */
     @Async("workflowNotificationExecutor")
-    public CompletableFuture<Void> sendSystemMaintenanceNotification(String maintenanceType, String startTime, String endTime, Map<String, Object> maintenanceData) {
+    public CompletableFuture<Void> sendSystemMaintenanceNotification(String maintenanceType, String startTime,
+            String endTime, Map<String, Object> maintenanceData) {
         return CompletableFuture.runAsync(() -> {
             Timer.Sample sample = Timer.start(meterRegistry);
             try {
                 Map<String, Object> message = Map.of(
-                    "type", NOTIFICATION_TYPE_SYSTEM_MAINTENANCE,
-                    "maintenanceType", maintenanceType,
-                    "startTime", startTime,
-                    "endTime", endTime,
-                    "data", maintenanceData,
-                    "timestamp", System.currentTimeMillis()
-                );
+                        "type", NOTIFICATION_TYPE_SYSTEM_MAINTENANCE,
+                        "maintenanceType", maintenanceType,
+                        "startTime", startTime,
+                        "endTime", endTime,
+                        "data", maintenanceData,
+                        "timestamp", System.currentTimeMillis());
 
                 webSocketController.broadcastMessage(message);
                 systemNotificationCounter.increment();
@@ -535,7 +544,8 @@ public class WorkflowNotificationService {
      * 批量发送通知给多个用户
      */
     @Async("workflowNotificationExecutor")
-    public CompletableFuture<Void> sendBatchNotifications(List<Long> userIds, String notificationType, Map<String, Object> data) {
+    public CompletableFuture<Void> sendBatchNotifications(List<Long> userIds, String notificationType,
+            Map<String, Object> data) {
         return CompletableFuture.runAsync(() -> {
             Timer.Sample sample = Timer.start(meterRegistry);
             try {
@@ -577,12 +587,12 @@ public class WorkflowNotificationService {
                         successCount++;
                     } catch (Exception e) {
                         log.warn("[工作流通知] 批量发送通知失败 - 用户ID: {}, 通知类型: {}, 错误: {}",
-                            userId, notificationType, e.getMessage());
+                                userId, notificationType, e.getMessage());
                     }
                 }
 
                 log.info("[工作流通知] 批量通知发送完成 - 通知类型: {}, 目标用户数: {}, 成功发送数: {}",
-                    notificationType, userIds.size(), successCount);
+                        notificationType, userIds.size(), successCount);
 
             } catch (Exception e) {
                 log.error("[工作流通知] 批量发送通知失败 - 通知类型: {}, 错误: {}", notificationType, e.getMessage(), e);
@@ -599,7 +609,7 @@ public class WorkflowNotificationService {
      */
     public void subscribeUser(Long userId, List<String> subscriptionTypes) {
         UserSubscription subscription = userSubscriptions.computeIfAbsent(userId,
-            id -> new UserSubscription(id));
+                id -> new UserSubscription(id));
 
         subscription.setSubscribed(true);
         subscription.setSubscriptionTypes(subscriptionTypes);
@@ -645,15 +655,14 @@ public class WorkflowNotificationService {
      */
     public Map<String, Object> getNotificationStatistics() {
         return Map.of(
-            "totalSubscriptions", totalSubscriptions.get(),
-            "totalNotifications", totalNotifications.get(),
-            "taskNotifications", taskNotificationCounter.count(),
-            "processNotifications", processNotificationCounter.count(),
-            "approvalNotifications", approvalNotificationCounter.count(),
-            "systemNotifications", systemNotificationCounter.count(),
-            "broadcastNotifications", broadcastNotificationCounter.count(),
-            "averageProcessingTime", notificationProcessingTimer.mean(java.util.concurrent.TimeUnit.MILLISECONDS)
-        );
+                "totalSubscriptions", totalSubscriptions.get(),
+                "totalNotifications", totalNotifications.get(),
+                "taskNotifications", taskNotificationCounter.count(),
+                "processNotifications", processNotificationCounter.count(),
+                "approvalNotifications", approvalNotificationCounter.count(),
+                "systemNotifications", systemNotificationCounter.count(),
+                "broadcastNotifications", broadcastNotificationCounter.count(),
+                "averageProcessingTime", notificationProcessingTimer.mean(java.util.concurrent.TimeUnit.MILLISECONDS));
     }
 
     // ==================== 工具方法 ====================
@@ -662,14 +671,11 @@ public class WorkflowNotificationService {
      * 创建通知消息
      */
     private Map<String, Object> createNotificationMessage(String notificationType, Map<String, Object> data) {
-        Map<String, Object> message = Map.of(
-            "type", notificationType,
-            "data", data,
-            "timestamp", System.currentTimeMillis(),
-            "notificationId", java.util.UUID.randomUUID().toString()
-        );
-
-        // 添加通知级别
+        Map<String, Object> message = new HashMap<>();
+        message.put("type", notificationType);
+        message.put("data", data);
+        message.put("timestamp", System.currentTimeMillis());
+        message.put("notificationId", java.util.UUID.randomUUID().toString());
         message.put("priority", determineNotificationPriority(notificationType));
 
         return message;
@@ -714,18 +720,37 @@ public class WorkflowNotificationService {
         }
 
         // Getters and Setters
-        public Long getUserId() { return userId; }
-        public boolean isSubscribed() { return subscribed; }
+        public Long getUserId() {
+            return userId;
+        }
+
+        public boolean isSubscribed() {
+            return subscribed;
+        }
+
         public void setSubscribed(boolean subscribed) {
             this.subscribed = subscribed;
             this.lastActivityTime = System.currentTimeMillis();
         }
-        public List<String> getSubscriptionTypes() { return subscriptionTypes; }
+
+        public List<String> getSubscriptionTypes() {
+            return subscriptionTypes;
+        }
+
         public void setSubscriptionTypes(List<String> subscriptionTypes) {
             this.subscriptionTypes = subscriptionTypes != null ? subscriptionTypes : new java.util.ArrayList<>();
         }
-        public long getSubscribeTime() { return subscribeTime; }
-        public void setSubscribeTime(long subscribeTime) { this.subscribeTime = subscribeTime; }
-        public long getLastActivityTime() { return lastActivityTime; }
+
+        public long getSubscribeTime() {
+            return subscribeTime;
+        }
+
+        public void setSubscribeTime(long subscribeTime) {
+            this.subscribeTime = subscribeTime;
+        }
+
+        public long getLastActivityTime() {
+            return lastActivityTime;
+        }
     }
 }

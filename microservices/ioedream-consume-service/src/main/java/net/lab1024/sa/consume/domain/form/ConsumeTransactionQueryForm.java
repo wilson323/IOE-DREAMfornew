@@ -1,99 +1,145 @@
 package net.lab1024.sa.consume.domain.form;
 
-import java.time.LocalDate;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
-import org.springframework.format.annotation.DateTimeFormat;
-
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
  * 消费交易查询表单
  * <p>
- * 严格遵循CLAUDE.md规范：
- * - 使用Form后缀命名
- * - 使用Jakarta验证注解
- * - 继承分页参数规范
+ * 用于前端查询交易记录的请求参数
+ * 支持多种查询条件和分页
  * </p>
  *
  * @author IOE-DREAM Team
  * @version 1.0.0
- * @since 2025-01-30
+ * @since 2025-12-21
  */
 @Data
+@Accessors(chain = true)
+@Schema(description = "消费交易查询请求")
 public class ConsumeTransactionQueryForm {
 
     /**
-     * 页码（从1开始）
+     * 当前页码
      */
-    @NotNull(message = "页码不能为空")
-    @Min(value = 1, message = "页码必须大于0")
+    @Schema(description = "当前页码", example = "1")
     private Integer pageNum = 1;
 
     /**
      * 每页大小
      */
-    @NotNull(message = "每页大小不能为空")
-    @Min(value = 1, message = "每页大小必须大于0")
+    @Schema(description = "每页大小", example = "20")
     private Integer pageSize = 20;
+
+    /**
+     * 交易ID（精确查询）
+     */
+    @Schema(description = "交易ID", example = "20251221001")
+    private String transactionId;
 
     /**
      * 用户ID
      */
+    @Schema(description = "用户ID", example = "1001")
     private Long userId;
 
     /**
-     * 交易流水号
+     * 用户姓名（模糊查询）
      */
-    private String transactionNo;
+    @Schema(description = "用户姓名", example = "张三")
+    private String userName;
 
     /**
      * 设备ID
      */
-    private Long deviceId;
+    @Schema(description = "设备ID", example = "DEV001")
+    private String deviceId;
 
     /**
-     * 区域ID
+     * 设备名称（模糊查询）
      */
-    private String areaId;
+    @Schema(description = "设备名称", example = "食堂POS机")
+    private String deviceName;
 
     /**
-     * 开始日期
+     * 餐次ID
      */
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    private LocalDate startDate;
-
-    /**
-     * 结束日期
-     */
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    private LocalDate endDate;
-
-    /**
-     * 消费模式
-     * <p>
-     * 枚举值：
-     * - FIXED - 定值
-     * - AMOUNT - 金额
-     * - PRODUCT - 商品
-     * - COUNT - 计次
-     * </p>
-     */
-    private String consumeMode;
+    @Schema(description = "餐次ID", example = "MEAL_001")
+    private String mealId;
 
     /**
      * 交易状态
-     * <p>
-     * 枚举值：
-     * - SUCCESS - 成功
-     * - FAILED - 失败
-     * - REFUND - 已退款
-     * </p>
      */
+    @Schema(description = "交易状态", example = "SUCCESS")
     private String status;
+
+    /**
+     * 消费模式
+     */
+    @Schema(description = "消费模式", example = "AMOUNT")
+    private String consumeMode;
+
+    /**
+     * 消费类型
+     */
+    @Schema(description = "消费类型", example = "CONSUME")
+    private String consumeType;
+
+    /**
+     * 最小交易金额
+     */
+    @Schema(description = "最小交易金额", example = "0.01")
+    private BigDecimal minAmount;
+
+    /**
+     * 最大交易金额
+     */
+    @Schema(description = "最大交易金额", example = "1000.00")
+    private BigDecimal maxAmount;
+
+    /**
+     * 交易时间开始
+     */
+    @Schema(description = "交易时间开始", example = "2025-12-21T00:00:00")
+    private LocalDateTime startTime;
+
+    /**
+     * 交易时间结束
+     */
+    @Schema(description = "交易时间结束", example = "2025-12-21T23:59:59")
+    private LocalDateTime endTime;
+
+    /**
+     * 订单号（精确查询）
+     */
+    @Schema(description = "订单号", example = "ORDER20251221001")
+    private String orderNo;
+
+    /**
+     * 排序字段
+     */
+    @Schema(description = "排序字段", example = "transactionTime")
+    private String sortField = "transactionTime";
+
+    /**
+     * 排序方向
+     */
+    @Schema(description = "排序方向", example = "desc")
+    private String sortOrder = "desc";
+
+    /**
+     * 是否包含已删除记录
+     */
+    @Schema(description = "是否包含已删除记录", example = "false")
+    private Boolean includeDeleted = false;
+
+    /**
+     * 是否只查询异常交易
+     */
+    @Schema(description = "是否只查询异常交易", example = "false")
+    private Boolean abnormal = false;
 }
-
-
-
-

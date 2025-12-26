@@ -1,17 +1,16 @@
 package net.lab1024.sa.video.manager;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import org.springframework.stereotype.Component;
-
 import lombok.extern.slf4j.Slf4j;
-
+import net.lab1024.sa.common.gateway.GatewayServiceClient;
 import net.lab1024.sa.video.dao.VideoMonitorDao;
 import net.lab1024.sa.video.entity.VideoMonitorEntity;
 
@@ -20,22 +19,25 @@ import net.lab1024.sa.video.entity.VideoMonitorEntity;
  * <p>
  * 提供监控会话管理相关的业务编排功能，包括会话管理、状态监控、资源优化等
  * 严格遵循CLAUDE.md全局架构规范
+ * 统一使用GatewayServiceClient进行微服务间调用
  * </p>
  *
  * @author IOE-DREAM架构团队
- * @version 1.0.0
+ * @version 2.0.0
  * @since 2025-12-16
+ * @updated 2025-12-21 移除自定义HTTP客户端，统一使用GatewayServiceClient
  */
 @Slf4j
 public class VideoMonitorManager {
 
     private final VideoMonitorDao videoMonitorDao;
+    private final GatewayServiceClient gatewayServiceClient;
 
     // 监控会话缓存
     private final Map<Long, VideoMonitorEntity> sessionCache = new ConcurrentHashMap<>();
 
     // 用户会话映射
-    private final Map<Long, Long> userSessionMap = new ConcurrentHashMap<>();
+    private final Map<Long, Long> userSessionMap = new HashMap<>();
 
     // 定时任务执行器
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(2);
@@ -44,9 +46,11 @@ public class VideoMonitorManager {
      * 构造函数注入依赖
      *
      * @param videoMonitorDao 视频监控数据访问层
+     * @param gatewayServiceClient 网关服务客户端
      */
-    public VideoMonitorManager(VideoMonitorDao videoMonitorDao) {
+    public VideoMonitorManager(VideoMonitorDao videoMonitorDao, GatewayServiceClient gatewayServiceClient) {
         this.videoMonitorDao = videoMonitorDao;
+        this.gatewayServiceClient = gatewayServiceClient;
         initScheduledTasks();
     }
 
@@ -230,15 +234,15 @@ public class VideoMonitorManager {
     /**
      * 更新网络状态
      *
-     * @param monitorId 监控会话ID
-     * @param networkStatus 网络状态
+     * @param monitorId      监控会话ID
+     * @param networkStatus  网络状态
      * @param networkLatency 网络延迟
      * @param packetLossRate 丢包率
      * @param bandwidthUsage 带宽占用
      * @return 是否成功更新
      */
     public boolean updateNetworkStatus(Long monitorId, Integer networkStatus,
-                                       Integer networkLatency, Double packetLossRate, Integer bandwidthUsage) {
+            Integer networkLatency, Double packetLossRate, Integer bandwidthUsage) {
         try {
             int result = videoMonitorDao.updateNetworkStatus(monitorId, networkStatus,
                     networkLatency, packetLossRate, bandwidthUsage);
@@ -264,8 +268,8 @@ public class VideoMonitorManager {
     /**
      * 更新资源使用情况
      *
-     * @param monitorId 监控会话ID
-     * @param cpuUsage CPU使用率
+     * @param monitorId   监控会话ID
+     * @param cpuUsage    CPU使用率
      * @param memoryUsage 内存使用率
      * @return 是否成功更新
      */
@@ -292,7 +296,7 @@ public class VideoMonitorManager {
     /**
      * 记录异常信息
      *
-     * @param monitorId 监控会话ID
+     * @param monitorId        监控会话ID
      * @param exceptionMessage 异常信息
      * @return 是否成功记录
      */
@@ -362,7 +366,7 @@ public class VideoMonitorManager {
             sessionCache.entrySet().removeIf(entry -> {
                 VideoMonitorEntity session = entry.getValue();
                 return session.getStartTime() != null &&
-                       session.getStartTime().isBefore(LocalDateTime.now().minusHours(expireHours));
+                        session.getStartTime().isBefore(LocalDateTime.now().minusHours(expireHours));
             });
 
             log.info("[监控管理] 过期会话清理完成，count={}", result);
@@ -495,12 +499,18 @@ public class VideoMonitorManager {
      */
     private Integer calculateScreenCount(Integer screenLayout) {
         switch (screenLayout) {
-            case 1: return 1;  // 单屏
-            case 2: return 4;  // 四分屏
-            case 3: return 9;  // 九分屏
-            case 4: return 16; // 十六分屏
-            case 5: return 25; // 二十五分屏
-            default: return 1;
+            case 1:
+                return 1; // 单屏
+            case 2:
+                return 4; // 四分屏
+            case 3:
+                return 9; // 九分屏
+            case 4:
+                return 16; // 十六分屏
+            case 5:
+                return 25; // 二十五分屏
+            default:
+                return 1;
         }
     }
 

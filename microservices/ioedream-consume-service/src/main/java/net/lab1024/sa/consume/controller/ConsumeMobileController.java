@@ -1,6 +1,11 @@
 package net.lab1024.sa.consume.controller;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.List;
+
+import jakarta.annotation.Resource;
+import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,12 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.micrometer.observation.annotation.Observed;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.annotation.Resource;
-import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.consume.domain.form.ConsumeMobileFaceForm;
 import net.lab1024.sa.consume.domain.form.ConsumeMobileNfcForm;
@@ -29,7 +30,6 @@ import net.lab1024.sa.consume.domain.vo.ConsumeMobileResultVO;
 import net.lab1024.sa.consume.domain.vo.ConsumeMobileStatsVO;
 import net.lab1024.sa.consume.domain.vo.ConsumeMobileSummaryVO;
 import net.lab1024.sa.consume.domain.vo.ConsumeMobileUserInfoVO;
-import net.lab1024.sa.consume.domain.vo.ConsumeMobileUserStatsVO;
 import net.lab1024.sa.consume.domain.vo.ConsumeMobileUserVO;
 import net.lab1024.sa.consume.domain.vo.ConsumeSyncDataVO;
 import net.lab1024.sa.consume.domain.vo.ConsumeSyncResultVO;
@@ -37,247 +37,127 @@ import net.lab1024.sa.consume.domain.vo.ConsumeValidateResultVO;
 import net.lab1024.sa.consume.service.ConsumeMobileService;
 
 /**
- * 消费移动端控制器
- * <p>
- * 提供移动端消费管理相关API
- * 严格遵循CLAUDE.md规范：
- * - 使用@RestController注解
- * - 使用@Resource依赖注入
- * - 使用@Valid参数校验
- * - 返回统一ResponseDTO格式
- * </p>
+ * 移动端消费控制器
  *
  * @author IOE-DREAM Team
- * @version 1.0.0
- * @since 2025-01-30
+ * @since 2025-12-22
  */
-@Slf4j
 @RestController
 @RequestMapping("/api/v1/consume/mobile")
-@Tag(name = "移动端消费管理", description = "移动端消费交易、查询、同步等API")
+@Tag(name = "移动端消费管理", description = "移动端消费交易、用户信息与同步接口")
+@Slf4j
 public class ConsumeMobileController {
 
     @Resource
     private ConsumeMobileService consumeMobileService;
 
-    /**
-     * 快速消费
-     *
-     * @param form 消费表单
-     * @return 消费结果
-     */
-    @PostMapping("/transaction/quick")
-    @Observed(name = "consumeMobile.quickConsume", contextualName = "consume-mobile-quick-consume")
     @Operation(summary = "快速消费", description = "移动端快速消费交易")
+    @PostMapping("/transaction/quick")
     public ResponseDTO<ConsumeMobileResultVO> quickConsume(@Valid @RequestBody ConsumeMobileQuickForm form) {
-        log.info("快速消费: deviceId={}, userId={}, amount={}",
-                form.getDeviceId(), form.getUserId(), form.getAmount());
+        log.info("[移动端消费] 快速消费, deviceId={}, userId={}", form.getDeviceId(), form.getUserId());
         ConsumeMobileResultVO result = consumeMobileService.quickConsume(form);
         return ResponseDTO.ok(result);
     }
 
-    /**
-     * 扫码消费
-     *
-     * @param form 消费表单
-     * @return 消费结果
-     */
-    @PostMapping("/transaction/scan")
-    @Observed(name = "consumeMobile.scanConsume", contextualName = "consume-mobile-scan-consume")
     @Operation(summary = "扫码消费", description = "移动端扫码消费交易")
+    @PostMapping("/transaction/scan")
     public ResponseDTO<ConsumeMobileResultVO> scanConsume(@Valid @RequestBody ConsumeMobileScanForm form) {
-        log.info("扫码消费: deviceId={}, qrCode={}, amount={}",
-                form.getDeviceId(), form.getQrCode(), form.getAmount());
+        log.info("[移动端消费] 扫码消费, deviceId={}, qrCode={}", form.getDeviceId(), form.getQrCode());
         ConsumeMobileResultVO result = consumeMobileService.scanConsume(form);
         return ResponseDTO.ok(result);
     }
 
-    /**
-     * NFC消费
-     *
-     * @param form 消费表单
-     * @return 消费结果
-     */
-    @PostMapping("/transaction/nfc")
-    @Observed(name = "consumeMobile.nfcConsume", contextualName = "consume-mobile-nfc-consume")
     @Operation(summary = "NFC消费", description = "移动端NFC消费交易")
+    @PostMapping("/transaction/nfc")
     public ResponseDTO<ConsumeMobileResultVO> nfcConsume(@Valid @RequestBody ConsumeMobileNfcForm form) {
-        log.info("NFC消费: deviceId={}, cardNumber={}, amount={}",
-                form.getDeviceId(), form.getCardNumber(), form.getAmount());
+        log.info("[移动端消费] NFC消费, deviceId={}, cardNumber={}", form.getDeviceId(), form.getCardNumber());
         ConsumeMobileResultVO result = consumeMobileService.nfcConsume(form);
         return ResponseDTO.ok(result);
     }
 
-    /**
-     * 人脸识别消费
-     *
-     * @param form 消费表单
-     * @return 消费结果
-     */
-    @PostMapping("/transaction/face")
-    @Observed(name = "consumeMobile.faceConsume", contextualName = "consume-mobile-face-consume")
     @Operation(summary = "人脸识别消费", description = "移动端人脸识别消费交易")
+    @PostMapping("/transaction/face")
     public ResponseDTO<ConsumeMobileResultVO> faceConsume(@Valid @RequestBody ConsumeMobileFaceForm form) {
-        log.info("人脸识别消费: deviceId={}, faceFeatures={}, amount={}",
-                form.getDeviceId(), form.getFaceFeatures(), form.getAmount());
+        log.info("[移动端消费] 人脸识别消费, deviceId={}", form.getDeviceId());
         ConsumeMobileResultVO result = consumeMobileService.faceConsume(form);
         return ResponseDTO.ok(result);
     }
 
-    /**
-     * 快速用户查询
-     *
-     * @param queryType  查询类型
-     * @param queryValue 查询值
-     * @return 用户信息
-     */
-    @GetMapping("/user/quick")
-    @Observed(name = "consumeMobile.quickUserInfo", contextualName = "consume-mobile-quick-user-info")
     @Operation(summary = "快速用户查询", description = "根据类型快速查询用户信息")
+    @GetMapping("/user/quick")
     public ResponseDTO<ConsumeMobileUserVO> quickUserInfo(
             @RequestParam String queryType,
             @RequestParam String queryValue) {
-        log.info("快速用户查询: queryType={}, queryValue={}", queryType, queryValue);
-        ConsumeMobileUserVO userVO = consumeMobileService.quickUserInfo(queryType, queryValue);
-        return ResponseDTO.ok(userVO);
+        log.info("[移动端消费] 快速用户查询, queryType={}, queryValue={}", queryType, queryValue);
+        ConsumeMobileUserVO result = consumeMobileService.quickUserInfo(queryType, queryValue);
+        return ResponseDTO.ok(result);
     }
 
-    /**
-     * 获取用户消费信息
-     *
-     * @param userId 用户ID
-     * @return 用户消费信息
-     */
+    @Operation(summary = "获取用户消费信息", description = "获取指定用户消费信息")
     @GetMapping("/user/consume-info/{userId}")
-    @Observed(name = "consumeMobile.getUserConsumeInfo", contextualName = "consume-mobile-get-user-consume-info")
-    @Operation(summary = "获取用户消费信息", description = "获取指定用户的消费信息")
     public ResponseDTO<ConsumeMobileUserInfoVO> getUserConsumeInfo(@PathVariable Long userId) {
-        log.info("获取用户消费信息: userId={}", userId);
-        ConsumeMobileUserInfoVO userInfo = consumeMobileService.getUserConsumeInfo(userId);
-        return ResponseDTO.ok(userInfo);
+        log.info("[移动端消费] 获取用户消费信息, userId={}", userId);
+        ConsumeMobileUserInfoVO result = consumeMobileService.getUserConsumeInfo(userId);
+        return ResponseDTO.ok(result);
     }
 
-    /**
-     * 获取有效餐别
-     *
-     * @return 餐别列表
-     */
+    @Operation(summary = "获取有效餐别", description = "获取当前有效餐别列表")
     @GetMapping("/meal/available")
-    @Observed(name = "consumeMobile.getAvailableMeals", contextualName = "consume-mobile-get-available-meals")
-    @Operation(summary = "获取有效餐别", description = "获取当前有效的餐别列表")
     public ResponseDTO<List<ConsumeMobileMealVO>> getAvailableMeals() {
-        log.info("获取有效餐别");
-        List<ConsumeMobileMealVO> meals = consumeMobileService.getAvailableMeals();
-        return ResponseDTO.ok(meals);
+        log.info("[移动端消费] 获取有效餐别");
+        List<ConsumeMobileMealVO> result = consumeMobileService.getAvailableMeals();
+        return ResponseDTO.ok(result);
     }
 
-    /**
-     * 获取设备配置
-     *
-     * @param deviceId 设备ID
-     * @return 设备配置
-     */
+    @Operation(summary = "获取设备配置", description = "获取指定设备配置")
     @GetMapping("/device/config/{deviceId}")
-    @Observed(name = "consumeMobile.getDeviceConfig", contextualName = "consume-mobile-get-device-config")
-    @Operation(summary = "获取设备配置", description = "获取指定消费设备的配置信息")
     public ResponseDTO<ConsumeDeviceConfigVO> getDeviceConfig(@PathVariable Long deviceId) {
-        log.info("获取设备配置: deviceId={}", deviceId);
-        ConsumeDeviceConfigVO config = consumeMobileService.getDeviceConfig(deviceId);
-        return ResponseDTO.ok(config);
+        log.info("[移动端消费] 获取设备配置, deviceId={}", deviceId);
+        ConsumeDeviceConfigVO result = consumeMobileService.getDeviceConfig(deviceId);
+        return ResponseDTO.ok(result);
     }
 
-    /**
-     * 获取设备今日统计
-     *
-     * @param deviceId 设备ID
-     * @return 统计数据
-     */
+    @Operation(summary = "获取设备今日统计", description = "获取指定设备今日消费统计")
     @GetMapping("/device/today-stats/{deviceId}")
-    @Observed(name = "consumeMobile.getDeviceTodayStats", contextualName = "consume-mobile-get-device-today-stats")
-    @Operation(summary = "获取设备今日统计", description = "获取指定设备今日的消费统计数据")
     public ResponseDTO<ConsumeMobileStatsVO> getDeviceTodayStats(@PathVariable Long deviceId) {
-        log.info("获取设备今日统计: deviceId={}", deviceId);
-        ConsumeMobileStatsVO stats = consumeMobileService.getDeviceTodayStats(deviceId);
-        return ResponseDTO.ok(stats);
+        log.info("[移动端消费] 获取设备今日统计, deviceId={}", deviceId);
+        ConsumeMobileStatsVO result = consumeMobileService.getDeviceTodayStats(deviceId);
+        return ResponseDTO.ok(result);
     }
 
-    /**
-     * 获取实时交易汇总
-     *
-     * @param areaId 区域ID
-     * @return 交易汇总
-     */
+    @Operation(summary = "获取实时交易汇总", description = "获取指定区域实时交易汇总")
     @GetMapping("/transaction/summary")
-    @Observed(name = "consumeMobile.getTransactionSummary", contextualName = "consume-mobile-get-transaction-summary")
-    @Operation(summary = "获取实时交易汇总", description = "获取指定区域的实时交易汇总")
-    public ResponseDTO<ConsumeMobileSummaryVO> getTransactionSummary(@RequestParam String areaId) {
-        log.info("获取实时交易汇总: areaId={}", areaId);
-        ConsumeMobileSummaryVO summary = consumeMobileService.getTransactionSummary(areaId);
-        return ResponseDTO.ok(summary);
+    public ResponseDTO<ConsumeMobileSummaryVO> getTransactionSummary(
+            @RequestParam(required = false) String areaId) {
+        log.info("[移动端消费] 获取实时交易汇总, areaId={}", areaId);
+        ConsumeMobileSummaryVO result = consumeMobileService.getTransactionSummary(areaId);
+        return ResponseDTO.ok(result);
     }
 
-    /**
-     * 离线交易同步
-     *
-     * @param form 同步表单
-     * @return 同步结果
-     */
+    @Operation(summary = "离线交易同步", description = "同步移动端离线消费交易")
     @PostMapping("/sync/offline")
-    @Observed(name = "consumeMobile.syncOfflineTransactions", contextualName = "consume-mobile-sync-offline-transactions")
-    @Operation(summary = "离线交易同步", description = "同步移动端离线消费交易数据")
     public ResponseDTO<ConsumeSyncResultVO> syncOfflineTransactions(@Valid @RequestBody ConsumeOfflineSyncForm form) {
-        log.info("离线交易同步: deviceId={}", form.getDeviceId());
+        log.info("[移动端消费] 离线交易同步, deviceId={}", form.getDeviceId());
         ConsumeSyncResultVO result = consumeMobileService.syncOfflineTransactions(form);
         return ResponseDTO.ok(result);
     }
 
-    /**
-     * 获取同步数据
-     *
-     * @param deviceId 设备ID
-     * @return 同步数据
-     */
+    @Operation(summary = "获取同步数据", description = "获取移动端同步数据")
     @GetMapping("/sync/data/{deviceId}")
-    @Observed(name = "consumeMobile.getSyncData", contextualName = "consume-mobile-get-sync-data")
-    @Operation(summary = "获取同步数据", description = "获取需要同步到移动端的数据")
-    public ResponseDTO<ConsumeSyncDataVO> getSyncData(@PathVariable Long deviceId) {
-        log.info("获取同步数据: deviceId={}", deviceId);
-        ConsumeSyncDataVO syncData = consumeMobileService.getSyncData(deviceId, null);
-        return ResponseDTO.ok(syncData);
-    }
-
-    /**
-     * 权限验证
-     *
-     * @param form 验证表单
-     * @return 验证结果
-     */
-    @PostMapping("/validate/permission")
-    @Observed(name = "consumeMobile.validatePermission", contextualName = "consume-mobile-validate-permission")
-    @Operation(summary = "权限验证", description = "验证用户消费权限")
-    public ResponseDTO<ConsumeValidateResultVO> validatePermission(
-            @Valid @RequestBody ConsumePermissionValidateForm form) {
-        log.info("权限验证: userId={}, areaId={}, amount={}",
-                form.getUserId(), form.getAreaId(), form.getAmount());
-        ConsumeValidateResultVO result = consumeMobileService.validateConsumePermission(form);
+    public ResponseDTO<ConsumeSyncDataVO> getSyncData(
+            @PathVariable Long deviceId,
+            @RequestParam(required = false) String syncTime) {
+        log.info("[移动端消费] 获取同步数据, deviceId={}, syncTime={}", deviceId, syncTime);
+        ConsumeSyncDataVO result = consumeMobileService.getSyncData(deviceId, syncTime);
         return ResponseDTO.ok(result);
     }
 
-    /**
-     * 获取用户统计
-     * <p>
-     * 获取指定用户的消费统计数据，包括总交易笔数、总金额、今日统计、本月统计
-     * </p>
-     *
-     * @param userId 用户ID
-     * @return 统计数据
-     */
-    @GetMapping("/stats/{userId}")
-    @Observed(name = "consumeMobile.getUserStats", contextualName = "consume-mobile-get-user-stats")
-    @Operation(summary = "获取用户统计", description = "获取指定用户的消费统计数据")
-    public ResponseDTO<ConsumeMobileUserStatsVO> getUserStats(@PathVariable Long userId) {
-        log.info("获取用户统计: userId={}", userId);
-        ConsumeMobileUserStatsVO stats = consumeMobileService.getUserStats(userId);
-        return ResponseDTO.ok(stats);
+    @Operation(summary = "权限验证", description = "验证用户消费权限")
+    @PostMapping("/validate/permission")
+    public ResponseDTO<ConsumeValidateResultVO> validatePermission(
+            @Valid @RequestBody ConsumePermissionValidateForm form) {
+        log.info("[移动端消费] 权限验证, userId={}, areaId={}", form.getUserId(), form.getAreaId());
+        ConsumeValidateResultVO result = consumeMobileService.validateConsumePermission(form);
+        return ResponseDTO.ok(result);
     }
 }

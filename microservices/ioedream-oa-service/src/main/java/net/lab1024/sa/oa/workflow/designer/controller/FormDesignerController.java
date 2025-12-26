@@ -1,13 +1,12 @@
 package net.lab1024.sa.oa.workflow.designer.controller;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.List;
 import java.util.Map;
 
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,9 +36,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RestController
 @RequestMapping("/api/v1/workflow/form-designer")
 @Tag(name = "表单设计器", description = "低代码表单设计器API")
+@Slf4j
 public class FormDesignerController {
-
-    private static final Logger log = LoggerFactory.getLogger (FormDesignerController.class);
 
     @Resource
     private FormDesignerService formDesignerService;

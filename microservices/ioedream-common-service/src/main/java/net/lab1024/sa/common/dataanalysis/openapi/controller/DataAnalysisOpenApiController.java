@@ -1,21 +1,56 @@
 package net.lab1024.sa.common.dataanalysis.openapi.controller;
 
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.List;
+
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.common.domain.PageResult;
-import net.lab1024.sa.common.dataanalysis.openapi.domain.request.*;
-import net.lab1024.sa.common.dataanalysis.openapi.domain.response.*;
-import net.lab1024.sa.common.dataanalysis.openapi.service.DataAnalysisOpenApiService;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
+import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import java.util.List;
+import net.lab1024.sa.common.dataanalysis.openapi.domain.request.AnalysisTaskQueryRequest;
+import net.lab1024.sa.common.dataanalysis.openapi.domain.request.AnomalyDetectionRequest;
+import net.lab1024.sa.common.dataanalysis.openapi.domain.request.ConsumptionAnalysisQueryRequest;
+import net.lab1024.sa.common.dataanalysis.openapi.domain.request.CustomReportRequest;
+import net.lab1024.sa.common.dataanalysis.openapi.domain.request.DashboardQueryRequest;
+import net.lab1024.sa.common.dataanalysis.openapi.domain.request.DataInsightRequest;
+import net.lab1024.sa.common.dataanalysis.openapi.domain.request.DataQualityQueryRequest;
+import net.lab1024.sa.common.dataanalysis.openapi.domain.request.DeviceUsageQueryRequest;
+import net.lab1024.sa.common.dataanalysis.openapi.domain.request.ExportRequest;
+import net.lab1024.sa.common.dataanalysis.openapi.domain.request.PredictionAnalysisRequest;
+import net.lab1024.sa.common.dataanalysis.openapi.domain.request.RecommendationRequest;
+import net.lab1024.sa.common.dataanalysis.openapi.domain.request.SecurityRiskQueryRequest;
+import net.lab1024.sa.common.dataanalysis.openapi.domain.request.TrendAnalysisRequest;
+import net.lab1024.sa.common.dataanalysis.openapi.domain.request.UserAccessQueryRequest;
+import net.lab1024.sa.common.dataanalysis.openapi.domain.response.AnalysisTaskResponse;
+import net.lab1024.sa.common.dataanalysis.openapi.domain.response.AnomalyDetectionResponse;
+import net.lab1024.sa.common.dataanalysis.openapi.domain.response.ComprehensiveOperationReportResponse;
+import net.lab1024.sa.common.dataanalysis.openapi.domain.response.ConsumptionAnalysisReportResponse;
+import net.lab1024.sa.common.dataanalysis.openapi.domain.response.CustomReportResponse;
+import net.lab1024.sa.common.dataanalysis.openapi.domain.response.DataInsightResponse;
+import net.lab1024.sa.common.dataanalysis.openapi.domain.response.DataQualityAssessmentResponse;
+import net.lab1024.sa.common.dataanalysis.openapi.domain.response.DeviceUsageReportResponse;
+import net.lab1024.sa.common.dataanalysis.openapi.domain.response.ExportTaskResponse;
+import net.lab1024.sa.common.dataanalysis.openapi.domain.response.IntelligentRecommendationResponse;
+import net.lab1024.sa.common.dataanalysis.openapi.domain.response.PredictionAnalysisResponse;
+import net.lab1024.sa.common.dataanalysis.openapi.domain.response.RealtimeDashboardResponse;
+import net.lab1024.sa.common.dataanalysis.openapi.domain.response.SecurityRiskReportResponse;
+import net.lab1024.sa.common.dataanalysis.openapi.domain.response.TrendAnalysisResponse;
+import net.lab1024.sa.common.dataanalysis.openapi.domain.response.UserAccessReportResponse;
+import net.lab1024.sa.common.dataanalysis.openapi.service.DataAnalysisOpenApiService;
+import net.lab1024.sa.common.domain.PageResult;
+import net.lab1024.sa.common.dto.ResponseDTO;
 
 /**
  * 开放平台数据分析API控制器
@@ -25,15 +60,16 @@ import java.util.List;
  * @version 1.0.0
  * @since 2025-12-16
  */
-@Slf4j
 @RestController
 @RequestMapping("/open/api/v1/data-analysis")
-@RequiredArgsConstructor
 @Tag(name = "开放平台数据分析API", description = "提供运营报表、趋势分析、智能预测等功能")
 @Validated
+@Slf4j
 public class DataAnalysisOpenApiController {
 
-    private final DataAnalysisOpenApiService dataAnalysisOpenApiService;
+
+    @Resource
+    private DataAnalysisOpenApiService dataAnalysisOpenApiService;
 
     /**
      * 获取综合运营报表
@@ -147,7 +183,8 @@ public class DataAnalysisOpenApiController {
         log.info("[开放API] 获取消费分析报表: dimension={}, startDate={}, endDate={}, consumptionType={}",
                 dimension, startDate, endDate, consumptionType);
 
-        ConsumptionAnalysisReportResponse response = dataAnalysisOpenApiService.getConsumptionAnalysisReport(queryRequest, token);
+        ConsumptionAnalysisReportResponse response = dataAnalysisOpenApiService
+                .getConsumptionAnalysisReport(queryRequest, token);
         return ResponseDTO.ok(response);
     }
 
@@ -237,7 +274,8 @@ public class DataAnalysisOpenApiController {
         log.info("[开放API] 预测分析: predictionType={}, targetField={}, predictionPeriod={}, clientIp={}",
                 request.getPredictionType(), request.getTargetField(), request.getPredictionPeriod(), clientIp);
 
-        PredictionAnalysisResponse response = dataAnalysisOpenApiService.getPredictionAnalysis(request, token, clientIp);
+        PredictionAnalysisResponse response = dataAnalysisOpenApiService.getPredictionAnalysis(request, token,
+                clientIp);
         return ResponseDTO.ok(response);
     }
 
@@ -257,7 +295,8 @@ public class DataAnalysisOpenApiController {
         log.info("[开放API] 智能推荐: recommendationType={}, targetObject={}, context={}, clientIp={}",
                 request.getRecommendationType(), request.getTargetObject(), request.getContext(), clientIp);
 
-        IntelligentRecommendationResponse response = dataAnalysisOpenApiService.getIntelligentRecommendations(request, token, clientIp);
+        IntelligentRecommendationResponse response = dataAnalysisOpenApiService.getIntelligentRecommendations(request,
+                token, clientIp);
         return ResponseDTO.ok(response);
     }
 
@@ -323,7 +362,8 @@ public class DataAnalysisOpenApiController {
         String token = extractTokenFromAuthorization(authorization);
 
         log.info("[开放API] 自定义报表: reportName={}, dataSource={}, dimensions={}, measures={}, clientIp={}",
-                request.getReportName(), request.getDataSource(), request.getDimensions(), request.getMeasures(), clientIp);
+                request.getReportName(), request.getDataSource(), request.getDimensions(), request.getMeasures(),
+                clientIp);
 
         CustomReportResponse response = dataAnalysisOpenApiService.getCustomReport(request, token, clientIp);
         return ResponseDTO.ok(response);
@@ -373,7 +413,8 @@ public class DataAnalysisOpenApiController {
         log.info("[开放API] 数据质量评估: assessmentScope={}, dataSource={}, assessmentDate={}",
                 assessmentScope, dataSource, assessmentDate);
 
-        DataQualityAssessmentResponse response = dataAnalysisOpenApiService.getDataQualityAssessment(queryRequest, token);
+        DataQualityAssessmentResponse response = dataAnalysisOpenApiService.getDataQualityAssessment(queryRequest,
+                token);
         return ResponseDTO.ok(response);
     }
 
@@ -434,3 +475,4 @@ public class DataAnalysisOpenApiController {
         return request.getRemoteAddr();
     }
 }
+

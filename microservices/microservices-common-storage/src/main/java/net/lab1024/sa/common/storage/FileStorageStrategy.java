@@ -18,68 +18,72 @@ import java.util.Map;
 public interface FileStorageStrategy {
 
     /**
-     * 上传文件
+     * 存储文件
      *
-     * @param file MultipartFile文件对象
-     * @param folder 文件夹路径(如: "access/snapshots/device001")
+     * @param file 上传的文件
+     * @param path 存储路径
      * @return 文件访问URL
      */
-    String uploadFile(MultipartFile file, String folder);
+    String storeFile(MultipartFile file, String path);
 
     /**
-     * 上传输入流
+     * 获取文件输入流
      *
-     * @param inputStream 输入流
-     * @param fileName 文件名
-     * @param contentType 内容类型(如: image/jpeg)
-     * @param size 文件大小(字节)
-     * @param folder 文件夹路径
-     * @return 文件访问URL
+     * @param path 文件路径
+     * @return 文件输入流
      */
-    String uploadStream(InputStream inputStream, String fileName, String contentType, long size, String folder);
-
-    /**
-     * 生成预签名上传URL
-     * <p>
-     * 设备可直接使用此URL上传文件,无需经过应用服务器
-     * 适用于大文件上传,减轻服务器压力
-     * </p>
-     *
-     * @param folder 文件夹路径
-     * @param fileName 文件名
-     * @param expirySeconds 有效期(秒)
-     * @return 预签名上传URL和相关信息
-     */
-    Map<String, String> getPresignedUploadUrl(String folder, String fileName, int expirySeconds);
-
-    /**
-     * 获取文件访问URL
-     *
-     * @param filePath 文件路径
-     * @return 文件访问URL
-     */
-    String getFileUrl(String filePath);
+    InputStream getFileStream(String path);
 
     /**
      * 删除文件
      *
-     * @param filePath 文件路径
+     * @param path 文件路径
      * @return 是否删除成功
      */
-    boolean deleteFile(String filePath);
+    boolean deleteFile(String path);
 
     /**
      * 检查文件是否存在
      *
-     * @param filePath 文件路径
+     * @param path 文件路径
      * @return 文件是否存在
      */
-    boolean fileExists(String filePath);
+    boolean fileExists(String path);
 
     /**
-     * 获取存储类型
+     * 获取文件信息
      *
-     * @return 存储类型(minio/local/aliyun-oss)
+     * @param path 文件路径
+     * @return 文件信息
      */
-    String getStorageType();
+    Map<String, Object> getFileInfo(String path);
+
+    /**
+     * 上传文件（兼容旧调用）
+     *
+     * @param file 上传的文件
+     * @param path 存储路径
+     * @return 文件访问URL
+     */
+    default String uploadFile(MultipartFile file, String path) {
+        return storeFile(file, path);
+    }
+
+    /**
+     * 获取预签名上传URL（默认不支持）
+     * <p>
+     * 返回Map包含：
+     * - uploadUrl: 预签名上传URL
+     * - method: HTTP方法（PUT）
+     * - expirySeconds: 过期秒数（字符串格式）
+     * </p>
+     *
+     * @param folder        文件夹路径（如 "access/snapshots"）
+     * @param fileName      文件名（如 "snapshot.jpg"）
+     * @param expireSeconds 过期秒数
+     * @return 预签名URL信息Map，如果存储类型不支持则返回null
+     */
+    default Map<String, String> getPresignedUploadUrl(String folder, String fileName, int expireSeconds) {
+        return null;
+    }
 }

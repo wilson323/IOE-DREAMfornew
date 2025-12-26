@@ -3,6 +3,7 @@ package net.lab1024.sa.access.manager;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.access.config.AccessCacheConstants;
 import net.lab1024.sa.common.organization.dao.AntiPassbackRecordDao;
@@ -37,6 +38,8 @@ import java.util.Map;
  */
 @Slf4j
 public class AntiPassbackManager {
+
+    // 显式添加logger声明以确保编译通过
 
     private final AntiPassbackRecordDao antiPassbackRecordDao;
     private final AreaAccessExtDao areaAccessExtDao;
@@ -251,7 +254,7 @@ public class AntiPassbackManager {
 
             // 3. 解析extConfig JSON
             try {
-                Map<String, Object> configMap = objectMapper.readValue(areaExt.getExtConfig(), Map.class);
+                Map<String, Object> configMap = objectMapper.readValue(areaExt.getExtConfig(), new TypeReference<Map<String, Object>>() {});
                 AntiPassbackConfig config = new AntiPassbackConfig();
 
                 // 读取反潜配置
@@ -324,10 +327,10 @@ public class AntiPassbackManager {
             }
 
             // 2. 解析现有配置
-            Map<String, Object> configMap;
+            Map<String, Object> configMap = objectMapper.readValue(areaExt.getExtConfig(), new TypeReference<Map<String, Object>>() {});
             if (areaExt.getExtConfig() != null && !areaExt.getExtConfig().trim().isEmpty()) {
                 try {
-                    configMap = objectMapper.readValue(areaExt.getExtConfig(), Map.class);
+                    configMap = objectMapper.readValue(areaExt.getExtConfig(), new TypeReference<Map<String, Object>>() {});
                 } catch (Exception e) {
                     log.warn("[反潜配置] 解析现有配置失败，使用空配置: areaId={}, error={}", areaId, e.getMessage());
                     configMap = new HashMap<>();

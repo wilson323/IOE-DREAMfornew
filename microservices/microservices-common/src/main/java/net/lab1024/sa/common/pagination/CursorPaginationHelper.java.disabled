@@ -1,0 +1,439 @@
+package net.lab1024.sa.common.pagination;
+
+import lombok.extern.slf4j.Slf4j;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.Timer;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+
+import java.time.LocalDateTime;
+import java.util.Base64;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Function;
+
+/**
+ * IOE-DREAM 游标分页助手
+ * <p>
+ * 企业级游标分页解决方案，替代传统的LIMIT offset分页
+ * 解决深度分页性能问题，提供高效的大数据集分页查询
+ * </p>
+ * <p>
+ * 核心优势：
+ * - 性能恒定：无论翻到多少页，查询性能保持稳定
+ * - 内存友好：避免大偏移量导致的内存消耗
+ * - 实时性好：支持新增数据的实时获取
+ * - 并发安全：支持高并发分页查询
+ * </p>
+ * <p>
+ * 使用场景：
+ * - 大数据集分页查询（10万+记录）
+ * - 实时数据流分页
+ * - 移动端无限滚动加载
+ * - 导出任务分批处理
+ * </p>
+ *
+ * @author IOE-DREAM架构团队
+ * @version 1.0.0
+ * @since 2025-12-20
+ */
+@Slf4j
+public class CursorPaginationHelper {
+
+    private final MeterRegistry meterRegistry;
+
+    // 性能统计
+    private final AtomicLong totalQueries = new AtomicLong(0);
+    private final AtomicLong cursorQueries = new AtomicLong(0);
+    private final AtomicLong fallbackQueries = new AtomicLong(0);
+
+    // 监控指标
+    private final Counter queryCounter;
+    private final Counter cursorHitCounter;
+    private final Counter fallbackCounter;
+    private final Timer queryTimer;
+
+    /**
+     * 构造函数
+     *
+     * @param meterRegistry 指标注册器
+     */
+    public CursorPaginationHelper(MeterRegistry meterRegistry) {
+        this.meterRegistry = meterRegistry;
+
+        // 初始化监控指标
+        this.queryCounter = Counter.builder("pagination.query.count")
+                .description("分页查询总数")
+                .tag("application", getApplicationName())
+                .register(meterRegistry);
+
+        this.cursorHitCounter = Counter.builder("pagination.cursor.hit.count")
+                .description("游标分页命中次数")
+                .tag("application", getApplicationName())
+                .register(meterRegistry);
+
+        this.fallbackCounter = Counter.builder("pagination.fallback.count")
+                .description("降级为传统分页次数")
+                .tag("application", getApplicationName())
+                .register(meterRegistry);
+
+        this.queryTimer = Timer.builder("pagination.query.duration")
+                .description("分页查询耗时")
+                .tag("application", getApplicationName())
+                .register(meterRegistry);
+
+        log.info("[游标分页] CursorPaginationHelper初始化完成");
+    }
+
+    /**
+     * 游标分页查询
+     *
+     * @param mapper MyBatis-Plus Mapper
+     * @param cursorRequest 游标分页请求
+     * @param timestampField 时间戳字段函数
+     * @param idField ID字段函数
+     * @param <T> 实体类型
+     * @return 游标分页结果
+     */
+    public <T> CursorPaginationResult<T> queryByCursor(
+            BaseMapper<T> mapper,
+            CursorPaginationRequest cursorRequest,
+            Function<T, LocalDateTime> timestampField,
+            Function<T, Long> idField) {
+
+        Timer.Sample sample = Timer.start(meterRegistry);
+        totalQueries.incrementAndGet();
+        queryCounter.increment();
+
+        String traceId = getCurrentTraceId();
+        log.debug("[游标分页] 开始游标分页查询: traceId={}, cursor={}, size={}",
+                 traceId, cursorRequest.getCursor(), cursorRequest.getSize());
+
+        try {
+            // 检查是否使用游标分页
+            if (shouldUseCursorPagination(cursorRequest)) {
+                CursorPaginationResult<T> result = executeCursorQuery(
+                    mapper, cursorRequest, timestampField, idField);
+
+                cursorQueries.incrementAndGet();
+                cursorHitCounter.increment();
+
+                log.debug("[游标分页] 游标分页查询成功: traceId={}, 结果数={}, hasNext={}",
+                         traceId, result.getData().size(), result.isHasNext());
+
+                return result;
+            } else {
+                // 降级为传统分页
+                CursorPaginationResult<T> result = fallbackToTraditionalPagination(
+                    mapper, cursorRequest);
+
+                fallbackQueries.incrementAndGet();
+                fallbackCounter.increment();
+
+                log.debug("[游标分页] 降级为传统分页: traceId={}, 结果数={}", traceId, result.getData().size());
+
+                return result;
+            }
+
+        } finally {
+            sample.stop(queryTimer);
+        }
+    }
+
+    /**
+     * 执行游标分页查询
+     */
+    private <T> CursorPaginationResult<T> executeCursorQuery(
+            BaseMapper<T> mapper,
+            CursorPaginationRequest request,
+            Function<T, LocalDateTime> timestampField,
+            Function<T, Long> idField) {
+
+        // 解码游标
+        CursorInfo cursorInfo = decodeCursor(request.getCursor());
+
+        // 构建查询条件
+        LambdaQueryWrapper<T> queryWrapper = new LambdaQueryWrapper<>();
+
+        if (cursorInfo != null) {
+            // 使用游标作为查询起点
+            queryWrapper.and(wrapper ->
+                wrapper.lt(timestampField.apply(null), cursorInfo.getTimestamp())
+                       .or()
+                       .eq(timestampField.apply(null), cursorInfo.getTimestamp())
+                       .lt(idField.apply(null), cursorInfo.getId())
+            );
+        }
+
+        // 添加其他查询条件
+        if (request.getCondition() != null) {
+            queryWrapper.apply(request.getCondition());
+        }
+
+        // 排序：时间戳降序，ID降序
+        queryWrapper.orderByDesc(timestampField.apply(null))
+                   .orderByDesc(idField.apply(null));
+
+        // 执行查询
+        List<T> data = mapper.selectList(queryWrapper.last("LIMIT " + (request.getSize() + 1)));
+
+        // 处理结果
+        boolean hasNext = data.size() > request.getSize();
+        if (hasNext) {
+            data = data.subList(0, request.getSize());
+        }
+
+        // 生成下一页游标
+        String nextCursor = null;
+        if (!data.isEmpty() && hasNext) {
+            T lastItem = data.get(data.size() - 1);
+            LocalDateTime lastTimestamp = timestampField.apply(lastItem);
+            Long lastId = idField.apply(lastItem);
+            nextCursor = encodeCursor(new CursorInfo(lastTimestamp, lastId));
+        }
+
+        return CursorPaginationResult.<T>builder()
+                .data(data)
+                .nextCursor(nextCursor)
+                .hasNext(hasNext)
+                .size(request.getSize())
+                .hasPrevious(cursorInfo != null)
+                .queryType("cursor")
+                .build();
+    }
+
+    /**
+     * 降级为传统分页
+     */
+    private <T> CursorPaginationResult<T> fallbackToTraditionalPagination(
+            BaseMapper<T> mapper,
+            CursorPaginationRequest request) {
+
+        int pageNum = calculatePageNum(request.getCursor());
+        int pageSize = request.getSize();
+
+        Page<T> page = new Page<>(pageNum, pageSize);
+        LambdaQueryWrapper<T> queryWrapper = new LambdaQueryWrapper<>();
+
+        // 添加查询条件
+        if (request.getCondition() != null) {
+            queryWrapper.apply(request.getCondition());
+        }
+
+        // 添加排序
+        if (request.getOrderBy() != null) {
+            queryWrapper.last(request.getOrderBy());
+        }
+
+        IPage<T> result = mapper.selectPage(page, queryWrapper);
+
+        // 计算下一页游标
+        String nextCursor = null;
+        if (result.hasNext()) {
+            nextCursor = "page_" + (pageNum + 1);
+        }
+
+        return CursorPaginationResult.<T>builder()
+                .data(result.getRecords())
+                .nextCursor(nextCursor)
+                .hasNext(result.hasNext())
+                .hasPrevious(pageNum > 1)
+                .size(pageSize)
+                .total(result.getTotal())
+                .pages(result.getPages())
+                .current(pageNum)
+                .queryType("traditional")
+                .build();
+    }
+
+    /**
+     * 判断是否应该使用游标分页
+     */
+    private boolean shouldUseCursorPagination(CursorPaginationRequest request) {
+        // 没有游标信息时使用传统分页（首次查询）
+        if (request.getCursor() == null || request.getCursor().isEmpty()) {
+            return false;
+        }
+
+        // 游标格式为page_x时降级为传统分页
+        if (request.getCursor().startsWith("page_")) {
+            return false;
+        }
+
+        // 其他情况使用游标分页
+        return true;
+    }
+
+    /**
+     * 编码游标
+     */
+    private String encodeCursor(CursorInfo cursorInfo) {
+        try {
+            String cursorData = cursorInfo.getTimestamp().toString() + "|" + cursorInfo.getId();
+            return Base64.getEncoder().encodeToString(cursorData.getBytes("UTF-8"));
+        } catch (Exception e) {
+            log.error("[游标分页] 游标编码失败", e);
+            return null;
+        }
+    }
+
+    /**
+     * 解码游标
+     */
+    private CursorInfo decodeCursor(String cursor) {
+        if (cursor == null || cursor.isEmpty() || cursor.startsWith("page_")) {
+            return null;
+        }
+
+        try {
+            byte[] decodedBytes = Base64.getDecoder().decode(cursor);
+            String cursorData = new String(decodedBytes, "UTF-8");
+            String[] parts = cursorData.split("\\|");
+
+            if (parts.length != 2) {
+                return null;
+            }
+
+            LocalDateTime timestamp = LocalDateTime.parse(parts[0]);
+            Long id = Long.parseLong(parts[1]);
+
+            return new CursorInfo(timestamp, id);
+
+        } catch (Exception e) {
+            log.error("[游标分页] 游标解码失败: cursor={}", cursor, e);
+            return null;
+        }
+    }
+
+    /**
+     * 计算页码
+     */
+    private int calculatePageNum(String cursor) {
+        if (cursor == null || cursor.isEmpty()) {
+            return 1;
+        }
+
+        if (cursor.startsWith("page_")) {
+            try {
+                return Integer.parseInt(cursor.substring(5));
+            } catch (Exception e) {
+                return 1;
+            }
+        }
+
+        // 默认返回第2页（对于游标分页）
+        return 2;
+    }
+
+    /**
+     * 创建首次分页请求
+     *
+     * @param size 每页大小
+     * @return 游标分页请求
+     */
+    public static CursorPaginationRequest createFirstRequest(int size) {
+        return CursorPaginationRequest.builder()
+                .cursor(null)
+                .size(size)
+                .build();
+    }
+
+    /**
+     * 创建下一页请求
+     *
+     * @param currentResult 当前结果
+     * @return 下一页请求
+     */
+    public static CursorPaginationRequest createNextRequest(CursorPaginationResult<?> currentResult) {
+        if (!currentResult.isHasNext() || currentResult.getNextCursor() == null) {
+            return null;
+        }
+
+        return CursorPaginationRequest.builder()
+                .cursor(currentResult.getNextCursor())
+                .size(currentResult.getSize())
+                .build();
+    }
+
+    /**
+     * 获取分页统计信息
+     */
+    public PaginationStatistics getStatistics() {
+        long total = totalQueries.get();
+        long cursor = cursorQueries.get();
+        long fallback = fallbackQueries.get();
+
+        return PaginationStatistics.builder()
+                .totalQueries(total)
+                .cursorQueries(cursor)
+                .fallbackQueries(fallback)
+                .cursorUsageRate(total > 0 ? (double) cursor / total * 100 : 0)
+                .queryType("cursor_pagination")
+                .build();
+    }
+
+    // ==================== 私有辅助方法 ====================
+
+    /**
+     * 获取当前Trace ID
+     */
+    private String getCurrentTraceId() {
+        return java.util.Optional.ofNullable(org.slf4j.MDC.get("traceId")).orElse("unknown");
+    }
+
+    /**
+     * 获取应用名称
+     */
+    private volatile String applicationName = null;
+
+    private String getApplicationName() {
+        if (applicationName == null) {
+            synchronized (this) {
+                if (applicationName == null) {
+                    applicationName = System.getProperty("spring.application.name", "ioedream");
+                }
+            }
+        }
+        return applicationName;
+    }
+
+    /**
+     * 游标信息
+     */
+    @lombok.Data
+    @lombok.AllArgsConstructor
+    public static class CursorInfo {
+        private LocalDateTime timestamp;
+        private Long id;
+    }
+
+    /**
+     * 分页统计信息
+     */
+    @lombok.Data
+    @lombok.Builder
+    public static class PaginationStatistics {
+        private long totalQueries;
+        private long cursorQueries;
+        private long fallbackQueries;
+        private double cursorUsageRate;
+        private String queryType;
+        private long reportTime = System.currentTimeMillis();
+
+        public String getOptimizationStatus() {
+            if (cursorUsageRate >= 90) {
+                return "优秀";
+            } else if (cursorUsageRate >= 70) {
+                return "良好";
+            } else if (cursorUsageRate >= 50) {
+                return "需要优化";
+            } else {
+                return "大量降级";
+            }
+        }
+    }
+}

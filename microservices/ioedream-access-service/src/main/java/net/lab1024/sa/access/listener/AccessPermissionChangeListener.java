@@ -2,7 +2,7 @@ package net.lab1024.sa.access.listener;
 
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.access.service.AccessPermissionSyncService;
-import net.lab1024.sa.common.organization.service.impl.AreaPermissionServiceImpl;
+import net.lab1024.sa.access.event.AccessPermissionChangeEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -40,15 +40,15 @@ public class AccessPermissionChangeListener {
      */
     @Async("permissionSyncExecutor")
     @EventListener
-    public void handlePermissionChange(AreaPermissionServiceImpl.PermissionChangeEvent event) {
+    public void handlePermissionChange(AccessPermissionChangeEvent event) {
         try {
             log.info("[权限变更监听] 处理权限变更事件 userId={}, areaId={}, changeType={}",
                     event.getUserId(), event.getAreaId(), event.getChangeType());
 
-            if ("ADDED".equals(event.getChangeType())) {
+            if (AccessPermissionChangeEvent.ChangeType.ADDED.equals(event.getChangeType())) {
                 // 新增权限 → 同步权限到该区域设备
                 accessPermissionSyncService.syncPermissionToDevices(event.getUserId(), event.getAreaId());
-            } else if ("REMOVED".equals(event.getChangeType())) {
+            } else if (AccessPermissionChangeEvent.ChangeType.REMOVED.equals(event.getChangeType())) {
                 // 移除权限 → 从该区域设备删除权限
                 accessPermissionSyncService.removePermissionFromDevices(event.getUserId(), event.getAreaId());
             }

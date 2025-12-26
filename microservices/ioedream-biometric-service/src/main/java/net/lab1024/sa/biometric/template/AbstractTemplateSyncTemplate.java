@@ -1,10 +1,14 @@
 package net.lab1024.sa.biometric.template;
 
 import lombok.extern.slf4j.Slf4j;
+
 import net.lab1024.sa.biometric.domain.entity.BiometricTemplateEntity;
 import net.lab1024.sa.biometric.domain.dto.BiometricTemplateSyncRequest;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
 import net.lab1024.sa.common.organization.entity.DeviceEntity;
+import net.lab1024.sa.common.dto.ResponseDTO;
+import com.fasterxml.jackson.core.type.TypeReference;
+import org.springframework.http.HttpMethod;
 
 import jakarta.annotation.Resource;
 import java.util.List;
@@ -123,12 +127,14 @@ public abstract class AbstractTemplateSyncTemplate {
      */
     private DeviceEntity validateDevice(String deviceId) {
         // 通过网关调用common-service获取设备信息
-        DeviceEntity device = gatewayServiceClient.callCommonService(
+        @SuppressWarnings("unchecked")
+        ResponseDTO<DeviceEntity> response = gatewayServiceClient.callCommonService(
                 "/api/v1/device/" + deviceId,
-                org.springframework.http.HttpMethod.GET,
+                HttpMethod.GET,
                 null,
-                DeviceEntity.class
-        ).getData();
+                new TypeReference<ResponseDTO<DeviceEntity>>() {}
+        );
+        DeviceEntity device = response != null ? response.getData() : null;
 
         if (device == null) {
             throw new IllegalArgumentException("设备不存在: " + deviceId);

@@ -1,5 +1,7 @@
 package net.lab1024.sa.visitor.openapi.controller;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,8 +19,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import jakarta.annotation.Resource;
 import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.visitor.openapi.domain.request.AddToBlacklistRequest;
@@ -54,15 +55,15 @@ import net.lab1024.sa.visitor.openapi.service.VisitorOpenApiService;
  * @version 1.0.0
  * @since 2025-12-16
  */
-@Slf4j
 @RestController
 @RequestMapping("/open/api/v1/visitor")
-@RequiredArgsConstructor
 @Tag(name = "开放平台访客管理API", description = "提供访客预约、审批流程、轨迹追踪等功能")
 @Validated
+@Slf4j
 public class VisitorOpenApiController {
 
-    private final VisitorOpenApiService visitorOpenApiService;
+    @Resource
+    private VisitorOpenApiService visitorOpenApiService;
 
     /**
      * 访客预约

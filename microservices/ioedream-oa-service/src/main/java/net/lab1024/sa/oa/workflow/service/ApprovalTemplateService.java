@@ -26,9 +26,9 @@ public interface ApprovalTemplateService {
      * 分页查询审批模板
      *
      * @param pageParam 分页参数
-     * @param category 模板分类（可选）
-     * @param keyword 关键词（可选）
-     * @param isPublic 是否公开（可选）
+     * @param category  模板分类（可选）
+     * @param keyword   关键词（可选）
+     * @param isPublic  是否公开（可选）
      * @return 分页结果
      */
     ResponseDTO<PageResult<ApprovalTemplateEntity>> pageTemplates(
@@ -64,7 +64,7 @@ public interface ApprovalTemplateService {
     /**
      * 复制审批模板
      *
-     * @param id 模板ID
+     * @param id              模板ID
      * @param newTemplateName 新模板名称
      * @param newTemplateCode 新模板编码
      * @return 复制的审批模板实体
@@ -74,7 +74,7 @@ public interface ApprovalTemplateService {
     /**
      * 更新审批模板
      *
-     * @param id 模板ID
+     * @param id   模板ID
      * @param form 审批模板表单
      * @return 更新后的审批模板实体
      */
@@ -107,18 +107,13 @@ public interface ApprovalTemplateService {
     /**
      * 从模板创建审批配置
      *
-     * @param templateId 模板ID
-     * @param businessType 业务类型
+     * @param templateId       模板ID
+     * @param businessType     业务类型
      * @param businessTypeName 业务类型名称
      * @return 创建的审批配置实体
      */
-    ResponseDTO<net.lab1024.sa.common.workflow.entity.ApprovalConfigEntity> createConfigFromTemplate(
+    ResponseDTO<net.lab1024.sa.oa.workflow.entity.ApprovalConfigEntity> createConfigFromTemplate(
             Long templateId,
             String businessType,
             String businessTypeName);
 }
-
-
-
-
-

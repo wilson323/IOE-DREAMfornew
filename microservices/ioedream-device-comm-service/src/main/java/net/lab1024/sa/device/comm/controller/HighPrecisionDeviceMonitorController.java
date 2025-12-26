@@ -1,12 +1,13 @@
 package net.lab1024.sa.device.comm.controller;
 
+import lombok.extern.slf4j.Slf4j;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.device.comm.monitor.HighPrecisionDeviceMonitor;
 import net.lab1024.sa.device.comm.service.HighPrecisionDeviceMonitorService;
@@ -44,7 +45,7 @@ import java.util.concurrent.CompletableFuture;
 @RestController
 @RequestMapping("/api/v1/device/monitor/high-precision")
 @Tag(name = "高精度设备监控", description = "高精度设备状态监控管理接口")
-public class HighPrecisionDeviceMonitorController {
+ public class HighPrecisionDeviceMonitorController {
 
     @Resource
     private HighPrecisionDeviceMonitorService highPrecisionDeviceMonitorService;

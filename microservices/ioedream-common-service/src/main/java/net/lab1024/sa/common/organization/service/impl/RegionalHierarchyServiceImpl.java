@@ -1,18 +1,24 @@
 package net.lab1024.sa.common.organization.service.impl;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.common.organization.service.RegionalHierarchyService;
-import net.lab1024.sa.common.organization.manager.RegionalHierarchyManager;
-import net.lab1024.sa.common.organization.entity.AreaEntity;
-import net.lab1024.sa.common.organization.dao.AreaDao;
-import net.lab1024.sa.common.dto.ResponseDTO;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import jakarta.annotation.Resource;
+import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.common.organization.dao.AreaDao;
+import net.lab1024.sa.common.organization.entity.AreaEntity;
+import net.lab1024.sa.common.organization.manager.RegionalHierarchyManager;
+import net.lab1024.sa.common.organization.service.RegionalHierarchyService;
 
 /**
  * 区域层级管理服务实现
@@ -22,13 +28,15 @@ import java.util.stream.Collectors;
  * @version 1.0.0
  * @since 2025-01-16
  */
-@Slf4j
 @Service
-@RequiredArgsConstructor
+@Slf4j
 public class RegionalHierarchyServiceImpl implements RegionalHierarchyService {
 
-    private final RegionalHierarchyManager regionalHierarchyManager;
-    private final AreaDao areaDao;
+
+    @Resource
+    private RegionalHierarchyManager regionalHierarchyManager;
+    @Resource
+    private AreaDao areaDao;
 
     @Override
     public ResponseDTO<String> getAreaHierarchyPath(Long areaId) {
@@ -77,7 +85,8 @@ public class RegionalHierarchyServiceImpl implements RegionalHierarchyService {
     @Override
     public ResponseDTO<RegionalHierarchyManager.HierarchyValidationResult> validateHierarchy(Long areaId) {
         try {
-            RegionalHierarchyManager.HierarchyValidationResult result = regionalHierarchyManager.validateHierarchy(areaId);
+            RegionalHierarchyManager.HierarchyValidationResult result = regionalHierarchyManager
+                    .validateHierarchy(areaId);
             return ResponseDTO.ok(result);
         } catch (Exception e) {
             log.error("验证区域层级结构失败, areaId={}", areaId, e);
@@ -99,7 +108,8 @@ public class RegionalHierarchyServiceImpl implements RegionalHierarchyService {
     @Override
     public ResponseDTO<List<RegionalHierarchyManager.AreaHierarchyTree>> getAreaHierarchyTree(Long rootParentId) {
         try {
-            List<RegionalHierarchyManager.AreaHierarchyTree> tree = regionalHierarchyManager.getAreaHierarchyTree(rootParentId);
+            List<RegionalHierarchyManager.AreaHierarchyTree> tree = regionalHierarchyManager
+                    .getAreaHierarchyTree(rootParentId);
             return ResponseDTO.ok(tree);
         } catch (Exception e) {
             log.error("获取区域层级树失败, rootParentId={}", rootParentId, e);
@@ -110,7 +120,8 @@ public class RegionalHierarchyServiceImpl implements RegionalHierarchyService {
     @Override
     public ResponseDTO<RegionalHierarchyManager.AreaStatistics> getAreaStatistics(Long parentAreaId) {
         try {
-            RegionalHierarchyManager.AreaStatistics statistics = regionalHierarchyManager.getAreaStatistics(parentAreaId);
+            RegionalHierarchyManager.AreaStatistics statistics = regionalHierarchyManager
+                    .getAreaStatistics(parentAreaId);
             return ResponseDTO.ok(statistics);
         } catch (Exception e) {
             log.error("获取区域统计信息失败, parentAreaId={}", parentAreaId, e);
@@ -157,7 +168,11 @@ public class RegionalHierarchyServiceImpl implements RegionalHierarchyService {
     @Override
     public ResponseDTO<List<AreaEntity>> searchAreas(String keyword) {
         try {
-            List<AreaEntity> areas = regionalHierarchyManager.searchAreas(keyword);
+            // 使用AreaDao进行搜索
+            List<AreaEntity> allAreas = areaDao.selectList(null);
+            List<AreaEntity> areas = allAreas.stream()
+                    .filter(area -> area.getAreaName() != null && area.getAreaName().contains(keyword))
+                    .collect(java.util.stream.Collectors.toList());
             return ResponseDTO.ok(areas);
         } catch (Exception e) {
             log.error("搜索区域失败, keyword={}", keyword, e);
@@ -167,7 +182,8 @@ public class RegionalHierarchyServiceImpl implements RegionalHierarchyService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @CacheEvict(value = {"area:unified:tree", "area:unified:code", "area:unified:path", "area:unified:children", "area:unified:access", "area:unified:devices", "area:unified:business_attrs"}, allEntries = true)
+    @CacheEvict(value = { "area:unified:tree", "area:unified:code", "area:unified:path", "area:unified:children",
+            "area:unified:access", "area:unified:devices", "area:unified:business_attrs" }, allEntries = true)
     public ResponseDTO<Long> createArea(AreaEntity areaEntity) {
         try {
             // 验证区域编码唯一性
@@ -176,15 +192,15 @@ public class RegionalHierarchyServiceImpl implements RegionalHierarchyService {
             }
 
             // 验证区域名称在同级下的唯一性
-            if (!validateAreaNameUnique(areaEntity.getAreaName(), areaEntity.getParentAreaId(),
-                    areaEntity.getAreaLevel(), null).getData()) {
+            if (!validateAreaNameUnique(areaEntity.getAreaName(), areaEntity.getParentId(),
+                    areaEntity.getLevel(), null).getData()) {
                 return ResponseDTO.error("AREA_NAME_EXISTS", "同级区域下已存在相同名称");
             }
 
             // 验证层级结构
-            if (areaEntity.getParentAreaId() != null) {
-                RegionalHierarchyManager.HierarchyValidationResult validation =
-                    validateHierarchy(areaEntity.getParentAreaId()).getData();
+            if (areaEntity.getParentId() != null) {
+                RegionalHierarchyManager.HierarchyValidationResult validation = validateHierarchy(
+                        areaEntity.getParentId()).getData();
                 if (!validation.isValid()) {
                     return ResponseDTO.error("HIERARCHY_INVALID", validation.getMessage());
                 }
@@ -208,7 +224,8 @@ public class RegionalHierarchyServiceImpl implements RegionalHierarchyService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @CacheEvict(value = {"area:unified:tree", "area:unified:code", "area:unified:path", "area:unified:children", "area:unified:access", "area:unified:devices", "area:unified:business_attrs"}, allEntries = true)
+    @CacheEvict(value = { "area:unified:tree", "area:unified:code", "area:unified:path", "area:unified:children",
+            "area:unified:access", "area:unified:devices", "area:unified:business_attrs" }, allEntries = true)
     public ResponseDTO<Void> updateArea(AreaEntity areaEntity) {
         try {
             // 检查区域是否存在
@@ -223,8 +240,8 @@ public class RegionalHierarchyServiceImpl implements RegionalHierarchyService {
             }
 
             // 验证区域名称在同级下的唯一性（排除自身）
-            if (!validateAreaNameUnique(areaEntity.getAreaName(), areaEntity.getParentAreaId(),
-                    areaEntity.getAreaLevel(), areaEntity.getAreaId()).getData()) {
+            if (!validateAreaNameUnique(areaEntity.getAreaName(), areaEntity.getParentId(),
+                    areaEntity.getLevel(), areaEntity.getAreaId()).getData()) {
                 return ResponseDTO.error("AREA_NAME_EXISTS", "同级区域下已存在相同名称");
             }
 
@@ -242,7 +259,8 @@ public class RegionalHierarchyServiceImpl implements RegionalHierarchyService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @CacheEvict(value = {"area:unified:tree", "area:unified:code", "area:unified:path", "area:unified:children", "area:unified:access", "area:unified:devices", "area:unified:business_attrs"}, allEntries = true)
+    @CacheEvict(value = { "area:unified:tree", "area:unified:code", "area:unified:path", "area:unified:children",
+            "area:unified:access", "area:unified:devices", "area:unified:business_attrs" }, allEntries = true)
     public ResponseDTO<Void> deleteArea(Long areaId) {
         try {
             // 检查是否存在子区域
@@ -267,7 +285,8 @@ public class RegionalHierarchyServiceImpl implements RegionalHierarchyService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @CacheEvict(value = {"area:unified:tree", "area:unified:code", "area:unified:path", "area:unified:children", "area:unified:access", "area:unified:devices", "area:unified:business_attrs"}, allEntries = true)
+    @CacheEvict(value = { "area:unified:tree", "area:unified:code", "area:unified:path", "area:unified:children",
+            "area:unified:access", "area:unified:devices", "area:unified:business_attrs" }, allEntries = true)
     public ResponseDTO<Void> moveArea(Long areaId, Long newParentId, Integer newLevel) {
         try {
             AreaEntity area = areaDao.selectById(areaId);
@@ -284,16 +303,16 @@ public class RegionalHierarchyServiceImpl implements RegionalHierarchyService {
 
                 // 验证层级关系
                 if (newLevel == null) {
-                    newLevel = newParent.getAreaLevel() + 1;
-                } else if (newLevel != newParent.getAreaLevel() + 1) {
+                    newLevel = newParent.getLevel() + 1;
+                } else if (newLevel != newParent.getLevel() + 1) {
                     return ResponseDTO.error("INVALID_LEVEL", "新层级级别与父区域层级不匹配");
                 }
             }
 
             // 更新区域信息
-            area.setParentAreaId(newParentId);
+            area.setParentId(newParentId);
             if (newLevel != null) {
-                area.setAreaLevel(newLevel);
+                area.setLevel(newLevel);
             }
             areaDao.updateById(area);
 
@@ -372,9 +391,15 @@ public class RegionalHierarchyServiceImpl implements RegionalHierarchyService {
     }
 
     @Override
-    public ResponseDTO<Boolean> validateAreaNameUnique(String areaName, Long parentAreaId, Integer areaLevel, Long excludeAreaId) {
+    public ResponseDTO<Boolean> validateAreaNameUnique(String areaName, Long parentAreaId, Integer areaLevel,
+            Long excludeAreaId) {
         try {
-            boolean exists = areaDao.existsByNameInLevel(areaName, parentAreaId, areaLevel, excludeAreaId);
+            // 手动实现唯一性验证
+            List<AreaEntity> areas = areaDao.selectByParentId(parentAreaId);
+            boolean exists = areas.stream()
+                    .anyMatch(area -> area.getAreaName().equals(areaName)
+                            && areaLevel.equals(area.getLevel())
+                            && (excludeAreaId == null || !area.getAreaId().equals(excludeAreaId)));
             return ResponseDTO.ok(!exists);
         } catch (Exception e) {
             log.error("验证区域名称唯一性失败, areaName={}, parentAreaId={}, areaLevel={}", areaName, parentAreaId, areaLevel, e);
@@ -385,7 +410,9 @@ public class RegionalHierarchyServiceImpl implements RegionalHierarchyService {
     @Override
     public ResponseDTO<Boolean> validateAreaCodeUnique(String areaCode, Long excludeAreaId) {
         try {
-            boolean exists = areaDao.existsByAreaCode(areaCode, excludeAreaId);
+            // 手动实现唯一性验证
+            AreaEntity existing = areaDao.selectByAreaCode(areaCode);
+            boolean exists = existing != null && (excludeAreaId == null || !existing.getAreaId().equals(excludeAreaId));
             return ResponseDTO.ok(!exists);
         } catch (Exception e) {
             log.error("验证区域编码唯一性失败, areaCode={}", areaCode, e);
@@ -396,11 +423,16 @@ public class RegionalHierarchyServiceImpl implements RegionalHierarchyService {
     @Override
     public ResponseDTO<List<Long>> getAreaPathIds(Long areaId) {
         try {
-            List<AreaEntity> pathAreas = areaDao.selectAreaPath(areaId);
+            // 手动实现路径获取
+            List<AreaEntity> pathAreas = regionalHierarchyManager.getAllParentAreas(areaId);
+            AreaEntity currentArea = areaDao.selectById(areaId);
+            if (currentArea != null) {
+                pathAreas.add(currentArea);
+            }
             List<Long> pathIds = pathAreas.stream()
-                .sorted(Comparator.comparing(AreaEntity::getAreaLevel))
-                .map(AreaEntity::getAreaId)
-                .collect(Collectors.toList());
+                    .sorted(Comparator.comparing(AreaEntity::getLevel))
+                    .map(AreaEntity::getAreaId)
+                    .collect(Collectors.toList());
             return ResponseDTO.ok(pathIds);
         } catch (Exception e) {
             log.error("获取区域路径ID列表失败, areaId={}", areaId, e);
@@ -441,7 +473,14 @@ public class RegionalHierarchyServiceImpl implements RegionalHierarchyService {
                 return ResponseDTO.ok(new ArrayList<>());
             }
 
-            List<AreaEntity> accessibleAreas = areaDao.selectBatchIds(accessibleAreaIds);
+            // 使用selectList和LambdaQueryWrapper替代已弃用的selectBatchIds
+            List<AreaEntity> accessibleAreas = new ArrayList<>();
+            for (Long areaId : accessibleAreaIds) {
+                AreaEntity area = areaDao.selectById(areaId);
+                if (area != null) {
+                    accessibleAreas.add(area);
+                }
+            }
             return ResponseDTO.ok(accessibleAreas);
 
         } catch (Exception e) {

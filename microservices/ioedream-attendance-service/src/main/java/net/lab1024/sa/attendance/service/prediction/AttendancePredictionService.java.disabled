@@ -1,0 +1,73 @@
+package net.lab1024.sa.attendance.service.prediction;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * 考勤预测服务接口
+ *
+ * 提供考勤预测、异常检测等AI功能
+ *
+ * @author IOE-DREAM
+ * @since 2025-12-26
+ */
+public interface AttendancePredictionService {
+
+    /**
+     * 训练预测模型
+     *
+     * @param modelName 模型名称
+     * @param modelType 模型类型（LSTM/RandomForest/XGBoost等）
+     * @param trainingStartDate 训练数据开始日期
+     * @param trainingEndDate 训练数据结束日期
+     * @param hyperparameters 超参数配置
+     * @return 模型ID
+     */
+    Long trainModel(String modelName,
+                    String modelType,
+                    LocalDate trainingStartDate,
+                    LocalDate trainingEndDate,
+                    Map<String, Object> hyperparameters);
+
+    /**
+     * 执行考勤预测
+     *
+     * @param modelId 模型ID
+     * @param employeeId 员工ID
+     * @param startDate 预测开始日期
+     * @param endDate 预测结束日期
+     * @return 预测结果列表
+     */
+    List<Map<String, Object>> predict(Long modelId,
+                                      Long employeeId,
+                                      LocalDate startDate,
+                                      LocalDate endDate);
+
+    /**
+     * 检测考勤异常
+     *
+     * @param modelId 模型ID
+     * @param startDate 检测开始日期
+     * @param endDate 检测结束日期
+     * @return 异常列表
+     */
+    List<Map<String, Object>> detectAnomalies(Long modelId,
+                                              LocalDate startDate,
+                                              LocalDate endDate);
+
+    /**
+     * 查询模型信息
+     *
+     * @param modelId 模型ID
+     * @return 模型信息
+     */
+    Map<String, Object> getModelInfo(Long modelId);
+
+    /**
+     * 查询模型版本列表
+     *
+     * @return 模型版本列表
+     */
+    List<Map<String, Object>> getModelVersions();
+}

@@ -16,7 +16,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
  * - 使用@SpringBootApplication注解
  * - 启用Nacos服务发现(@EnableDiscoveryClient)
  * - 正确配置包扫描路径（common包和attendance包）
- * - 正确配置MapperScan路径（包含common模块和attendance模块的DAO包）
+ * - 正确配置MapperScan路径（细粒度模块架构）
  * </p>
  * <p>
  * 核心功能模块:
@@ -43,14 +43,16 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
         "net.lab1024.sa.common.util",
         // 安全认证
         "net.lab1024.sa.common.security",
-        // 考勤相关公共模块
-        "net.lab1024.sa.common.attendance",
         // 组织机构
         "net.lab1024.sa.common.organization",
-        // RBAC权限
-        "net.lab1024.sa.common.rbac",
-        // 系统配置
-        "net.lab1024.sa.common.system"
+        // 系统偏好
+        // 网关服务客户端
+        "net.lab1024.sa.common.gateway",
+        // 文件存储
+        // 工作流
+        "net.lab1024.sa.common.workflow",
+        "net.lab1024.sa.common.storage",
+        "net.lab1024.sa.common.preference"
     },
     exclude = {
         HibernateJpaAutoConfiguration.class
@@ -58,22 +60,9 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 )
 @EnableDiscoveryClient
 @MapperScan(basePackages = {
-    // Common模块DAO（18个包）
-    "net.lab1024.sa.common.auth.dao",
-    "net.lab1024.sa.common.rbac.dao",
-    "net.lab1024.sa.common.system.employee.dao",
-    "net.lab1024.sa.common.access.dao",
-    "net.lab1024.sa.common.visitor.dao",
-    "net.lab1024.sa.common.audit.dao",
-    "net.lab1024.sa.common.monitor.dao",
-    "net.lab1024.sa.common.config.dao",
-    "net.lab1024.sa.common.menu.dao",
-    "net.lab1024.sa.common.dict.dao",
+    // Common模块DAO（细粒度模块架构）
     "net.lab1024.sa.common.organization.dao",
-    "net.lab1024.sa.common.workflow.dao",
-    "net.lab1024.sa.common.system.dao",
-    "net.lab1024.sa.common.notification.dao",
-    "net.lab1024.sa.common.scheduler.dao",
+    "net.lab1024.sa.common.preference.dao",
     // Attendance模块DAO
     "net.lab1024.sa.attendance.dao"
 })
@@ -91,5 +80,3 @@ public class AttendanceServiceApplication {
         SpringApplication.run(AttendanceServiceApplication.class, args);
     }
 }
-
-

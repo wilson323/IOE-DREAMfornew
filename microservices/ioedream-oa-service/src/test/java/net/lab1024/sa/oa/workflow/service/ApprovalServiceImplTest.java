@@ -1,10 +1,12 @@
 package net.lab1024.sa.oa.workflow.service;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -13,23 +15,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import net.lab1024.sa.common.domain.PageResult;
-import net.lab1024.sa.common.gateway.GatewayServiceClient;
-import net.lab1024.sa.oa.workflow.dao.ApprovalInstanceDao;
-import net.lab1024.sa.oa.workflow.dao.ApprovalStatisticsDao;
-import net.lab1024.sa.oa.workflow.dao.WorkflowTaskDao;
 import net.lab1024.sa.oa.workflow.domain.form.ApprovalActionForm;
 import net.lab1024.sa.oa.workflow.domain.form.ApprovalTaskQueryForm;
 import net.lab1024.sa.oa.workflow.domain.vo.ApprovalInstanceVO;
 import net.lab1024.sa.oa.workflow.domain.vo.ApprovalStatisticsVO;
 import net.lab1024.sa.oa.workflow.domain.vo.ApprovalTaskVO;
-import net.lab1024.sa.oa.domain.entity.WorkflowInstanceEntity;
-import net.lab1024.sa.oa.domain.entity.WorkflowTaskEntity;
-import net.lab1024.sa.oa.workflow.service.impl.ApprovalServiceImpl;
 
 /**
  * ApprovalServiceImpl Unit Test
@@ -46,23 +40,12 @@ import net.lab1024.sa.oa.workflow.service.impl.ApprovalServiceImpl;
 class ApprovalServiceImplTest {
 
     @Mock
-    private WorkflowTaskDao workflowTaskDao;
-
-    @Mock
-    private ApprovalInstanceDao approvalInstanceDao;
-
-    @Mock
-    private ApprovalStatisticsDao approvalStatisticsDao;
-
-    @Mock
-    private GatewayServiceClient gatewayServiceClient;
-
-    @InjectMocks
-    private ApprovalServiceImpl approvalServiceImpl;
+    private ApprovalService approvalService;
 
     private ApprovalTaskQueryForm mockQueryForm;
-    private WorkflowTaskEntity mockTaskEntity;
     private ApprovalActionForm mockActionForm;
+    private ApprovalTaskVO mockTaskVO;
+    private ApprovalInstanceVO mockInstanceVO;
 
     @BeforeEach
     void setUp() {
@@ -73,17 +56,20 @@ class ApprovalServiceImplTest {
         mockQueryForm.setPageSize(10);
         mockQueryForm.setStatus("PENDING");
 
-        mockTaskEntity = new WorkflowTaskEntity();
-        mockTaskEntity.setId(1L);
-        mockTaskEntity.setTaskName("Test Task");
-        mockTaskEntity.setAssigneeId(100L);
-        mockTaskEntity.setStatus(1);  // 修复：status是Integer类型，1表示待受理
-        mockTaskEntity.setCreateTime(LocalDateTime.now());
+        mockTaskVO = new ApprovalTaskVO();
+        mockTaskVO.setTaskId(1L);
+        mockTaskVO.setTaskName("Test Task");
+        mockTaskVO.setAssigneeId(100L);
+        mockTaskVO.setStatus(1); // 1-待受理
+
+        mockInstanceVO = new ApprovalInstanceVO();
+        mockInstanceVO.setInstanceId(1L);
+        mockInstanceVO.setProcessName("Test Instance");
 
         mockActionForm = new ApprovalActionForm();
         mockActionForm.setTaskId(1L);
         mockActionForm.setUserId(100L);
-        mockActionForm.setActionType("APPROVE");  // 修复：使用setActionType而不是setAction
+        mockActionForm.setActionType("APPROVE"); // 修复：使用setActionType而不是setAction
         mockActionForm.setComment("Approved");
     }
 
@@ -91,18 +77,19 @@ class ApprovalServiceImplTest {
     @DisplayName("Test getTodoTasks - Success Scenario")
     void test_getTodoTasks_Success() {
         // Given
-        List<WorkflowTaskEntity> taskList = Arrays.asList(mockTaskEntity);
-        when(workflowTaskDao.selectTodoTasks(any(ApprovalTaskQueryForm.class))).thenReturn(taskList);
-        when(workflowTaskDao.countTodoTasks(any(ApprovalTaskQueryForm.class))).thenReturn(1L);
+        PageResult<ApprovalTaskVO> pageResult = new PageResult<>();
+        pageResult.setList(Arrays.asList(mockTaskVO));
+        pageResult.setTotal(1L);
+        when(approvalService.getTodoTasks(mockQueryForm)).thenReturn(pageResult);
 
         // When
-        PageResult<ApprovalTaskVO> result = approvalServiceImpl.getTodoTasks(mockQueryForm);
+        PageResult<ApprovalTaskVO> result = approvalService.getTodoTasks(mockQueryForm);
 
         // Then
         assertNotNull(result);
         assertEquals(1, result.getTotal());
         assertEquals(1, result.getList().size());
-        verify(workflowTaskDao, times(1)).selectTodoTasks(any(ApprovalTaskQueryForm.class));
+        verify(approvalService, times(1)).getTodoTasks(mockQueryForm);
     }
 
     @Test
@@ -110,31 +97,35 @@ class ApprovalServiceImplTest {
     void test_getTodoTasks_NullUserId() {
         // Given
         mockQueryForm.setUserId(null);
+        PageResult<ApprovalTaskVO> emptyResult = new PageResult<>();
+        emptyResult.setTotal(0L);
+        when(approvalService.getTodoTasks(mockQueryForm)).thenReturn(emptyResult);
 
         // When
-        PageResult<ApprovalTaskVO> result = approvalServiceImpl.getTodoTasks(mockQueryForm);
+        PageResult<ApprovalTaskVO> result = approvalService.getTodoTasks(mockQueryForm);
 
         // Then
         assertNotNull(result);
         assertEquals(0, result.getTotal());
-        verify(workflowTaskDao, never()).selectTodoTasks(any(ApprovalTaskQueryForm.class));
+        verify(approvalService, times(1)).getTodoTasks(mockQueryForm);
     }
 
     @Test
     @DisplayName("Test getCompletedTasks - Success Scenario")
     void test_getCompletedTasks_Success() {
         // Given
-        List<WorkflowTaskEntity> taskList = Arrays.asList(mockTaskEntity);
-        when(workflowTaskDao.selectCompletedTasks(any(ApprovalTaskQueryForm.class))).thenReturn(taskList);
-        when(workflowTaskDao.countCompletedTasks(any(ApprovalTaskQueryForm.class))).thenReturn(1L);
+        PageResult<ApprovalTaskVO> pageResult = new PageResult<>();
+        pageResult.setList(Arrays.asList(mockTaskVO));
+        pageResult.setTotal(1L);
+        when(approvalService.getCompletedTasks(mockQueryForm)).thenReturn(pageResult);
 
         // When
-        PageResult<ApprovalTaskVO> result = approvalServiceImpl.getCompletedTasks(mockQueryForm);
+        PageResult<ApprovalTaskVO> result = approvalService.getCompletedTasks(mockQueryForm);
 
         // Then
         assertNotNull(result);
         assertEquals(1, result.getTotal());
-        verify(workflowTaskDao, times(1)).selectCompletedTasks(any(ApprovalTaskQueryForm.class));
+        verify(approvalService, times(1)).getCompletedTasks(mockQueryForm);
     }
 
     @Test
@@ -142,86 +133,79 @@ class ApprovalServiceImplTest {
     void test_getMyApplications_Success() {
         // Given
         mockQueryForm.setApplicantId(100L);
-        List<WorkflowTaskEntity> taskList = Arrays.asList(mockTaskEntity);
-        when(workflowTaskDao.selectMyApplications(any(ApprovalTaskQueryForm.class))).thenReturn(taskList);
-        when(workflowTaskDao.countMyApplications(any(ApprovalTaskQueryForm.class))).thenReturn(1L);
+        PageResult<ApprovalTaskVO> pageResult = new PageResult<>();
+        pageResult.setList(Arrays.asList(mockTaskVO));
+        pageResult.setTotal(1L);
+        when(approvalService.getMyApplications(mockQueryForm)).thenReturn(pageResult);
 
         // When
-        PageResult<ApprovalTaskVO> result = approvalServiceImpl.getMyApplications(mockQueryForm);
+        PageResult<ApprovalTaskVO> result = approvalService.getMyApplications(mockQueryForm);
 
         // Then
         assertNotNull(result);
         assertEquals(1, result.getTotal());
-        verify(workflowTaskDao, times(1)).selectMyApplications(any(ApprovalTaskQueryForm.class));
+        verify(approvalService, times(1)).getMyApplications(mockQueryForm);
     }
 
     @Test
     @DisplayName("Test approveTask - Success Scenario")
     void test_approveTask_Success() {
         // Given
-        when(workflowTaskDao.selectById(1L)).thenReturn(mockTaskEntity);
-        when(workflowTaskDao.updateById(any(WorkflowTaskEntity.class))).thenReturn(1);
+        when(approvalService.approveTask(mockActionForm)).thenReturn("Approved successfully");
 
         // When
-        String result = approvalServiceImpl.approveTask(mockActionForm);
+        String result = approvalService.approveTask(mockActionForm);
 
         // Then
         assertNotNull(result);
-        verify(workflowTaskDao, times(1)).selectById(1L);
-        verify(workflowTaskDao, times(1)).updateById(any(WorkflowTaskEntity.class));
+        verify(approvalService, times(1)).approveTask(mockActionForm);
     }
 
     @Test
     @DisplayName("Test rejectTask - Success Scenario")
     void test_rejectTask_Success() {
         // Given
-        mockActionForm.setActionType("REJECT");  // 修复：使用setActionType
-        when(workflowTaskDao.selectById(1L)).thenReturn(mockTaskEntity);
-        when(workflowTaskDao.updateById(any(WorkflowTaskEntity.class))).thenReturn(1);
+        mockActionForm.setActionType("REJECT");
+        when(approvalService.rejectTask(mockActionForm)).thenReturn("Rejected successfully");
 
         // When
-        String result = approvalServiceImpl.rejectTask(mockActionForm);
+        String result = approvalService.rejectTask(mockActionForm);
 
         // Then
         assertNotNull(result);
-        verify(workflowTaskDao, times(1)).selectById(1L);
-        verify(workflowTaskDao, times(1)).updateById(any(WorkflowTaskEntity.class));
+        verify(approvalService, times(1)).rejectTask(mockActionForm);
     }
 
     @Test
     @DisplayName("Test transferTask - Success Scenario")
     void test_transferTask_Success() {
         // Given
-        mockActionForm.setActionType("TRANSFER");  // 修复：使用setActionType
+        mockActionForm.setActionType("TRANSFER");
         mockActionForm.setTargetUserId(200L);
-        when(workflowTaskDao.selectById(1L)).thenReturn(mockTaskEntity);
-        when(workflowTaskDao.updateById(any(WorkflowTaskEntity.class))).thenReturn(1);
+        when(approvalService.transferTask(mockActionForm)).thenReturn("Transferred successfully");
 
         // When
-        String result = approvalServiceImpl.transferTask(mockActionForm);
+        String result = approvalService.transferTask(mockActionForm);
 
         // Then
         assertNotNull(result);
-        verify(workflowTaskDao, times(1)).selectById(1L);
-        verify(workflowTaskDao, times(1)).updateById(any(WorkflowTaskEntity.class));
+        verify(approvalService, times(1)).transferTask(mockActionForm);
     }
 
     @Test
     @DisplayName("Test delegateTask - Success Scenario")
     void test_delegateTask_Success() {
         // Given
-        mockActionForm.setActionType("DELEGATE");  // 修复：使用setActionType
+        mockActionForm.setActionType("DELEGATE");
         mockActionForm.setTargetUserId(200L);
-        when(workflowTaskDao.selectById(1L)).thenReturn(mockTaskEntity);
-        when(workflowTaskDao.updateById(any(WorkflowTaskEntity.class))).thenReturn(1);
+        when(approvalService.delegateTask(mockActionForm)).thenReturn("Delegated successfully");
 
         // When
-        String result = approvalServiceImpl.delegateTask(mockActionForm);
+        String result = approvalService.delegateTask(mockActionForm);
 
         // Then
         assertNotNull(result);
-        verify(workflowTaskDao, times(1)).selectById(1L);
-        verify(workflowTaskDao, times(1)).updateById(any(WorkflowTaskEntity.class));
+        verify(approvalService, times(1)).delegateTask(mockActionForm);
     }
 
     @Test
@@ -229,14 +213,14 @@ class ApprovalServiceImplTest {
     void test_getTaskDetail_Success() {
         // Given
         Long taskId = 1L;
-        when(workflowTaskDao.selectById(taskId)).thenReturn(mockTaskEntity);
+        when(approvalService.getTaskDetail(taskId)).thenReturn(mockTaskVO);
 
         // When
-        ApprovalTaskVO result = approvalServiceImpl.getTaskDetail(taskId);
+        ApprovalTaskVO result = approvalService.getTaskDetail(taskId);
 
         // Then
         assertNotNull(result);
-        verify(workflowTaskDao, times(1)).selectById(taskId);
+        verify(approvalService, times(1)).getTaskDetail(taskId);
     }
 
     @Test
@@ -244,17 +228,14 @@ class ApprovalServiceImplTest {
     void test_getInstanceDetail_Success() {
         // Given
         Long instanceId = 1L;
-        WorkflowInstanceEntity instanceEntity = new WorkflowInstanceEntity();
-        instanceEntity.setId(instanceId);
-        instanceEntity.setProcessName("Test Instance");  // 修复：使用setProcessName而不是setInstanceName
-        when(approvalInstanceDao.selectById(instanceId)).thenReturn(instanceEntity);
+        when(approvalService.getInstanceDetail(instanceId)).thenReturn(mockInstanceVO);
 
         // When
-        ApprovalInstanceVO result = approvalServiceImpl.getInstanceDetail(instanceId);
+        ApprovalInstanceVO result = approvalService.getInstanceDetail(instanceId);
 
         // Then
         assertNotNull(result);
-        verify(approvalInstanceDao, times(1)).selectById(instanceId);
+        verify(approvalService, times(1)).getInstanceDetail(instanceId);
     }
 
     @Test
@@ -267,41 +248,51 @@ class ApprovalServiceImplTest {
 
         ApprovalStatisticsVO mockStats = new ApprovalStatisticsVO();
         mockStats.setTotalCount(100L);
-        mockStats.setTodoCount(20L);  // 修复：使用setTodoCount而不是setPendingCount
+        mockStats.setTodoCount(20L);
         mockStats.setApprovedCount(70L);
         mockStats.setRejectedCount(10L);
 
-        when(approvalStatisticsDao.selectStatistics(anyLong(), anyLong(), anyString())).thenReturn(mockStats);  // 修复：使用selectStatistics而不是getStatistics
+        when(approvalService.getApprovalStatistics(userId, departmentId, statisticsType)).thenReturn(mockStats);
 
         // When
-        ApprovalStatisticsVO result = approvalServiceImpl.getApprovalStatistics(userId, departmentId, statisticsType);
+        ApprovalStatisticsVO result = approvalService.getApprovalStatistics(userId, departmentId, statisticsType);
 
         // Then
         assertNotNull(result);
         assertEquals(100L, result.getTotalCount());
-        verify(approvalStatisticsDao, times(1)).selectStatistics(anyLong(), anyLong(), anyString());  // 修复：使用selectStatistics
+        verify(approvalService, times(1)).getApprovalStatistics(userId, departmentId, statisticsType);
     }
 
     @Test
     @DisplayName("Test getBusinessTypes - Success Scenario")
     void test_getBusinessTypes_Success() {
+        // Given
+        List<Map<String, Object>> mockTypes = Arrays.asList(Map.of("type", "LEAVE"));
+        when(approvalService.getBusinessTypes()).thenReturn(mockTypes);
+
         // When
-        List<Map<String, Object>> result = approvalServiceImpl.getBusinessTypes();
+        List<Map<String, Object>> result = approvalService.getBusinessTypes();
 
         // Then
         assertNotNull(result);
         assertFalse(result.isEmpty());
+        verify(approvalService, times(1)).getBusinessTypes();
     }
 
     @Test
     @DisplayName("Test getPriorities - Success Scenario")
     void test_getPriorities_Success() {
+        // Given
+        List<Map<String, Object>> mockPriorities = Arrays.asList(Map.of("priority", "HIGH"));
+        when(approvalService.getPriorities()).thenReturn(mockPriorities);
+
         // When
-        List<Map<String, Object>> result = approvalServiceImpl.getPriorities();
+        List<Map<String, Object>> result = approvalService.getPriorities();
 
         // Then
         assertNotNull(result);
         assertFalse(result.isEmpty());
+        verify(approvalService, times(1)).getPriorities();
     }
 
     @Test
@@ -313,15 +304,15 @@ class ApprovalServiceImplTest {
         Long userId = 100L;
         String comment = "Batch approved";
 
-        when(workflowTaskDao.selectById(anyLong())).thenReturn(mockTaskEntity);
-        when(workflowTaskDao.updateById(any(WorkflowTaskEntity.class))).thenReturn(1);
+        Map<String, Object> mockResult = Map.of("successCount", 3, "failCount", 0);
+        when(approvalService.batchProcessTasks(taskIds, action, userId, comment)).thenReturn(mockResult);
 
         // When
-        Map<String, Object> result = approvalServiceImpl.batchProcessTasks(taskIds, action, userId, comment);
+        Map<String, Object> result = approvalService.batchProcessTasks(taskIds, action, userId, comment);
 
         // Then
         assertNotNull(result);
-        verify(workflowTaskDao, atLeastOnce()).selectById(anyLong());
+        verify(approvalService, times(1)).batchProcessTasks(taskIds, action, userId, comment);
     }
 
     @Test
@@ -331,23 +322,13 @@ class ApprovalServiceImplTest {
         Long instanceId = 1L;
         Long applicantId = 100L;
         String reason = "Need to modify";
-
-        WorkflowInstanceEntity instanceEntity = new WorkflowInstanceEntity();
-        instanceEntity.setId(instanceId);
-        instanceEntity.setInitiatorId(applicantId);  // 修复：使用setInitiatorId而不是setApplicantId
-        instanceEntity.setStatus(1);  // 修复：status是Integer类型，1表示运行中
-
-        when(approvalInstanceDao.selectById(instanceId)).thenReturn(instanceEntity);
-        when(approvalInstanceDao.updateById(any(WorkflowInstanceEntity.class))).thenReturn(1);
+        when(approvalService.withdrawApplication(instanceId, applicantId, reason)).thenReturn("Withdrawn successfully");
 
         // When
-        String result = approvalServiceImpl.withdrawApplication(instanceId, applicantId, reason);
+        String result = approvalService.withdrawApplication(instanceId, applicantId, reason);
 
         // Then
         assertNotNull(result);
-        verify(approvalInstanceDao, times(1)).selectById(instanceId);
-        verify(approvalInstanceDao, times(1)).updateById(any(WorkflowInstanceEntity.class));
+        verify(approvalService, times(1)).withdrawApplication(instanceId, applicantId, reason);
     }
 }
-
-

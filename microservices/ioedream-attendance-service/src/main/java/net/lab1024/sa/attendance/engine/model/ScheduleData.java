@@ -111,6 +111,21 @@ public class ScheduleData {
     private Map<String, Object> extendedAttributes;
 
     /**
+     * 班次技能要求映射
+     */
+    private Map<Long, List<String>> shiftRequirements;
+
+    /**
+     * 员工技能映射
+     */
+    private Map<Long, List<String>> employeeSkills;
+
+    /**
+     * 班次容量限制映射
+     */
+    private Map<Long, Integer> shiftCapacities;
+
+    /**
      * 员工数据内部类
      */
     @Data
@@ -155,8 +170,8 @@ public class ScheduleData {
         private String shiftName;
         private String shiftCode;
         private String shiftType; // NORMAL, PEAK, NIGHT, OVERTIME
-        private LocalTime startTime;
-        private LocalTime endTime;
+        private LocalTime workStartTime;
+        private LocalTime workEndTime;
         private Integer duration; // 持续时间（分钟）
         private Integer requiredEmployeeCount; // 需要员工数量
         private Integer minEmployeeCount; // 最少员工数量
@@ -281,8 +296,8 @@ public class ScheduleData {
         private Long employeeId;
         private Long shiftId;
         private LocalDate scheduleDate;
-        private LocalTime startTime;
-        private LocalTime endTime;
+        private LocalTime workStartTime;
+        private LocalTime workEndTime;
         private String workLocation;
         private Integer actualDuration; // 实际工作时长
         private String status; // SCHEDULED, COMPLETED, ABSENT

@@ -1,16 +1,70 @@
 package net.lab1024.sa.attendance.engine.prediction.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.attendance.engine.model.ScheduleData;
-import net.lab1024.sa.attendance.engine.model.ScheduleRecord;
-import net.lab1024.sa.attendance.engine.prediction.*;
-import net.lab1024.sa.attendance.engine.prediction.model.*;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+
+import net.lab1024.sa.attendance.engine.model.ScheduleData;
+import net.lab1024.sa.attendance.engine.model.ScheduleRecord;
+import net.lab1024.sa.attendance.engine.prediction.SchedulePredictor;
+import net.lab1024.sa.attendance.engine.prediction.model.AbsenteeismFactor;
+import net.lab1024.sa.attendance.engine.prediction.model.AbsenteeismPatternAnalysis;
+import net.lab1024.sa.attendance.engine.prediction.model.AbsenteeismPredictionResult;
+import net.lab1024.sa.attendance.engine.prediction.model.BatchPredictionResult;
+import net.lab1024.sa.attendance.engine.prediction.model.BusinessFactor;
+import net.lab1024.sa.attendance.engine.prediction.model.ConfidenceInterval;
+import net.lab1024.sa.attendance.engine.prediction.model.ConflictPatternAnalysis;
+import net.lab1024.sa.attendance.engine.prediction.model.ConflictPredictionResult;
+import net.lab1024.sa.attendance.engine.prediction.model.ConflictPreventionSuggestion;
+import net.lab1024.sa.attendance.engine.prediction.model.ConflictSeverity;
+import net.lab1024.sa.attendance.engine.prediction.model.CostFactor;
+import net.lab1024.sa.attendance.engine.prediction.model.CostOptimizationSuggestion;
+import net.lab1024.sa.attendance.engine.prediction.model.CostPredictionResult;
+import net.lab1024.sa.attendance.engine.prediction.model.CurrentData;
+import net.lab1024.sa.attendance.engine.prediction.model.DataChangeAnalysis;
+import net.lab1024.sa.attendance.engine.prediction.model.DataPoint;
+import net.lab1024.sa.attendance.engine.prediction.model.EmployeeData;
+import net.lab1024.sa.attendance.engine.prediction.model.EmployeePreference;
+import net.lab1024.sa.attendance.engine.prediction.model.HighRiskPeriod;
+import net.lab1024.sa.attendance.engine.prediction.model.HistoricalData;
+import net.lab1024.sa.attendance.engine.prediction.model.HistoricalTrendAnalysis;
+import net.lab1024.sa.attendance.engine.prediction.model.ModelPerformanceMetrics;
+import net.lab1024.sa.attendance.engine.prediction.model.PeakPeriod;
+import net.lab1024.sa.attendance.engine.prediction.model.PredictionContext;
+import net.lab1024.sa.attendance.engine.prediction.model.PredictionData;
+import net.lab1024.sa.attendance.engine.prediction.model.PredictionImpact;
+import net.lab1024.sa.attendance.engine.prediction.model.PredictionModel;
+import net.lab1024.sa.attendance.engine.prediction.model.PredictionRequest;
+import net.lab1024.sa.attendance.engine.prediction.model.PredictionScope;
+import net.lab1024.sa.attendance.engine.prediction.model.PredictionStatistics;
+import net.lab1024.sa.attendance.engine.prediction.model.PredictionSuggestion;
+import net.lab1024.sa.attendance.engine.prediction.model.PredictionValidationResult;
+import net.lab1024.sa.attendance.engine.prediction.model.RealTimePredictionResult;
+import net.lab1024.sa.attendance.engine.prediction.model.ResourceRequirement;
+import net.lab1024.sa.attendance.engine.prediction.model.SatisfactionFactor;
+import net.lab1024.sa.attendance.engine.prediction.model.SatisfactionImprovementSuggestion;
+import net.lab1024.sa.attendance.engine.prediction.model.SatisfactionPredictionResult;
+import net.lab1024.sa.attendance.engine.prediction.model.SatisfactionRisk;
+import net.lab1024.sa.attendance.engine.prediction.model.SchedulePredictionResult;
+import net.lab1024.sa.attendance.engine.prediction.model.SeasonalAdjustment;
+import net.lab1024.sa.attendance.engine.prediction.model.SeasonalAdjustmentStrategy;
+import net.lab1024.sa.attendance.engine.prediction.model.SeasonalPeak;
+import net.lab1024.sa.attendance.engine.prediction.model.SeasonalPredictionResult;
+import net.lab1024.sa.attendance.engine.prediction.model.SeasonalityParameters;
+import net.lab1024.sa.attendance.engine.prediction.model.SeasonalityPatternAnalysis;
+import net.lab1024.sa.attendance.engine.prediction.model.SkillBasedStaffing;
+import net.lab1024.sa.attendance.engine.prediction.model.SkillRequirement;
+import net.lab1024.sa.attendance.engine.prediction.model.StaffingPredictionResult;
+import net.lab1024.sa.attendance.engine.prediction.model.TimeRange;
+import net.lab1024.sa.attendance.engine.prediction.model.WorkloadPatternAnalysis;
+import net.lab1024.sa.attendance.engine.prediction.model.WorkloadPredictionResult;
 
 /**
  * 排班预测器实现类
@@ -27,15 +81,16 @@ import java.util.stream.Collectors;
 public class SchedulePredictorImpl implements SchedulePredictor {
 
     // 预测模型缓存
-    private final Map<String, PredictionModel> modelCache = new ConcurrentHashMap<>();
+    private final Map<String, PredictionModel> modelCache = new HashMap<>();
 
     // 预测统计
-    private final Map<String, PredictionStatistics> predictionStatistics = new ConcurrentHashMap<>();
+    private final Map<String, PredictionStatistics> predictionStatistics = new HashMap<>();
 
     @Override
-    public SchedulePredictionResult predictScheduleDemand(PredictionData predictionData, PredictionScope predictionScope) {
+    public SchedulePredictionResult predictScheduleDemand(PredictionData predictionData,
+            PredictionScope predictionScope) {
         log.info("[排班预测] 开始预测排班需求，范围: {} - {}",
-                predictionScope.getStartTime(), predictionScope.getEndTime());
+                predictionScope.getWorkStartTime(), predictionScope.getWorkEndTime());
 
         LocalDateTime startTime = LocalDateTime.now();
         SchedulePredictionResult result = SchedulePredictionResult.builder()
@@ -94,8 +149,9 @@ public class SchedulePredictorImpl implements SchedulePredictor {
     }
 
     @Override
-    public StaffingPredictionResult predictStaffingDemand(TimeRange timeRange, List<SkillRequirement> skillRequirements, HistoricalData historicalData) {
-        log.debug("[排班预测] 预测人员需求，时间范围: {} - {}", timeRange.getStartTime(), timeRange.getEndTime());
+    public StaffingPredictionResult predictStaffingDemand(TimeRange timeRange, List<SkillRequirement> skillRequirements,
+            HistoricalData historicalData) {
+        log.debug("[排班预测] 预测人员需求，时间范围: {} - {}", timeRange.getWorkStartTime(), timeRange.getWorkEndTime());
 
         StaffingPredictionResult result = StaffingPredictionResult.builder()
                 .predictionId(UUID.randomUUID().toString())
@@ -140,8 +196,9 @@ public class SchedulePredictorImpl implements SchedulePredictor {
     }
 
     @Override
-    public AbsenteeismPredictionResult predictAbsenteeismRate(TimeRange timeRange, EmployeeData employeeData, HistoricalData historicalData) {
-        log.debug("[排班预测] 预测缺勤率，时间范围: {} - {}", timeRange.getStartTime(), timeRange.getEndTime());
+    public AbsenteeismPredictionResult predictAbsenteeismRate(TimeRange timeRange, EmployeeData employeeData,
+            HistoricalData historicalData) {
+        log.debug("[排班预测] 预测缺勤率，时间范围: {} - {}", timeRange.getWorkStartTime(), timeRange.getWorkEndTime());
 
         AbsenteeismPredictionResult result = AbsenteeismPredictionResult.builder()
                 .predictionId(UUID.randomUUID().toString())
@@ -186,8 +243,9 @@ public class SchedulePredictorImpl implements SchedulePredictor {
     }
 
     @Override
-    public WorkloadPredictionResult predictWorkload(TimeRange timeRange, List<BusinessFactor> businessFactors, HistoricalData historicalData) {
-        log.debug("[排班预测] 预测工作量，时间范围: {} - {}", timeRange.getStartTime(), timeRange.getEndTime());
+    public WorkloadPredictionResult predictWorkload(TimeRange timeRange, List<BusinessFactor> businessFactors,
+            HistoricalData historicalData) {
+        log.debug("[排班预测] 预测工作量，时间范围: {} - {}", timeRange.getWorkStartTime(), timeRange.getWorkEndTime());
 
         WorkloadPredictionResult result = WorkloadPredictionResult.builder()
                 .predictionId(UUID.randomUUID().toString())
@@ -229,7 +287,8 @@ public class SchedulePredictorImpl implements SchedulePredictor {
     }
 
     @Override
-    public CostPredictionResult predictCost(List<ScheduleRecord> scheduleRecords, List<CostFactor> costFactors, TimeRange timeRange) {
+    public CostPredictionResult predictCost(List<ScheduleRecord> scheduleRecords, List<CostFactor> costFactors,
+            TimeRange timeRange) {
         log.debug("[排班预测] 预测成本，排班记录数: {}", scheduleRecords.size());
 
         CostPredictionResult result = CostPredictionResult.builder()
@@ -275,7 +334,8 @@ public class SchedulePredictorImpl implements SchedulePredictor {
     }
 
     @Override
-    public SatisfactionPredictionResult predictSatisfaction(List<ScheduleRecord> scheduleRecords, Map<Long, EmployeePreference> employeePreferences) {
+    public SatisfactionPredictionResult predictSatisfaction(List<ScheduleRecord> scheduleRecords,
+            Map<Long, EmployeePreference> employeePreferences) {
         log.debug("[排班预测] 预测员工满意度，排班记录数: {}", scheduleRecords.size());
 
         SatisfactionPredictionResult result = SatisfactionPredictionResult.builder()
@@ -361,7 +421,8 @@ public class SchedulePredictorImpl implements SchedulePredictor {
     }
 
     @Override
-    public SeasonalPredictionResult predictSeasonalDemand(HistoricalData historicalData, SeasonalityParameters seasonality) {
+    public SeasonalPredictionResult predictSeasonalDemand(HistoricalData historicalData,
+            SeasonalityParameters seasonality) {
         log.debug("[排班预测] 预测季节性需求");
 
         SeasonalPredictionResult result = SeasonalPredictionResult.builder()
@@ -398,7 +459,8 @@ public class SchedulePredictorImpl implements SchedulePredictor {
     }
 
     @Override
-    public RealTimePredictionResult updateRealTimePrediction(CurrentData currentData, PredictionContext predictionContext) {
+    public RealTimePredictionResult updateRealTimePrediction(CurrentData currentData,
+            PredictionContext predictionContext) {
         log.debug("[排班预测] 实时更新预测");
 
         RealTimePredictionResult result = RealTimePredictionResult.builder()
@@ -435,7 +497,8 @@ public class SchedulePredictorImpl implements SchedulePredictor {
     }
 
     @Override
-    public PredictionValidationResult validatePrediction(List<Double> predictedValues, List<Double> actualValues, String predictionType) {
+    public PredictionValidationResult validatePrediction(List<Double> predictedValues, List<Double> actualValues,
+            String predictionType) {
         log.debug("[排班预测] 验证预测准确性，类型: {}, 数据量: {}", predictionType, predictedValues.size());
 
         PredictionValidationResult result = PredictionValidationResult.builder()
@@ -563,7 +626,8 @@ public class SchedulePredictorImpl implements SchedulePredictor {
 
         for (PredictionRequest request : predictionRequests) {
             try {
-                SchedulePredictionResult result = predictScheduleDemand(request.getPredictionData(), request.getPredictionScope());
+                SchedulePredictionResult result = predictScheduleDemand(request.getPredictionData(),
+                        request.getPredictionScope());
                 batchResult.getResults().add(result);
 
                 if (result.isPredictionSuccessful()) {
@@ -587,8 +651,8 @@ public class SchedulePredictorImpl implements SchedulePredictor {
 
         batchResult.setSuccessfulPredictions(successfulPredictions);
         batchResult.setFailedPredictions(failedPredictions);
-        batchResult.setSuccessRate(predictionRequests.size() > 0 ?
-                (double) successfulPredictions / predictionRequests.size() * 100 : 0.0);
+        batchResult.setSuccessRate(
+                predictionRequests.size() > 0 ? (double) successfulPredictions / predictionRequests.size() * 100 : 0.0);
 
         log.info("[排班预测] 批量预测完成，成功: {}/{}，成功率: {:.1f}%",
                 successfulPredictions, predictionRequests.size(), batchResult.getSuccessRate());
@@ -614,19 +678,19 @@ public class SchedulePredictorImpl implements SchedulePredictor {
      * 获取或创建预测模型
      */
     private PredictionModel getOrCreateModel(String modelType) {
-        return modelCache.computeIfAbsent(modelType, k ->
-                PredictionModel.builder()
-                        .modelType(k)
-                        .version("1.0")
-                        .createdTime(LocalDateTime.now())
-                        .parameters(new HashMap<>())
-                        .build());
+        return modelCache.computeIfAbsent(modelType, k -> PredictionModel.builder()
+                .modelType(k)
+                .version("1.0")
+                .createdTime(LocalDateTime.now())
+                .parameters(new HashMap<>())
+                .build());
     }
 
     /**
      * 应用预测模型
      */
-    private Map<String, Double> applyPredictionModel(PredictionData data, PredictionScope scope, PredictionModel model) {
+    private Map<String, Double> applyPredictionModel(PredictionData data, PredictionScope scope,
+            PredictionModel model) {
         Map<String, Double> predictions = new HashMap<>();
 
         // 简化实现：基于历史数据的简单预测
@@ -699,8 +763,8 @@ public class SchedulePredictorImpl implements SchedulePredictor {
      * 更新预测统计信息
      */
     private void updatePredictionStatistics(String predictionType, SchedulePredictionResult result) {
-        PredictionStatistics statistics = predictionStatistics.computeIfAbsent(predictionType, k ->
-                PredictionStatistics.builder()
+        PredictionStatistics statistics = predictionStatistics.computeIfAbsent(predictionType,
+                k -> PredictionStatistics.builder()
                         .predictionType(k)
                         .totalPredictions(0)
                         .averageAccuracy(0.0)
@@ -725,7 +789,8 @@ public class SchedulePredictorImpl implements SchedulePredictor {
     }
 
     private Map<String, SkillBasedStaffing> adjustForSkillRequirements(
-            Map<String, Integer> baseStaffing, List<SkillRequirement> skillRequirements, HistoricalData historicalData) {
+            Map<String, Integer> baseStaffing, List<SkillRequirement> skillRequirements,
+            HistoricalData historicalData) {
         return new HashMap<>();
     }
 
@@ -753,7 +818,8 @@ public class SchedulePredictorImpl implements SchedulePredictor {
         return 3.5;
     }
 
-    private List<AbsenteeismFactor> identifyAbsenteeismFactors(TimeRange timeRange, EmployeeData employeeData, HistoricalData historicalData) {
+    private List<AbsenteeismFactor> identifyAbsenteeismFactors(TimeRange timeRange, EmployeeData employeeData,
+            HistoricalData historicalData) {
         return new ArrayList<>();
     }
 
@@ -761,7 +827,8 @@ public class SchedulePredictorImpl implements SchedulePredictor {
         return baseRate;
     }
 
-    private Map<String, Double> predictDepartmentAbsenteeismRates(TimeRange timeRange, EmployeeData employeeData, HistoricalData historicalData) {
+    private Map<String, Double> predictDepartmentAbsenteeismRates(TimeRange timeRange, EmployeeData employeeData,
+            HistoricalData historicalData) {
         Map<String, Double> rates = new HashMap<>();
         rates.put("IT", 2.8);
         rates.put("HR", 3.2);
@@ -796,7 +863,8 @@ public class SchedulePredictorImpl implements SchedulePredictor {
         return new ArrayList<>();
     }
 
-    private Map<String, ResourceRequirement> calculateResourceRequirements(Map<String, Double> adjustedWorkload, List<PeakPeriod> peakPeriods) {
+    private Map<String, ResourceRequirement> calculateResourceRequirements(Map<String, Double> adjustedWorkload,
+            List<PeakPeriod> peakPeriods) {
         return new HashMap<>();
     }
 
@@ -816,30 +884,37 @@ public class SchedulePredictorImpl implements SchedulePredictor {
         return scheduleRecords.size() * 20.0;
     }
 
-    private List<CostOptimizationSuggestion> generateCostOptimizationSuggestions(List<ScheduleRecord> scheduleRecords, List<CostFactor> costFactors, CostPredictionResult result) {
+    private List<CostOptimizationSuggestion> generateCostOptimizationSuggestions(List<ScheduleRecord> scheduleRecords,
+            List<CostFactor> costFactors, CostPredictionResult result) {
         return new ArrayList<>();
     }
 
-    private double calculateBaseSatisfaction(List<ScheduleRecord> scheduleRecords, Map<Long, EmployeePreference> employeePreferences) {
+    private double calculateBaseSatisfaction(List<ScheduleRecord> scheduleRecords,
+            Map<Long, EmployeePreference> employeePreferences) {
         return 75.0;
     }
 
-    private List<SatisfactionFactor> analyzeSatisfactionFactors(List<ScheduleRecord> scheduleRecords, Map<Long, EmployeePreference> employeePreferences) {
+    private List<SatisfactionFactor> analyzeSatisfactionFactors(List<ScheduleRecord> scheduleRecords,
+            Map<Long, EmployeePreference> employeePreferences) {
         return new ArrayList<>();
     }
 
-    private Map<String, Double> predictDepartmentSatisfaction(List<ScheduleRecord> scheduleRecords, Map<Long, EmployeePreference> employeePreferences) {
+    private Map<String, Double> predictDepartmentSatisfaction(List<ScheduleRecord> scheduleRecords,
+            Map<Long, EmployeePreference> employeePreferences) {
         Map<String, Double> satisfaction = new HashMap<>();
         satisfaction.put("IT", 78.0);
         satisfaction.put("HR", 82.0);
         return satisfaction;
     }
 
-    private List<SatisfactionRisk> identifySatisfactionRisks(List<ScheduleRecord> scheduleRecords, Map<Long, EmployeePreference> employeePreferences) {
+    private List<SatisfactionRisk> identifySatisfactionRisks(List<ScheduleRecord> scheduleRecords,
+            Map<Long, EmployeePreference> employeePreferences) {
         return new ArrayList<>();
     }
 
-    private List<SatisfactionImprovementSuggestion> generateSatisfactionImprovementSuggestions(List<ScheduleRecord> scheduleRecords, Map<Long, EmployeePreference> employeePreferences, List<SatisfactionRisk> risks) {
+    private List<SatisfactionImprovementSuggestion> generateSatisfactionImprovementSuggestions(
+            List<ScheduleRecord> scheduleRecords, Map<Long, EmployeePreference> employeePreferences,
+            List<SatisfactionRisk> risks) {
         return new ArrayList<>();
     }
 
@@ -847,25 +922,29 @@ public class SchedulePredictorImpl implements SchedulePredictor {
         return ConflictPatternAnalysis.builder().build();
     }
 
-    private Map<String, Double> predictConflictProbabilities(List<ScheduleRecord> proposedSchedule, ScheduleData scheduleData) {
+    private Map<String, Double> predictConflictProbabilities(List<ScheduleRecord> proposedSchedule,
+            ScheduleData scheduleData) {
         Map<String, Double> probabilities = new HashMap<>();
         probabilities.put("time_conflict", 0.15);
         probabilities.put("skill_conflict", 0.08);
         return probabilities;
     }
 
-    private List<HighRiskPeriod> identifyHighRiskPeriods(List<ScheduleRecord> proposedSchedule, Map<String, Double> conflictProbabilities) {
+    private List<HighRiskPeriod> identifyHighRiskPeriods(List<ScheduleRecord> proposedSchedule,
+            Map<String, Double> conflictProbabilities) {
         return new ArrayList<>();
     }
 
-    private Map<String, ConflictSeverity> predictConflictSeverities(List<ScheduleRecord> proposedSchedule, Map<String, Double> conflictProbabilities) {
+    private Map<String, ConflictSeverity> predictConflictSeverities(List<ScheduleRecord> proposedSchedule,
+            Map<String, Double> conflictProbabilities) {
         Map<String, ConflictSeverity> severities = new HashMap<>();
         severities.put("time_conflict", ConflictSeverity.MEDIUM);
         severities.put("skill_conflict", ConflictSeverity.LOW);
         return severities;
     }
 
-    private List<ConflictPreventionSuggestion> generateConflictPreventionSuggestions(List<ScheduleRecord> proposedSchedule, Map<String, Double> conflictProbabilities) {
+    private List<ConflictPreventionSuggestion> generateConflictPreventionSuggestions(
+            List<ScheduleRecord> proposedSchedule, Map<String, Double> conflictProbabilities) {
         return new ArrayList<>();
     }
 
@@ -873,7 +952,8 @@ public class SchedulePredictorImpl implements SchedulePredictor {
         return SeasonalityPatternAnalysis.builder().build();
     }
 
-    private Map<String, Double> predictSeasonalDemands(HistoricalData historicalData, SeasonalityParameters seasonality) {
+    private Map<String, Double> predictSeasonalDemands(HistoricalData historicalData,
+            SeasonalityParameters seasonality) {
         Map<String, Double> demands = new HashMap<>();
         demands.put("spring", 1.1);
         demands.put("summer", 0.9);
@@ -886,7 +966,8 @@ public class SchedulePredictorImpl implements SchedulePredictor {
         return new ArrayList<>();
     }
 
-    private List<SeasonalAdjustmentStrategy> generateSeasonalAdjustmentStrategies(Map<String, Double> seasonalDemands, List<SeasonalPeak> seasonalPeaks) {
+    private List<SeasonalAdjustmentStrategy> generateSeasonalAdjustmentStrategies(Map<String, Double> seasonalDemands,
+            List<SeasonalPeak> seasonalPeaks) {
         return new ArrayList<>();
     }
 
@@ -898,11 +979,13 @@ public class SchedulePredictorImpl implements SchedulePredictor {
         return DataChangeAnalysis.builder().build();
     }
 
-    private Map<String, Double> updatePredictionModels(Map<String, Double> currentPredictions, DataChangeAnalysis changeAnalysis) {
+    private Map<String, Double> updatePredictionModels(Map<String, Double> currentPredictions,
+            DataChangeAnalysis changeAnalysis) {
         return currentPredictions;
     }
 
-    private List<PredictionImpact> calculatePredictionImpacts(Map<String, Double> currentPredictions, Map<String, Double> updatedPredictions) {
+    private List<PredictionImpact> calculatePredictionImpacts(Map<String, Double> currentPredictions,
+            Map<String, Double> updatedPredictions) {
         return new ArrayList<>();
     }
 

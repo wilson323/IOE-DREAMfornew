@@ -1,8 +1,9 @@
 package net.lab1024.sa.oa.workflow.config;
 
+import lombok.extern.slf4j.Slf4j;
+
+
 import jakarta.annotation.PostConstruct;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Flowable初始化后处理器
@@ -11,9 +12,8 @@ import org.slf4j.LoggerFactory;
  * @version 1.0.0
  * @since 2025-01-17
  */
+@Slf4j
 public class FlowableInitializationProcessor {
-
-    private static final Logger log = LoggerFactory.getLogger(FlowableInitializationProcessor.class);
 
     @PostConstruct
     public void init() {

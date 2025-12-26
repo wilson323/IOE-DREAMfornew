@@ -19,7 +19,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.common.openapi.domain.response.PageResult;
+import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.video.dao.AIEventDao;
 import net.lab1024.sa.video.domain.entity.AIEventEntity;
 import net.lab1024.sa.video.domain.form.AIEventAddForm;
@@ -583,3 +583,4 @@ public class AIEventServiceImpl implements AIEventService {
         return vo;
     }
 }
+

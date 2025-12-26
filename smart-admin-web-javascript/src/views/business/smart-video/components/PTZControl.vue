@@ -113,8 +113,19 @@
 
         <!-- 预置位控制 -->
         <div class="preset-control">
-          <a-card title="预置位" size="small">
-            <div class="preset-list">
+          <a-card title="预置位管理" size="small">
+            <template #extra>
+              <a-button
+                size="small"
+                type="primary"
+                @click="openAddPresetModal"
+              >
+                <template #icon><PlusCircleOutlined /></template>
+                添加预置位
+              </a-button>
+            </template>
+
+            <div class="preset-list" v-loading="loading">
               <a-list
                 :data-source="presetList"
                 size="small"
@@ -124,29 +135,47 @@
                   <a-list-item>
                     <a-list-item-meta
                       :title="item.name"
-                      :description="item.position"
+                      :description="item.description || item.position"
                     />
                     <template #actions>
-                      <a-button size="small" type="link" @click="gotoPreset(item)">
+                      <a-button
+                        size="small"
+                        type="link"
+                        @click="gotoPreset(item)"
+                      >
                         调用
+                      </a-button>
+                      <a-button
+                        size="small"
+                        type="link"
+                        @click="openEditPresetModal(item)"
+                      >
+                        <template #icon><EditOutlined /></template>
+                        编辑
+                      </a-button>
+                      <a-button
+                        size="small"
+                        type="link"
+                        danger
+                        @click="deletePresetItem(item)"
+                      >
+                        <template #icon><DeleteOutlined /></template>
+                        删除
                       </a-button>
                     </template>
                   </a-list-item>
                 </template>
+                <template #footer>
+                  <div class="preset-footer">
+                    <a-space>
+                      <a-button type="primary" @click="savePreset" size="small">
+                        <template #icon><SaveOutlined /></template>
+                        保存当前为预置位
+                      </a-button>
+                    </a-space>
+                  </div>
+                </template>
               </a-list>
-            </div>
-
-            <div class="preset-actions">
-              <a-space>
-                <a-button type="primary" @click="savePreset">
-                  <template #icon><SaveOutlined /></template>
-                  保存预置位
-                </a-button>
-                <a-button @click="clearPreset">
-                  <template #icon><DeleteOutlined /></template>
-                  清除预置位
-                </a-button>
-              </a-space>
             </div>
           </a-card>
         </div>
@@ -165,12 +194,64 @@
         </a-card>
       </div>
     </div>
+
+    <!-- 添加预置位弹窗 -->
+    <a-modal
+      v-model:open="showAddPresetModal"
+      title="添加预置位"
+      @ok="confirmAddPreset"
+      @cancel="showAddPresetModal = false"
+    >
+      <a-form layout="vertical">
+        <a-form-item label="预置位名称" required>
+          <a-input
+            v-model:value="newPresetForm.name"
+            placeholder="请输入预置位名称"
+            :maxlength="50"
+          />
+        </a-form-item>
+        <a-form-item label="描述">
+          <a-textarea
+            v-model:value="newPresetForm.description"
+            placeholder="请输入预置位描述"
+            :rows="3"
+            :maxlength="200"
+          />
+        </a-form-item>
+      </a-form>
+    </a-modal>
+
+    <!-- 编辑预置位弹窗 -->
+    <a-modal
+      v-model:open="showEditPresetModal"
+      title="编辑预置位"
+      @ok="confirmEditPreset"
+      @cancel="showEditPresetModal = false"
+    >
+      <a-form layout="vertical" v-if="editingPreset">
+        <a-form-item label="预置位名称" required>
+          <a-input
+            v-model:value="editingPreset.name"
+            placeholder="请输入预置位名称"
+            :maxlength="50"
+          />
+        </a-form-item>
+        <a-form-item label="描述">
+          <a-textarea
+            v-model:value="editingPreset.description"
+            placeholder="请输入预置位描述"
+            :rows="3"
+            :maxlength="200"
+          />
+        </a-form-item>
+      </a-form>
+    </a-modal>
   </a-modal>
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue';
-import { message } from 'ant-design-vue';
+import { ref, reactive, watch, onMounted } from 'vue';
+import { message, Modal } from 'ant-design-vue';
 import {
   CaretUpOutlined,
   CaretDownOutlined,
@@ -180,7 +261,10 @@ import {
   MinusOutlined,
   SaveOutlined,
   DeleteOutlined,
+  EditOutlined,
+  PlusCircleOutlined,
 } from '@ant-design/icons-vue';
+import { videoPcApi } from '/@/api/business/video/video-pc-api';
 
 const props = defineProps({
   visible: {
@@ -198,14 +282,81 @@ const emit = defineEmits(['close', 'control']);
 // 状态
 const controlSpeed = ref(5);
 const controlTimer = ref(null);
+const loading = ref(false);
 
-// 预置位列表
-const presetList = reactive([
-  { id: 1, name: '预置位1', position: '前端视角' },
-  { id: 2, name: '预置位2', position: '后端视角' },
-  { id: 3, name: '预置位3', position: '左侧视角' },
-  { id: 4, name: '预置位4', position: '右侧视角' },
-]);
+// 预置位列表（从后端加载）
+const presetList = ref([]);
+const selectedPresetId = ref(null);
+
+// 新建预置位
+const showAddPresetModal = ref(false);
+const newPresetForm = reactive({
+  name: '',
+  description: ''
+});
+
+// 编辑预置位
+const showEditPresetModal = ref(false);
+const editingPreset = ref(null);
+
+// 监听设备变化，加载预置位列表
+watch(() => props.visible, async (newVal) => {
+  if (newVal && props.device) {
+    await loadPresetList();
+  }
+});
+
+// 监听设备变化
+watch(() => props.device, async (newDevice) => {
+  if (newDevice && props.visible) {
+    await loadPresetList();
+  }
+});
+
+// 加载预置位列表
+const loadPresetList = async () => {
+  if (!props.device) return;
+
+  try {
+    loading.value = true;
+    const res = await videoPcApi.getPresetList(
+      props.device.deviceId,
+      props.device.channelId || '1'
+    );
+
+    if (res.code === 200 || res.success) {
+      presetList.value = res.data || [];
+      if (presetList.value.length === 0) {
+        // 如果后端没有数据，使用默认示例数据
+        presetList.value = [
+          { id: 1, name: '预置位1', description: '前端视角' },
+          { id: 2, name: '预置位2', description: '后端视角' },
+          { id: 3, name: '预置位3', description: '左侧视角' },
+          { id: 4, name: '预置位4', description: '右侧视角' },
+        ];
+      }
+    } else {
+      message.warning('获取预置位列表失败，使用默认数据');
+      presetList.value = [
+        { id: 1, name: '预置位1', description: '前端视角' },
+        { id: 2, name: '预置位2', description: '后端视角' },
+        { id: 3, name: '预置位3', description: '左侧视角' },
+        { id: 4, name: '预置位4', description: '右侧视角' },
+      ];
+    }
+  } catch (error) {
+    console.error('[云台控制] 加载预置位列表失败', error);
+    // 使用默认数据
+    presetList.value = [
+      { id: 1, name: '预置位1', description: '前端视角' },
+      { id: 2, name: '预置位2', description: '后端视角' },
+      { id: 3, name: '预置位3', description: '左侧视角' },
+      { id: 4, name: '预置位4', description: '右侧视角' },
+    ];
+  } finally {
+    loading.value = false;
+  }
+};
 
 // 开始控制
 const startControl = (command) => {
@@ -215,7 +366,8 @@ const startControl = (command) => {
   }
 
   const params = {
-    deviceId: props.device.id,
+    deviceId: props.device.deviceId || props.device.id,
+    channelId: props.device.channelId || '1',
     command,
     speed: controlSpeed.value,
   };
@@ -240,6 +392,11 @@ const stopControl = () => {
     clearInterval(controlTimer.value);
     controlTimer.value = null;
   }
+
+  // 发送停止指令
+  if (props.device) {
+    emit('control', 'stop');
+  }
 };
 
 // 速度变化
@@ -248,19 +405,180 @@ const handleSpeedChange = (value) => {
 };
 
 // 保存预置位
-const savePreset = () => {
-  message.success('预置位保存成功');
+const savePreset = async () => {
+  if (!props.device) {
+    message.warning('请先选择设备');
+    return;
+  }
+
+  const newPresetId = presetList.value.length + 1;
+
+  try {
+    const res = await videoPcApi.setPreset(
+      props.device.deviceId,
+      props.device.channelId || '1',
+      newPresetId,
+      `预置位${newPresetId}`
+    );
+
+    if (res.code === 200 || res.success) {
+      presetList.value.push({
+        id: newPresetId,
+        name: `预置位${newPresetId}`,
+        description: '自定义预置位'
+      });
+      message.success('预置位保存成功');
+    } else {
+      message.error(res.message || '预置位保存失败');
+    }
+  } catch (error) {
+    console.error('[云台控制] 保存预置位失败', error);
+    message.error('保存预置位异常');
+  }
 };
 
-// 清除预置位
+// 清除预置位（已弃用，使用deletePreset代替）
 const clearPreset = () => {
-  message.success('预置位已清除');
+  message.info('请使用删除按钮删除指定预置位');
 };
 
 // 调用预置位
-const gotoPreset = (preset) => {
-  message.info(`调用预置位：${preset.name}`);
-  emit('control', `goto_preset_${preset.id}`);
+const gotoPreset = async (preset) => {
+  if (!props.device) {
+    message.warning('请先选择设备');
+    return;
+  }
+
+  try {
+    const res = await videoPcApi.gotoPreset(
+      props.device.deviceId,
+      props.device.channelId || '1',
+      preset.id,
+      controlSpeed.value
+    );
+
+    if (res.code === 200 || res.success) {
+      message.success(`调用预置位：${preset.name}`);
+      emit('control', `goto_preset_${preset.id}`);
+    } else {
+      message.error(res.message || '调用预置位失败');
+    }
+  } catch (error) {
+    console.error('[云台控制] 调用预置位失败', error);
+    message.error('调用预置位异常');
+  }
+};
+
+// 打开添加预置位弹窗
+const openAddPresetModal = () => {
+  newPresetForm.name = '';
+  newPresetForm.description = '';
+  showAddPresetModal.value = true;
+};
+
+// 确认添加预置位
+const confirmAddPreset = async () => {
+  if (!newPresetForm.name.trim()) {
+    message.warning('请输入预置位名称');
+    return;
+  }
+
+  if (!props.device) {
+    message.warning('请先选择设备');
+    return;
+  }
+
+  const newPresetId = presetList.value.length > 0
+    ? Math.max(...presetList.value.map(p => p.id)) + 1
+    : 1;
+
+  try {
+    const res = await videoPcApi.setPreset(
+      props.device.deviceId,
+      props.device.channelId || '1',
+      newPresetId,
+      newPresetForm.name
+    );
+
+    if (res.code === 200 || res.success) {
+      presetList.value.push({
+        id: newPresetId,
+        name: newPresetForm.name,
+        description: newPresetForm.description || '自定义预置位'
+      });
+      message.success('预置位添加成功');
+      showAddPresetModal.value = false;
+    } else {
+      message.error(res.message || '添加预置位失败');
+    }
+  } catch (error) {
+    console.error('[云台控制] 添加预置位失败', error);
+    message.error('添加预置位异常');
+  }
+};
+
+// 打开编辑预置位弹窗
+const openEditPresetModal = (preset) => {
+  editingPreset.value = {
+    ...preset
+  };
+  showEditPresetModal.value = true;
+};
+
+// 确认编辑预置位
+const confirmEditPreset = () => {
+  if (!editingPreset.value.name.trim()) {
+    message.warning('请输入预置位名称');
+    return;
+  }
+
+  // 更新本地数据
+  const index = presetList.value.findIndex(p => p.id === editingPreset.value.id);
+  if (index !== -1) {
+    presetList.value[index] = {
+      ...presetList.value[index],
+      name: editingPreset.value.name,
+      description: editingPreset.value.description
+    };
+  }
+
+  message.success('预置位更新成功');
+  showEditPresetModal.value = false;
+};
+
+// 删除预置位
+const deletePresetItem = (preset) => {
+  Modal.confirm({
+    title: '确认删除',
+    content: `确定要删除预置位"${preset.name}"吗？`,
+    onOk: async () => {
+      if (!props.device) {
+        message.warning('请先选择设备');
+        return;
+      }
+
+      try {
+        const res = await videoPcApi.deletePreset(
+          props.device.deviceId,
+          props.device.channelId || '1',
+          preset.id
+        );
+
+        if (res.code === 200 || res.success) {
+          const index = presetList.value.findIndex(p => p.id === preset.id);
+          if (index !== -1) {
+            presetList.value.splice(index, 1);
+          }
+          message.success('预置位删除成功');
+        } else {
+          message.error(res.message || '删除预置位失败');
+        }
+      } catch (error) {
+        console.error('[云台控制] 删除预置位失败', error);
+        message.error('删除预置位异常');
+      }
+    }
+  });
 };
 
 // 关闭
@@ -268,6 +586,13 @@ const handleClose = () => {
   stopControl();
   emit('close');
 };
+
+// 初始化加载
+onMounted(async () => {
+  if (props.visible && props.device) {
+    await loadPresetList();
+  }
+});
 </script>
 
 <style scoped lang="less">
@@ -320,14 +645,16 @@ const handleClose = () => {
 
   .preset-control {
     .preset-list {
-      max-height: 200px;
+      max-height: 250px;
       overflow-y: auto;
       margin-bottom: 12px;
     }
 
-    .preset-actions {
+    .preset-footer {
       display: flex;
       justify-content: center;
+      padding: 8px 0;
+      border-top: 1px solid #f0f0f0;
     }
   }
 

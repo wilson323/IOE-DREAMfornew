@@ -1,5 +1,6 @@
 package net.lab1024.sa.video.manager;
 
+import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.video.entity.VideoFaceEntity;
 import net.lab1024.sa.video.entity.VideoFaceDetectionEntity;
 import net.lab1024.sa.video.entity.VideoFaceCompareEntity;
@@ -19,6 +20,7 @@ import java.math.BigDecimal;
  * @author IOE-DREAM Team
  * @since 2025-12-16
  */
+@Slf4j
 public class VideoFaceManager {
 
     private final VideoFaceDao videoFaceDao;

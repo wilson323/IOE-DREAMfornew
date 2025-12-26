@@ -1,0 +1,8 @@
+net.lab1024.sa:ioedream-db-init:jar:1.0.0
++- org.flywaydb:flyway-core:jar:11.7.2:compile
+|  +- com.fasterxml.jackson.dataformat:jackson-dataformat-toml:jar:2.19.4:compile
+|  |  +- com.fasterxml.jackson.core:jackson-databind:jar:2.19.4:compile
+|  |  \- com.fasterxml.jackson.core:jackson-core:jar:2.19.4:compile
+|  \- com.fasterxml.jackson.datatype:jackson-datatype-jsr310:jar:2.19.4:compile
+|     \- com.fasterxml.jackson.core:jackson-annotations:jar:2.19.4:compile
+\- com.mysql:mysql-connector-j:jar:9.5.0:runtime

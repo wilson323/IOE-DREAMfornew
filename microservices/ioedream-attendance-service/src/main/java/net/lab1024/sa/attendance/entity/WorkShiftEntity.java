@@ -208,8 +208,96 @@ public class WorkShiftEntity extends BaseEntity {
     private Integer sortOrder;
 
     /**
+     * 是否跨天班次：0-否 1-是
+     * <p>
+     * 标识班次是否跨越自然日（如夜班22:00-06:00）
+     * </p>
+     */
+    @TableField("is_cross_day")
+    private Integer isCrossDay;
+
+    /**
+     * 跨天归属规则
+     * <p>
+     * START_DATE-以班次开始日期为准（推荐，适合夜班考勤统计）
+     * END_DATE-以班次结束日期为准
+     * SPLIT-上班和下班分别归属到各自日期（不推荐）
+     * </p>
+     */
+    @TableField("cross_day_rule")
+    private String crossDayRule;
+
+    /**
      * 扩展属性（JSON格式）
      */
     @TableField("extended_attributes")
     private String extendedAttributes;
+
+    /**
+     * 判断班次是否跨天
+     * <p>
+     * 根据上下班时间自动判断是否为跨天班次
+     * </p>
+     *
+     * @return true-跨天 false-不跨天
+     */
+    public boolean isCrossDayShift() {
+        if (workStartTime == null || workEndTime == null) {
+            return false;
+        }
+        // 如果下班时间小于上班时间，则为跨天班次
+        return workEndTime.isBefore(workStartTime);
+    }
+
+    /**
+     * 班次类型枚举
+     */
+    public enum ShiftType {
+        /** 标准班 */
+        STANDARD_SHIFT(1, "标准班"),
+        /** 夜班 */
+        NIGHT_SHIFT(2, "夜班"),
+        /** 轮班制 */
+        ROTATING_SHIFT(3, "轮班制"),
+        /** 弹性班 */
+        FLEXIBLE_SHIFT(4, "弹性班"),
+        /** 早班 */
+        EARLY_SHIFT(5, "早班"),
+        /** 晚班 */
+        LATE_SHIFT(6, "晚班");
+
+        private final Integer code;
+        private final String description;
+
+        ShiftType(Integer code, String description) {
+            this.code = code;
+            this.description = description;
+        }
+
+        public Integer getCode() {
+            return code;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public static ShiftType fromCode(Integer code) {
+            if (code == null) {
+                return STANDARD_SHIFT;
+            }
+            for (ShiftType type : values()) {
+                if (type.code.equals(code)) {
+                    return type;
+                }
+            }
+            return STANDARD_SHIFT;
+        }
+    }
+
+    /** 夜班常量 */
+    public static final ShiftType NIGHT_SHIFT = ShiftType.NIGHT_SHIFT;
+
+    /** 轮班制常量 */
+    public static final ShiftType ROTATING_SHIFT = ShiftType.ROTATING_SHIFT;
 }

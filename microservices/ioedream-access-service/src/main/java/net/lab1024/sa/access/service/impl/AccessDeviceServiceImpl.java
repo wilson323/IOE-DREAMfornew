@@ -4,11 +4,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import net.lab1024.sa.common.util.QueryBuilder;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -70,39 +72,16 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
                 queryForm.getAreaId(), queryForm.getDeviceStatus(), queryForm.getEnabled());
 
         try {
-            // 构建查询条件
-            LambdaQueryWrapper<DeviceEntity> wrapper = new LambdaQueryWrapper<>();
-
-            // 设备类型：固定为ACCESS
-            wrapper.eq(DeviceEntity::getDeviceType, "ACCESS");
-
-            // 关键字查询（设备名称或设备编码）
-            if (StringUtils.hasText(queryForm.getKeyword())) {
-                wrapper.and(w -> w.like(DeviceEntity::getDeviceName, queryForm.getKeyword())
-                        .or()
-                        .like(DeviceEntity::getDeviceCode, queryForm.getKeyword()));
-            }
-
-            // 区域ID
-            if (queryForm.getAreaId() != null) {
-                wrapper.eq(DeviceEntity::getAreaId, queryForm.getAreaId());
-            }
-
-            // 设备状态
-            if (queryForm.getDeviceStatus() != null) {
-                wrapper.eq(DeviceEntity::getDeviceStatus, queryForm.getDeviceStatus());
-            }
-
-            // 启用状态
-            if (queryForm.getEnabled() != null) {
-                wrapper.eq(DeviceEntity::getEnabled, queryForm.getEnabled());
-            }
-
-            // 未删除条件
-            wrapper.eq(DeviceEntity::getDeletedFlag, false);
-
-            // 按创建时间倒序排列
-            wrapper.orderByDesc(DeviceEntity::getCreateTime);
+            // 构建查询条件（使用QueryBuilder）
+            LambdaQueryWrapper<DeviceEntity> wrapper = QueryBuilder.of(DeviceEntity.class)
+                .keyword(queryForm.getKeyword(), DeviceEntity::getDeviceName, DeviceEntity::getDeviceCode)
+                .eq(DeviceEntity::getDeviceType, "ACCESS")
+                .eq(DeviceEntity::getAreaId, queryForm.getAreaId())
+                .eq(DeviceEntity::getDeviceStatus, queryForm.getDeviceStatus())
+                .eq(DeviceEntity::getEnabled, queryForm.getEnabled())
+                .eq(DeviceEntity::getDeletedFlag, false)
+                .orderByDesc(DeviceEntity::getCreateTime)
+                .build();
 
             // 分页查询
             Page<DeviceEntity> page = new Page<>(queryForm.getPageNum(), queryForm.getPageSize());
@@ -119,7 +98,7 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
             result.setTotal(pageResult.getTotal());
             result.setPageNum((int) pageResult.getCurrent());
             result.setPageSize((int) pageResult.getSize());
-            result.setTotalPages((int) pageResult.getPages());
+            result.setPages((int) pageResult.getPages());
 
             log.info("[门禁设备] 分页查询设备列表成功: total={}, pageNum={}, pageSize={}",
                     result.getTotal(), queryForm.getPageNum(), queryForm.getPageSize());
@@ -178,7 +157,7 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
         try {
             // 检查设备编码是否已存在
             DeviceEntity existingDevice = accessDeviceDao.selectByDeviceCode(addForm.getDeviceCode());
-            if (existingDevice != null && (existingDevice.getDeletedFlag() == null || existingDevice.getDeletedFlag() == 0)) {
+            if (existingDevice != null && (existingDevice.getDeletedFlag() == null || existingDevice.getDeletedFlag().equals(0))) {
                 log.warn("[门禁设备] 设备编码已存在: deviceCode={}", addForm.getDeviceCode());
                 return ResponseDTO.error("DEVICE_CODE_EXISTS", "设备编码已存在");
             }
@@ -188,8 +167,8 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
             BeanUtils.copyProperties(addForm, device);
 
             // 设置固定属性
-            device.setDeviceType("ACCESS");
-            device.setBusinessModule("access");
+            device.setDeviceType(1); // 设备类型：1-门禁设备
+            // businessModule字段在DeviceEntity中不存在，已移除
             device.setDeviceStatus(2); // 默认离线
             device.setDeletedFlag(0);
             device.setCreateTime(LocalDateTime.now());
@@ -208,7 +187,7 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
             }
 
             log.info("[门禁设备] 添加设备成功: deviceId={}, deviceCode={}", device.getDeviceId(), device.getDeviceCode());
-            return ResponseDTO.ok(device.getDeviceId());
+            return ResponseDTO.ok(device.getDeviceId().toString());
 
         } catch (Exception e) {
             log.error("[门禁设备] 添加设备异常: deviceCode={}, error={}", addForm.getDeviceCode(), e.getMessage(), e);
@@ -403,7 +382,7 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
         BeanUtils.copyProperties(device, vo);
 
         // 设置固定属性
-        vo.setDeviceType("ACCESS");
+        vo.setDeviceType("ACCESS"); // 设备类型：ACCESS
 
         // 查询区域名称（如果区域ID存在）
         if (device.getAreaId() != null) {
@@ -412,19 +391,19 @@ public class AccessDeviceServiceImpl implements AccessDeviceService {
                         "/api/v1/organization/area/" + device.getAreaId(),
                         HttpMethod.GET,
                         null,
-                        AreaEntity.class
+                        new TypeReference<ResponseDTO<AreaEntity>>() {}
                 );
 
                 if (areaResponse != null && areaResponse.isSuccess() && areaResponse.getData() != null) {
                     vo.setAreaName(areaResponse.getData().getAreaName());
                 } else {
-                    // 如果查询失败，使用设备实体中的区域名称
-                    vo.setAreaName(device.getAreaName());
+                    // 如果查询失败，设置默认区域名称
+                    vo.setAreaName("未知区域");
                 }
             } catch (Exception e) {
                 log.debug("[门禁设备] 查询区域信息失败: areaId={}, error={}", device.getAreaId(), e.getMessage());
-                // 查询失败时使用设备实体中的区域名称
-                vo.setAreaName(device.getAreaName());
+                // 查询失败时设置默认区域名称
+                vo.setAreaName("未知区域");
             }
         }
 

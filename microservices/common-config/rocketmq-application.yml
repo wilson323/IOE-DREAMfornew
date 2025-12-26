@@ -145,10 +145,11 @@ management:
       show-details: always
     rocketmq:
       enabled: true
-  metrics:
-    export:
-      prometheus:
+  prometheus:
+    metrics:
+      export:
         enabled: true
+  metrics:
     tags:
       application: ${spring.application.name}
       component: rocketmq

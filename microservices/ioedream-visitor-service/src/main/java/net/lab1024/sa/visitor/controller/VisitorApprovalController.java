@@ -1,5 +1,7 @@
 package net.lab1024.sa.visitor.controller;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,9 +24,8 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.common.openapi.domain.response.PageResult;
+import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.visitor.domain.form.ApprovalDecisionForm;
 import net.lab1024.sa.visitor.domain.vo.ApprovalRecordVO;
 import net.lab1024.sa.visitor.domain.vo.PendingApprovalVO;
@@ -44,12 +45,12 @@ import net.lab1024.sa.visitor.service.VisitorApprovalService;
  * @version 1.0.0
  * @since 2025-01-30
  */
-@Slf4j
 @RestController
 @RequestMapping("/api/v1/visitor/approval")
 @Tag(name = "访客审批管理", description = "访客预约审批相关API")
 @Validated
 @CircuitBreaker(name = "visitorApprovalController")
+@Slf4j
 public class VisitorApprovalController {
 
     @Resource
@@ -283,3 +284,4 @@ public class VisitorApprovalController {
         return new ArrayList<>();
     }
 }
+

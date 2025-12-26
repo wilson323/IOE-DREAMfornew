@@ -1,14 +1,21 @@
 package net.lab1024.sa.device.comm.vendor;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.device.comm.protocol.ProtocolAdapter;
-import net.lab1024.sa.device.comm.protocol.factory.ProtocolAdapterFactory;
 
 import java.time.LocalDateTime;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import net.lab1024.sa.device.comm.protocol.ProtocolAdapter;
+import net.lab1024.sa.device.comm.protocol.factory.ProtocolAdapterFactory;
 
 /**
  * 设备厂商支持管理器
@@ -25,16 +32,16 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @version 1.0.0
  * @since 2025-12-16
  */
-@Slf4j
 @Schema(description = "设备厂商支持管理器")
+@Slf4j
 public class DeviceVendorSupportManager {
 
     private final ProtocolAdapterFactory protocolAdapterFactory;
 
     // 厂商分类统计
-    private final Map<String, VendorInfo> vendorRegistry = new ConcurrentHashMap<>();
-    private final Map<String, List<DeviceInfo>> vendorDevices = new ConcurrentHashMap<>();
-    private final Map<String, AtomicInteger> deviceTypeCounts = new ConcurrentHashMap<>();
+    private final Map<String, VendorInfo> vendorRegistry = new HashMap<>();
+    private final Map<String, List<DeviceInfo>> vendorDevices = new HashMap<>();
+    private final Map<String, AtomicInteger> deviceTypeCounts = new HashMap<>();
 
     // 支持统计
     private final AtomicInteger totalSupportedVendors = new AtomicInteger(0);
@@ -249,11 +256,10 @@ public class DeviceVendorSupportManager {
 
             // 更新厂商的协议支持
             vendorInfo.getSupportedProtocols().add(deviceInfo.getProtocolType());
-            totalSupportedProtocols.set(new HashSet<>(
-                    vendorRegistry.values().stream()
-                            .flatMap(vendor -> vendor.getSupportedProtocols().stream())
-                            .collect(java.util.stream.Collectors.toSet())
-            ).size());
+            totalSupportedProtocols.set((int) vendorRegistry.values().stream()
+                    .flatMap(vendor -> vendor.getSupportedProtocols().stream())
+                    .distinct()
+                    .count());
 
             log.info("[厂商支持管理] 厂商设备注册成功: {} - {}, 总设备数: {}, 总协议数: {}",
                     vendorInfo.getVendorName(), deviceInfo.getDeviceModel(),
@@ -303,7 +309,7 @@ public class DeviceVendorSupportManager {
     /**
      * 移除厂商设备
      *
-     * @param vendorName 厂商名称
+     * @param vendorName  厂商名称
      * @param deviceModel 设备型号
      * @return 是否成功
      */
@@ -573,7 +579,8 @@ public class DeviceVendorSupportManager {
     /**
      * 创建设备信息
      */
-    private DeviceInfo createDeviceInfo(VendorInfo vendorInfo, String protocolType, String deviceModel, String deviceName) {
+    private DeviceInfo createDeviceInfo(VendorInfo vendorInfo, String protocolType, String deviceModel,
+            String deviceName) {
         DeviceInfo deviceInfo = new DeviceInfo();
         deviceInfo.setVendorName(vendorInfo.getVendorName());
         deviceInfo.setProtocolType(protocolType);
@@ -714,29 +721,69 @@ public class DeviceVendorSupportManager {
         private String qualityLevel;
 
         // getters and setters
-        public String getVendorName() { return vendorName; }
-        public void setVendorName(String vendorName) { this.vendorName = vendorName; }
+        public String getVendorName() {
+            return vendorName;
+        }
 
-        public String getEnglishName() { return englishName; }
-        public void setEnglishName(String englishName) { this.englishName = englishName; }
+        public void setVendorName(String vendorName) {
+            this.vendorName = vendorName;
+        }
 
-        public String getCategory() { return category; }
-        public void setCategory(String category) { this.category = category; }
+        public String getEnglishName() {
+            return englishName;
+        }
 
-        public Integer getFoundedYear() { return foundedYear; }
-        public void setFoundedYear(Integer foundedYear) { this.foundedYear = foundedYear; }
+        public void setEnglishName(String englishName) {
+            this.englishName = englishName;
+        }
 
-        public String getWebsite() { return website; }
-        public void setWebsite(String website) { this.website = website; }
+        public String getCategory() {
+            return category;
+        }
 
-        public String getDescription() { return description; }
-        public void setDescription(String description) { this.description = description; }
+        public void setCategory(String category) {
+            this.category = category;
+        }
 
-        public List<String> getSupportedProtocols() { return supportedProtocols; }
-        public void setSupportedProtocols(List<String> supportedProtocols) { this.supportedProtocols = supportedProtocols; }
+        public Integer getFoundedYear() {
+            return foundedYear;
+        }
 
-        public String getQualityLevel() { return qualityLevel; }
-        public void setQualityLevel(String qualityLevel) { this.qualityLevel = qualityLevel; }
+        public void setFoundedYear(Integer foundedYear) {
+            this.foundedYear = foundedYear;
+        }
+
+        public String getWebsite() {
+            return website;
+        }
+
+        public void setWebsite(String website) {
+            this.website = website;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
+
+        public List<String> getSupportedProtocols() {
+            return supportedProtocols;
+        }
+
+        public void setSupportedProtocols(List<String> supportedProtocols) {
+            this.supportedProtocols = supportedProtocols;
+        }
+
+        public String getQualityLevel() {
+            return qualityLevel;
+        }
+
+        public void setQualityLevel(String qualityLevel) {
+            this.qualityLevel = qualityLevel;
+        }
     }
 
     /**
@@ -753,26 +800,61 @@ public class DeviceVendorSupportManager {
         private String qualityLevel;
 
         // getters and setters
-        public String getVendorName() { return vendorName; }
-        public void setVendorName(String vendorName) { this.vendorName = vendorName; }
+        public String getVendorName() {
+            return vendorName;
+        }
 
-        public String getProtocolType() { return protocolType; }
-        public void setProtocolType(String protocolType) { this.protocolType = protocolType; }
+        public void setVendorName(String vendorName) {
+            this.vendorName = vendorName;
+        }
 
-        public String getDeviceModel() { return deviceModel; }
-        public void setDeviceModel(String deviceModel) { this.deviceModel = deviceModel; }
+        public String getProtocolType() {
+            return protocolType;
+        }
 
-        public String getDeviceName() { return deviceName; }
-        public void setDeviceName(String deviceName) { this.deviceName = deviceName; }
+        public void setProtocolType(String protocolType) {
+            this.protocolType = protocolType;
+        }
 
-        public String getDeviceType() { return deviceType; }
-        public void setDeviceType(String deviceType) { this.deviceType = deviceType; }
+        public String getDeviceModel() {
+            return deviceModel;
+        }
 
-        public LocalDateTime getRegisterTime() { return registerTime; }
-        public void setRegisterTime(LocalDateTime registerTime) { this.registerTime = registerTime; }
+        public void setDeviceModel(String deviceModel) {
+            this.deviceModel = deviceModel;
+        }
 
-        public String getQualityLevel() { return qualityLevel; }
-        public void setQualityLevel(String qualityLevel) { this.qualityLevel = qualityLevel; }
+        public String getDeviceName() {
+            return deviceName;
+        }
+
+        public void setDeviceName(String deviceName) {
+            this.deviceName = deviceName;
+        }
+
+        public String getDeviceType() {
+            return deviceType;
+        }
+
+        public void setDeviceType(String deviceType) {
+            this.deviceType = deviceType;
+        }
+
+        public LocalDateTime getRegisterTime() {
+            return registerTime;
+        }
+
+        public void setRegisterTime(LocalDateTime registerTime) {
+            this.registerTime = registerTime;
+        }
+
+        public String getQualityLevel() {
+            return qualityLevel;
+        }
+
+        public void setQualityLevel(String qualityLevel) {
+            this.qualityLevel = qualityLevel;
+        }
     }
 
     /**
@@ -790,29 +872,69 @@ public class DeviceVendorSupportManager {
         private List<String> protocolTypes = new ArrayList<>();
 
         // getters and setters
-        public Integer getTotalVendors() { return totalVendors; }
-        public void setTotalVendors(Integer totalVendors) { this.totalVendors = totalVendors; }
+        public Integer getTotalVendors() {
+            return totalVendors;
+        }
 
-        public Integer getTotalDevices() { return totalDevices; }
-        public void setTotalDevices(Integer totalDevices) { this.totalDevices = totalDevices; }
+        public void setTotalVendors(Integer totalVendors) {
+            this.totalVendors = totalVendors;
+        }
 
-        public Integer getTotalProtocols() { return totalProtocols; }
-        public void setTotalProtocols(Integer totalProtocols) { this.totalProtocols = totalProtocols; }
+        public Integer getTotalDevices() {
+            return totalDevices;
+        }
 
-        public Map<String, Integer> getVendorDeviceCount() { return vendorDeviceCount; }
-        public void setVendorDeviceCount(Map<String, Integer> vendorDeviceCount) { this.vendorDeviceCount = vendorDeviceCount; }
+        public void setTotalDevices(Integer totalDevices) {
+            this.totalDevices = totalDevices;
+        }
 
-        public Map<String, Integer> getDeviceTypeCount() { return deviceTypeCount; }
-        public void setDeviceTypeCount(Map<String, Integer> deviceTypeCount) { this.deviceTypeCount = deviceTypeCount; }
+        public Integer getTotalProtocols() {
+            return totalProtocols;
+        }
 
-        public Map<String, Integer> getCategoryCount() { return categoryCount; }
-        public void setCategoryCount(Map<String, Integer> categoryCount) { this.categoryCount = categoryCount; }
+        public void setTotalProtocols(Integer totalProtocols) {
+            this.totalProtocols = totalProtocols;
+        }
 
-        public Integer getProtocolTypeCount() { return protocolTypeCount; }
-        public void setProtocolTypeCount(Integer protocolTypeCount) { this.protocolTypeCount = protocolTypeCount; }
+        public Map<String, Integer> getVendorDeviceCount() {
+            return vendorDeviceCount;
+        }
 
-        public List<String> getProtocolTypes() { return protocolTypes; }
-        public void setProtocolTypes(List<String> protocolTypes) { this.protocolTypes = protocolTypes; }
+        public void setVendorDeviceCount(Map<String, Integer> vendorDeviceCount) {
+            this.vendorDeviceCount = vendorDeviceCount;
+        }
+
+        public Map<String, Integer> getDeviceTypeCount() {
+            return deviceTypeCount;
+        }
+
+        public void setDeviceTypeCount(Map<String, Integer> deviceTypeCount) {
+            this.deviceTypeCount = deviceTypeCount;
+        }
+
+        public Map<String, Integer> getCategoryCount() {
+            return categoryCount;
+        }
+
+        public void setCategoryCount(Map<String, Integer> categoryCount) {
+            this.categoryCount = categoryCount;
+        }
+
+        public Integer getProtocolTypeCount() {
+            return protocolTypeCount;
+        }
+
+        public void setProtocolTypeCount(Integer protocolTypeCount) {
+            this.protocolTypeCount = protocolTypeCount;
+        }
+
+        public List<String> getProtocolTypes() {
+            return protocolTypes;
+        }
+
+        public void setProtocolTypes(List<String> protocolTypes) {
+            this.protocolTypes = protocolTypes;
+        }
     }
 
     /**
@@ -826,17 +948,37 @@ public class DeviceVendorSupportManager {
         private String compatibilityGrade;
 
         // getters and setters
-        public LocalDateTime getReportTime() { return reportTime; }
-        public void setReportTime(LocalDateTime reportTime) { this.reportTime = reportTime; }
+        public LocalDateTime getReportTime() {
+            return reportTime;
+        }
 
-        public Map<String, VendorCompatibility> getVendorCompatibility() { return vendorCompatibility; }
-        public void setVendorCompatibility(Map<String, VendorCompatibility> vendorCompatibility) { this.vendorCompatibility = vendorCompatibility; }
+        public void setReportTime(LocalDateTime reportTime) {
+            this.reportTime = reportTime;
+        }
 
-        public double getOverallCompatibilityScore() { return overallCompatibilityScore; }
-        public void setOverallCompatibilityScore(double overallCompatibilityScore) { this.overallCompatibilityScore = overallCompatibilityScore; }
+        public Map<String, VendorCompatibility> getVendorCompatibility() {
+            return vendorCompatibility;
+        }
 
-        public String getCompatibilityGrade() { return compatibilityGrade; }
-        public void setCompatibilityGrade(String compatibilityGrade) { this.compatibilityGrade = compatibilityGrade; }
+        public void setVendorCompatibility(Map<String, VendorCompatibility> vendorCompatibility) {
+            this.vendorCompatibility = vendorCompatibility;
+        }
+
+        public double getOverallCompatibilityScore() {
+            return overallCompatibilityScore;
+        }
+
+        public void setOverallCompatibilityScore(double overallCompatibilityScore) {
+            this.overallCompatibilityScore = overallCompatibilityScore;
+        }
+
+        public String getCompatibilityGrade() {
+            return compatibilityGrade;
+        }
+
+        public void setCompatibilityGrade(String compatibilityGrade) {
+            this.compatibilityGrade = compatibilityGrade;
+        }
     }
 
     /**
@@ -851,19 +993,44 @@ public class DeviceVendorSupportManager {
         private Map<String, Object> compatibilityDetails = new HashMap<>();
 
         // getters and setters
-        public String getVendorName() { return vendorName; }
-        public void setVendorName(String vendorName) { this.vendorName = vendorName; }
+        public String getVendorName() {
+            return vendorName;
+        }
 
-        public LocalDateTime getAnalyzedTime() { return analyzedTime; }
-        public void setAnalyzedTime(LocalDateTime analyzedTime) { this.analyzedTime = analyzedTime; }
+        public void setVendorName(String vendorName) {
+            this.vendorName = vendorName;
+        }
 
-        public double getCompatibilityScore() { return compatibilityScore; }
-        public void setCompatibilityScore(double compatibilityScore) { this.compatibilityScore = compatibilityScore; }
+        public LocalDateTime getAnalyzedTime() {
+            return analyzedTime;
+        }
 
-        public String getCompatibilityGrade() { return compatibilityGrade; }
-        public void setCompatibilityGrade(String compatibilityGrade) { this.compatibilityGrade = compatibilityGrade; }
+        public void setAnalyzedTime(LocalDateTime analyzedTime) {
+            this.analyzedTime = analyzedTime;
+        }
 
-        public Map<String, Object> getCompatibilityDetails() { return compatibilityDetails; }
-        public void setCompatibilityDetails(Map<String, Object> compatibilityDetails) { this.compatibilityDetails = compatibilityDetails; }
+        public double getCompatibilityScore() {
+            return compatibilityScore;
+        }
+
+        public void setCompatibilityScore(double compatibilityScore) {
+            this.compatibilityScore = compatibilityScore;
+        }
+
+        public String getCompatibilityGrade() {
+            return compatibilityGrade;
+        }
+
+        public void setCompatibilityGrade(String compatibilityGrade) {
+            this.compatibilityGrade = compatibilityGrade;
+        }
+
+        public Map<String, Object> getCompatibilityDetails() {
+            return compatibilityDetails;
+        }
+
+        public void setCompatibilityDetails(Map<String, Object> compatibilityDetails) {
+            this.compatibilityDetails = compatibilityDetails;
+        }
     }
 }

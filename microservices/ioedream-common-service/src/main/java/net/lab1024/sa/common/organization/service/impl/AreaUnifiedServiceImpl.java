@@ -1,23 +1,31 @@
 package net.lab1024.sa.common.organization.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.micrometer.observation.annotation.Observed;
-import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.common.organization.dao.AreaDao;
-import net.lab1024.sa.common.organization.entity.AreaEntity;
-import net.lab1024.sa.common.organization.service.AreaUnifiedService;
-import net.lab1024.sa.common.exception.BusinessException;
-import net.lab1024.sa.common.exception.ParamException;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import io.micrometer.observation.annotation.Observed;
+import jakarta.annotation.Resource;
+import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.common.exception.ParamException;
+import net.lab1024.sa.common.organization.dao.AreaDao;
+import net.lab1024.sa.common.organization.entity.AreaEntity;
+import net.lab1024.sa.common.organization.service.AreaUnifiedService;
 
 /**
  * 统一区域空间管理服务实现类
@@ -26,10 +34,11 @@ import java.util.stream.Collectors;
  * @version 1.0.0
  * @since 2025-12-08
  */
-@Slf4j
 @Service
 @Transactional(rollbackFor = Exception.class)
+@Slf4j
 public class AreaUnifiedServiceImpl implements AreaUnifiedService {
+
 
     @Resource
     private AreaDao areaDao;
@@ -79,11 +88,11 @@ public class AreaUnifiedServiceImpl implements AreaUnifiedService {
     @Override
     @Observed(name = "area.hasAreaAccess", contextualName = "area-has-access")
     @Cacheable(value = "area:unified:access", key = "#userId + ':' + #areaId")
-    public boolean hasAreaAccess(Long userId, Long areaId) {
+    public Boolean hasAreaAccess(Long userId, Long areaId) {
         log.debug("[区域统一服务] 检查用户区域权限, userId={}, areaId={}", userId, areaId);
 
         // 检查用户是否有该区域的直接权限
-        boolean hasDirectAccess = areaDao.hasDirectAccess(userId, areaId);
+        Boolean hasDirectAccess = areaDao.hasDirectAccess(userId, areaId);
 
         if (hasDirectAccess) {
             return true;
@@ -157,9 +166,11 @@ public class AreaUnifiedServiceImpl implements AreaUnifiedService {
 
         if (attributesStr != null && !attributesStr.trim().isEmpty()) {
             try {
-                attributes = objectMapper.readValue(attributesStr, new TypeReference<Map<String, Object>>() {});
+                attributes = objectMapper.readValue(attributesStr, new TypeReference<Map<String, Object>>() {
+                });
             } catch (IllegalArgumentException | ParamException e) {
-                log.warn("[区域统一服务] 解析业务属性参数异常: areaId={}, businessModule={}, error={}", areaId, businessModule, e.getMessage());
+                log.warn("[区域统一服务] 解析业务属性参数异常: areaId={}, businessModule={}, error={}", areaId, businessModule,
+                        e.getMessage());
             } catch (Exception e) {
                 log.warn("[区域统一服务] 解析业务属性系统异常: areaId={}, businessModule={}", areaId, businessModule, e);
             }
@@ -185,9 +196,11 @@ public class AreaUnifiedServiceImpl implements AreaUnifiedService {
             }
 
         } catch (IllegalArgumentException | ParamException e) {
-            log.warn("[区域统一服务] 设置区域业务属性参数异常, areaId={}, businessModule={}, error={}", areaId, businessModule, e.getMessage());
+            log.warn("[区域统一服务] 设置区域业务属性参数异常, areaId={}, businessModule={}, error={}", areaId, businessModule,
+                    e.getMessage());
         } catch (BusinessException e) {
-            log.warn("[区域统一服务] 设置区域业务属性业务异常, areaId={}, businessModule={}, error={}", areaId, businessModule, e.getMessage());
+            log.warn("[区域统一服务] 设置区域业务属性业务异常, areaId={}, businessModule={}, error={}", areaId, businessModule,
+                    e.getMessage());
         } catch (Exception e) {
             log.error("[区域统一服务] 设置区域业务属性系统异常, areaId={}, businessModule={}", areaId, businessModule, e);
         }
@@ -201,7 +214,7 @@ public class AreaUnifiedServiceImpl implements AreaUnifiedService {
     public List<Map<String, Object>> getAreaDevices(Long areaId, String deviceType) {
         log.debug("[区域统一服务] 获取区域设备, areaId={}, deviceType={}", areaId, deviceType);
 
-            // 获取设备ID列表
+        // 获取设备ID列表
         List<Long> deviceIds = areaDao.selectAreaDevices(areaId, deviceType);
 
         // 转换为 Map<String, Object> 格式
@@ -245,11 +258,11 @@ public class AreaUnifiedServiceImpl implements AreaUnifiedService {
 
     @Override
     @Observed(name = "area.isAreaSupportBusiness", contextualName = "area-is-support-business")
-    public boolean isAreaSupportBusiness(Long areaId, String businessModule) {
+    public Boolean isAreaSupportBusiness(Long areaId, String businessModule) {
         log.debug("[区域统一服务] 检查区域业务支持, areaId={}, businessModule={}", areaId, businessModule);
 
         Map<String, Object> attributes = getAreaBusinessAttributes(areaId, businessModule);
-        return attributes != null && !attributes.isEmpty();
+        return Boolean.valueOf(attributes != null && !attributes.isEmpty());
     }
 
     @Override
@@ -260,7 +273,7 @@ public class AreaUnifiedServiceImpl implements AreaUnifiedService {
         Set<String> supportedModules = new HashSet<>();
 
         // 检查各业务模块的支持情况
-        String[] modules = {"access", "consume", "attendance", "visitor", "video", "oa"};
+        String[] modules = { "access", "consume", "attendance", "visitor", "video", "oa" };
 
         for (String module : modules) {
             if (isAreaSupportBusiness(areaId, module)) {

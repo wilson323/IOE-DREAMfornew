@@ -1,5 +1,6 @@
 package net.lab1024.sa.video.edge.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
@@ -20,7 +21,6 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.video.edge.EdgeDeviceStatus;
 import net.lab1024.sa.video.edge.EdgeStatistics;
@@ -54,7 +54,7 @@ import net.lab1024.sa.video.edge.vo.EdgeStatisticsVO;
 @PermissionCheck(value = "VIDEO_MANAGE", description = "边缘视频管理权限")
 @RequestMapping("/api/v1/edge/video")
 @Tag(name = "边缘视频管理", description = "边缘设备注册、AI推理、模型管理、云边协同等API")
-public class EdgeVideoController {
+ public class EdgeVideoController {
 
     @Resource
     private EdgeVideoProcessor edgeVideoProcessor;

@@ -1,5 +1,8 @@
 package net.lab1024.sa.common.config;
 
+import lombok.extern.slf4j.Slf4j;
+
+
 import java.util.concurrent.ThreadPoolExecutor;
 
 import org.springframework.context.annotation.Bean;
@@ -7,7 +10,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * 异步任务配置类
@@ -29,10 +31,11 @@ import lombok.extern.slf4j.Slf4j;
  * @version 1.0.0
  * @since 2025-01-30
  */
-@Slf4j
 @Configuration
 @EnableAsync
+@Slf4j
 public class AsyncConfiguration {
+
 
     /**
      * 通知发送线程池

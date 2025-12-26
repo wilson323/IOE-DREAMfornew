@@ -1,20 +1,30 @@
 package net.lab1024.sa.device.comm.service.impl;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.annotation.Resource;
-import org.springframework.transaction.annotation.Transactional;
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.device.comm.protocol.rs485.*;
-import net.lab1024.sa.device.comm.protocol.*;
-import net.lab1024.sa.device.comm.protocol.domain.ProtocolHeartbeatResult;
-import net.lab1024.sa.device.comm.service.RS485ProtocolService;
-import net.lab1024.sa.device.comm.dao.DeviceCommLogDao;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.Future;
+
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
-import java.util.concurrent.Future;
+import jakarta.annotation.Resource;
+import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.device.comm.dao.DeviceCommLogDao;
+import net.lab1024.sa.device.comm.protocol.domain.ProtocolHeartbeatResult;
+import net.lab1024.sa.device.comm.protocol.rs485.RS485DeviceStatus;
+import net.lab1024.sa.device.comm.protocol.rs485.RS485DeviceStatusVO;
+import net.lab1024.sa.device.comm.protocol.rs485.RS485HeartbeatResult;
+import net.lab1024.sa.device.comm.protocol.rs485.RS485HeartbeatResultVO;
+import net.lab1024.sa.device.comm.protocol.rs485.RS485InitResult;
+import net.lab1024.sa.device.comm.protocol.rs485.RS485InitResultVO;
+import net.lab1024.sa.device.comm.protocol.rs485.RS485ProcessResult;
+import net.lab1024.sa.device.comm.protocol.rs485.RS485ProcessResultVO;
+import net.lab1024.sa.device.comm.protocol.rs485.RS485ProtocolAdapter;
+import net.lab1024.sa.device.comm.protocol.rs485.RS485ProtocolManager;
+import net.lab1024.sa.device.comm.service.RS485ProtocolService;
 
 /**
  * RS485协议服务实现
@@ -30,9 +40,9 @@ import java.util.concurrent.Future;
  * @version 1.0.0
  * @since 2025-12-16
  */
-@Slf4j
 @Service
 @Transactional(rollbackFor = Exception.class)
+@Slf4j
 public class RS485ProtocolServiceImpl implements RS485ProtocolService {
 
     @Resource
@@ -46,8 +56,8 @@ public class RS485ProtocolServiceImpl implements RS485ProtocolService {
 
     @Override
     public ResponseDTO<RS485InitResultVO> initializeDevice(Long deviceId,
-                                                            Map<String, Object> deviceInfo,
-                                                            Map<String, Object> config) {
+            Map<String, Object> deviceInfo,
+            Map<String, Object> config) {
         try {
             log.info("[RS485服务] 初始化设备, deviceId={}", deviceId);
 
@@ -79,8 +89,7 @@ public class RS485ProtocolServiceImpl implements RS485ProtocolService {
             if (initResult.isSuccess()) {
                 RS485InitResult rs485Result = RS485InitResult.success(
                         deviceId,
-                        (String) deviceInfo.getOrDefault("serialNumber", "UNKNOWN")
-                );
+                        (String) deviceInfo.getOrDefault("serialNumber", "UNKNOWN"));
                 rs485Result.setMessage("设备初始化成功");
                 RS485InitResultVO vo = convertToInitResultVO(rs485Result);
                 return ResponseDTO.ok(vo);
@@ -97,8 +106,8 @@ public class RS485ProtocolServiceImpl implements RS485ProtocolService {
 
     @Override
     public ResponseDTO<RS485ProcessResultVO> processDeviceMessage(Long deviceId,
-                                                                 byte[] rawData,
-                                                                 String protocolType) {
+            byte[] rawData,
+            String protocolType) {
         try {
             log.debug("[RS485服务] 处理设备消息, deviceId={}, protocolType={}", deviceId, protocolType);
 
@@ -125,8 +134,7 @@ public class RS485ProtocolServiceImpl implements RS485ProtocolService {
             } else {
                 result = RS485ProcessResult.failure(
                         processResult.getErrorCode() != null ? processResult.getErrorCode() : "PROCESS_ERROR",
-                        processResult.getErrorMessage() != null ? processResult.getErrorMessage() : "消息处理失败"
-                );
+                        processResult.getErrorMessage() != null ? processResult.getErrorMessage() : "消息处理失败");
             }
 
             // 记录操作日志
@@ -160,17 +168,20 @@ public class RS485ProtocolServiceImpl implements RS485ProtocolService {
             // 调用Adapter层处理心跳（主动发送心跳）
             Map<String, Object> heartbeatData = new HashMap<>();
             heartbeatData.put("timestamp", System.currentTimeMillis());
-            ProtocolHeartbeatResult heartbeatResult = rs485ProtocolAdapter.handleDeviceHeartbeat(heartbeatData, deviceId);
+            ProtocolHeartbeatResult heartbeatResult = rs485ProtocolAdapter.handleDeviceHeartbeat(heartbeatData,
+                    deviceId);
 
             // 转换为VO
             RS485HeartbeatResultVO vo = RS485HeartbeatResultVO.builder()
                     .success(heartbeatResult.isSuccess())
-                    .message(heartbeatResult.getResponseMessage() != null ? heartbeatResult.getResponseMessage() : "心跳处理成功")
+                    .message(heartbeatResult.getResponseMessage() != null ? heartbeatResult.getResponseMessage()
+                            : "心跳处理成功")
                     .deviceId(deviceId)
                     .online(heartbeatResult.isOnline())
                     .latency(0L) // ProtocolHeartbeatResult没有latency字段，使用默认值0
-                    .heartbeatTime(heartbeatResult.getHeartbeatTime() != null 
-                            ? heartbeatResult.getHeartbeatTime().atZone(java.time.ZoneId.systemDefault()).toInstant().toEpochMilli()
+                    .heartbeatTime(heartbeatResult.getHeartbeatTime() != null
+                            ? heartbeatResult.getHeartbeatTime().atZone(java.time.ZoneId.systemDefault()).toInstant()
+                                    .toEpochMilli()
                             : System.currentTimeMillis())
                     .build();
 
@@ -189,7 +200,7 @@ public class RS485ProtocolServiceImpl implements RS485ProtocolService {
 
     @Override
     public ResponseDTO<RS485HeartbeatResultVO> processDeviceHeartbeat(Long deviceId,
-                                                                     Map<String, Object> heartbeatData) {
+            Map<String, Object> heartbeatData) {
         try {
             log.debug("[RS485服务] 处理设备心跳, deviceId={}", deviceId);
 
@@ -225,8 +236,8 @@ public class RS485ProtocolServiceImpl implements RS485ProtocolService {
 
     @Override
     public ResponseDTO<byte[]> buildDeviceResponse(Long deviceId,
-                                                   String messageType,
-                                                   Map<String, Object> businessData) {
+            String messageType,
+            Map<String, Object> businessData) {
         try {
             log.debug("[RS485服务] 构建设备响应, deviceId={}, messageType={}", deviceId, messageType);
 
@@ -258,7 +269,7 @@ public class RS485ProtocolServiceImpl implements RS485ProtocolService {
     }
 
     @Override
-    @Cacheable(value = "device:comm:rs485:status", key = "#deviceId", unless = "#result == null || !#result.getOk()")
+    @Cacheable(value = "device:comm:rs485:status", key = "#deviceId", unless = "#result == null || !#result.isSuccess()")
     public ResponseDTO<RS485DeviceStatusVO> getDeviceStatus(Long deviceId) {
         try {
             log.debug("[RS485服务] 获取设备状态, deviceId={}", deviceId);
@@ -311,7 +322,7 @@ public class RS485ProtocolServiceImpl implements RS485ProtocolService {
     }
 
     @Override
-    @Cacheable(value = "device:comm:rs485:statistics", key = "'all'", unless = "#result == null || !#result.getOk()")
+    @Cacheable(value = "device:comm:rs485:statistics", key = "'all'", unless = "#result == null || !#result.isSuccess()")
     public ResponseDTO<Map<String, Object>> getPerformanceStatistics() {
         try {
             log.debug("[RS485服务] 获取性能统计");
@@ -328,7 +339,7 @@ public class RS485ProtocolServiceImpl implements RS485ProtocolService {
     }
 
     @Override
-    @Cacheable(value = "device:comm:rs485:models", key = "'all'", unless = "#result == null || !#result.getOk()")
+    @Cacheable(value = "device:comm:rs485:models", key = "'all'", unless = "#result == null || !#result.isSuccess()")
     public ResponseDTO<String[]> getSupportedDeviceModels() {
         try {
             log.debug("[RS485服务] 获取支持的设备型号");
@@ -380,7 +391,9 @@ public class RS485ProtocolServiceImpl implements RS485ProtocolService {
                 .deviceId(result.getDeviceId())
                 .serialNumber(result.getSerialNumber())
                 .protocolVersion(result.getProtocolVersion())
-                .initTime(result.getInitTime() != null ? result.getInitTime().atZone(java.time.ZoneId.systemDefault()).toInstant().toEpochMilli() : System.currentTimeMillis())
+                .initTime(result.getInitTime() != null
+                        ? result.getInitTime().atZone(java.time.ZoneId.systemDefault()).toInstant().toEpochMilli()
+                        : System.currentTimeMillis())
                 .status(result.isSuccess() ? "SUCCESS" : "FAILED")
                 .build();
     }
@@ -397,7 +410,9 @@ public class RS485ProtocolServiceImpl implements RS485ProtocolService {
                 .message(result.getMessage() != null ? result.getMessage() : (result.isSuccess() ? "处理成功" : "处理失败"))
                 .deviceId(result.getDeviceId())
                 .messageType(result.getMessageType())
-                .processTime(result.getProcessTime() != null ? result.getProcessTime().atZone(java.time.ZoneId.systemDefault()).toInstant().toEpochMilli() : System.currentTimeMillis())
+                .processTime(result.getProcessTime() != null
+                        ? result.getProcessTime().atZone(java.time.ZoneId.systemDefault()).toInstant().toEpochMilli()
+                        : System.currentTimeMillis())
                 .responseData(result.getResponseData())
                 .status(result.isSuccess() ? "SUCCESS" : "FAILED");
 
@@ -418,11 +433,14 @@ public class RS485ProtocolServiceImpl implements RS485ProtocolService {
     private RS485HeartbeatResultVO convertToHeartbeatResultVO(RS485HeartbeatResult result) {
         return RS485HeartbeatResultVO.builder()
                 .success(result.isSuccess())
-                .message(result.getErrorMessage() != null ? result.getErrorMessage() : (result.isSuccess() ? "心跳成功" : "心跳失败"))
+                .message(result.getErrorMessage() != null ? result.getErrorMessage()
+                        : (result.isSuccess() ? "心跳成功" : "心跳失败"))
                 .deviceId(result.getDeviceId())
                 .online(result.isOnline())
                 .latency(result.getLatency())
-                .heartbeatTime(result.getHeartbeatTime() != null ? result.getHeartbeatTime().atZone(java.time.ZoneId.systemDefault()).toInstant().toEpochMilli() : System.currentTimeMillis())
+                .heartbeatTime(result.getHeartbeatTime() != null
+                        ? result.getHeartbeatTime().atZone(java.time.ZoneId.systemDefault()).toInstant().toEpochMilli()
+                        : System.currentTimeMillis())
                 .build();
     }
 
@@ -446,8 +464,7 @@ public class RS485ProtocolServiceImpl implements RS485ProtocolService {
         try {
             // 异步记录日志，避免影响主流程性能
             if (deviceCommLogDao != null) {
-                net.lab1024.sa.device.comm.entity.DeviceCommLogEntity logEntity = 
-                    new net.lab1024.sa.device.comm.entity.DeviceCommLogEntity();
+                net.lab1024.sa.device.comm.entity.DeviceCommLogEntity logEntity = new net.lab1024.sa.device.comm.entity.DeviceCommLogEntity();
                 logEntity.setDeviceId(deviceId);
                 logEntity.setCommType(operation);
                 logEntity.setRequestContent(message);

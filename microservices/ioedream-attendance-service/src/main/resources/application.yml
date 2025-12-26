@@ -1,4 +1,4 @@
-# ============================================================
+﻿# ============================================================
 # IOE-DREAM Attendance Service 配置文件
 #
 # @Author:    IOE-DREAM Team
@@ -22,20 +22,13 @@ spring:
     import:
       - "classpath:common-config/cache-application.yml"
       - "classpath:common-config/database-application.yml"
-      - "optional:ENC(AES256:K9L0M1N2O3P4Q5R6S7T8U9V0W1X2Y3Z):ioedream-attendance-service-docker.yaml"  # 2025.0.0.0版本需要显式指定dataId
+      - "classpath:common-config/resilience4j-application.yml"
 
   # ==================== 数据源配置 ====================
   datasource:
-    type: com.alibaba.druid.pool.DruidDataSource
-    driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://${MYSQL_HOST:127.0.0.1}:${MYSQL_PORT:3306}/${MYSQL_DATABASE:ioedream}?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
     username: ${MYSQL_USERNAME:ENC(AES256:M1N2O3P4Q5R6S7T8U9V0W1X2Y3Z4A5B)}
     password: ${MYSQL_PASSWORD:ENC(AES256:G6K7X8J9M0N1O2P3Q4R5S6T7U8V9W0X)}
-    druid:
-      initial-size: 5
-      min-idle: 5
-      max-active: 20
-      max-wait: 60000
 
   # ==================== Redis配置 ====================
   data:
@@ -115,7 +108,7 @@ mybatis-plus:
 logging:
   level:
     root: INFO
-    net.lab1024.sa: DEBUG
+    "net.lab1024.sa": DEBUG
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"
     file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"
@@ -149,3 +142,73 @@ management:
   zipkin:
     tracing:
       endpoint: ${ZIPKIN_ENDPOINT:http://localhost:9411/api/v2/spans}
+
+# ==================== Resilience4j容错配置 ====================
+resilience4j:
+  timelimiter:
+    configs:
+      default:
+        timeout-duration: 5s
+        cancel-running-future: true
+    instances:
+      dashboardTimeLimiter:
+        timeout-duration: 3s
+        cancel-running-future: true
+
+  retry:
+    configs:
+      default:
+        max-attempts: 3
+        wait-duration: 100ms
+        retry-exceptions:
+          - java.lang.Exception
+        ignore-exceptions:
+          - java.lang.IllegalArgumentException
+    instances:
+      dashboardRetry:
+        max-attempts: 2
+        wait-duration: 50ms
+
+  rate-limiter:
+    configs:
+      default:
+        limit-for-period: 100
+        limit-refresh-period: 1s
+        timeout-duration: 3s
+        register-health-indicator: true
+    instances:
+      dashboardApi:
+        limit-for-period: 50 # 每秒最多50个请求
+        limit-refresh-period: 1s # 每秒刷新
+        timeout-duration: 3s # 等待时间
+        register-health-indicator: true
+      attendanceApi:
+        limit-for-period: 100 # 每秒最多100个请求
+        limit-refresh-period: 1s
+        timeout-duration: 1s
+        register-health-indicator: true
+      mobileApi:
+        limit-for-period: 200 # 移动端API每秒200个请求
+        limit-refresh-period: 1s
+        timeout-duration: 1s
+        register-health-indicator: true
+
+  circuit-breaker:
+    configs:
+      default:
+        sliding-window-size: 50
+        failure-rate-threshold: 50
+        slow-call-rate-threshold: 100
+        slow-call-duration-threshold: 3s
+        permitted-number-of-calls-in-half-open-state: 3
+        wait-duration-in-open-state: 5s
+        register-health-indicator: true
+    instances:
+      dashboardCircuitBreaker:
+        sliding-window-size: 20
+        failure-rate-threshold: 40
+        slow-call-rate-threshold: 80
+        slow-call-duration-threshold: 2s
+        wait-duration-in-open-state: 10s
+        register-health-indicator: true
+

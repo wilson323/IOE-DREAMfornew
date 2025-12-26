@@ -2,7 +2,7 @@
 # IOE-DREAM Project Skills System Overview
 
 > **🎯 技能体系定位**: IOE-DREAM智慧园区一卡通管理平台的AI辅助开发技能体系
-> **📊 技能总数**: 26个专业技能 + 4个P0优先级守护技能
+> **📊 技能总数**: 28个专业技能 + 6个P0优先级守护技能
 > **🔧 技术栈**: Spring Boot 3.5.8 + Jakarta EE 3.0+ + MyBatis-Plus + 微服务架构
 > **⚡ 适用场景**: 企业级开发、架构设计、技术栈升级、合规性检查、最佳实践
 
@@ -10,8 +10,8 @@
 
 ## 📋 技能体系概览
 
-### 🎯 P0优先级守护技能 (4个)
-**核心价值**: 强制执行技术栈规范，确保代码质量和架构合规
+### 🎯 P0优先级守护技能 (6个)
+**核心价值**: 强制执行技术栈规范，确保代码质量和架构合规，系统性解决编译问题
 
 | 技能名称 | 功能描述 | 适用场景 | 技能等级 |
 |---------|---------|----------|----------|
@@ -21,6 +21,8 @@
 | [code-quality-guardian](./code-quality-guardian.md) | 代码质量守护专家 | 代码质量检查、性能优化、最佳实践 | ⭐⭐⭐⭐⭐ |
 | [documentation-management-guardian](./documentation-management-guardian.md) | 文档管理守护专家 | 文档规范执行、目录结构管理、内容质量保证 | ⭐⭐⭐⭐⭐ |
 | [openspec-compliance-specialist](./openspec-compliance-specialist.md) | OpenSpec规范遵循专家 | 规范流程执行、变更管理、标准合规检查 | ⭐⭐⭐⭐⭐ |
+| [global-dependency-manager](./global-dependency-manager.md) | **全局依赖管理专家** | **依赖架构设计、冲突解决、Maven配置优化** | ⭐⭐⭐⭐⭐⭐ |
+| [compilation-error-fixer](./compilation-error-fixer.md) | **编译异常修复专家** | **编译错误根因分析、文档更新协调、系统性修复** | ⭐⭐⭐⭐⭐⭐ |
 
 ### 🔧 核心开发技能 (22个)
 
@@ -104,25 +106,38 @@ Spring Boot 3.5.8
 ```
 1. four-tier-architecture-guardian (架构规范)
 2. spring-boot-jakarta-guardian (技术栈)
-3. microservices-architect (微服务设计)
-4. database-architect (数据库设计)
-5. smart-admin-developer (框架开发)
+3. global-dependency-manager (依赖架构设计)
+4. microservices-architect (微服务设计)
+5. database-architect (数据库设计)
+6. smart-admin-developer (框架开发)
 ```
 
 #### 🔍 代码审查
 ```
 1. tech-stack-unification-guardian (技术栈检查)
 2. code-quality-guardian (代码质量)
-3. security-specialist (安全检查)
-4. performance-optimization-expert (性能检查)
+3. global-dependency-manager (依赖架构检查)
+4. security-specialist (安全检查)
+5. performance-optimization-expert (性能检查)
+```
+
+#### 🚨 编译问题修复
+```
+1. compilation-error-fixer (编译异常根因分析)
+2. global-dependency-manager (依赖问题诊断)
+3. spring-boot-jakarta-guardian (技术栈问题修复)
+4. four-tier-architecture-guardian (架构违规修复)
+5. documentation-management-guardian (文档一致性修复)
 ```
 
 #### 🚀 系统升级
 ```
 1. spring-boot-jakarta-guardian (Jakarta迁移)
-2. four-tier-architecture-guardian (架构检查)
-3. devops-engineer (部署升级)
-4. testing-automation-engineer (回归测试)
+2. global-dependency-manager (依赖架构升级)
+3. compilation-error-fixer (编译问题修复)
+4. four-tier-architecture-guardian (架构检查)
+5. devops-engineer (部署升级)
+6. testing-automation-engineer (回归测试)
 ```
 
 ### 3. 技能调用方式
@@ -174,7 +189,9 @@ Spring Boot 3.5.8
 │   ├── four-tier-architecture-guardian.md
 │   ├── spring-boot-jakarta-guardian.md
 │   ├── tech-stack-unification-guardian.md
-│   └── code-quality-guardian.md
+│   ├── code-quality-guardian.md
+│   ├── global-dependency-manager.md         # 新增：全局依赖管理专家
+│   └── compilation-error-fixer.md            # 新增：编译异常修复专家
 ├── 架构设计与开发/                       # 架构和开发相关技能
 │   ├── smart-admin-developer.md
 │   ├── microservices-architect.md

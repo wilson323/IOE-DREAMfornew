@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpMethod;
@@ -21,6 +22,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import net.lab1024.sa.access.dao.AccessAlarmDao;
 import net.lab1024.sa.access.dao.AccessDeviceDao;
 import net.lab1024.sa.access.domain.form.AccessMonitorQueryForm;
 import net.lab1024.sa.access.domain.vo.AccessAlarmVO;
@@ -33,9 +35,10 @@ import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
 import net.lab1024.sa.common.organization.dao.AccessRecordDao;
 import net.lab1024.sa.common.organization.entity.AccessRecordEntity;
+import net.lab1024.sa.access.domain.entity.AccessAlarmEntity;
 import net.lab1024.sa.common.organization.entity.AreaEntity;
 import net.lab1024.sa.common.organization.entity.DeviceEntity;
-import net.lab1024.sa.common.security.entity.UserEntity;
+import net.lab1024.sa.common.organization.entity.UserEntity;
 import net.lab1024.sa.common.dto.ResponseDTO;
 
 /**
@@ -74,6 +77,9 @@ public class AccessMonitorServiceImpl implements AccessMonitorService {
 
     @Resource
     private RabbitTemplate rabbitTemplate;
+
+    @Resource
+    private AccessAlarmDao accessAlarmDao;
 
     /**
      * 查询实时设备状态列表
@@ -122,7 +128,7 @@ public class AccessMonitorServiceImpl implements AccessMonitorService {
             result.setTotal(pageResult.getTotal());
             result.setPageNum((int) pageResult.getCurrent());
             result.setPageSize((int) pageResult.getSize());
-            result.setTotalPages((int) pageResult.getPages());
+            result.setPages((int) pageResult.getPages());
 
             log.info("[实时监控] 查询设备状态列表成功: total={}, pageNum={}, pageSize={}",
                     result.getTotal(), queryForm.getPageNum(), queryForm.getPageSize());
@@ -171,22 +177,77 @@ public class AccessMonitorServiceImpl implements AccessMonitorService {
 
     /**
      * 查询报警列表
-     * <p>
-     * 注意：报警功能需要创建报警表，这里先返回空列表，后续完善
-     * </p>
      */
     @Override
     @Transactional(readOnly = true)
     public ResponseDTO<PageResult<AccessAlarmVO>> queryAlarmList(AccessMonitorQueryForm queryForm) {
-        log.info("[实时监控] 查询报警列表: pageNum={}, pageSize={}, alarmLevel={}",
-                queryForm.getPageNum(), queryForm.getPageSize(), queryForm.getAlarmLevel());
+        log.info("[实时监控] 查询报警列表: pageNum={}, pageSize={}, alarmLevel={}, startTime={}, endTime={}",
+                queryForm.getPageNum(), queryForm.getPageSize(), queryForm.getAlarmLevel(),
+                queryForm.getStartTime(), queryForm.getEndTime());
 
         try {
-            // TODO: 实现报警查询功能，需要创建报警表和相关DAO
-            // 目前先返回空列表
-            PageResult<AccessAlarmVO> result = PageResult.empty(queryForm.getPageNum(), queryForm.getPageSize());
+            // 1. 构建查询条件
+            LambdaQueryWrapper<AccessAlarmEntity> wrapper = new LambdaQueryWrapper<>();
 
-            log.info("[实时监控] 查询报警列表成功: total=0");
+            // 报警级别过滤
+            if (queryForm.getAlarmLevel() != null) {
+                wrapper.eq(AccessAlarmEntity::getAlarmLevel, queryForm.getAlarmLevel());
+            }
+
+            // 时间范围过滤
+            if (queryForm.getStartTime() != null) {
+                wrapper.ge(AccessAlarmEntity::getAlarmTime, queryForm.getStartTime());
+            }
+            if (queryForm.getEndTime() != null) {
+                wrapper.le(AccessAlarmEntity::getAlarmTime, queryForm.getEndTime());
+            }
+
+            // 处理状态过滤（通过processedTime是否为空判断）
+            // TODO: 在AccessMonitorQueryForm中添加processed字段后启用此过滤
+            // if (queryForm.getProcessed() != null) {
+            //     if (queryForm.getProcessed()) {
+            //         wrapper.isNotNull(AccessAlarmEntity::getProcessedTime);
+            //     } else {
+            //         wrapper.isNull(AccessAlarmEntity::getProcessedTime);
+            //     }
+            // }
+
+            // 设备ID过滤
+            if (StringUtils.hasText(queryForm.getDeviceId())) {
+                wrapper.eq(AccessAlarmEntity::getDeviceId, Long.parseLong(queryForm.getDeviceId()));
+            }
+
+            // 区域ID过滤
+            if (queryForm.getAreaId() != null) {
+                wrapper.eq(AccessAlarmEntity::getAreaId, queryForm.getAreaId());
+            }
+
+            // 未删除条件
+            wrapper.eq(AccessAlarmEntity::getDeletedFlag, false);
+
+            // 按报警时间倒序排列（最新的在前）
+            wrapper.orderByDesc(AccessAlarmEntity::getAlarmTime);
+
+            // 2. 分页查询
+            Page<AccessAlarmEntity> page = new Page<>(queryForm.getPageNum(), queryForm.getPageSize());
+            Page<AccessAlarmEntity> pageResult = accessAlarmDao.selectPage(page, wrapper);
+
+            // 3. 转换为VO列表
+            List<AccessAlarmVO> voList = pageResult.getRecords().stream()
+                    .map(this::convertToAlarmVO)
+                    .collect(Collectors.toList());
+
+            // 4. 构建分页结果
+            PageResult<AccessAlarmVO> result = new PageResult<>();
+            result.setRecords(voList);
+            result.setTotal(pageResult.getTotal());
+            result.setPageNum((int) pageResult.getCurrent());
+            result.setPageSize((int) pageResult.getSize());
+            result.setPages((int) pageResult.getPages());
+
+            log.info("[实时监控] 查询报警列表成功: total={}, pageNum={}, pageSize={}",
+                    result.getTotal(), queryForm.getPageNum(), queryForm.getPageSize());
+
             return ResponseDTO.ok(result);
 
         } catch (Exception e) {
@@ -197,9 +258,6 @@ public class AccessMonitorServiceImpl implements AccessMonitorService {
 
     /**
      * 处理报警
-     * <p>
-     * 注意：报警功能需要创建报警表，这里先返回成功，后续完善
-     * </p>
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -207,10 +265,38 @@ public class AccessMonitorServiceImpl implements AccessMonitorService {
         log.info("[实时监控] 处理报警: alarmId={}, handleRemark={}", alarmId, handleRemark);
 
         try {
-            // TODO: 实现报警处理功能，需要创建报警表和相关DAO
-            // 目前先返回成功
+            // 1. 查询报警记录
+            AccessAlarmEntity alarm = accessAlarmDao.selectById(alarmId);
+            if (alarm == null) {
+                log.warn("[实时监控] 报警记录不存在: alarmId={}", alarmId);
+                return ResponseDTO.error("ALARM_NOT_FOUND", "报警记录不存在");
+            }
 
-            log.info("[实时监控] 处理报警成功: alarmId={}", alarmId);
+            // 2. 检查是否已处理
+            if (Boolean.TRUE.equals(alarm.getProcessed())) {
+                log.warn("[实时监控] 报警已处理，无需重复处理: alarmId={}", alarmId);
+                return ResponseDTO.error("ALARM_ALREADY_PROCESSED", "报警已处理");
+            }
+
+            // 3. 更新处理状态
+            alarm.setProcessed(true);
+            alarm.setProcessStatus(2); // 2-已处理
+            alarm.setHandleTime(LocalDateTime.now());
+            alarm.setHandleRemark(handleRemark);
+            alarm.setAlarmStatus("RESOLVED");
+            alarm.setHandleResult("已处理");
+
+            // 4. 更新数据库
+            int updateResult = accessAlarmDao.updateById(alarm);
+            if (updateResult <= 0) {
+                log.error("[实时监控] 更新报警处理状态失败: alarmId={}", alarmId);
+                return ResponseDTO.error("UPDATE_ALARM_FAILED", "更新报警处理状态失败");
+            }
+
+            // 5. 发送处理通知（可选）
+            sendAlarmHandledNotification(alarm);
+
+            log.info("[实时监控] 处理报警成功: alarmId={}, alarmType={}", alarmId, alarm.getAlarmType());
             return ResponseDTO.ok();
 
         } catch (Exception e) {
@@ -280,7 +366,7 @@ public class AccessMonitorServiceImpl implements AccessMonitorService {
                                 "/api/v1/organization/user/" + userId,
                                 HttpMethod.GET,
                                 null,
-                                UserEntity.class
+                                new TypeReference<ResponseDTO<UserEntity>>() {}
                         );
 
                 if (userResponse != null && userResponse.isSuccess() && userResponse.getData() != null) {
@@ -439,17 +525,17 @@ public class AccessMonitorServiceImpl implements AccessMonitorService {
                         "/api/v1/organization/area/" + device.getAreaId(),
                         HttpMethod.GET,
                         null,
-                        AreaEntity.class
+                        new TypeReference<ResponseDTO<AreaEntity>>() {}
                 );
 
                 if (areaResponse != null && areaResponse.isSuccess() && areaResponse.getData() != null) {
                     vo.setAreaName(areaResponse.getData().getAreaName());
                 } else {
-                    vo.setAreaName(device.getAreaName());
+                    vo.setAreaName("未知区域");
                 }
             } catch (Exception e) {
                 log.debug("[实时监控] 查询区域信息失败: areaId={}, error={}", device.getAreaId(), e.getMessage());
-                vo.setAreaName(device.getAreaName());
+                vo.setAreaName("未知区域");
             }
         }
 
@@ -507,7 +593,7 @@ public class AccessMonitorServiceImpl implements AccessMonitorService {
                         "/api/v1/organization/area/" + record.getAreaId(),
                         HttpMethod.GET,
                         null,
-                        AreaEntity.class
+                        new TypeReference<ResponseDTO<AreaEntity>>() {}
                 );
 
                 if (areaResponse != null && areaResponse.isSuccess() && areaResponse.getData() != null) {
@@ -586,7 +672,7 @@ public class AccessMonitorServiceImpl implements AccessMonitorService {
                         "/api/v1/organization/area/" + record.getAreaId(),
                         HttpMethod.GET,
                         null,
-                        AreaEntity.class
+                        new TypeReference<ResponseDTO<AreaEntity>>() {}
                 );
 
                 if (areaResponse != null && areaResponse.isSuccess() && areaResponse.getData() != null) {
@@ -605,7 +691,7 @@ public class AccessMonitorServiceImpl implements AccessMonitorService {
                                 "/api/v1/organization/user/" + record.getUserId(),
                                 HttpMethod.GET,
                                 null,
-                                UserEntity.class
+                                new TypeReference<ResponseDTO<UserEntity>>() {}
                         );
 
                 if (userResponse != null && userResponse.isSuccess() && userResponse.getData() != null) {
@@ -640,6 +726,161 @@ public class AccessMonitorServiceImpl implements AccessMonitorService {
                 return "停用";
             default:
                 return "未知";
+        }
+    }
+
+    /**
+     * 转换报警实体为VO
+     */
+    private AccessAlarmVO convertToAlarmVO(AccessAlarmEntity entity) {
+        AccessAlarmVO vo = new AccessAlarmVO();
+        BeanUtils.copyProperties(entity, vo);
+
+        // 设置设备ID（转换为String）
+        if (entity.getDeviceId() != null) {
+            vo.setDeviceId(entity.getDeviceId().toString());
+        }
+
+        // 设置报警级别名称
+        vo.setAlarmLevelName(getAlarmLevelName(entity.getAlarmLevel()));
+
+        // 设置报警类型名称
+        vo.setAlarmTypeName(getAlarmTypeName(entity.getAlarmType()));
+
+        // 设置处理状态名称
+        vo.setProcessStatusName(getProcessStatusName(entity.getProcessStatus()));
+
+        // 设置报警状态名称
+        vo.setAlarmStatusName(getAlarmStatusName(entity.getAlarmStatus()));
+
+        // 设置是否已处理
+        vo.setProcessedName(Boolean.TRUE.equals(entity.getProcessed()) ? "是" : "否");
+
+        return vo;
+    }
+
+    /**
+     * 获取报警级别名称
+     */
+    private String getAlarmLevelName(Integer alarmLevel) {
+        if (alarmLevel == null) {
+            return "未知";
+        }
+        switch (alarmLevel) {
+            case 1:
+                return "低级";
+            case 2:
+                return "中级";
+            case 3:
+                return "高级";
+            case 4:
+                return "紧急";
+            case 5:
+                return "严重";
+            default:
+                return "未知";
+        }
+    }
+
+    /**
+     * 获取报警类型名称
+     */
+    private String getAlarmTypeName(String alarmType) {
+        if (!StringUtils.hasText(alarmType)) {
+            return "未知";
+        }
+        switch (alarmType) {
+            case "DEVICE_OFFLINE":
+                return "设备离线";
+            case "ILLEGAL_ENTRY":
+                return "非法闯入";
+            case "DOOR_TIMEOUT":
+                return "门超时未关";
+            case "FORCED_ENTRY":
+                return "强力破门";
+            case "DURESS_ALARM":
+                return "胁迫报警";
+            case "CARD_ABNORMAL":
+                return "卡片异常";
+            default:
+                return alarmType;
+        }
+    }
+
+    /**
+     * 获取处理状态名称
+     */
+    private String getProcessStatusName(Integer processStatus) {
+        if (processStatus == null) {
+            return "未知";
+        }
+        switch (processStatus) {
+            case 0:
+                return "未处理";
+            case 1:
+                return "处理中";
+            case 2:
+                return "已处理";
+            case 3:
+                return "已忽略";
+            default:
+                return "未知";
+        }
+    }
+
+    /**
+     * 获取报警状态名称
+     */
+    private String getAlarmStatusName(String alarmStatus) {
+        if (!StringUtils.hasText(alarmStatus)) {
+            return "未知";
+        }
+        switch (alarmStatus) {
+            case "ACTIVE":
+                return "活跃";
+            case "ACKNOWLEDGED":
+                return "已确认";
+            case "PROCESSING":
+                return "处理中";
+            case "RESOLVED":
+                return "已解决";
+            case "CLOSED":
+                return "已关闭";
+            case "IGNORED":
+                return "已忽略";
+            default:
+                return alarmStatus;
+        }
+    }
+
+    /**
+     * 发送报警处理通知
+     */
+    private void sendAlarmHandledNotification(AccessAlarmEntity alarm) {
+        try {
+            // 构建通知消息
+            Map<String, Object> message = new HashMap<>();
+            message.put("alarmId", alarm.getAlarmId());
+            message.put("alarmType", alarm.getAlarmType());
+            message.put("alarmLevel", alarm.getAlarmLevel());
+            message.put("deviceId", alarm.getDeviceId());
+            message.put("deviceName", alarm.getDeviceName());
+            message.put("handlerId", alarm.getHandlerId());
+            message.put("handlerName", alarm.getHandlerName());
+            message.put("handleTime", alarm.getHandleTime());
+            message.put("handleRemark", alarm.getHandleRemark());
+            message.put("handleResult", alarm.getHandleResult());
+
+            // 发送到RabbitMQ（如果配置了消息队列）
+            rabbitTemplate.convertAndSend("access.alarm.handled", message);
+
+            log.info("[实时监控] 发送报警处理通知成功: alarmId={}, alarmType={}, handlerId={}",
+                    alarm.getAlarmId(), alarm.getAlarmType(), alarm.getHandlerId());
+
+        } catch (Exception e) {
+            // 通知发送失败不影响主流程，仅记录日志
+            log.warn("[实时监控] 发送报警处理通知失败: alarmId={}, error={}",
+                    alarm.getAlarmId(), e.getMessage());
         }
     }
 }

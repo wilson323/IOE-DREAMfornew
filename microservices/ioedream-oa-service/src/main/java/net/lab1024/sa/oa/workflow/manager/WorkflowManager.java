@@ -1,9 +1,15 @@
 package net.lab1024.sa.oa.workflow.manager;
 
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.oa.workflow.model.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+
+import net.lab1024.sa.oa.workflow.model.WorkflowDefinition;
+import net.lab1024.sa.oa.workflow.model.WorkflowTemplate;
 
 /**
  * 工作流管理器
@@ -43,7 +49,3 @@ public class WorkflowManager {
         return new ArrayList<>(workflowTemplates.values());
     }
 }
-
-
-
-

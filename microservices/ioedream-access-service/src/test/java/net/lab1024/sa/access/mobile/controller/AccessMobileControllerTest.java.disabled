@@ -1,0 +1,620 @@
+package net.lab1024.sa.access.mobile.controller;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import net.lab1024.sa.access.domain.form.*;
+import net.lab1024.sa.access.domain.vo.*;
+import net.lab1024.sa.access.service.AccessVerificationService;
+import net.lab1024.sa.common.auth.util.JwtTokenUtil;
+import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.common.gateway.GatewayServiceClient;
+import net.lab1024.sa.common.util.TypeUtils;
+
+/**
+ * AccessMobileController单元测试
+ * <p>
+ * 目标覆盖率：>= 80%
+ * 测试范围：门禁移动端控制器核心API方法
+ * </p>
+ *
+ * @author IOE-DREAM Team
+ * @since 2025-01-30
+ */
+@ExtendWith(MockitoExtension.class)
+@DisplayName("AccessMobileController单元测试")
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+class AccessMobileControllerTest {
+
+    @InjectMocks
+    private AccessMobileController accessMobileController;
+
+    @Mock
+    private AccessVerificationService accessVerificationService;
+
+    @Mock
+    private JwtTokenUtil jwtTokenUtil;
+
+    @Mock
+    private GatewayServiceClient gatewayServiceClient;
+
+    @Mock
+    private RedisTemplate<String, Object> redisTemplate;
+
+    @Mock
+    private ValueOperations<String, Object> valueOperations;
+
+    private MockMvc mockMvc;
+    private ObjectMapper objectMapper;
+
+    @BeforeEach
+    void setUp() {
+        mockMvc = MockMvcBuilders.standaloneSetup(accessMobileController).build();
+        objectMapper = new ObjectMapper();
+
+        // RedisTemplate mock配置
+        when(redisTemplate.opsForValue()).thenReturn(valueOperations);
+        when(redisTemplate.opsForSet()).thenReturn(mock(org.springframework.data.redis.core.SetOperations.class));
+        when(redisTemplate.delete(anyString())).thenReturn(true);
+        when(redisTemplate.hasKey(anyString())).thenReturn(false);
+    }
+
+    // ==================== initializeAuth测试 ====================
+
+    @Test
+    @DisplayName("测试初始化认证-已登录用户")
+    void testInitializeAuth_LoggedInUser() throws Exception {
+        // given
+        MobileAuthInitForm form = new MobileAuthInitForm();
+        form.setDeviceId("device123");
+        form.setDeviceType("android");
+        form.setUserId(1001L);
+
+        when(jwtTokenUtil.generateAccessToken(1001L, "mobile_user")).thenReturn("access_token_123");
+        when(jwtTokenUtil.generateRefreshToken(1001L, "mobile_user")).thenReturn("refresh_token_123");
+        when(jwtTokenUtil.getRemainingTimeFromAccessToken("access_token_123")).thenReturn(3600L);
+        when(jwtTokenUtil.getRemainingTime("refresh_token_123")).thenReturn(7200L);
+
+        when(gatewayServiceClient.callCommonService(anyString(), any(), any(), any()))
+            .thenReturn(buildUserInfoResponse());
+
+        // when
+        ResponseDTO<MobileAuthInitVO> result = accessMobileController.initializeAuth(form);
+
+        // then
+        assertNotNull(result);
+        assertEquals(200, result.getCode());
+        assertNotNull(result.getData());
+        assertEquals("access_token_123", result.getData().getAccessToken());
+        assertEquals("refresh_token_123", result.getData().getRefreshToken());
+        assertEquals(3600L, result.getData().getExpiresIn());
+        assertEquals(7200L, result.getData().getRefreshExpiresIn());
+        assertEquals("Bearer", result.getData().getTokenType());
+        assertNotNull(result.getData().getUserInfo());
+
+        verify(jwtTokenUtil, times(1)).generateAccessToken(1001L, "mobile_user");
+        verify(jwtTokenUtil, times(1)).generateRefreshToken(1001L, "mobile_user");
+        verify(valueOperations, times(1)).set(anyString(), any(), anyLong(), any());
+    }
+
+    @Test
+    @DisplayName("测试初始化认证-未登录用户")
+    void testInitializeAuth_AnonymousUser() throws Exception {
+        // given
+        MobileAuthInitForm form = new MobileAuthInitForm();
+        form.setDeviceId("device123");
+        form.setDeviceType("ios");
+        form.setUserId(null); // 未登录
+
+        // when
+        ResponseDTO<MobileAuthInitVO> result = accessMobileController.initializeAuth(form);
+
+        // then
+        assertNotNull(result);
+        assertEquals(200, result.getCode());
+        assertNotNull(result.getData());
+        assertEquals("device123", result.getData().getDeviceId());
+        assertEquals("Bearer", result.getData().getTokenType());
+        assertNotNull(result.getData().getServerPublicKey());
+        assertNotNull(result.getData().getChallenge());
+        assertNull(result.getData().getAccessToken()); // 未登录用户无令牌
+        assertNull(result.getData().getUserInfo());
+
+        verify(jwtTokenUtil, never()).generateAccessToken(anyLong(), anyString());
+    }
+
+    @Test
+    @DisplayName("测试初始化认证-无效设备类型")
+    void testInitializeAuth_InvalidDeviceType() throws Exception {
+        // given
+        MobileAuthInitForm form = new MobileAuthInitForm();
+        form.setDeviceId("device123");
+        form.setDeviceType("windows"); // 不支持的设备类型
+        form.setUserId(1001L);
+
+        // when & then
+        assertThrows(BusinessException.class, () -> {
+            accessMobileController.initializeAuth(form);
+        });
+    }
+
+    // ==================== refreshToken测试 ====================
+
+    @Test
+    @DisplayName("测试刷新令牌-成功")
+    void testRefreshToken_Success() throws Exception {
+        // given
+        MobileRefreshTokenForm form = new MobileRefreshTokenForm();
+        form.setDeviceId("device123");
+        form.setRefreshToken("old_refresh_token");
+
+        when(jwtTokenUtil.validateRefreshToken("old_refresh_token")).thenReturn(true);
+        when(jwtTokenUtil.getUserIdFromRefreshToken("old_refresh_token")).thenReturn(1001L);
+        when(valueOperations.get("mobile:user:device:1001")).thenReturn("device123");
+        when(jwtTokenUtil.generateAccessToken(1001L, "mobile_user")).thenReturn("new_access_token");
+        when(jwtTokenUtil.generateRefreshToken(1001L, "mobile_user")).thenReturn("new_refresh_token");
+        when(jwtTokenUtil.getRemainingTimeFromAccessToken("new_access_token")).thenReturn(3600L);
+        when(jwtTokenUtil.getRemainingTime("new_refresh_token")).thenReturn(7200L);
+        when(jwtTokenUtil.getRemainingTime("old_refresh_token")).thenReturn(3600L);
+
+        // when
+        ResponseDTO<MobileTokenVO> result = accessMobileController.refreshToken(form);
+
+        // then
+        assertNotNull(result);
+        assertEquals(200, result.getCode());
+        assertNotNull(result.getData());
+        assertEquals("new_access_token", result.getData().getAccessToken());
+        assertEquals("new_refresh_token", result.getData().getRefreshToken());
+        assertEquals("Bearer", result.getData().getTokenType());
+
+        verify(jwtTokenUtil, times(1)).generateAccessToken(1001L, "mobile_user");
+        verify(jwtTokenUtil, times(1)).generateRefreshToken(1001L, "mobile_user");
+        verify(valueOperations, times(1)).set(eq("token:blacklist:old_refresh_token"), eq("blacklisted"), eq(3600L), any());
+    }
+
+    @Test
+    @DisplayName("测试刷新令牌-无效令牌")
+    void testRefreshToken_InvalidToken() throws Exception {
+        // given
+        MobileRefreshTokenForm form = new MobileRefreshTokenForm();
+        form.setDeviceId("device123");
+        form.setRefreshToken("invalid_token");
+
+        when(jwtTokenUtil.validateRefreshToken("invalid_token")).thenReturn(false);
+
+        // when & then
+        BusinessException exception = assertThrows(BusinessException.class, () -> {
+            accessMobileController.refreshToken(form);
+        });
+        assertTrue(exception.getMessage().contains("刷新令牌无效或已过期"));
+    }
+
+    @Test
+    @DisplayName("测试刷新令牌-设备ID不匹配")
+    void testRefreshToken_DeviceMismatch() throws Exception {
+        // given
+        MobileRefreshTokenForm form = new MobileRefreshTokenForm();
+        form.setDeviceId("device123");
+        form.setRefreshToken("refresh_token");
+
+        when(jwtTokenUtil.validateRefreshToken("refresh_token")).thenReturn(true);
+        when(jwtTokenUtil.getUserIdFromRefreshToken("refresh_token")).thenReturn(1001L);
+        when(valueOperations.get("mobile:user:device:1001")).thenReturn("different_device");
+
+        // when & then
+        BusinessException exception = assertThrows(BusinessException.class, () -> {
+            accessMobileController.refreshToken(form);
+        });
+        assertTrue(exception.getMessage().contains("设备ID不匹配"));
+    }
+
+    // ==================== logout测试 ====================
+
+    @Test
+    @DisplayName("测试注销-成功")
+    void testLogout_Success() throws Exception {
+        // given
+        MobileLogoutForm form = new MobileLogoutForm();
+        form.setDeviceId("device123");
+        form.setAccessToken("access_token");
+
+        when(jwtTokenUtil.getUserIdFromAccessToken("access_token")).thenReturn(1001L);
+        when(valueOperations.get("mobile:user:device:1001")).thenReturn("device123");
+        doNothing().when(jwtTokenUtil).revokeToken("access_token");
+        doNothing().when(jwtTokenUtil).revokeAllUserTokens(1001L);
+
+        // when
+        ResponseDTO<Void> result = accessMobileController.logout(form);
+
+        // then
+        assertNotNull(result);
+        assertEquals(200, result.getCode());
+
+        verify(jwtTokenUtil, times(1)).revokeToken("access_token");
+        verify(jwtTokenUtil, times(1)).revokeAllUserTokens(1001L);
+        verify(valueOperations, times(1)).get("mobile:user:device:1001");
+        verify(redisTemplate, times(1)).delete("mobile:user:device:1001");
+    }
+
+    @Test
+    @DisplayName("测试注销-无效令牌")
+    void testLogout_InvalidToken() throws Exception {
+        // given
+        MobileLogoutForm form = new MobileLogoutForm();
+        form.setDeviceId("device123");
+        form.setAccessToken("invalid_token");
+
+        when(jwtTokenUtil.getUserIdFromAccessToken("invalid_token")).thenReturn(null);
+
+        // when & then
+        BusinessException exception = assertThrows(BusinessException.class, () -> {
+            accessMobileController.logout(form);
+        });
+        assertTrue(exception.getMessage().contains("访问令牌无效"));
+    }
+
+    // ==================== generateQRCode测试 ====================
+
+    @Test
+    @DisplayName("测试生成二维码-成功")
+    void testGenerateQRCode_Success() throws Exception {
+        // given
+        MobileQRCodeForm form = new MobileQRCodeForm();
+        form.setAreaId(100L);
+        form.setQrCodeType("visitor");
+        form.setVisitorId(5001L);
+        form.setValidityMinutes(5);
+
+        // when
+        ResponseDTO<MobileQRCodeVO> result = accessMobileController.generateQRCode(form);
+
+        // then
+        assertNotNull(result);
+        assertEquals(200, result.getCode());
+        assertNotNull(result.getData());
+        assertNotNull(result.getData().getSessionId());
+        assertNotNull(result.getData().getQrContent());
+        assertNotNull(result.getData().getQrImage());
+        assertEquals(300L, result.getData().getValidSeconds()); // 5分钟 = 300秒
+        assertEquals("pending", result.getData().getStatus());
+        assertEquals("visitor", result.getData().getQrCodeType());
+
+        ArgumentCaptor<String> cacheKeyCaptor = ArgumentCaptor.forClass(String.class);
+        verify(valueOperations, times(1)).set(cacheKeyCaptor.capture(), any(), eq(5), any());
+        assertTrue(cacheKeyCaptor.getValue().startsWith("qrcode:session:"));
+    }
+
+    @Test
+    @DisplayName("测试生成二维码-使用默认有效期")
+    void testGenerateQRCode_DefaultValidity() throws Exception {
+        // given
+        MobileQRCodeForm form = new MobileQRCodeForm();
+        form.setAreaId(100L);
+        form.setQrCodeType("user");
+        form.setUserId(2001L);
+        form.setValidityMinutes(null); // 使用默认值
+
+        // when
+        ResponseDTO<MobileQRCodeVO> result = accessMobileController.generateQRCode(form);
+
+        // then
+        assertNotNull(result);
+        assertEquals(200, result.getCode());
+        assertEquals(300L, result.getData().getValidSeconds()); // 默认5分钟
+    }
+
+    // ==================== verifyQRCode测试 ====================
+
+    @Test
+    @DisplayName("测试验证二维码-成功")
+    void testVerifyQRCode_Success() throws Exception {
+        // given
+        String sessionId = "test_session_id";
+        MobileQRCodeForm form = new MobileQRCodeForm();
+        form.setAreaId(100L);
+        form.setSessionId(sessionId);
+
+        // Mock缓存中的会话信息
+        AccessMobileController.QRCodeSession mockSession = new AccessMobileController.QRCodeSession();
+        mockSession.setSessionId(sessionId);
+        mockSession.setAreaId(100L);
+        mockSession.setUserId(2001L);
+        mockSession.setStatus("pending");
+        mockSession.setExpireTime(LocalDateTime.now().plusMinutes(5));
+
+        when(valueOperations.get("qrcode:session:" + sessionId)).thenReturn(mockSession);
+        when(gatewayServiceClient.callCommonService(anyString(), any(), any(), any()))
+            .thenReturn(buildAccessCheckResponse(true));
+
+        // when
+        ResponseDTO<MobileBiometricVO> result = accessMobileController.verifyQRCode(form);
+
+        // then
+        assertNotNull(result);
+        assertEquals(200, result.getCode());
+        assertNotNull(result.getData());
+        assertEquals("success", result.getData().getResult());
+        assertTrue(result.getData().isMatched());
+        assertTrue(result.getData().isHasAccess());
+        assertEquals("qrcode", result.getData().getBiometricType());
+
+        // 验证会话状态已更新为used
+        ArgumentCaptor<AccessMobileController.QRCodeSession> sessionCaptor = ArgumentCaptor.forClass(AccessMobileController.QRCodeSession.class);
+        verify(valueOperations, times(1)).set(eq("qrcode:session:" + sessionId), sessionCaptor.capture(), eq(1), any());
+        assertEquals("used", sessionCaptor.getValue().getStatus());
+    }
+
+    @Test
+    @DisplayName("测试验证二维码-会话不存在")
+    void testVerifyQRCode_SessionNotFound() throws Exception {
+        // given
+        MobileQRCodeForm form = new MobileQRCodeForm();
+        form.setAreaId(100L);
+        form.setSessionId("nonexistent_session");
+
+        when(valueOperations.get("qrcode:session:nonexistent_session")).thenReturn(null);
+
+        // when & then
+        BusinessException exception = assertThrows(BusinessException.class, () -> {
+            accessMobileController.verifyQRCode(form);
+        });
+        assertTrue(exception.getMessage().contains("二维码不存在或已过期"));
+    }
+
+    @Test
+    @DisplayName("测试验证二维码-区域ID不匹配")
+    void testVerifyQRCode_AreaMismatch() throws Exception {
+        // given
+        String sessionId = "test_session_id";
+        MobileQRCodeForm form = new MobileQRCodeForm();
+        form.setAreaId(200L); // 不同的区域ID
+        form.setSessionId(sessionId);
+
+        AccessMobileController.QRCodeSession mockSession = new AccessMobileController.QRCodeSession();
+        mockSession.setSessionId(sessionId);
+        mockSession.setAreaId(100L); // 原始区域100
+        mockSession.setStatus("pending");
+
+        when(valueOperations.get("qrcode:session:" + sessionId)).thenReturn(mockSession);
+
+        // when & then
+        BusinessException exception = assertThrows(BusinessException.class, () -> {
+            accessMobileController.verifyQRCode(form);
+        });
+        assertTrue(exception.getMessage().contains("区域ID不匹配"));
+    }
+
+    // ==================== verifyBiometric测试 ====================
+
+    @Test
+    @DisplayName("测试生物识别验证-成功")
+    void testVerifyBiometric_Success() throws Exception {
+        // given
+        MobileBiometricForm form = new MobileBiometricForm();
+        form.setUserId(2001L);
+        form.setDeviceId("device123");
+        form.setAreaId(100L);
+        form.setBiometricType("face");
+        form.setFeatureVector("feature_vector_data");
+        form.setConfidenceThreshold(0.85);
+
+        when(gatewayServiceClient.callCommonService(anyString(), any(), any(), any()))
+            .thenReturn(buildAccessCheckResponse(true))
+            .thenReturn(buildUserInfoResponse());
+
+        when(gatewayServiceClient.callDeviceCommService(anyString(), any(), any(), any()))
+            .thenReturn(buildBiometricVerifyResponse(true, 0.95));
+
+        // when
+        ResponseDTO<MobileBiometricVO> result = accessMobileController.verifyBiometric(form);
+
+        // then
+        assertNotNull(result);
+        assertEquals(200, result.getCode());
+        assertNotNull(result.getData());
+        assertEquals("success", result.getData().getResult());
+        assertTrue(result.getData().isMatched());
+        assertTrue(result.getData().isHasAccess());
+        assertEquals(0.95, result.getData().getConfidence());
+        assertEquals("face", result.getData().getBiometricType());
+    }
+
+    @Test
+    @DisplayName("测试生物识别验证-无权限")
+    void testVerifyBiometric_NoAccess() throws Exception {
+        // given
+        MobileBiometricForm form = new MobileBiometricForm();
+        form.setUserId(2001L);
+        form.setDeviceId("device123");
+        form.setAreaId(100L);
+        form.setBiometricType("face");
+
+        when(gatewayServiceClient.callCommonService(anyString(), any(), any(), any()))
+            .thenReturn(buildAccessCheckResponse(false)) // 无权限
+            .thenReturn(buildUserInfoResponse());
+
+        when(gatewayServiceClient.callDeviceCommService(anyString(), any(), any(), any()))
+            .thenReturn(buildBiometricVerifyResponse(true, 0.95));
+
+        // when
+        ResponseDTO<MobileBiometricVO> result = accessMobileController.verifyBiometric(form);
+
+        // then
+        assertNotNull(result);
+        assertEquals(200, result.getCode());
+        assertEquals("failed", result.getData().getResult());
+        assertFalse(result.getData().isHasAccess());
+        assertTrue(result.getData().getMessage().contains("无访问权限"));
+    }
+
+    @Test
+    @DisplayName("测试生物识别验证-缺少用户ID")
+    void testVerifyBiometric_MissingUserId() throws Exception {
+        // given
+        MobileBiometricForm form = new MobileBiometricForm();
+        form.setUserId(null); // 缺少用户ID
+        form.setDeviceId("device123");
+        form.setAreaId(100L);
+
+        // when & then
+        BusinessException exception = assertThrows(BusinessException.class, () -> {
+            accessMobileController.verifyBiometric(form);
+        });
+        assertTrue(exception.getMessage().contains("用户ID不能为空"));
+    }
+
+    // ==================== getDeviceInfo测试 ====================
+
+    @Test
+    @DisplayName("测试获取设备信息-成功")
+    void testGetDeviceInfo_Success() throws Exception {
+        // given
+        String deviceId = "device123";
+        when(gatewayServiceClient.callDeviceCommService(anyString(), any(), any(), any()))
+            .thenReturn(buildDeviceInfoResponse());
+
+        // when
+        ResponseDTO<MobileDeviceInfoVO> result = accessMobileController.getDeviceInfo(deviceId);
+
+        // then
+        assertNotNull(result);
+        assertEquals(200, result.getCode());
+        assertNotNull(result.getData());
+        assertEquals(deviceId, result.getData().getDeviceId());
+        assertEquals("门禁设备01", result.getData().getDeviceName());
+        assertEquals("ACCESS", result.getData().getDeviceType());
+        assertEquals("online", result.getData().getDeviceStatus());
+    }
+
+    @Test
+    @DisplayName("测试获取设备信息-设备不存在")
+    void testGetDeviceInfo_NotFound() throws Exception {
+        // given
+        String deviceId = "nonexistent_device";
+        when(gatewayServiceClient.callDeviceCommService(anyString(), any(), any(), any()))
+            .thenReturn(ResponseDTO.error("DEVICE_NOT_FOUND", "设备不存在"));
+
+        // when & then
+        BusinessException exception = assertThrows(BusinessException.class, () -> {
+            accessMobileController.getDeviceInfo(deviceId);
+        });
+        assertTrue(exception.getMessage().contains("设备不存在"));
+    }
+
+    // ==================== sendHeartbeat测试 ====================
+
+    @Test
+    @DisplayName("测试发送心跳-成功")
+    void testSendHeartbeat_Success() throws Exception {
+        // given
+        MobileHeartbeatForm form = new MobileHeartbeatForm();
+        form.setDeviceId("device123");
+        form.setDeviceStatus("online");
+        form.setBatteryLevel(85);
+        form.setNetworkType("4g");
+        form.setSignalStrength("strong");
+        form.setAppVersion("1.0.0");
+
+        // when
+        ResponseDTO<MobileHeartbeatVO> result = accessMobileController.sendHeartbeat(form);
+
+        // then
+        assertNotNull(result);
+        assertEquals(200, result.getCode());
+        assertNotNull(result.getData());
+        assertEquals("device123", result.getData().getDeviceId());
+        assertEquals("success", result.getData().getStatus());
+        assertEquals("心跳接收成功", result.getData().getMessage());
+        assertEquals(30, result.getData().getNextHeartbeatInterval());
+        assertFalse(result.getData().isNeedUpdate());
+
+        verify(valueOperations, times(1)).set(eq("mobile:device:device123"), any(), eq(1), any());
+    }
+
+    @Test
+    @DisplayName("测试发送心跳-需要更新")
+    void testSendHeartbeat_NeedUpdate() throws Exception {
+        // given
+        MobileHeartbeatForm form = new MobileHeartbeatForm();
+        form.setDeviceId("device123");
+        form.setDeviceStatus("online");
+        form.setBatteryLevel(85);
+        form.setAppVersion("1.0.0"); // 旧版本
+
+        // when
+        ResponseDTO<MobileHeartbeatVO> result = accessMobileController.sendHeartbeat(form);
+
+        // then
+        assertNotNull(result);
+        // 注意：由于checkAppUpdate默认返回false，所以needUpdate为false
+        // 如需测试需要更新的场景，需要mock checkAppUpdate返回true
+    }
+
+    // ==================== Mock辅助方法 ====================
+
+    private ResponseDTO<Map<String, Object>> buildUserInfoResponse() {
+        Map<String, Object> userData = new HashMap<>();
+        userData.put("userId", 1001L);
+        userData.put("username", "testuser");
+        userData.put("realName", "测试用户");
+        userData.put("phone", "13800138000");
+        userData.put("email", "test@example.com");
+
+        return ResponseDTO.ok(userData);
+    }
+
+    private ResponseDTO<Boolean> buildAccessCheckResponse(boolean hasAccess) {
+        return ResponseDTO.ok(hasAccess);
+    }
+
+    private ResponseDTO<Map<String, Object>> buildDeviceInfoResponse() {
+        Map<String, Object> deviceData = new HashMap<>();
+        deviceData.put("deviceId", "device123");
+        deviceData.put("deviceName", "门禁设备01");
+        deviceData.put("deviceType", "ACCESS");
+        deviceData.put("deviceSubType", 1);
+        deviceData.put("deviceStatus", "online");
+        deviceData.put("areaId", 100L);
+        deviceData.put("areaName", "A栋大厅");
+        deviceData.put("ipAddress", "192.168.1.100");
+        deviceData.put("port", 8080);
+        deviceData.put("firmwareVersion", "1.0.0");
+
+        return ResponseDTO.ok(deviceData);
+    }
+
+    private ResponseDTO<Map<String, Object>> buildBiometricVerifyResponse(boolean matched, double confidence) {
+        Map<String, Object> resultData = new HashMap<>();
+        resultData.put("matched", matched);
+        resultData.put("confidence", confidence);
+
+        return ResponseDTO.ok(resultData);
+    }
+}

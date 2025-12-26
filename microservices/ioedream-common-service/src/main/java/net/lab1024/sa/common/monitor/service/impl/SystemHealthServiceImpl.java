@@ -1,5 +1,7 @@
 package net.lab1024.sa.common.monitor.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.lang.management.ManagementFactory;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -14,7 +16,11 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 
 import io.micrometer.observation.annotation.Observed;
 import jakarta.annotation.Resource;
-import lombok.extern.slf4j.Slf4j;
+import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.common.exception.ParamException;
+import net.lab1024.sa.common.exception.SystemException;
+import net.lab1024.sa.common.monitor.dao.AlertDao;
+import net.lab1024.sa.common.monitor.domain.constant.SecurityAlertConstants;
 import net.lab1024.sa.common.monitor.domain.entity.AlertEntity;
 import net.lab1024.sa.common.monitor.domain.vo.AlertSummaryVO;
 import net.lab1024.sa.common.monitor.domain.vo.ComponentHealthVO;
@@ -23,30 +29,24 @@ import net.lab1024.sa.common.monitor.domain.vo.SystemHealthVO;
 import net.lab1024.sa.common.monitor.manager.HealthCheckManager;
 import net.lab1024.sa.common.monitor.manager.PerformanceMonitorManager;
 import net.lab1024.sa.common.monitor.manager.SystemMonitorManager;
-import net.lab1024.sa.common.monitor.dao.AlertDao;
 import net.lab1024.sa.common.monitor.service.SystemHealthService;
-import net.lab1024.sa.common.exception.BusinessException;
-import net.lab1024.sa.common.exception.SystemException;
-import net.lab1024.sa.common.exception.ParamException;
 
 /**
  * 系统健康监控服务实现类
  * <p>
- * 严格遵循CLAUDE.md规范:
- * - 使用@Service注解标识服务实现
- * - 使用@Resource依赖注入（符合架构规范）
- * - 使用@Transactional管理事务
- * - 完整的异常处理和日志记录
+ * 严格遵循CLAUDE.md规范: - 使用@Service注解标识服务实现 - 使用@Resource依赖注入（符合架构规范） -
+ * 使用@Transactional管理事务 - 完整的异常处理和日志记录
  * </p>
  *
  * @author IOE-DREAM Team
  * @version 1.0.0
  * @since 2025-12-02
  */
-@Slf4j
 @Service
 @Transactional(rollbackFor = Exception.class)
+@Slf4j
 public class SystemHealthServiceImpl implements SystemHealthService {
+
 
     @Resource
     private HealthCheckManager healthCheckManager;
@@ -85,19 +85,24 @@ public class SystemHealthServiceImpl implements SystemHealthService {
             List<Map<String, Object>> microservicesStatus = getMicroservicesStatus();
             systemHealth.setTotalServices(microservicesStatus.size());
             systemHealth.setOnlineServices((int) microservicesStatus.stream()
-                    .filter(service -> "UP".equals(service.get("status")))
-                    .count());
+                    .filter(service -> "UP".equals(service.get("status"))).count());
             systemHealth.setOfflineServices(systemHealth.getTotalServices() - systemHealth.getOnlineServices());
 
-            // 获取告警信息
+            // 获取告警信息（使用安防告警标准级别：P1/P2/P3/P4）
             List<Map<String, Object>> activeAlerts = getActiveAlerts();
             systemHealth.setActiveAlerts(activeAlerts.size());
             systemHealth.setCriticalAlerts((int) activeAlerts.stream()
-                    .filter(alert -> "CRITICAL".equals(alert.get("alertLevel")))
-                    .count());
+                    .filter(alert -> {
+                        Object level = alert.get("alertLevel");
+                        return level != null && (level.equals(SecurityAlertConstants.AlertLevel.P1_URGENT)
+                                || "P1".equals(level.toString()) || "CRITICAL".equals(level.toString()));
+                    }).count());
             systemHealth.setWarningAlerts((int) activeAlerts.stream()
-                    .filter(alert -> "WARNING".equals(alert.get("alertLevel")))
-                    .count());
+                    .filter(alert -> {
+                        Object level = alert.get("alertLevel");
+                        return level != null && (level.equals(SecurityAlertConstants.AlertLevel.P3_NORMAL)
+                                || "P3".equals(level.toString()) || "WARNING".equals(level.toString()));
+                    }).count());
 
             // 获取资源使用情况
             ResourceUsageVO resourceUsage = systemMonitorManager.getResourceUsage();
@@ -109,8 +114,7 @@ public class SystemHealthServiceImpl implements SystemHealthService {
             // 获取组件状态
             List<Map<String, Object>> componentHealth = getComponentHealthStatus();
             List<ComponentHealthVO> componentHealthList = componentHealth.stream()
-                    .map(this::convertToComponentHealthVO)
-                    .collect(java.util.stream.Collectors.toList());
+                    .map(this::convertToComponentHealthVO).collect(java.util.stream.Collectors.toList());
             systemHealth.setComponentHealthList(componentHealthList);
 
             // 获取系统指标
@@ -124,8 +128,7 @@ public class SystemHealthServiceImpl implements SystemHealthService {
             systemHealth.setHealthTrends(healthTrends);
 
             // 转换活跃告警为摘要列表
-            List<AlertSummaryVO> alertSummaryList = activeAlerts.stream()
-                    .map(this::convertToAlertSummaryVO)
+            List<AlertSummaryVO> alertSummaryList = activeAlerts.stream().map(this::convertToAlertSummaryVO)
                     .collect(java.util.stream.Collectors.toList());
             systemHealth.setActiveAlertList(alertSummaryList);
 
@@ -142,7 +145,6 @@ public class SystemHealthServiceImpl implements SystemHealthService {
         return systemHealth;
     }
 
-    @Override
     @Observed(name = "system.health.component", contextualName = "system-health-component")
     @Transactional(readOnly = true)
     public List<Map<String, Object>> getComponentHealthStatus() {
@@ -156,7 +158,6 @@ public class SystemHealthServiceImpl implements SystemHealthService {
         }
     }
 
-    @Override
     @Observed(name = "system.health.metrics", contextualName = "system-health-metrics")
     @Transactional(readOnly = true)
     public Map<String, Object> getSystemMetrics() {
@@ -170,7 +171,6 @@ public class SystemHealthServiceImpl implements SystemHealthService {
         }
     }
 
-    @Override
     @Observed(name = "system.health.resource", contextualName = "system-health-resource")
     @Transactional(readOnly = true)
     public Map<String, Object> getResourceUsage() {
@@ -180,26 +180,18 @@ public class SystemHealthServiceImpl implements SystemHealthService {
             ResourceUsageVO resourceUsage = systemMonitorManager.getResourceUsage();
 
             Map<String, Object> usage = new HashMap<>();
-            usage.put("cpu", Map.of(
-                    "usage", resourceUsage.getCpuUsage(),
-                    "cores", resourceUsage.getCpuCores(),
+            usage.put("cpu", Map.of("usage", resourceUsage.getCpuUsage(), "cores", resourceUsage.getCpuCores(),
                     "load", resourceUsage.getCpuLoad()));
 
-            usage.put("memory", Map.of(
-                    "usage", resourceUsage.getMemoryUsage(),
-                    "total", resourceUsage.getTotalMemory(),
-                    "used", resourceUsage.getUsedMemory(),
-                    "available", resourceUsage.getAvailableMemory()));
+            usage.put("memory",
+                    Map.of("usage", resourceUsage.getMemoryUsage(), "total", resourceUsage.getTotalMemory(), "used",
+                            resourceUsage.getUsedMemory(), "available", resourceUsage.getAvailableMemory()));
 
-            usage.put("disk", Map.of(
-                    "usage", resourceUsage.getDiskUsage(),
-                    "total", resourceUsage.getTotalDisk(),
-                    "used", resourceUsage.getUsedDisk(),
-                    "available", resourceUsage.getAvailableDisk()));
+            usage.put("disk", Map.of("usage", resourceUsage.getDiskUsage(), "total", resourceUsage.getTotalDisk(),
+                    "used", resourceUsage.getUsedDisk(), "available", resourceUsage.getAvailableDisk()));
 
-            usage.put("network", Map.of(
-                    "inbound", resourceUsage.getNetworkInbound(),
-                    "outbound", resourceUsage.getNetworkOutbound()));
+            usage.put("network", Map.of("inbound", resourceUsage.getNetworkInbound(), "outbound",
+                    resourceUsage.getNetworkOutbound()));
 
             return usage;
 
@@ -209,7 +201,6 @@ public class SystemHealthServiceImpl implements SystemHealthService {
         }
     }
 
-    @Override
     @Observed(name = "system.health.microservices", contextualName = "system-health-microservices")
     @Transactional(readOnly = true)
     public List<Map<String, Object>> getMicroservicesStatus() {
@@ -223,7 +214,6 @@ public class SystemHealthServiceImpl implements SystemHealthService {
         }
     }
 
-    @Override
     @Observed(name = "system.health.database", contextualName = "system-health-database")
     @Transactional(readOnly = true)
     public Map<String, Object> getDatabaseStatus() {
@@ -237,7 +227,6 @@ public class SystemHealthServiceImpl implements SystemHealthService {
         }
     }
 
-    @Override
     @Observed(name = "system.health.cache", contextualName = "system-health-cache")
     @Transactional(readOnly = true)
     public Map<String, Object> getCacheStatus() {
@@ -251,7 +240,6 @@ public class SystemHealthServiceImpl implements SystemHealthService {
         }
     }
 
-    @Override
     @Observed(name = "system.health.check", contextualName = "system-health-check")
     @Transactional(readOnly = true)
     public Map<String, Object> performHealthCheck(String component) {
@@ -268,7 +256,6 @@ public class SystemHealthServiceImpl implements SystemHealthService {
         }
     }
 
-    @Override
     @Observed(name = "system.health.activeAlerts", contextualName = "system-health-active-alerts")
     @Transactional(readOnly = true)
     public List<Map<String, Object>> getActiveAlerts() {
@@ -276,24 +263,22 @@ public class SystemHealthServiceImpl implements SystemHealthService {
 
         try {
             QueryWrapper<AlertEntity> queryWrapper = new QueryWrapper<>();
-            queryWrapper.eq("status", "ACTIVE");
-            queryWrapper.eq("deleted_flag", 0);
+            queryWrapper.eq("status", SecurityAlertConstants.AlertStatus.PENDING); // 使用安防告警标准状态（待处理）
+            queryWrapper.eq("deleted_flag", 0); // 使用deleted_flag字段
             queryWrapper.orderByDesc("create_time");
             queryWrapper.last("LIMIT 100");
 
             List<AlertEntity> alerts = alertDao.selectList(queryWrapper);
 
-            return alerts.stream()
-                    .map(alert -> {
-                        Map<String, Object> map = new HashMap<>();
-                        map.put("alertId", alert.getId());
-                        map.put("alertLevel", alert.getAlertLevel());
-                        map.put("alertTitle", alert.getAlertTitle());
-                        map.put("alertMessage", alert.getAlertMessage());
-                        map.put("createTime", alert.getCreateTime());
-                        return map;
-                    })
-                    .collect(java.util.stream.Collectors.toList());
+            return alerts.stream().map(alert -> {
+                Map<String, Object> map = new HashMap<>();
+                map.put("alertId", alert.getId());
+                map.put("alertLevel", alert.getAlertLevel());
+                map.put("alertTitle", alert.getAlertTitle());
+                map.put("alertMessage", alert.getAlertContent());
+                map.put("createTime", alert.getCreateTime());
+                return map;
+            }).collect(java.util.stream.Collectors.toList());
 
         } catch (Exception e) {
             log.error("[系统健康服务] 获取活跃告警系统异常", e);
@@ -301,7 +286,6 @@ public class SystemHealthServiceImpl implements SystemHealthService {
         }
     }
 
-    @Override
     @Observed(name = "system.health.uptime", contextualName = "system-health-uptime")
     @Transactional(readOnly = true)
     public Map<String, Object> getSystemUptime() {
@@ -326,7 +310,6 @@ public class SystemHealthServiceImpl implements SystemHealthService {
         }
     }
 
-    @Override
     @Observed(name = "system.health.trends", contextualName = "system-health-trends")
     @Transactional(readOnly = true)
     public List<Map<String, Object>> getHealthTrends(Integer hours) {
@@ -343,17 +326,20 @@ public class SystemHealthServiceImpl implements SystemHealthService {
         }
     }
 
-    @Override
     @Observed(name = "system.health.resolveAlert", contextualName = "system-health-resolve-alert")
     public void resolveAlert(Long alertId, String resolution) {
         log.info("解决告警，ID：{}，说明：{}", alertId, resolution);
 
         try {
-            AlertEntity alert = new AlertEntity();
-            alert.setId(alertId);
-            alert.setStatus("RESOLVED");
-            alert.setResolutionNotes(resolution);
-            alert.setResolvedTime(LocalDateTime.now());
+            AlertEntity alert = alertDao.selectById(alertId);
+            if (alert == null) {
+                log.warn("[系统健康服务] 告警不存在，无法解决, alertId={}", alertId);
+                throw new BusinessException("ALERT_NOT_FOUND", "告警不存在");
+            }
+
+            alert.setStatus(SecurityAlertConstants.AlertStatus.RESOLVED); // 使用安防告警标准状态（已处理）
+            alert.setHandleRemark(resolution);
+            alert.setHandleTime(LocalDateTime.now());
 
             alertDao.updateById(alert);
 
@@ -415,4 +401,3 @@ public class SystemHealthServiceImpl implements SystemHealthService {
         return vo;
     }
 }
-

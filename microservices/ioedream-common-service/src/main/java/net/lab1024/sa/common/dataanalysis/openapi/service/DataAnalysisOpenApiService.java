@@ -161,3 +161,4 @@ public interface DataAnalysisOpenApiService {
      */
     PageResult<AnalysisTaskResponse> getAnalysisTasks(AnalysisTaskQueryRequest request, String token);
 }
+

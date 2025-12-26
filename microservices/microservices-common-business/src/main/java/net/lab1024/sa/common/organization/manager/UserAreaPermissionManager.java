@@ -1,160 +1,98 @@
 package net.lab1024.sa.common.organization.manager;
 
-import net.lab1024.sa.common.organization.dao.UserAreaPermissionDao;
-import net.lab1024.sa.common.organization.entity.UserAreaPermissionEntity;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
+import net.lab1024.sa.common.organization.dao.UserAreaPermissionDao;
+import net.lab1024.sa.common.organization.entity.UserAreaPermissionEntity;
+
 /**
- * 用户区域权限管理类
+ * 用户区域权限管理器（遗留）
  * <p>
+ * 遗留管理器，容易与门禁设备权限混用，门禁侧请使用AccessUserPermissionManager。
  * 严格遵循CLAUDE.md规范：
- * - 纯Java类，不使用Spring注解
+ * - Manager类是纯Java类，不使用Spring注解
  * - 通过构造函数注入依赖
- * - 在配置类中注册为Bean
- * </p>
- * <p>
- * 核心职责：
- * - 用户区域权限的复杂业务逻辑编排
- * - 权限验证和查询
- * - 权限有效期管理
+ * - 处理复杂的业务逻辑编排
  * </p>
  *
  * @author IOE-DREAM Team
  * @version 1.0.0
- * @since 2025-12-18
+ * @since 2025-01-30
  */
+@Deprecated
 public class UserAreaPermissionManager {
 
-    private final UserAreaPermissionDao userAreaPermissionDao;
+    private final UserAreaPermissionDao dao;
 
     /**
-     * 构造函数注入依赖
+     * 构造函数
      *
-     * @param userAreaPermissionDao 用户区域权限DAO
+     * @param dao 用户区域权限DAO
      */
-    public UserAreaPermissionManager(UserAreaPermissionDao userAreaPermissionDao) {
-        this.userAreaPermissionDao = userAreaPermissionDao;
+    public UserAreaPermissionManager(UserAreaPermissionDao dao) {
+        this.dao = dao;
     }
 
     /**
-     * 根据用户ID和区域ID查询权限
-     * <p>
-     * 对应文档中的permissionDao.selectByUserAndArea()方法
-     * </p>
-     *
-     * @param userId 用户ID
-     * @param areaId 区域ID
-     * @return 权限实体，不存在返回null
-     */
-    public UserAreaPermissionEntity getPermissionByUserAndArea(Long userId, Long areaId) {
-        return userAreaPermissionDao.selectByUserAndArea(userId, areaId);
-    }
-
-    /**
-     * 验证用户是否有区域权限
-     * <p>
-     * 检查权限是否存在、是否有效、是否在有效期内
-     * </p>
-     *
-     * @param userId 用户ID
-     * @param areaId 区域ID
-     * @return 是否有权限
-     */
-    public boolean hasAreaPermission(Long userId, Long areaId) {
-        // 使用DAO的查询方法，自动处理有效期检查
-        return userAreaPermissionDao.hasPermission(userId, areaId);
-    }
-
-    /**
-     * 验证用户是否有区域权限（带时间检查）
-     * <p>
-     * 检查权限是否存在、是否有效、是否在有效期内
-     * </p>
-     *
-     * @param userId 用户ID
-     * @param areaId 区域ID
-     * @param currentTime 当前时间
-     * @return 是否有权限
-     */
-    public boolean hasAreaPermissionAtTime(Long userId, Long areaId, LocalDateTime currentTime) {
-        UserAreaPermissionEntity permission = userAreaPermissionDao.selectValidPermission(userId, areaId, currentTime);
-        return permission != null;
-    }
-
-    /**
-     * 获取用户的所有区域权限
+     * 根据用户ID查询权限
      *
      * @param userId 用户ID
      * @return 权限列表
      */
-    public List<UserAreaPermissionEntity> getUserPermissions(Long userId) {
-        return userAreaPermissionDao.selectByUserId(userId);
+    public List<UserAreaPermissionEntity> getPermissionsByUserId(Long userId) {
+        return dao.selectList(
+                new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<UserAreaPermissionEntity>()
+                        .eq(UserAreaPermissionEntity::getUserId, userId)
+                        .eq(UserAreaPermissionEntity::getDeleted, false));
     }
 
     /**
-     * 获取区域的所有用户权限
+     * 根据区域ID查询权限
      *
      * @param areaId 区域ID
      * @return 权限列表
      */
-    public List<UserAreaPermissionEntity> getAreaPermissions(Long areaId) {
-        return userAreaPermissionDao.selectByAreaId(areaId);
+    public List<UserAreaPermissionEntity> getPermissionsByAreaId(Long areaId) {
+        return dao.selectList(
+                new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<UserAreaPermissionEntity>()
+                        .eq(UserAreaPermissionEntity::getAreaId, areaId)
+                        .eq(UserAreaPermissionEntity::getDeleted, false));
     }
 
     /**
-     * 获取有效的权限（未过期）
+     * 获取用户的有效权限
+     * <p>
+     * 查询指定用户在指定区域的有效权限，包括：
+     * 1. 权限状态为启用（permission_status = 1）
+     * 2. 权限在有效期内（start_time <= now <= end_time）
+     * 3. 未删除（deleted = false）
+     * </p>
      *
      * @param userId 用户ID
      * @param areaId 区域ID
-     * @return 权限实体，不存在或已过期返回null
+     * @return 有效权限实体，如果不存在则返回null
      */
     public UserAreaPermissionEntity getValidPermission(Long userId, Long areaId) {
-        return userAreaPermissionDao.selectValidPermission(userId, areaId, LocalDateTime.now());
-    }
+        LocalDateTime now = LocalDateTime.now();
 
-    /**
-     * 检查权限是否过期
-     *
-     * @param permission 权限实体
-     * @return 是否过期
-     */
-    public boolean isPermissionExpired(UserAreaPermissionEntity permission) {
-        if (permission == null) {
-            return true;
-        }
+        List<UserAreaPermissionEntity> permissions = dao.selectList(
+                new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<UserAreaPermissionEntity>()
+                        .eq(UserAreaPermissionEntity::getUserId, userId)
+                        .eq(UserAreaPermissionEntity::getAreaId, areaId)
+                        .eq(UserAreaPermissionEntity::getPermissionStatus, 1) // 启用状态
+                        .eq(UserAreaPermissionEntity::getDeleted, false)
+                        .and(wrapper -> wrapper
+                                .isNull(UserAreaPermissionEntity::getStartTime)
+                                .or()
+                                .le(UserAreaPermissionEntity::getStartTime, now))
+                        .and(wrapper -> wrapper
+                                .isNull(UserAreaPermissionEntity::getEndTime)
+                                .or()
+                                .ge(UserAreaPermissionEntity::getEndTime, now))
+                        .orderByDesc(UserAreaPermissionEntity::getInheritPriority)
+                        .last("LIMIT 1"));
 
-        // 永久权限不过期
-        if (UserAreaPermissionEntity.PermissionType.ALWAYS.equals(permission.getPermissionType())) {
-            return false;
-        }
-
-        // 限时权限检查结束时间
-        if (permission.getEndTime() != null) {
-            return LocalDateTime.now().isAfter(permission.getEndTime());
-        }
-
-        return false;
-    }
-
-    /**
-     * 批量失效过期权限
-     *
-     * @return 失效的权限数量
-     */
-    public int expireInvalidPermissions() {
-        LocalDateTime currentTime = LocalDateTime.now();
-        List<UserAreaPermissionEntity> expiredPermissions = userAreaPermissionDao.selectExpiredPermissions(currentTime);
-
-        if (expiredPermissions.isEmpty()) {
-            return 0;
-        }
-
-        List<Long> permissionIds = expiredPermissions.stream()
-                .map(UserAreaPermissionEntity::getId)
-                .toList();
-
-        return userAreaPermissionDao.batchUpdateStatus(permissionIds, UserAreaPermissionEntity.Status.INVALID);
+        return permissions.isEmpty() ? null : permissions.get(0);
     }
 }

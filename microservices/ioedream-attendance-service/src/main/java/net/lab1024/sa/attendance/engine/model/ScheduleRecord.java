@@ -58,12 +58,12 @@ public class ScheduleRecord {
     /**
      * 工作开始时间
      */
-    private LocalDateTime startTime;
+    private LocalDateTime workStartTime;
 
     /**
      * 工作结束时间
      */
-    private LocalDateTime endTime;
+    private LocalDateTime workEndTime;
 
     /**
      * 工作地点

@@ -1,47 +1,46 @@
 package net.lab1024.sa.oa.workflow.service.impl;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import io.micrometer.observation.annotation.Observed;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-
-import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.common.domain.PageParam;
-import net.lab1024.sa.common.domain.PageResult;
-import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.oa.workflow.dao.WorkflowDefinitionDao;
-import net.lab1024.sa.oa.workflow.dao.WorkflowInstanceDao;
-import net.lab1024.sa.oa.workflow.dao.WorkflowTaskDao;
-import net.lab1024.sa.oa.domain.entity.WorkflowDefinitionEntity;
-import net.lab1024.sa.oa.domain.entity.WorkflowInstanceEntity;
-import net.lab1024.sa.oa.domain.entity.WorkflowTaskEntity;
-import net.lab1024.sa.common.exception.BusinessException;
-import net.lab1024.sa.common.exception.ParamException;
-import net.lab1024.sa.common.exception.SystemException;
-import net.lab1024.sa.oa.workflow.service.WorkflowEngineService;
-import net.lab1024.sa.oa.workflow.websocket.WorkflowWebSocketController;
-import net.lab1024.sa.oa.workflow.metrics.WorkflowEngineMetricsCollector;
 
-import net.lab1024.sa.oa.workflow.config.wrapper.FlowableRepositoryService;
-import net.lab1024.sa.oa.workflow.config.wrapper.FlowableRuntimeService;
-import net.lab1024.sa.oa.workflow.config.wrapper.FlowableTaskService;
-import net.lab1024.sa.oa.workflow.config.wrapper.FlowableHistoryService;
-import net.lab1024.sa.oa.workflow.config.wrapper.FlowableManagementService;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import org.flowable.engine.repository.ProcessDefinition;
 import org.flowable.engine.runtime.ProcessInstance;
-import org.flowable.engine.history.HistoricProcessInstance;
 import org.flowable.task.api.Task;
-import org.flowable.task.api.history.HistoricTaskInstance;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.time.LocalDateTime;
+
+import io.micrometer.observation.annotation.Observed;
+import jakarta.annotation.Resource;
+import net.lab1024.sa.common.domain.PageParam;
+import net.lab1024.sa.common.domain.PageResult;
+import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.common.exception.ParamException;
+import net.lab1024.sa.common.exception.SystemException;
+import net.lab1024.sa.oa.domain.entity.WorkflowDefinitionEntity;
+import net.lab1024.sa.oa.domain.entity.WorkflowInstanceEntity;
+import net.lab1024.sa.oa.domain.entity.WorkflowTaskEntity;
+import net.lab1024.sa.oa.workflow.config.wrapper.FlowableHistoryService;
+import net.lab1024.sa.oa.workflow.config.wrapper.FlowableManagementService;
+import net.lab1024.sa.oa.workflow.config.wrapper.FlowableRepositoryService;
+import net.lab1024.sa.oa.workflow.config.wrapper.FlowableRuntimeService;
+import net.lab1024.sa.oa.workflow.config.wrapper.FlowableTaskService;
+import net.lab1024.sa.oa.workflow.dao.WorkflowDefinitionDao;
+import net.lab1024.sa.oa.workflow.dao.WorkflowInstanceDao;
+import net.lab1024.sa.oa.workflow.dao.WorkflowTaskDao;
+import net.lab1024.sa.oa.workflow.metrics.WorkflowEngineMetricsCollector;
+import net.lab1024.sa.oa.workflow.service.WorkflowEngineService;
+import net.lab1024.sa.oa.workflow.websocket.WorkflowWebSocketController;
 
 /**
  * 工作流引擎服务实现类
@@ -64,9 +63,9 @@ import java.time.LocalDateTime;
  * @since 2025-01-16
  * @version 4.0.0 - Flowable 6.8.0 集成版
  */
-@Slf4j
 @Service
 @Transactional(rollbackFor = Exception.class)
+@Slf4j
 public class WorkflowEngineServiceImpl implements WorkflowEngineService {
 
     @Resource
@@ -118,7 +117,8 @@ public class WorkflowEngineServiceImpl implements WorkflowEngineService {
     @Override
     @Observed(name = "workflow.deploy", contextualName = "workflow-deploy-process")
     @Transactional(rollbackFor = Exception.class)
-    public ResponseDTO<String> deployProcess(String bpmnXml, String processName, String processKey, String description, String category) {
+    public ResponseDTO<String> deployProcess(String bpmnXml, String processName, String processKey, String description,
+            String category) {
         log.info("部署Flowable 6.8.0流程定义，流程Key: {}, 流程名称: {}", processKey, processName);
         long startTime = System.currentTimeMillis();
 
@@ -136,8 +136,7 @@ public class WorkflowEngineServiceImpl implements WorkflowEngineService {
 
             // 2. 使用Flowable引擎部署流程定义
             org.flowable.engine.repository.Deployment deployment = flowableRepositoryService.deployProcessDefinition(
-                processKey, processName, category, bpmnXml, description
-            );
+                    processKey, processName, category, bpmnXml, description);
 
             if (deployment == null) {
                 throw new SystemException("DEPLOY_PROCESS_SYSTEM_ERROR", "Flowable引擎部署失败");
@@ -182,7 +181,7 @@ public class WorkflowEngineServiceImpl implements WorkflowEngineService {
             metricsCollector.recordProcessDeploymentTime(processKey, duration);
 
             log.info("Flowable流程定义部署成功，本地定义ID: {}, 流程Key: {}, Flowable部署ID: {}, 流程定义ID: {}, 耗时: {}ms",
-                definition.getId(), processKey, deployment.getId(), processDefinition.getId(), duration);
+                    definition.getId(), processKey, deployment.getId(), processDefinition.getId(), duration);
             return ResponseDTO.ok("流程部署成功，定义ID: " + definition.getId() + ", Flowable部署ID: " + deployment.getId());
         } catch (IllegalArgumentException | ParamException e) {
             log.warn("[工作流引擎] 部署流程定义参数错误: processKey={}, error={}", processKey, e.getMessage());
@@ -191,7 +190,8 @@ public class WorkflowEngineServiceImpl implements WorkflowEngineService {
             log.warn("[工作流引擎] 部署流程定义业务异常: processKey={}, code={}, message={}", processKey, e.getCode(), e.getMessage());
             throw e;
         } catch (SystemException e) {
-            log.error("[工作流引擎] 部署流程定义系统异常: processKey={}, code={}, message={}", processKey, e.getCode(), e.getMessage(), e);
+            log.error("[工作流引擎] 部署流程定义系统异常: processKey={}, code={}, message={}", processKey, e.getCode(), e.getMessage(),
+                    e);
             throw new SystemException("DEPLOY_PROCESS_SYSTEM_ERROR", "部署流程定义失败：" + e.getMessage(), e);
         } catch (Exception e) {
             log.error("[工作流引擎] 部署流程定义未知异常: processKey={}", processKey, e);
@@ -201,14 +201,16 @@ public class WorkflowEngineServiceImpl implements WorkflowEngineService {
 
     @Override
     @Observed(name = "workflow.definition.page", contextualName = "workflow-definition-page")
-    public ResponseDTO<PageResult<WorkflowDefinitionEntity>> pageDefinitions(PageParam pageParam, String category, String status, String keyword) {
+    public ResponseDTO<PageResult<WorkflowDefinitionEntity>> pageDefinitions(PageParam pageParam, String category,
+            String status, String keyword) {
         log.debug("分页查询流程定义，分类: {}, 状态: {}, 关键词: {}", category, status, keyword);
         try {
             // 构建分页对象
             Page<WorkflowDefinitionEntity> page = new Page<>(pageParam.getPageNum(), pageParam.getPageSize());
 
             // 调用DAO层查询
-            IPage<WorkflowDefinitionEntity> pageResult = workflowDefinitionDao.selectDefinitionPage(page, category, status, keyword);
+            IPage<WorkflowDefinitionEntity> pageResult = workflowDefinitionDao.selectDefinitionPage(page, category,
+                    status, keyword);
 
             // 转换为PageResult
             PageResult<WorkflowDefinitionEntity> result = new PageResult<>();
@@ -250,10 +252,12 @@ public class WorkflowEngineServiceImpl implements WorkflowEngineService {
             log.warn("[工作流引擎] 获取流程定义详情参数错误: definitionId={}, error={}", definitionId, e.getMessage());
             throw new ParamException("PARAM_ERROR", "参数错误：" + e.getMessage(), e);
         } catch (BusinessException e) {
-            log.warn("[工作流引擎] 获取流程定义详情业务异常: definitionId={}, code={}, message={}", definitionId, e.getCode(), e.getMessage());
+            log.warn("[工作流引擎] 获取流程定义详情业务异常: definitionId={}, code={}, message={}", definitionId, e.getCode(),
+                    e.getMessage());
             throw e;
         } catch (SystemException e) {
-            log.error("[工作流引擎] 获取流程定义详情系统异常: definitionId={}, code={}, message={}", definitionId, e.getCode(), e.getMessage(), e);
+            log.error("[工作流引擎] 获取流程定义详情系统异常: definitionId={}, code={}, message={}", definitionId, e.getCode(),
+                    e.getMessage(), e);
             throw new SystemException("GET_DEFINITION_SYSTEM_ERROR", "获取流程定义详情失败：" + e.getMessage(), e);
         } catch (Exception e) {
             log.error("[工作流引擎] 获取流程定义详情未知异常: definitionId={}", definitionId, e);
@@ -284,10 +288,12 @@ public class WorkflowEngineServiceImpl implements WorkflowEngineService {
             log.warn("[工作流引擎] 激活流程定义参数错误: definitionId={}, error={}", definitionId, e.getMessage());
             throw new ParamException("PARAM_ERROR", "参数错误：" + e.getMessage(), e);
         } catch (BusinessException e) {
-            log.warn("[工作流引擎] 激活流程定义业务异常: definitionId={}, code={}, message={}", definitionId, e.getCode(), e.getMessage());
+            log.warn("[工作流引擎] 激活流程定义业务异常: definitionId={}, code={}, message={}", definitionId, e.getCode(),
+                    e.getMessage());
             throw e;
         } catch (SystemException e) {
-            log.error("[工作流引擎] 激活流程定义系统异常: definitionId={}, code={}, message={}", definitionId, e.getCode(), e.getMessage(), e);
+            log.error("[工作流引擎] 激活流程定义系统异常: definitionId={}, code={}, message={}", definitionId, e.getCode(),
+                    e.getMessage(), e);
             throw new SystemException("ACTIVATE_DEFINITION_SYSTEM_ERROR", "激活流程定义失败：" + e.getMessage(), e);
         } catch (Exception e) {
             log.error("[工作流引擎] 激活流程定义未知异常: definitionId={}", definitionId, e);
@@ -318,10 +324,12 @@ public class WorkflowEngineServiceImpl implements WorkflowEngineService {
             log.warn("[工作流引擎] 禁用流程定义参数错误: definitionId={}, error={}", definitionId, e.getMessage());
             throw new ParamException("PARAM_ERROR", "参数错误：" + e.getMessage(), e);
         } catch (BusinessException e) {
-            log.warn("[工作流引擎] 禁用流程定义业务异常: definitionId={}, code={}, message={}", definitionId, e.getCode(), e.getMessage());
+            log.warn("[工作流引擎] 禁用流程定义业务异常: definitionId={}, code={}, message={}", definitionId, e.getCode(),
+                    e.getMessage());
             throw e;
         } catch (SystemException e) {
-            log.error("[工作流引擎] 禁用流程定义系统异常: definitionId={}, code={}, message={}", definitionId, e.getCode(), e.getMessage(), e);
+            log.error("[工作流引擎] 禁用流程定义系统异常: definitionId={}, code={}, message={}", definitionId, e.getCode(),
+                    e.getMessage(), e);
             throw new SystemException("DISABLE_DEFINITION_SYSTEM_ERROR", "禁用流程定义失败：" + e.getMessage(), e);
         } catch (Exception e) {
             log.error("[工作流引擎] 禁用流程定义未知异常: definitionId={}", definitionId, e);
@@ -344,15 +352,14 @@ public class WorkflowEngineServiceImpl implements WorkflowEngineService {
             // 2. 检查是否有运行的流程实例
             Page<WorkflowInstanceEntity> checkPage = new Page<>(1, 1);
             IPage<WorkflowInstanceEntity> runningInstances = workflowInstanceDao.selectInstancePage(
-                checkPage, definitionId, 1, null, null, null
-            );
+                    checkPage, definitionId, 1, null, null, null);
 
             if (runningInstances.getTotal() > 0) {
                 if (Boolean.TRUE.equals(cascade)) {
                     log.warn("流程定义存在运行的实例，但允许级联删除，定义ID: {}", definitionId);
                 } else {
                     throw new BusinessException("CANNOT_DELETE_HAS_RUNNING_INSTANCES",
-                        "无法删除流程定义，存在运行中的流程实例（共" + runningInstances.getTotal() + "个）。如需删除，请使用级联删除。");
+                            "无法删除流程定义，存在运行中的流程实例（共" + runningInstances.getTotal() + "个）。如需删除，请使用级联删除。");
                 }
             }
 
@@ -367,8 +374,7 @@ public class WorkflowEngineServiceImpl implements WorkflowEngineService {
                 // 查询所有相关的流程实例
                 Page<WorkflowInstanceEntity> instancePage = new Page<>(1, 1000); // 假设最多1000个实例
                 IPage<WorkflowInstanceEntity> instances = workflowInstanceDao.selectInstancePage(
-                    instancePage, definitionId, null, null, null, null
-                );
+                        instancePage, definitionId, null, null, null, null);
                 // 级联逻辑删除流程实例和任务
                 for (WorkflowInstanceEntity instance : instances.getRecords()) {
                     // 逻辑删除流程实例
@@ -388,10 +394,12 @@ public class WorkflowEngineServiceImpl implements WorkflowEngineService {
             log.warn("[工作流引擎] 删除流程定义参数错误: definitionId={}, error={}", definitionId, e.getMessage());
             throw new ParamException("PARAM_ERROR", "参数错误：" + e.getMessage(), e);
         } catch (BusinessException e) {
-            log.warn("[工作流引擎] 删除流程定义业务异常: definitionId={}, code={}, message={}", definitionId, e.getCode(), e.getMessage());
+            log.warn("[工作流引擎] 删除流程定义业务异常: definitionId={}, code={}, message={}", definitionId, e.getCode(),
+                    e.getMessage());
             throw e;
         } catch (SystemException e) {
-            log.error("[工作流引擎] 删除流程定义系统异常: definitionId={}, code={}, message={}", definitionId, e.getCode(), e.getMessage(), e);
+            log.error("[工作流引擎] 删除流程定义系统异常: definitionId={}, code={}, message={}", definitionId, e.getCode(),
+                    e.getMessage(), e);
             throw new SystemException("DELETE_DEFINITION_SYSTEM_ERROR", "删除流程定义失败：" + e.getMessage(), e);
         } catch (Exception e) {
             log.error("[工作流引擎] 删除流程定义未知异常: definitionId={}", definitionId, e);
@@ -404,7 +412,8 @@ public class WorkflowEngineServiceImpl implements WorkflowEngineService {
     @Override
     @Observed(name = "workflow.process.start", contextualName = "workflow-process-start")
     @Transactional(rollbackFor = Exception.class)
-    public ResponseDTO<Long> startProcess(Long definitionId, String businessKey, String instanceName, Map<String, Object> variables, Map<String, Object> formData) {
+    public ResponseDTO<Long> startProcess(Long definitionId, String businessKey, String instanceName,
+            Map<String, Object> variables, Map<String, Object> formData) {
         log.info("启动流程实例，定义ID: {}, 业务Key: {}", definitionId, businessKey);
         long startTime = System.currentTimeMillis();
 
@@ -422,8 +431,8 @@ public class WorkflowEngineServiceImpl implements WorkflowEngineService {
             // 2. 获取当前用户ID（从请求上下文获取，这里需要传入userId参数）
             // 注意：实际调用时应从SmartRequestUtil.getUserId()获取
             Long initiatorId = variables != null && variables.containsKey("initiatorId")
-                ? Long.parseLong(variables.get("initiatorId").toString())
-                : null;
+                    ? Long.parseLong(variables.get("initiatorId").toString())
+                    : null;
 
             if (initiatorId == null) {
                 throw new ParamException("INITIATOR_ID_REQUIRED", "发起人ID不能为空");
@@ -475,15 +484,14 @@ public class WorkflowEngineServiceImpl implements WorkflowEngineService {
             // 5. 使用Flowable引擎启动流程实例
             String starterUserId = initiatorId != null ? String.valueOf(initiatorId) : "system";
             ProcessInstance flowableInstance = flowableRuntimeService.startProcessInstanceByKeyWithFullResult(
-                definition.getProcessKey(), businessKey, flowVariables, starterUserId
-            );
+                    definition.getProcessKey(), businessKey, flowVariables, starterUserId);
 
             if (flowableInstance == null) {
                 throw new SystemException("START_PROCESS_SYSTEM_ERROR", "Flowable引擎启动流程实例失败");
             }
 
             log.info("Flowable流程实例启动成功，引擎实例ID: {}, 流程Key: {}",
-                flowableInstance.getId(), definition.getProcessKey());
+                    flowableInstance.getId(), definition.getProcessKey());
 
             // 6. 创建本地流程实例记录（用于业务管理）
             instance.setFlowableInstanceId(flowableInstance.getId());
@@ -533,13 +541,16 @@ public class WorkflowEngineServiceImpl implements WorkflowEngineService {
             log.info("流程实例启动成功，实例ID: {}, 业务Key: {}, 耗时: {}ms", instanceId, businessKey, duration);
             return ResponseDTO.ok(instanceId);
         } catch (IllegalArgumentException | ParamException e) {
-            log.warn("[工作流引擎] 启动流程实例参数错误: definitionId={}, businessKey={}, error={}", definitionId, businessKey, e.getMessage());
+            log.warn("[工作流引擎] 启动流程实例参数错误: definitionId={}, businessKey={}, error={}", definitionId, businessKey,
+                    e.getMessage());
             throw new ParamException("START_PROCESS_PARAM_ERROR", "参数错误：" + e.getMessage(), e);
         } catch (BusinessException e) {
-            log.warn("[工作流引擎] 启动流程实例业务异常: definitionId={}, businessKey={}, code={}, message={}", definitionId, businessKey, e.getCode(), e.getMessage());
+            log.warn("[工作流引擎] 启动流程实例业务异常: definitionId={}, businessKey={}, code={}, message={}", definitionId,
+                    businessKey, e.getCode(), e.getMessage());
             throw e;
         } catch (SystemException e) {
-            log.error("[工作流引擎] 启动流程实例系统异常: definitionId={}, businessKey={}, code={}, message={}", definitionId, businessKey, e.getCode(), e.getMessage(), e);
+            log.error("[工作流引擎] 启动流程实例系统异常: definitionId={}, businessKey={}, code={}, message={}", definitionId,
+                    businessKey, e.getCode(), e.getMessage(), e);
             throw new SystemException("START_PROCESS_SYSTEM_ERROR", "启动流程实例失败：" + e.getMessage(), e);
         } catch (Exception e) {
             log.error("[工作流引擎] 启动流程实例未知异常: definitionId={}, businessKey={}", definitionId, businessKey, e);
@@ -549,7 +560,8 @@ public class WorkflowEngineServiceImpl implements WorkflowEngineService {
 
     @Override
     @Observed(name = "workflow.instance.page", contextualName = "workflow-instance-page")
-    public ResponseDTO<PageResult<WorkflowInstanceEntity>> pageInstances(PageParam pageParam, Long definitionId, String status, Long startUserId, String startDate, String endDate) {
+    public ResponseDTO<PageResult<WorkflowInstanceEntity>> pageInstances(PageParam pageParam, Long definitionId,
+            String status, Long startUserId, String startDate, String endDate) {
         log.debug("分页查询流程实例，定义ID: {}, 状态: {}", definitionId, status);
         try {
             // 构建分页对象
@@ -567,8 +579,7 @@ public class WorkflowEngineServiceImpl implements WorkflowEngineService {
 
             // 调用DAO层查询
             IPage<WorkflowInstanceEntity> pageResult = workflowInstanceDao.selectInstancePage(
-                page, definitionId, statusInt, startUserId, startDate, endDate
-            );
+                    page, definitionId, statusInt, startUserId, startDate, endDate);
 
             // 转换为PageResult
             PageResult<WorkflowInstanceEntity> result = new PageResult<>();
@@ -610,10 +621,12 @@ public class WorkflowEngineServiceImpl implements WorkflowEngineService {
             log.warn("[工作流引擎] 获取流程实例详情参数错误: instanceId={}, error={}", instanceId, e.getMessage());
             throw new ParamException("PARAM_ERROR", "参数错误：" + e.getMessage(), e);
         } catch (BusinessException e) {
-            log.warn("[工作流引擎] 获取流程实例详情业务异常: instanceId={}, code={}, message={}", instanceId, e.getCode(), e.getMessage());
+            log.warn("[工作流引擎] 获取流程实例详情业务异常: instanceId={}, code={}, message={}", instanceId, e.getCode(),
+                    e.getMessage());
             throw e;
         } catch (SystemException e) {
-            log.error("[工作流引擎] 获取流程实例详情系统异常: instanceId={}, code={}, message={}", instanceId, e.getCode(), e.getMessage(), e);
+            log.error("[工作流引擎] 获取流程实例详情系统异常: instanceId={}, code={}, message={}", instanceId, e.getCode(),
+                    e.getMessage(), e);
             throw new SystemException("GET_INSTANCE_SYSTEM_ERROR", "获取流程实例详情失败：" + e.getMessage(), e);
         } catch (Exception e) {
             log.error("[工作流引擎] 获取流程实例详情未知异常: instanceId={}", instanceId, e);
@@ -653,7 +666,8 @@ public class WorkflowEngineServiceImpl implements WorkflowEngineService {
             log.warn("[工作流引擎] 挂起流程实例业务异常: instanceId={}, code={}, message={}", instanceId, e.getCode(), e.getMessage());
             throw e;
         } catch (SystemException e) {
-            log.error("[工作流引擎] 挂起流程实例系统异常: instanceId={}, code={}, message={}", instanceId, e.getCode(), e.getMessage(), e);
+            log.error("[工作流引擎] 挂起流程实例系统异常: instanceId={}, code={}, message={}", instanceId, e.getCode(), e.getMessage(),
+                    e);
             throw new SystemException("SUSPEND_INSTANCE_SYSTEM_ERROR", "挂起流程实例失败：" + e.getMessage(), e);
         } catch (Exception e) {
             log.error("[工作流引擎] 挂起流程实例未知异常: instanceId={}", instanceId, e);
@@ -692,7 +706,8 @@ public class WorkflowEngineServiceImpl implements WorkflowEngineService {
             log.warn("[工作流引擎] 激活流程实例业务异常: instanceId={}, code={}, message={}", instanceId, e.getCode(), e.getMessage());
             throw e;
         } catch (SystemException e) {
-            log.error("[工作流引擎] 激活流程实例系统异常: instanceId={}, code={}, message={}", instanceId, e.getCode(), e.getMessage(), e);
+            log.error("[工作流引擎] 激活流程实例系统异常: instanceId={}, code={}, message={}", instanceId, e.getCode(), e.getMessage(),
+                    e);
             throw new SystemException("ACTIVATE_INSTANCE_SYSTEM_ERROR", "激活流程实例失败：" + e.getMessage(), e);
         } catch (Exception e) {
             log.error("[工作流引擎] 激活流程实例未知异常: instanceId={}", instanceId, e);
@@ -732,7 +747,8 @@ public class WorkflowEngineServiceImpl implements WorkflowEngineService {
             log.warn("[工作流引擎] 终止流程实例业务异常: instanceId={}, code={}, message={}", instanceId, e.getCode(), e.getMessage());
             throw e;
         } catch (SystemException e) {
-            log.error("[工作流引擎] 终止流程实例系统异常: instanceId={}, code={}, message={}", instanceId, e.getCode(), e.getMessage(), e);
+            log.error("[工作流引擎] 终止流程实例系统异常: instanceId={}, code={}, message={}", instanceId, e.getCode(), e.getMessage(),
+                    e);
             throw new SystemException("TERMINATE_INSTANCE_SYSTEM_ERROR", "终止流程实例失败：" + e.getMessage(), e);
         } catch (Exception e) {
             log.error("[工作流引擎] 终止流程实例未知异常: instanceId={}", instanceId, e);
@@ -772,7 +788,8 @@ public class WorkflowEngineServiceImpl implements WorkflowEngineService {
             log.warn("[工作流引擎] 撤销流程实例业务异常: instanceId={}, code={}, message={}", instanceId, e.getCode(), e.getMessage());
             throw e;
         } catch (SystemException e) {
-            log.error("[工作流引擎] 撤销流程实例系统异常: instanceId={}, code={}, message={}", instanceId, e.getCode(), e.getMessage(), e);
+            log.error("[工作流引擎] 撤销流程实例系统异常: instanceId={}, code={}, message={}", instanceId, e.getCode(), e.getMessage(),
+                    e);
             throw new SystemException("REVOKE_INSTANCE_SYSTEM_ERROR", "撤销流程实例失败：" + e.getMessage(), e);
         } catch (Exception e) {
             log.error("[工作流引擎] 撤销流程实例未知异常: instanceId={}", instanceId, e);
@@ -783,7 +800,8 @@ public class WorkflowEngineServiceImpl implements WorkflowEngineService {
     // ==================== 任务管理 ====================
 
     @Override
-    public ResponseDTO<PageResult<WorkflowTaskEntity>> pageMyTasks(PageParam pageParam, Long userId, String category, Integer priority, String dueStatus) {
+    public ResponseDTO<PageResult<WorkflowTaskEntity>> pageMyTasks(PageParam pageParam, Long userId, String category,
+            Integer priority, String dueStatus) {
         log.debug("分页查询我的待办任务，用户ID: {}, 分类: {}", userId, category);
         try {
             // 构建分页对象
@@ -791,8 +809,7 @@ public class WorkflowEngineServiceImpl implements WorkflowEngineService {
 
             // 调用DAO层查询
             IPage<WorkflowTaskEntity> pageResult = workflowTaskDao.selectMyTasksPage(
-                page, userId, category, priority, dueStatus
-            );
+                    page, userId, category, priority, dueStatus);
 
             // 转换为PageResult
             PageResult<WorkflowTaskEntity> result = new PageResult<>();
@@ -819,7 +836,8 @@ public class WorkflowEngineServiceImpl implements WorkflowEngineService {
     }
 
     @Override
-    public ResponseDTO<PageResult<WorkflowTaskEntity>> pageMyCompletedTasks(PageParam pageParam, Long userId, String category, String outcome, String startDate, String endDate) {
+    public ResponseDTO<PageResult<WorkflowTaskEntity>> pageMyCompletedTasks(PageParam pageParam, Long userId,
+            String category, String outcome, String startDate, String endDate) {
         log.debug("分页查询我的已办任务，用户ID: {}", userId);
         try {
             // 构建分页对象
@@ -827,8 +845,7 @@ public class WorkflowEngineServiceImpl implements WorkflowEngineService {
 
             // 调用DAO层查询
             IPage<WorkflowTaskEntity> pageResult = workflowTaskDao.selectMyCompletedTasksPage(
-                page, userId, category, outcome, startDate, endDate
-            );
+                    page, userId, category, outcome, startDate, endDate);
 
             // 转换为PageResult
             PageResult<WorkflowTaskEntity> result = new PageResult<>();
@@ -855,7 +872,8 @@ public class WorkflowEngineServiceImpl implements WorkflowEngineService {
     }
 
     @Override
-    public ResponseDTO<PageResult<WorkflowInstanceEntity>> pageMyProcesses(PageParam pageParam, Long userId, String category, String status) {
+    public ResponseDTO<PageResult<WorkflowInstanceEntity>> pageMyProcesses(PageParam pageParam, Long userId,
+            String category, String status) {
         log.debug("分页查询我发起的流程，用户ID: {}", userId);
         try {
             // 构建分页对象
@@ -873,8 +891,7 @@ public class WorkflowEngineServiceImpl implements WorkflowEngineService {
 
             // 调用DAO层查询（使用startUserId过滤）
             IPage<WorkflowInstanceEntity> pageResult = workflowInstanceDao.selectInstancePage(
-                page, null, statusInt, userId, null, null
-            );
+                    page, null, statusInt, userId, null, null);
 
             // 转换为PageResult
             PageResult<WorkflowInstanceEntity> result = new PageResult<>();
@@ -955,10 +972,12 @@ public class WorkflowEngineServiceImpl implements WorkflowEngineService {
             log.warn("[工作流引擎] 受理任务参数错误: taskId={}, userId={}, error={}", taskId, userId, e.getMessage());
             throw new ParamException("PARAM_ERROR", "参数错误：" + e.getMessage(), e);
         } catch (BusinessException e) {
-            log.warn("[工作流引擎] 受理任务业务异常: taskId={}, userId={}, code={}, message={}", taskId, userId, e.getCode(), e.getMessage());
+            log.warn("[工作流引擎] 受理任务业务异常: taskId={}, userId={}, code={}, message={}", taskId, userId, e.getCode(),
+                    e.getMessage());
             throw e;
         } catch (SystemException e) {
-            log.error("[工作流引擎] 受理任务系统异常: taskId={}, userId={}, code={}, message={}", taskId, userId, e.getCode(), e.getMessage(), e);
+            log.error("[工作流引擎] 受理任务系统异常: taskId={}, userId={}, code={}, message={}", taskId, userId, e.getCode(),
+                    e.getMessage(), e);
             throw new SystemException("CLAIM_TASK_SYSTEM_ERROR", "受理任务失败：" + e.getMessage(), e);
         } catch (Exception e) {
             log.error("[工作流引擎] 受理任务未知异常: taskId={}, userId={}", taskId, userId, e);
@@ -1035,10 +1054,12 @@ public class WorkflowEngineServiceImpl implements WorkflowEngineService {
             log.warn("[工作流引擎] 委派任务参数错误: taskId={}, targetUserId={}, error={}", taskId, targetUserId, e.getMessage());
             throw new ParamException("PARAM_ERROR", "参数错误：" + e.getMessage(), e);
         } catch (BusinessException e) {
-            log.warn("[工作流引擎] 委派任务业务异常: taskId={}, targetUserId={}, code={}, message={}", taskId, targetUserId, e.getCode(), e.getMessage());
+            log.warn("[工作流引擎] 委派任务业务异常: taskId={}, targetUserId={}, code={}, message={}", taskId, targetUserId,
+                    e.getCode(), e.getMessage());
             throw e;
         } catch (SystemException e) {
-            log.error("[工作流引擎] 委派任务系统异常: taskId={}, targetUserId={}, code={}, message={}", taskId, targetUserId, e.getCode(), e.getMessage(), e);
+            log.error("[工作流引擎] 委派任务系统异常: taskId={}, targetUserId={}, code={}, message={}", taskId, targetUserId,
+                    e.getCode(), e.getMessage(), e);
             throw new SystemException("DELEGATE_TASK_SYSTEM_ERROR", "委派任务失败：" + e.getMessage(), e);
         } catch (Exception e) {
             log.error("[工作流引擎] 委派任务未知异常: taskId={}, targetUserId={}", taskId, targetUserId, e);
@@ -1082,10 +1103,12 @@ public class WorkflowEngineServiceImpl implements WorkflowEngineService {
             log.warn("[工作流引擎] 转交任务参数错误: taskId={}, targetUserId={}, error={}", taskId, targetUserId, e.getMessage());
             throw new ParamException("PARAM_ERROR", "参数错误：" + e.getMessage(), e);
         } catch (BusinessException e) {
-            log.warn("[工作流引擎] 转交任务业务异常: taskId={}, targetUserId={}, code={}, message={}", taskId, targetUserId, e.getCode(), e.getMessage());
+            log.warn("[工作流引擎] 转交任务业务异常: taskId={}, targetUserId={}, code={}, message={}", taskId, targetUserId,
+                    e.getCode(), e.getMessage());
             throw e;
         } catch (SystemException e) {
-            log.error("[工作流引擎] 转交任务系统异常: taskId={}, targetUserId={}, code={}, message={}", taskId, targetUserId, e.getCode(), e.getMessage(), e);
+            log.error("[工作流引擎] 转交任务系统异常: taskId={}, targetUserId={}, code={}, message={}", taskId, targetUserId,
+                    e.getCode(), e.getMessage(), e);
             throw new SystemException("TRANSFER_TASK_SYSTEM_ERROR", "转交任务失败：" + e.getMessage(), e);
         } catch (Exception e) {
             log.error("[工作流引擎] 转交任务未知异常: taskId={}, targetUserId={}", taskId, targetUserId, e);
@@ -1096,7 +1119,8 @@ public class WorkflowEngineServiceImpl implements WorkflowEngineService {
     @Override
     @Observed(name = "workflow.task.complete", contextualName = "workflow-task-complete")
     @Transactional(rollbackFor = Exception.class)
-    public ResponseDTO<String> completeTask(Long taskId, String outcome, String comment, Map<String, Object> variables, Map<String, Object> formData) {
+    public ResponseDTO<String> completeTask(Long taskId, String outcome, String comment, Map<String, Object> variables,
+            Map<String, Object> formData) {
         log.info("完成Flowable任务，任务ID: {}, 结果: {}", taskId, outcome);
         try {
             // 验证任务是否存在
@@ -1145,10 +1169,11 @@ public class WorkflowEngineServiceImpl implements WorkflowEngineService {
             String flowableTaskId = task.getFlowableTaskId();
             if (flowableTaskId == null || flowableTaskId.isEmpty()) {
                 // 如果本地任务没有Flowable任务ID，尝试通过流程实例ID和任务名称查找
-                List<Task> flowableTasks = flowableTaskService.getTasksByProcessInstanceId(instance.getFlowableInstanceId());
+                List<Task> flowableTasks = flowableTaskService
+                        .getTasksByProcessInstanceId(instance.getFlowableInstanceId());
                 Optional<Task> matchingTask = flowableTasks.stream()
-                    .filter(t -> task.getTaskName().equals(t.getName()))
-                    .findFirst();
+                        .filter(t -> task.getTaskName().equals(t.getName()))
+                        .findFirst();
 
                 if (matchingTask.isPresent()) {
                     flowableTaskId = matchingTask.get().getId();
@@ -1179,7 +1204,7 @@ public class WorkflowEngineServiceImpl implements WorkflowEngineService {
                     Map<String, Object> existingVariables = new HashMap<>();
                     if (instance.getVariables() != null && !instance.getVariables().isEmpty()) {
                         existingVariables = objectMapper.readValue(instance.getVariables(),
-                            objectMapper.getTypeFactory().constructMapType(Map.class, String.class, Object.class));
+                                objectMapper.getTypeFactory().constructMapType(Map.class, String.class, Object.class));
                     }
                     existingVariables.putAll(taskVariables);
                     instance.setVariables(objectMapper.writeValueAsString(existingVariables));
@@ -1262,7 +1287,8 @@ public class WorkflowEngineServiceImpl implements WorkflowEngineService {
                         Map<String, Object> existingVariables = new HashMap<>();
                         if (instance.getVariables() != null && !instance.getVariables().isEmpty()) {
                             existingVariables = objectMapper.readValue(instance.getVariables(),
-                                objectMapper.getTypeFactory().constructMapType(Map.class, String.class, Object.class));
+                                    objectMapper.getTypeFactory().constructMapType(Map.class, String.class,
+                                            Object.class));
                         }
                         existingVariables.putAll(flowVariables);
                         instance.setVariables(objectMapper.writeValueAsString(existingVariables));
@@ -1363,10 +1389,12 @@ public class WorkflowEngineServiceImpl implements WorkflowEngineService {
             log.warn("[工作流引擎] 获取流程实例图参数错误: instanceId={}, error={}", instanceId, e.getMessage());
             throw new ParamException("PARAM_ERROR", "参数错误：" + e.getMessage(), e);
         } catch (BusinessException e) {
-            log.warn("[工作流引擎] 获取流程实例图业务异常: instanceId={}, code={}, message={}", instanceId, e.getCode(), e.getMessage());
+            log.warn("[工作流引擎] 获取流程实例图业务异常: instanceId={}, code={}, message={}", instanceId, e.getCode(),
+                    e.getMessage());
             throw e;
         } catch (SystemException e) {
-            log.error("[工作流引擎] 获取流程实例图系统异常: instanceId={}, code={}, message={}", instanceId, e.getCode(), e.getMessage(), e);
+            log.error("[工作流引擎] 获取流程实例图系统异常: instanceId={}, code={}, message={}", instanceId, e.getCode(),
+                    e.getMessage(), e);
             throw new SystemException("GET_PROCESS_DIAGRAM_SYSTEM_ERROR", "获取流程图失败：" + e.getMessage(), e);
         } catch (Exception e) {
             log.error("[工作流引擎] 获取流程实例图未知异常: instanceId={}", instanceId, e);
@@ -1392,10 +1420,12 @@ public class WorkflowEngineServiceImpl implements WorkflowEngineService {
             log.warn("[工作流引擎] 获取流程历史记录参数错误: instanceId={}, error={}", instanceId, e.getMessage());
             throw new ParamException("PARAM_ERROR", "参数错误：" + e.getMessage(), e);
         } catch (BusinessException e) {
-            log.warn("[工作流引擎] 获取流程历史记录业务异常: instanceId={}, code={}, message={}", instanceId, e.getCode(), e.getMessage());
+            log.warn("[工作流引擎] 获取流程历史记录业务异常: instanceId={}, code={}, message={}", instanceId, e.getCode(),
+                    e.getMessage());
             throw e;
         } catch (SystemException e) {
-            log.error("[工作流引擎] 获取流程历史记录系统异常: instanceId={}, code={}, message={}", instanceId, e.getCode(), e.getMessage(), e);
+            log.error("[工作流引擎] 获取流程历史记录系统异常: instanceId={}, code={}, message={}", instanceId, e.getCode(),
+                    e.getMessage(), e);
             throw new SystemException("GET_PROCESS_HISTORY_SYSTEM_ERROR", "获取流程历史记录失败：" + e.getMessage(), e);
         } catch (Exception e) {
             log.error("[工作流引擎] 获取流程历史记录未知异常: instanceId={}", instanceId, e);
@@ -1408,7 +1438,8 @@ public class WorkflowEngineServiceImpl implements WorkflowEngineService {
         log.debug("获取流程统计信息，开始日期: {}, 结束日期: {}", startDate, endDate);
         try {
             // 调用DAO层统计方法
-            Map<String, Object> statistics = workflowInstanceDao.selectProcessStatistics(null, null, startDate, endDate);
+            Map<String, Object> statistics = workflowInstanceDao.selectProcessStatistics(null, null, startDate,
+                    endDate);
 
             // 构建返回结果
             Map<String, Object> result = new HashMap<>();
@@ -1416,9 +1447,11 @@ public class WorkflowEngineServiceImpl implements WorkflowEngineService {
                 result.put("totalInstances", statistics.get("total") != null ? statistics.get("total") : 0);
                 result.put("runningInstances", statistics.get("running") != null ? statistics.get("running") : 0);
                 result.put("completedInstances", statistics.get("completed") != null ? statistics.get("completed") : 0);
-                result.put("terminatedInstances", statistics.get("terminated") != null ? statistics.get("terminated") : 0);
+                result.put("terminatedInstances",
+                        statistics.get("terminated") != null ? statistics.get("terminated") : 0);
                 result.put("suspendedInstances", statistics.get("suspended") != null ? statistics.get("suspended") : 0);
-                result.put("averageDuration", statistics.get("avgDuration") != null ? statistics.get("avgDuration") : 0);
+                result.put("averageDuration",
+                        statistics.get("avgDuration") != null ? statistics.get("avgDuration") : 0);
             } else {
                 result.put("totalInstances", 0);
                 result.put("runningInstances", 0);
@@ -1433,7 +1466,8 @@ public class WorkflowEngineServiceImpl implements WorkflowEngineService {
             if (taskStatistics != null) {
                 result.put("totalTasks", taskStatistics.get("total") != null ? taskStatistics.get("total") : 0);
                 result.put("pendingTasks", taskStatistics.get("pending") != null ? taskStatistics.get("pending") : 0);
-                result.put("completedTasks", taskStatistics.get("completed") != null ? taskStatistics.get("completed") : 0);
+                result.put("completedTasks",
+                        taskStatistics.get("completed") != null ? taskStatistics.get("completed") : 0);
             } else {
                 result.put("totalTasks", 0);
                 result.put("pendingTasks", 0);
@@ -1473,7 +1507,8 @@ public class WorkflowEngineServiceImpl implements WorkflowEngineService {
                     Map<String, Object> stats = (Map<String, Object>) statisticsList.get(0);
                     result.put("totalTasks", stats.get("totalTasks") != null ? stats.get("totalTasks") : 0);
                     result.put("pendingTasks", stats.get("pendingTasks") != null ? stats.get("pendingTasks") : 0);
-                    result.put("processingTasks", stats.get("processingTasks") != null ? stats.get("processingTasks") : 0);
+                    result.put("processingTasks",
+                            stats.get("processingTasks") != null ? stats.get("processingTasks") : 0);
                     result.put("completedTasks", stats.get("completedTasks") != null ? stats.get("completedTasks") : 0);
                     result.put("averageDuration", stats.get("avgDuration") != null ? stats.get("avgDuration") : 0);
                     result.put("overdueCount", stats.get("overdueCount") != null ? stats.get("overdueCount") : 0);
@@ -1481,7 +1516,9 @@ public class WorkflowEngineServiceImpl implements WorkflowEngineService {
                     // 计算完成率
                     Long totalTasks = Long.parseLong(stats.get("totalTasks").toString());
                     Long completedTasks = Long.parseLong(stats.get("completedTasks").toString());
-                    double completionRate = totalTasks > 0 ? (completedTasks.doubleValue() / totalTasks.doubleValue()) * 100 : 0.0;
+                    double completionRate = totalTasks > 0
+                            ? (completedTasks.doubleValue() / totalTasks.doubleValue()) * 100
+                            : 0.0;
                     result.put("completionRate", completionRate);
                 } else {
                     // 如果返回格式不同，使用默认值
@@ -1532,7 +1569,8 @@ public class WorkflowEngineServiceImpl implements WorkflowEngineService {
             // 统计活跃任务数
             Long activeTasks = workflowTaskDao.countByStatus(1); // 1-待处理
             Long processingTasks = workflowTaskDao.countByStatus(2); // 2-处理中
-            stats.put("activeTasks", (activeTasks != null ? activeTasks : 0L) + (processingTasks != null ? processingTasks : 0L));
+            stats.put("activeTasks",
+                    (activeTasks != null ? activeTasks : 0L) + (processingTasks != null ? processingTasks : 0L));
 
             // 统计已部署流程数
             Long deployedProcesses = workflowDefinitionDao.countByStatus("ACTIVE");
@@ -1557,8 +1595,3 @@ public class WorkflowEngineServiceImpl implements WorkflowEngineService {
         }
     }
 }
-
-
-
-
-

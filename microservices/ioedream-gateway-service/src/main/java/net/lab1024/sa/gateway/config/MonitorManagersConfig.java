@@ -1,10 +1,12 @@
 package net.lab1024.sa.gateway.config;
 
+import lombok.extern.slf4j.Slf4j;
+
+
 import org.springframework.context.annotation.Configuration;
 
 import io.micrometer.core.instrument.MeterRegistry;
 import jakarta.annotation.Resource;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * 网关监控配置类
@@ -16,9 +18,10 @@ import lombok.extern.slf4j.Slf4j;
  * @version 1.0.0
  * @since 2025-12-09
  */
-@Slf4j
 @Configuration
+@Slf4j
 public class MonitorManagersConfig {
+
 
     @Resource
     private MeterRegistry meterRegistry;

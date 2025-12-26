@@ -1,7 +1,6 @@
 package net.lab1024.sa.oa.workflow.health;
 
 import lombok.extern.slf4j.Slf4j;
-
 /**
  * 工作流引擎健康检查 - 占位符
  * <p>
@@ -18,8 +17,8 @@ import lombok.extern.slf4j.Slf4j;
  * @version 2.0.0
  * @since 2025-01-17
  */
-@Slf4j
 // @Component - 待实现后启用
+@Slf4j
 public class WorkflowEngineHealthIndicator {
 
     // TODO: 完整实现需要：

@@ -1,5 +1,7 @@
 package net.lab1024.sa.attendance.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -10,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import jakarta.annotation.Resource;
 import io.github.resilience4j.retry.annotation.Retry;
 import io.micrometer.observation.annotation.Observed;
-import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.exception.BusinessException;
 import net.lab1024.sa.common.exception.ParamException;
@@ -22,11 +23,11 @@ import net.lab1024.sa.attendance.dao.AttendanceShiftDao;
 import net.lab1024.sa.attendance.entity.AttendanceShiftEntity;
 import net.lab1024.sa.attendance.domain.form.AttendanceShiftForm;
 import net.lab1024.sa.attendance.service.AttendanceShiftService;
-
-@Slf4j
 @Service
 @Transactional(rollbackFor = Exception.class)
+@Slf4j
 public class AttendanceShiftServiceImpl implements AttendanceShiftService {
+
 
     @Resource
     private AttendanceShiftDao attendanceShiftDao;
@@ -69,7 +70,7 @@ public class AttendanceShiftServiceImpl implements AttendanceShiftService {
 
         Map<String, Object> variables = new HashMap<>();
 
-        ResponseDTO<Long> workflowResult = workflowApprovalManager.startApprovalProcess(
+        Long workflowInstanceId = workflowApprovalManager.startApprovalProcess(
                 WorkflowDefinitionConstants.ATTENDANCE_SHIFT,
                 entity.getShiftNo(),
                 "调班申请-" + entity.getShiftNo(),
@@ -79,13 +80,11 @@ public class AttendanceShiftServiceImpl implements AttendanceShiftService {
                 variables
         );
 
-        if (workflowResult == null || !workflowResult.isSuccess()) {
+        if (workflowInstanceId == null) {
             log.error("[调班申请] 启动审批流程失败，shiftNo={}", entity.getShiftNo());
-            throw new BusinessException("启动审批流程失败: " +
-                    (workflowResult != null ? workflowResult.getMessage() : "未知错误"));
+            throw new BusinessException("启动审批流程失败");
         }
 
-        Long workflowInstanceId = workflowResult.getData();
         entity.setWorkflowInstanceId(workflowInstanceId);
         attendanceShiftDao.updateById(entity);
 
@@ -179,6 +178,5 @@ public class AttendanceShiftServiceImpl implements AttendanceShiftService {
         return "SH" + System.currentTimeMillis();
     }
 }
-
 
 

@@ -41,8 +41,8 @@ public class VideoStreamManager {
     /**
      * 创建视频流会话
      *
-     * @param deviceId 设备ID
-     * @param channelId 通道ID
+     * @param deviceId   设备ID
+     * @param channelId  通道ID
      * @param streamType 流类型（main/sub）
      * @return 会话信息
      */
@@ -107,7 +107,7 @@ public class VideoStreamManager {
     /**
      * 获取视频截图
      *
-     * @param deviceId 设备ID
+     * @param deviceId  设备ID
      * @param channelId 通道ID
      * @return 截图信息
      */
@@ -174,7 +174,7 @@ public class VideoStreamManager {
      * 切换视频流质量
      *
      * @param sessionId 会话ID
-     * @param quality 质量等级（high/medium/low）
+     * @param quality   质量等级（high/medium/low）
      * @return 切换结果
      */
     public Map<String, Object> switchStreamQuality(String sessionId, String quality) {

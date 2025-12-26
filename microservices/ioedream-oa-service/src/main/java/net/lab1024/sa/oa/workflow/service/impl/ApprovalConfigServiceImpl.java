@@ -1,5 +1,7 @@
 package net.lab1024.sa.oa.workflow.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.time.LocalDateTime;
 
 import org.springframework.stereotype.Service;
@@ -11,16 +13,15 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 import io.micrometer.observation.annotation.Observed;
 import jakarta.annotation.Resource;
-import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.domain.PageParam;
 import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.exception.BusinessException;
 import net.lab1024.sa.common.exception.ParamException;
 import net.lab1024.sa.common.exception.SystemException;
-import net.lab1024.sa.common.workflow.dao.ApprovalConfigDao;
+import net.lab1024.sa.oa.workflow.dao.ApprovalConfigDao;
 import net.lab1024.sa.oa.workflow.domain.form.ApprovalConfigForm;
-import net.lab1024.sa.common.workflow.entity.ApprovalConfigEntity;
+import net.lab1024.sa.oa.workflow.entity.ApprovalConfigEntity;
 import net.lab1024.sa.oa.workflow.service.ApprovalConfigService;
 
 /**
@@ -37,10 +38,11 @@ import net.lab1024.sa.oa.workflow.service.ApprovalConfigService;
  * @version 1.0.0
  * @since 2025-01-30
  */
-@Slf4j
 @Service
 @Transactional(rollbackFor = Exception.class)
+@Slf4j
 public class ApprovalConfigServiceImpl implements ApprovalConfigService {
+
 
     @Resource
     private ApprovalConfigDao approvalConfigDao;
@@ -296,8 +298,3 @@ public class ApprovalConfigServiceImpl implements ApprovalConfigService {
         }
     }
 }
-
-
-
-
-

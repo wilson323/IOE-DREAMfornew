@@ -1,6 +1,7 @@
 package net.lab1024.sa.device.comm.config;
 
 import lombok.extern.slf4j.Slf4j;
+
 import net.lab1024.sa.device.comm.decorator.IDeviceCommandExecutor;
 import net.lab1024.sa.device.comm.decorator.impl.BasicCommandExecutor;
 import net.lab1024.sa.device.comm.decorator.impl.LoggingCommandDecorator;
@@ -21,9 +22,10 @@ import jakarta.annotation.Resource;
  * @version 1.0.0
  * @since 2025-12-18
  */
-@Slf4j
 @Configuration
+@Slf4j
 public class DeviceCommandExecutorConfiguration {
+
 
     @Resource
     private BasicCommandExecutor basicCommandExecutor;
@@ -54,3 +56,4 @@ public class DeviceCommandExecutorConfiguration {
         return executor;
     }
 }
+

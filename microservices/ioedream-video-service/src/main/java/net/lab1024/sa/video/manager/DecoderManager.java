@@ -1,11 +1,12 @@
 package net.lab1024.sa.video.manager;
 
-import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.video.dao.VideoDecoderDao;
-import net.lab1024.sa.video.entity.VideoDecoderEntity;
-
 import java.time.LocalDateTime;
 import java.util.List;
+
+import lombok.extern.slf4j.Slf4j;
+
+import net.lab1024.sa.video.dao.VideoDecoderDao;
+import net.lab1024.sa.video.entity.VideoDecoderEntity;
 
 /**
  * 解码器管理器
@@ -87,7 +88,7 @@ public class DecoderManager {
      * 更新解码器的在线状态和最后在线时间
      * </p>
      *
-     * @param decoderId 解码器ID
+     * @param decoderId    解码器ID
      * @param deviceStatus 设备状态：1-在线，2-离线，3-故障
      */
     public void monitorDecoderStatus(Long decoderId, Integer deviceStatus) {
@@ -105,7 +106,7 @@ public class DecoderManager {
      * 为窗口分配可用的解码通道
      * </p>
      *
-     * @param wallId 电视墙ID
+     * @param wallId   电视墙ID
      * @param windowId 窗口ID
      * @return 解码器ID和通道号的数组 [decoderId, channelNo]，如果分配失败返回null
      */
@@ -127,7 +128,7 @@ public class DecoderManager {
                 videoDecoderDao.updateChannelUsage(decoder.getDecoderId(), newUsedChannels, newAvailableChannels);
 
                 log.info("[解码器管理] 通道分配成功: decoderId={}, channelNo={}", decoder.getDecoderId(), channelNo);
-                return new Long[]{decoder.getDecoderId(), (long) channelNo};
+                return new Long[] { decoder.getDecoderId(), (long) channelNo };
             }
         }
 

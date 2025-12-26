@@ -1,0 +1,33 @@
+﻿{
+    "Summary":  {
+                    "Total":  16,
+                    "Errors":  1,
+                    "Warnings":  7,
+                    "Success":  8
+                },
+    "Timestamp":  "2025-12-21 21:05:48",
+    "Results":  {
+                    "Errors":  [
+                                   "❌ smart-admin-web-javascript\\src\\api\\business\\attendance\\attendance-api.js 未使用 /api/v1/ 前缀"
+                               ],
+                    "Warnings":  [
+                                     "⚠️ 前端API文件不存在: smart-admin-web-javascript\\src\\api\\business\\video\\video-api.js",
+                                     "⚠️ 未找到 AccessDevice 对应的后端实体文件",
+                                     "⚠️ 未找到 AttendanceRecord 对应的后端实体文件",
+                                     "⚠️ 未找到 ConsumeRecord 对应的后端实体文件",
+                                     "⚠️ 未找到 VideoDevice 对应的后端实体文件",
+                                     "⚠️ AttendanceRecordController.java 查询接口使用GET方法（建议改为POST）",
+                                     "⚠️ AttendanceRecordController.java 可能缺少统一错误处理"
+                                 ],
+                    "Success":  [
+                                    "✅ smart-admin-web-javascript\\src\\api\\business\\access\\access-api.js 使用正确的 /api/v1/ 前缀",
+                                    "✅ smart-admin-web-javascript\\src\\api\\business\\consume\\consume-api.js 使用正确的 /api/v1/ 前缀",
+                                    "✅ smart-app\\api\\access.js 使用正确的 /api/mobile/v1/ 前缀",
+                                    "✅ smart-app\\api\\workflow.js 使用正确的 /api/v1/ 前缀",
+                                    "✅ AccessDeviceController.java 查询接口使用POST方法（推荐）",
+                                    "✅ AccessDeviceController.java 使用统一错误响应格式",
+                                    "✅ VideoDeviceController.java 查询接口使用POST方法（推荐）",
+                                    "✅ VideoDeviceController.java 使用统一错误响应格式"
+                                ]
+                }
+}

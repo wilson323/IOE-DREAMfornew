@@ -1,10 +1,10 @@
 package net.lab1024.sa.gateway.service;
 
-import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+
+import jakarta.annotation.Resource;
 import net.lab1024.sa.common.exception.SystemException;
 import net.lab1024.sa.gateway.config.CaptchaConfig;
-import org.springframework.data.redis.core.RedisTemplate;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -13,7 +13,6 @@ import java.io.ByteArrayOutputStream;
 import java.util.Base64;
 import java.util.Random;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 /**
  * 验证码服务
@@ -28,18 +27,20 @@ import java.util.concurrent.TimeUnit;
  * @author IOE-DREAM Team
  * @since 2025-12-08
  */
-@Slf4j
 // 架构问题：网关服务是响应式WebFlux，@Transactional在响应式环境中不工作
 // 验证码服务应移至common-service
 // @Service
 // @Transactional(rollbackFor = Exception.class)
+@Slf4j
 public class CaptchaService {
+
 
     @Resource
     private CaptchaConfig captchaConfig;
 
-    @Resource
-    private RedisTemplate<String, String> redisTemplate;
+    // 临时注释Redis依赖，验证码服务将迁移到common-service
+    // @Resource
+    // private RedisTemplate<String, String> redisTemplate;
 
     private final ThreadLocal<Random> randomThreadLocal = ThreadLocal.withInitial(Random::new);
 
@@ -214,27 +215,32 @@ public class CaptchaService {
             log.warn("验证码UUID或文本为空，跳过保存");
             return;
         }
-        String prefix = captchaConfig.getRedisKeyPrefix() != null ? captchaConfig.getRedisKeyPrefix() : "captcha:";
-        String key = prefix + captchaUuid;
-        redisTemplate.opsForValue().set(key, captchaText, captchaConfig.getExpireSeconds(), TimeUnit.SECONDS);
-        log.debug("验证码已存储到Redis，key: {}", key);
+        // 临时注释Redis操作，验证码服务将迁移到common-service
+        // String prefix = captchaConfig.getRedisKeyPrefix() != null ? captchaConfig.getRedisKeyPrefix() : "captcha:";
+        // String key = prefix + captchaUuid;
+        // redisTemplate.opsForValue().set(key, captchaText, captchaConfig.getExpireSeconds(), TimeUnit.SECONDS);
+        // log.debug("验证码已存储到Redis，key: {}", key);
+        log.debug("验证码生成成功（临时模式，未存储到Redis）: {}", captchaUuid);
     }
 
     /**
      * 从Redis获取验证码
      */
     private String getCaptchaFromRedis(String captchaUuid) {
-        String key = captchaConfig.getRedisKeyPrefix() + captchaUuid;
-        return redisTemplate.opsForValue().get(key);
+        // 临时返回null，验证码服务将迁移到common-service
+        // String key = captchaConfig.getRedisKeyPrefix() + captchaUuid;
+        // return redisTemplate.opsForValue().get(key);
+        return null;
     }
 
     /**
-     * 从Redis删除验证码
+     * 从Redis删除验证码（临时空实现）
      */
     private void deleteCaptchaFromRedis(String captchaUuid) {
-        String key = captchaConfig.getRedisKeyPrefix() + captchaUuid;
-        redisTemplate.delete(key);
-        log.debug("验证码已从Redis删除，key: {}", key);
+        // 临时空实现，验证码服务将迁移到common-service
+        // String key = captchaConfig.getRedisKeyPrefix() + captchaUuid;
+        // redisTemplate.delete(key);
+        // log.debug("验证码已从Redis删除，key: {}", key);
     }
 
     /**
@@ -259,3 +265,4 @@ public class CaptchaService {
         private int expireSeconds;
     }
 }
+

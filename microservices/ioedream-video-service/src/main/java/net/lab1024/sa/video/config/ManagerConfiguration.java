@@ -1,10 +1,9 @@
 package net.lab1024.sa.video.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.video.manager.AIEventManager;
 import net.lab1024.sa.video.manager.BehaviorDetectionManager;
 import net.lab1024.sa.video.manager.CrowdAnalysisManager;

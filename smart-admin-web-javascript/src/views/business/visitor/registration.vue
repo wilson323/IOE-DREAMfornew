@@ -16,7 +16,11 @@
 
       <!-- 步骤1：身份验证 -->
       <div v-if="currentStep === 0" class="step-content">
-        <a-form layout="vertical">
+        <!-- 验证中骨架屏 -->
+        <SkeletonLoader v-if="validating" type="form" :fieldCount="2" />
+
+        <!-- 实际表单 -->
+        <a-form v-else layout="vertical">
           <a-form-item label="身份证号" required>
             <a-input
               v-model:value="registrationForm.idCardNumber"
@@ -44,7 +48,11 @@
 
       <!-- 步骤2：信息登记 -->
       <div v-if="currentStep === 1" class="step-content">
-        <a-form :model="registrationForm" layout="vertical">
+        <!-- 提交中骨架屏 -->
+        <SkeletonLoader v-if="submitting" type="form" :fieldCount="6" />
+
+        <!-- 实际表单 -->
+        <a-form v-else :model="registrationForm" layout="vertical">
           <a-row :gutter="16">
             <a-col :span="12">
               <a-form-item label="访客姓名" required>
@@ -128,6 +136,7 @@ import { ref, reactive } from 'vue';
 import { message } from 'ant-design-vue';
 import { useRouter } from 'vue-router';
 import { visitorApi } from '/@/api/business/visitor/visitor-api';
+import SkeletonLoader from '/@/components/SkeletonLoader.vue';
 
 const router = useRouter();
 

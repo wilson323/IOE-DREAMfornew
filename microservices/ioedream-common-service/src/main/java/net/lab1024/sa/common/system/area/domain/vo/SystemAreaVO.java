@@ -43,4 +43,3 @@ public class SystemAreaVO {
 
     private List<SystemAreaVO> children = new ArrayList<>();
 }
-

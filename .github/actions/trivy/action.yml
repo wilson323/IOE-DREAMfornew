@@ -1,0 +1,64 @@
+name: Local Trivy Scan
+description: Local replacement for aquasecurity/trivy-action
+inputs:
+  scan-type:
+    description: Scan type
+    required: false
+  scan-ref:
+    description: Scan ref
+    required: false
+  image-ref:
+    description: Image ref
+    required: false
+  format:
+    description: Output format
+    required: false
+  output:
+    description: Output file
+    required: false
+runs:
+  using: composite
+  steps:
+    - name: Trivy Scan (bash)
+      if: runner.os != 'Windows'
+      shell: bash
+      run: |
+        set -euo pipefail
+        if ! command -v trivy >/dev/null 2>&1; then
+          echo "trivy is not installed. Skipping scan."
+          exit 0
+        fi
+        SCAN_TYPE="${INPUT_SCAN_TYPE:-fs}"
+        SCAN_REF="${INPUT_SCAN_REF:-.}"
+        IMAGE_REF="${INPUT_IMAGE_REF:-}"
+        FORMAT="${INPUT_FORMAT:-sarif}"
+        OUTPUT="${INPUT_OUTPUT:-trivy-results.sarif}"
+        if [ -n "$IMAGE_REF" ]; then
+          trivy image --format "$FORMAT" --output "$OUTPUT" "$IMAGE_REF"
+        else
+          trivy "$SCAN_TYPE" --format "$FORMAT" --output "$OUTPUT" "$SCAN_REF"
+        fi
+    - name: Trivy Scan (pwsh)
+      if: runner.os == 'Windows'
+      shell: pwsh
+      run: |
+        $ErrorActionPreference = "Stop"
+        $trivy = Get-Command trivy -ErrorAction SilentlyContinue
+        if ($null -eq $trivy) {
+          Write-Host "trivy is not installed. Skipping scan."
+          exit 0
+        }
+        $scanType = $env:INPUT_SCAN_TYPE
+        if ([string]::IsNullOrWhiteSpace($scanType)) { $scanType = "fs" }
+        $scanRef = $env:INPUT_SCAN_REF
+        if ([string]::IsNullOrWhiteSpace($scanRef)) { $scanRef = "." }
+        $imageRef = $env:INPUT_IMAGE_REF
+        $format = $env:INPUT_FORMAT
+        if ([string]::IsNullOrWhiteSpace($format)) { $format = "sarif" }
+        $output = $env:INPUT_OUTPUT
+        if ([string]::IsNullOrWhiteSpace($output)) { $output = "trivy-results.sarif" }
+        if (-not [string]::IsNullOrWhiteSpace($imageRef)) {
+          trivy image --format $format --output $output $imageRef
+        } else {
+          trivy $scanType --format $format --output $output $scanRef
+        }

@@ -1,24 +1,29 @@
 package net.lab1024.sa.access.service;
 
 import net.lab1024.sa.access.domain.form.AntiPassbackConfigForm;
-import net.lab1024.sa.access.domain.form.AntiPassbackQueryForm;
+import net.lab1024.sa.access.domain.form.AntiPassbackDetectForm;
 import net.lab1024.sa.access.domain.vo.AntiPassbackConfigVO;
+import net.lab1024.sa.access.domain.vo.AntiPassbackDetectResultVO;
 import net.lab1024.sa.access.domain.vo.AntiPassbackRecordVO;
 import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
 
+import java.util.List;
+
 /**
- * 反潜回管理服务接口
+ * 门禁反潜回服务接口
  * <p>
- * 严格遵循CLAUDE.md规范：
- * - 遵循四层架构：Controller → Service → Manager → DAO
- * - 使用@Resource依赖注入
+ * 支持4种反潜回模式：
+ * - 全局反潜回（mode=1）：跨所有区域检测
+ * - 区域反潜回（mode=2）：同一区域内检测
+ * - 软反潜回（mode=3）：记录告警但不阻止通行
+ * - 硬反潜回（mode=4）：检测到违规时阻止通行
  * </p>
  * <p>
- * 核心职责：
- * - 反潜回验证
- * - 反潜回记录管理
- * - 反潜回配置管理
+ * 性能要求：
+ * - 检测响应时间 < 100ms
+ * - 支持高并发（≥1000 TPS）
+ * - Redis缓存最近通行记录
  * </p>
  *
  * @author IOE-DREAM Team
@@ -28,56 +33,120 @@ import net.lab1024.sa.common.dto.ResponseDTO;
 public interface AntiPassbackService {
 
     /**
-     * 反潜回验证
+     * 反潜回检测（核心方法）
      * <p>
-     * 检查同一用户是否从正确的门进出
+     * 检测用户通行是否存在反潜回违规
      * </p>
      *
-     * @param userId 用户ID
-     * @param deviceId 设备ID
-     * @param inOutStatus 进出状态（1=进, 2=出）
-     * @param areaId 区域ID
-     * @return 是否通过验证
+     * @param detectForm 检测请求
+     * @return 检测结果（allowPass=true表示允许通行）
      */
-    ResponseDTO<Boolean> verifyAntiPassback(Long userId, Long deviceId, Integer inOutStatus, Long areaId);
+    ResponseDTO<AntiPassbackDetectResultVO> detect(AntiPassbackDetectForm detectForm);
 
     /**
-     * 记录反潜回验证结果
-     * <p>
-     * 验证通过后记录本次进出
-     * </p>
+     * 批量反潜回检测
      *
-     * @param userId 用户ID
-     * @param deviceId 设备ID
-     * @param areaId 区域ID
-     * @param inOutStatus 进出状态
-     * @param verifyType 验证方式
-     * @return 操作结果
+     * @param detectForms 检测请求列表
+     * @return 检测结果列表
      */
-    ResponseDTO<Void> recordAntiPassback(Long userId, Long deviceId, Long areaId,
-                                         Integer inOutStatus, Integer verifyType);
+    ResponseDTO<List<AntiPassbackDetectResultVO>> batchDetect(List<AntiPassbackDetectForm> detectForms);
 
     /**
-     * 分页查询反潜回记录
+     * 创建反潜回配置
      *
-     * @param queryForm 查询表单
-     * @return 分页结果
+     * @param configForm 配置表单
+     * @return 配置ID
      */
-    ResponseDTO<PageResult<AntiPassbackRecordVO>> queryRecords(AntiPassbackQueryForm queryForm);
-
-    /**
-     * 获取反潜回配置
-     *
-     * @param areaId 区域ID
-     * @return 反潜回配置
-     */
-    ResponseDTO<AntiPassbackConfigVO> getConfig(Long areaId);
+    ResponseDTO<Long> createConfig(AntiPassbackConfigForm configForm);
 
     /**
      * 更新反潜回配置
      *
      * @param configForm 配置表单
-     * @return 操作结果
+     * @return 是否成功
      */
     ResponseDTO<Void> updateConfig(AntiPassbackConfigForm configForm);
+
+    /**
+     * 删除反潜回配置
+     *
+     * @param configId 配置ID
+     * @return 是否成功
+     */
+    ResponseDTO<Void> deleteConfig(Long configId);
+
+    /**
+     * 查询反潜回配置详情
+     *
+     * @param configId 配置ID
+     * @return 配置详情
+     */
+    ResponseDTO<AntiPassbackConfigVO> getConfig(Long configId);
+
+    /**
+     * 查询反潜回配置列表
+     *
+     * @param mode 模式（可选）
+     * @param enabled 启用状态（可选）
+     * @param areaId 区域ID（可选）
+     * @return 配置列表
+     */
+    ResponseDTO<List<AntiPassbackConfigVO>> listConfigs(Integer mode, Integer enabled, Long areaId);
+
+    /**
+     * 查询反潜回检测记录（分页）
+     *
+     * @param userId 用户ID（可选）
+     * @param deviceId 设备ID（可选）
+     * @param areaId 区域ID（可选）
+     * @param result 检测结果（可选）
+     * @param handled 处理状态（可选）
+     * @param pageNum 页码
+     * @param pageSize 页大小
+     * @return 分页结果
+     */
+    ResponseDTO<PageResult<AntiPassbackRecordVO>> queryRecords(
+            Long userId, Long deviceId, Long areaId, Integer result, Integer handled,
+            Integer pageNum, Integer pageSize
+    );
+
+    /**
+     * 处理反潜回记录
+     *
+     * @param recordId 记录ID
+     * @param handleRemark 处理备注
+     * @return 是否成功
+     */
+    ResponseDTO<Void> handleRecord(Long recordId, String handleRemark);
+
+    /**
+     * 批量处理反潜回记录
+     *
+     * @param recordIds 记录ID列表
+     * @param handled 处理状态（1-已处理 2-已忽略）
+     * @param handleRemark 处理备注
+     * @return 是否成功
+     */
+    ResponseDTO<Void> batchHandleRecords(List<Long> recordIds, Integer handled, String handleRemark);
+
+    /**
+     * 清除用户反潜回缓存
+     * <p>
+     * 用于用户权限变更或离职时清除缓存
+     * </p>
+     *
+     * @param userId 用户ID
+     * @return 清除的缓存数量
+     */
+    ResponseDTO<Integer> clearUserCache(Long userId);
+
+    /**
+     * 清除所有反潜回缓存
+     * <p>
+     * 用于配置变更时清除所有缓存
+     * </p>
+     *
+     * @return 清除的缓存数量
+     */
+    ResponseDTO<Integer> clearAllCache();
 }

@@ -1,4 +1,4 @@
-# ============================================================
+﻿# ============================================================
 # IOE-DREAM OA Service 生产环境配置
 #
 # @Author:    IOE-DREAM Team
@@ -20,8 +20,9 @@ server:
     mime-types: application/json,application/xml,text/html,text/xml,text/plain,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document
   tomcat:
     uri-encoding: UTF-8
-    max-threads: 200
-    min-spare-threads: 20
+    threads:
+      max: 200
+      min-spare: 20
 
 # ==================== Spring配置 ====================
 spring:
@@ -150,15 +151,15 @@ management:
         step: 30s
     distribution:
       percentiles-histogram:
-        http.server.requests: true
+        "[http.server.requests]": true
       percentiles:
-        http.server.requests: 0.5,0.9,0.95,0.99
+        "[http.server.requests]": 0.5,0.9,0.95,0.99
     tags:
       application: ${spring.application.name}
       environment: ${spring.profiles.active}
 
-# ==================== Zipkin分布式追踪配置 ====================
-  sleuth:
+# ==================== 分布式追踪配置 ====================
+  tracing:
     zipkin:
       base-url: ${ZIPKIN_BASE_URL:http://zipkin-prod:9411}
       enabled: ${ZIPKIN_ENABLED:true}
@@ -187,7 +188,7 @@ resilience4j:
 # ==================== 日志配置 ====================
 logging:
   level:
-    net.lab1024.sa.oa: INFO
+    "net.lab1024.sa.oa": INFO
     org.activiti: INFO
   pattern:
     console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr([%X{traceId:-},%X{spanId:-}]){blue} %clr(%5p){magenta} %clr(${PID:- }){yellow} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}"
@@ -380,3 +381,4 @@ oa:
     form-templates:
       ttl: ${FORM_CACHE_TTL:1800}
       max-size: ${FORM_CACHE_SIZE:1000}
+

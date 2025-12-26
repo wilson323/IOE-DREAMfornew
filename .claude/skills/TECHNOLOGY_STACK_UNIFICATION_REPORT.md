@@ -34,7 +34,8 @@
 - **jakarta.annotation.Resource** (禁用javax.annotation.Resource)
 - **jakarta.validation.Valid** (禁用javax.validation.Valid)
 - **jakarta.transaction.Transactional** (禁用javax.transaction.Transactional)
-- **jakarta.persistence.Entity** (禁用javax.persistence.Entity)
+- **@Data
+@TableName("table_name")** (禁用javax.persistence.Entity)
 - **jakarta.servlet.http.HttpServletRequest** (禁用javax.servlet)
 
 ### 依赖注入规范 (强制)
@@ -50,8 +51,8 @@
 
 #### ioedream-gateway-service (网关服务)
 ```
-技术栈: Spring Cloud Gateway + Nacos + Resilience4j + Sa-Token
-版本: Spring Boot 3.5.8 + Spring Cloud 2025.0.0
+技术栈: Spring Boot 3.5.8 + GatewayServiceClient + Nacos + Resilience4j + Spring Security
+版本: Spring Boot 3.5.8 + Microservices Gateway Client
 ```
 
 #### ioedream-common-service (公共服务)
@@ -160,8 +161,8 @@
 
 #### gateway-service-specialist.md
 ```
-技术栈: Spring Cloud Gateway + Nacos + Resilience4j + Sa-Token
-特点: 网关服务专家，包含智能路由、安全防护、流量控制
+技术栈: Spring Boot 3.5.8 + GatewayServiceClient + Nacos + Resilience4j + Spring Security
+特点: 网关服务专家，统一微服务间调用，RestTemplate配置，泛型类型处理
 ```
 
 ### 3. 架构Guardian Skills (3个)

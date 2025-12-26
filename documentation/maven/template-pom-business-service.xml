@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ============================================================
+  IOE-DREAM 业务服务模块 POM 模板
+
+  适用模块:
+    - ioedream-access-service (门禁服务)
+    - ioedream-attendance-service (考勤服务)
+    - ioedream-consume-service (消费服务)
+    - ioedream-video-service (视频服务)
+    - ioedream-visitor-service (访客服务)
+    - ioedream-oa-service (OA服务)
+
+  特征:
+    - ✅ 依赖多个细粒度公共模块
+    - ✅ 包含完整 Spring Boot 依赖
+    - ✅ 包含 Spring Cloud 依赖
+    - ✅ 包含业务特定依赖
+
+  使用说明:
+    1. 复制此模板到目标服务
+    2. 修改 <artifactId> 为实际服务名
+    3. 修改 <name> 和 <description>
+    4. 根据业务需求选择需要的细粒度模块
+    5. 移除不需要的依赖注释块
+
+  细粒度模块依赖原则:
+    - common-core: 必须依赖
+    - common-data: 需要数据库访问时依赖
+    - common-security: 需要安全认证时依赖
+    - common-cache: 需要缓存功能时依赖
+    - common-monitor: 需要监控功能时依赖
+    - common-storage: 需要文件存储时依赖
+    - common-export: 需要导出功能时依赖
+    - common-workflow: 需要工作流时依赖
+    - common-permission: 需要权限验证时依赖
+    - common-business: 需要业务公共组件时依赖
+    - common-util: 需要工具类时依赖
+
+  注意:
+    - 此模板生成的 JAR 可以直接运行
+    - 使用 'java -jar' 命令启动
+  ============================================================
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+  http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <!-- ============================================================
+       父 POM 配置
+       ============================================================ -->
+  <parent>
+    <groupId>net.lab1024.sa</groupId>
+    <artifactId>ioedream-microservices-parent</artifactId>
+    <version>1.0.0</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+
+  <!-- ============================================================
+       模块基本信息
+       ============================================================ -->
+  <artifactId>ioedream-xxx-service</artifactId>
+  <packaging>jar</packaging>
+
+  <name>IOE-DREAM XXX Service</name>
+  <description>XXX服务：详细描述业务职责和功能</description>
+
+  <!-- ============================================================
+       构建配置
+       ============================================================ -->
+  <build>
+    <plugins>
+      <!--
+        启用 spring-boot-maven-plugin 的 repackage
+        生成可执行 JAR,包含所有依赖
+      -->
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>repackage</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <!-- ============================================================
+       依赖管理
+       ============================================================ -->
+  <dependencies>
+    <!-- ==================== 核心基础模块 (必须保留) ==================== -->
+
+    <!-- Common Core (最小稳定内核,必须依赖) -->
+    <dependency>
+      <groupId>net.lab1024.sa</groupId>
+      <artifactId>microservices-common-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!-- ==================== 细粒度公共模块 (按需选择) ==================== -->
+
+    <!-- Common Data (数据访问层,需要数据库时保留) -->
+    <dependency>
+      <groupId>net.lab1024.sa</groupId>
+      <artifactId>microservices-common-data</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!-- Common Security (安全认证,需要认证时保留) -->
+    <dependency>
+      <groupId>net.lab1024.sa</groupId>
+      <artifactId>microservices-common-security</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!-- Common Cache (缓存管理,需要缓存时保留) -->
+    <dependency>
+      <groupId>net.lab1024.sa</groupId>
+      <artifactId>microservices-common-cache</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!-- Common Monitor (监控模块,需要监控时保留) -->
+    <dependency>
+      <groupId>net.lab1024.sa</groupId>
+      <artifactId>microservices-common-monitor</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!-- Common Storage (文件存储,需要文件存储时保留) -->
+    <!--
+    <dependency>
+      <groupId>net.lab1024.sa</groupId>
+      <artifactId>microservices-common-storage</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    -->
+
+    <!-- Common Export (导出功能,需要导出时保留) -->
+    <!--
+    <dependency>
+      <groupId>net.lab1024.sa</groupId>
+      <artifactId>microservices-common-export</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    -->
+
+    <!-- Common Workflow (工作流,需要工作流时保留) -->
+    <!--
+    <dependency>
+      <groupId>net.lab1024.sa</groupId>
+      <artifactId>microservices-common-workflow</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    -->
+
+    <!-- Common Permission (权限验证,需要权限验证时保留) -->
+    <!--
+    <dependency>
+      <groupId>net.lab1024.sa</groupId>
+      <artifactId>microservices-common-permission</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    -->
+
+    <!-- Common Business (业务公共组件,需要时保留) -->
+    <dependency>
+      <groupId>net.lab1024.sa</groupId>
+      <artifactId>microservices-common-business</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!-- Common Util (工具类模块,需要时保留) -->
+    <dependency>
+      <groupId>net.lab1024.sa</groupId>
+      <artifactId>microservices-common-util</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!-- ==================== 公共模块聚合 (可选,谨慎使用) ==================== -->
+
+    <!--
+      ⚠️ 警告: microservices-common 包含所有公共模块聚合
+      建议优先使用细粒度模块依赖,只在必要时使用此聚合依赖
+
+      <dependency>
+        <groupId>net.lab1024.sa</groupId>
+        <artifactId>microservices-common</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+    -->
+
+    <!-- ==================== Spring Boot 核心依赖 (必须保留) ==================== -->
+
+    <!-- Spring Boot Web (Web支持) -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+
+    <!-- Spring Boot Starter (核心功能) -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter</artifactId>
+    </dependency>
+
+    <!-- Spring Boot Validation (参数验证) -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-validation</artifactId>
+    </dependency>
+
+    <!-- ==================== Spring Cloud 微服务依赖 (必须保留) ==================== -->
+
+    <!-- Spring Cloud Nacos Discovery (服务发现) -->
+    <dependency>
+      <groupId>com.alibaba.cloud</groupId>
+      <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+    </dependency>
+
+    <!-- Spring Cloud Nacos Config (配置中心) -->
+    <dependency>
+      <groupId>com.alibaba.cloud</groupId>
+      <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+    </dependency>
+
+    <!-- ==================== 消息队列 (按需选择) ==================== -->
+
+    <!-- Spring Boot AMQP (RabbitMQ) -->
+    <!--
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-amqp</artifactId>
+    </dependency>
+    -->
+
+    <!-- Spring Boot Kafka -->
+    <!--
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-kafka</artifactId>
+    </dependency>
+    -->
+
+    <!-- ==================== 服务容错 (推荐保留) ==================== -->
+
+    <!-- Resilience4j (容错机制) -->
+    <dependency>
+      <groupId>io.github.resilience4j</groupId>
+      <artifactId>resilience4j-spring-boot3</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.github.resilience4j</groupId>
+      <artifactId>resilience4j-retry</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.github.resilience4j</groupId>
+      <artifactId>resilience4j-circuitbreaker</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.github.resilience4j</groupId>
+      <artifactId>resilience4j-ratelimiter</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.github.resilience4j</groupId>
+      <artifactId>resilience4j-micrometer</artifactId>
+    </dependency>
+
+    <!-- ==================== 监控指标 (推荐保留) ==================== -->
+
+    <!-- Micrometer Core (监控指标) -->
+    <dependency>
+      <groupId>io.micrometer</groupId>
+      <artifactId>micrometer-core</artifactId>
+    </dependency>
+
+    <!-- ==================== WebSocket (按需选择) ==================== -->
+
+    <!-- Spring WebSocket (WebSocket支持) -->
+    <!--
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-websocket</artifactId>
+    </dependency>
+    -->
+
+    <!-- ==================== 第三方库依赖 (按需选择) ==================== -->
+
+    <!-- FastJSON2 (JSON解析) -->
+    <dependency>
+      <groupId>com.alibaba.fastjson2</groupId>
+      <artifactId>fastjson2</artifactId>
+      <version>2.0.43</version>
+    </dependency>
+
+    <!-- Commons Codec (摘要算法) -->
+    <dependency>
+      <groupId>commons-codec</groupId>
+      <artifactId>commons-codec</artifactId>
+      <version>1.15</version>
+    </dependency>
+
+    <!-- Apache Commons Collections4 (集合工具) -->
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-collections4</artifactId>
+    </dependency>
+
+    <!-- ==================== 测试依赖 (必须保留) ==================== -->
+
+    <!-- Spring Boot Test (包含JUnit、Mockito、Spring Test) -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- JUnit Jupiter -->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- Mockito Core -->
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- Mockito JUnit Jupiter -->
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+</project>

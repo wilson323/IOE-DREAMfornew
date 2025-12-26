@@ -1,0 +1,65 @@
+IOE-DREAM 代码质量监控报告
+============================
+生成时间: 2025年12月20日 18:05:58
+Git 分支: main
+Git 提交: b4f5a413
+
+📊 SLF4J 规范监控
+-----------------
+📁 access-service: 0 个违规
+
+📁 attendance-service: 0 个违规
+
+📁 oa-service: 0 个违规
+
+📁 video-service: 0 个违规
+
+📁 visitor-service: 0 个违规
+
+📁 device-comm-service: 0 个违规
+
+📁 biometric-service: 0 个违规
+
+📁 common-service: 0 个违规
+
+📈 SLF4J 总计: 0 个违规
+
+🔧 依赖注入规范监控
+-------------------
+📊 @Autowired 违规: 1 个
+   详情: 需要修复为 @Resource 注解
+
+📊 @Repository 违规: 7 个
+   详情: 需要修复为 @Mapper 注解
+
+📊 Repository 命名违规: 0 个
+
+🔒 安全配置监控
+---------------
+📊 明文密码: 5 个
+   ⚠️ 发现明文密码，需要加密存储
+
+📁 项目结构监控
+---------------
+📊 Java 文件总数: 1411
+📊 POM 文件数: 16
+
+🎯 质量评分
+----------
+📊 质量评分: 75/100
+📊 质量等级: B
+📊 总问题数: 13
+📊 状态: ⚠️ 一般
+
+📋 改进建议
+----------
+2. 修复 @Autowired 违规: bash scripts/fix-autowired-violations.sh
+3. 修复 @Repository 违规: bash scripts/fix-repository-violations.sh
+5. 加密敏感配置: 使用 Nacos 加密配置
+
+📊 历史趋势分析
+--------------
+➡️ 质量稳定: 无变化
+
+============================
+报告生成完成

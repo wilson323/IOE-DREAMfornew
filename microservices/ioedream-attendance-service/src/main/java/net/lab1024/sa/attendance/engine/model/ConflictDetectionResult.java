@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -110,6 +111,7 @@ public class ConflictDetectionResult {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @EqualsAndHashCode(callSuper = true)
     public static class SkillConflict extends ScheduleConflict {
         private String requiredSkill;
         private List<Long> lackingSkillEmployees;
@@ -120,6 +122,7 @@ public class ConflictDetectionResult {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @EqualsAndHashCode(callSuper = true)
     public static class WorkHourConflict extends ScheduleConflict {
         private Integer exceededHours;
         private Integer maxAllowedHours;
@@ -130,6 +133,7 @@ public class ConflictDetectionResult {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @EqualsAndHashCode(callSuper = true)
     public static class CapacityConflict extends ScheduleConflict {
         private Integer requiredCount;
         private Integer actualCount;
@@ -141,6 +145,7 @@ public class ConflictDetectionResult {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @EqualsAndHashCode(callSuper = true)
     public static class OtherConflict extends ScheduleConflict {
         private String customConflictType;
         private Map<String, Object> customDetails;

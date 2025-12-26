@@ -7,10 +7,7 @@ import lombok.Data;
 /**
  * 审批流程实例视图对象
  * <p>
- * 严格遵循CLAUDE.md规范：
- * - VO类用于数据传输，不包含业务逻辑
- * - 字段命名清晰，符合业务语义
- * - 完整的字段注释
+ * 严格遵循CLAUDE.md规范： - VO类用于数据传输，不包含业务逻辑 - 字段命名清晰，符合业务语义 - 完整的字段注释
  * </p>
  *
  * @author IOE-DREAM架构团队
@@ -100,13 +97,7 @@ public class ApprovalInstanceVO {
      */
     private String reason;
 
-    public String getProcessName() {
+    public String getProcessName () {
         return processName;
     }
 }
-
-
-
-
-
-

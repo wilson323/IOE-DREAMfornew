@@ -31,8 +31,8 @@ spring:
         server-addr: ${NACOS_SERVER_ADDR:127.0.0.1:8848}
         namespace: ${NACOS_NAMESPACE:dev}
         group: ${NACOS_GROUP:IOE-DREAM}
-        username: ${NACOS_USERNAME:nacos}
-        password: ${NACOS_PASSWORD:nacos}
+        username: ${NACOS_USERNAME:}
+        password: ${NACOS_PASSWORD:}
         enabled: true
         register-enabled: true
       config:

@@ -1,24 +1,30 @@
 package net.lab1024.sa.device.comm.protocol.hotupdate;
 
+import lombok.extern.slf4j.Slf4j;
+
+import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Component;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.annotation.Resource;
-import lombok.extern.slf4j.Slf4j;
+import net.lab1024.sa.device.comm.dao.ProtocolConfigDao;
 import net.lab1024.sa.device.comm.protocol.ProtocolAdapter;
 import net.lab1024.sa.device.comm.protocol.factory.ProtocolAdapterFactory;
-import net.lab1024.sa.device.comm.dao.ProtocolConfigDao;
-import org.springframework.stereotype.Component;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.Scheduled;
-
-import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.jar.JarFile;
-import java.util.jar.JarEntry;
-import java.io.IOException;
-import java.nio.file.*;
-import java.lang.reflect.Constructor;
 
 /**
  * 协议适配器热更新管理器
@@ -35,9 +41,9 @@ import java.lang.reflect.Constructor;
  * @version 1.0.0
  * @since 2025-12-16
  */
-@Slf4j
 @Component("protocolAdapterHotUpdater")
 @Schema(description = "协议适配器热更新管理器")
+@Slf4j
 public class ProtocolAdapterHotUpdater {
 
     @Resource
@@ -47,13 +53,13 @@ public class ProtocolAdapterHotUpdater {
     private ProtocolConfigDao protocolConfigDao;
 
     // 适配器缓存
-    private final Map<String, ProtocolAdapterInstance> adapterCache = new ConcurrentHashMap<>();
+    private final Map<String, ProtocolAdapterInstance> adapterCache = new HashMap<>();
 
     // 适配器配置缓存
-    private final Map<String, Map<String, Object>> adapterConfigCache = new ConcurrentHashMap<>();
+    private final Map<String, Map<String, Object>> adapterConfigCache = new HashMap<>();
 
     // 更新历史记录
-    private final Map<String, List<UpdateRecord>> updateHistory = new ConcurrentHashMap<>();
+    private final Map<String, List<UpdateRecord>> updateHistory = new HashMap<>();
 
     // 临时目录
     private final String tempDir = System.getProperty("java.io.tmpdir") + "/protocol-updates";
@@ -83,16 +89,16 @@ public class ProtocolAdapterHotUpdater {
      * 热更新协议适配器
      *
      * @param protocolType 协议类型
-     * @param jarFilePath JAR文件路径
-     * @param className 适配器类名
-     * @param config 配置参数
+     * @param jarFilePath  JAR文件路径
+     * @param className    适配器类名
+     * @param config       配置参数
      * @return 更新结果
      */
     @Async("rs485TaskExecutor")
     public CompletableFuture<HotUpdateResult> hotUpdateAdapter(String protocolType,
-                                                             String jarFilePath,
-                                                             String className,
-                                                             Map<String, Object> config) {
+            String jarFilePath,
+            String className,
+            Map<String, Object> config) {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 log.info("[协议热更新] 开始热更新适配器, protocolType={}, jarFilePath={}, className={}",
@@ -152,7 +158,7 @@ public class ProtocolAdapterHotUpdater {
      * 动态更新适配器配置
      *
      * @param protocolType 协议类型
-     * @param config 新的配置参数
+     * @param config       新的配置参数
      * @return 更新结果
      */
     @Async("rs485MonitorExecutor")
@@ -173,7 +179,8 @@ public class ProtocolAdapterHotUpdater {
                 }
 
                 // 备份当前配置
-                Map<String, Object> backupConfig = new HashMap<>(adapterConfigCache.getOrDefault(protocolType, new HashMap<>()));
+                Map<String, Object> backupConfig = new HashMap<>(
+                        adapterConfigCache.getOrDefault(protocolType, new HashMap<>()));
 
                 // 应用新配置
                 applyNewConfig(adapterInstance.getAdapter(), config);
@@ -207,7 +214,7 @@ public class ProtocolAdapterHotUpdater {
      * 回滚协议适配器到指定版本
      *
      * @param protocolType 协议类型
-     * @param version 目标版本
+     * @param version      目标版本
      * @return 回滚结果
      */
     @Async("rs485MonitorExecutor")
@@ -300,7 +307,7 @@ public class ProtocolAdapterHotUpdater {
      * @return 更新历史列表
      */
     public List<UpdateRecord> getUpdateHistory(String protocolType) {
-        return updateHistory.getOrDefault(protocolType, new ArrayList<>());
+        return updateHistory.getOrDefault(protocolType, new ArrayList<UpdateRecord>());
     }
 
     /**
@@ -311,15 +318,15 @@ public class ProtocolAdapterHotUpdater {
             Path tempPath = Paths.get(tempDir);
             if (Files.exists(tempPath)) {
                 Files.walk(tempPath)
-                    .filter(path -> Files.isRegularFile(path))
-                    .forEach(path -> {
-                        try {
-                            Files.delete(path);
-                            log.debug("[协议热更新] 删除临时文件: {}", path);
-                        } catch (IOException e) {
-                            log.warn("[协议热更新] 删除临时文件失败: {}", path, e);
-                        }
-                    });
+                        .filter(path -> Files.isRegularFile(path))
+                        .forEach(path -> {
+                            try {
+                                Files.delete(path);
+                                log.debug("[协议热更新] 删除临时文件: {}", path);
+                            } catch (IOException e) {
+                                log.warn("[协议热更新] 删除临时文件失败: {}", path, e);
+                            }
+                        });
             }
         } catch (Exception e) {
             log.error("[协议热更新] 清理临时文件失败", e);
@@ -367,8 +374,7 @@ public class ProtocolAdapterHotUpdater {
                     current.getAdapter(),
                     current.getClassName(),
                     current.getJarFilePath(),
-                    current.getVersion()
-            );
+                    current.getVersion());
 
             // 备份配置
             Map<String, Object> config = adapterConfigCache.get(protocolType);
@@ -426,7 +432,8 @@ public class ProtocolAdapterHotUpdater {
 
         // 加载适配器类
         @SuppressWarnings("unchecked")
-        Class<? extends ProtocolAdapter> adapterClass = (Class<? extends ProtocolAdapter>) classLoader.loadClass(className);
+        Class<? extends ProtocolAdapter> adapterClass = (Class<? extends ProtocolAdapter>) classLoader
+                .loadClass(className);
 
         // 实例化适配器
         Constructor<? extends ProtocolAdapter> constructor = adapterClass.getDeclaredConstructor();
@@ -505,9 +512,8 @@ public class ProtocolAdapterHotUpdater {
             ProtocolAdapterInstance newAdapterInstance = new ProtocolAdapterInstance(
                     newAdapter,
                     newAdapter.getClass().getName(),
-                    "",  // 运行时加载，没有JAR路径
-                    newAdapter.getVersion()
-            );
+                    "", // 运行时加载，没有JAR路径
+                    newAdapter.getVersion());
 
             // 设置配置
             Map<String, Object> config = adapterConfigCache.get(protocolType);
@@ -579,7 +585,7 @@ public class ProtocolAdapterHotUpdater {
         if (baudRate != null) {
             int rate = Integer.parseInt(baudRate.toString());
             if (rate != 300 && rate != 600 && rate != 1200 && rate != 2400 &&
-                rate != 4800 && rate != 9600 && rate != 19200 && rate != 38400) {
+                    rate != 4800 && rate != 9600 && rate != 19200 && rate != 38400) {
                 return HotUpdateResult.failure("RS485波特率不支持: " + rate);
             }
         }
@@ -731,7 +737,7 @@ public class ProtocolAdapterHotUpdater {
         record.setUpdateTime(new Date());
         record.setSuccess(success);
 
-        updateHistory.computeIfAbsent(protocolType, k -> new ArrayList<>()).add(record);
+        updateHistory.computeIfAbsent(protocolType, k -> new ArrayList<UpdateRecord>()).add(record);
 
         // 限制历史记录数量
         List<UpdateRecord> history = updateHistory.get(protocolType);
@@ -744,18 +750,18 @@ public class ProtocolAdapterHotUpdater {
      * 记录配置更新历史
      */
     private void recordConfigUpdateHistory(String protocolType, Map<String, Object> oldConfig,
-                                            Map<String, Object> newConfig, boolean success) {
+            Map<String, Object> newConfig, boolean success) {
         UpdateRecord record = new UpdateRecord();
         record.setProtocolType(protocolType);
-        record.setJarFilePath("");  // 配置更新没有JAR文件
-        record.setClassName("");  // 配置更新没有类名
+        record.setJarFilePath(""); // 配置更新没有JAR文件
+        record.setClassName(""); // 配置更新没有类名
         record.setVersion("config-update-" + System.currentTimeMillis());
         record.setUpdateTime(new Date());
         record.setSuccess(success);
         record.setOldConfig(oldConfig != null ? new HashMap<>(oldConfig) : null);
         record.setNewConfig(newConfig != null ? new HashMap<>(newConfig) : null);
 
-        updateHistory.computeIfAbsent(protocolType, k -> new ArrayList<>()).add(record);
+        updateHistory.computeIfAbsent(protocolType, k -> new ArrayList<UpdateRecord>()).add(record);
 
         // 限制历史记录数量
         List<UpdateRecord> history = updateHistory.get(protocolType);
@@ -769,7 +775,8 @@ public class ProtocolAdapterHotUpdater {
      */
     private void startTempFileCleanup() {
         // 每小时清理一次临时文件
-        java.util.concurrent.ScheduledExecutorService scheduler = java.util.concurrent.Executors.newSingleThreadScheduledExecutor();
+        java.util.concurrent.ScheduledExecutorService scheduler = java.util.concurrent.Executors
+                .newSingleThreadScheduledExecutor();
         scheduler.scheduleAtFixedRate(this::cleanupTempFiles, 1, 1, java.util.concurrent.TimeUnit.HOURS);
     }
 
@@ -786,7 +793,7 @@ public class ProtocolAdapterHotUpdater {
         private Map<String, Object> config;
 
         public ProtocolAdapterInstance(ProtocolAdapter adapter, String className,
-                                        String jarFilePath, String version) {
+                String jarFilePath, String version) {
             this.adapter = adapter;
             this.className = className;
             this.jarFilePath = jarFilePath;
@@ -794,12 +801,29 @@ public class ProtocolAdapterHotUpdater {
         }
 
         // getters and setters
-        public ProtocolAdapter getAdapter() { return adapter; }
-        public String getClassName() { return className; }
-        public String getJarFilePath() { return jarFilePath; }
-        public String getVersion() { return version; }
-        public Map<String, Object> getConfig() { return config; }
-        public void setConfig(Map<String, Object> config) { this.config = config; }
+        public ProtocolAdapter getAdapter() {
+            return adapter;
+        }
+
+        public String getClassName() {
+            return className;
+        }
+
+        public String getJarFilePath() {
+            return jarFilePath;
+        }
+
+        public String getVersion() {
+            return version;
+        }
+
+        public Map<String, Object> getConfig() {
+            return config;
+        }
+
+        public void setConfig(Map<String, Object> config) {
+            this.config = config;
+        }
     }
 
     /**
@@ -816,22 +840,69 @@ public class ProtocolAdapterHotUpdater {
         private Map<String, Object> newConfig;
 
         // getters and setters
-        public String getProtocolType() { return protocolType; }
-        public void setProtocolType(String protocolType) { this.protocolType = protocolType; }
-        public String getJarFilePath() { return jarFilePath; }
-        public void setJarFilePath(String jarFilePath) { this.jarFilePath = jarFilePath; }
-        public String getClassName() { return className; }
-        public void setClassName(String className) { this.className = className; }
-        public String getVersion() { return version; }
-        public void setVersion(String version) { this.version = version; }
-        public Date getUpdateTime() { return updateTime; }
-        public void setUpdateTime(Date updateTime) { this.updateTime = updateTime; }
-        public boolean isSuccess() { return success; }
-        public void setSuccess(boolean success) { this.success = success; }
-        public Map<String, Object> getOldConfig() { return oldConfig; }
-        public void setOldConfig(Map<String, Object> oldConfig) { this.oldConfig = oldConfig; }
-        public Map<String, Object> getNewConfig() { return newConfig; }
-        public void setNewConfig(Map<String, Object> newConfig) { this.newConfig = newConfig; }
+        public String getProtocolType() {
+            return protocolType;
+        }
+
+        public void setProtocolType(String protocolType) {
+            this.protocolType = protocolType;
+        }
+
+        public String getJarFilePath() {
+            return jarFilePath;
+        }
+
+        public void setJarFilePath(String jarFilePath) {
+            this.jarFilePath = jarFilePath;
+        }
+
+        public String getClassName() {
+            return className;
+        }
+
+        public void setClassName(String className) {
+            this.className = className;
+        }
+
+        public String getVersion() {
+            return version;
+        }
+
+        public void setVersion(String version) {
+            this.version = version;
+        }
+
+        public Date getUpdateTime() {
+            return updateTime;
+        }
+
+        public void setUpdateTime(Date updateTime) {
+            this.updateTime = updateTime;
+        }
+
+        public boolean isSuccess() {
+            return success;
+        }
+
+        public void setSuccess(boolean success) {
+            this.success = success;
+        }
+
+        public Map<String, Object> getOldConfig() {
+            return oldConfig;
+        }
+
+        public void setOldConfig(Map<String, Object> oldConfig) {
+            this.oldConfig = oldConfig;
+        }
+
+        public Map<String, Object> getNewConfig() {
+            return newConfig;
+        }
+
+        public void setNewConfig(Map<String, Object> newConfig) {
+            this.newConfig = newConfig;
+        }
     }
 
     /**
@@ -851,14 +922,37 @@ public class ProtocolAdapterHotUpdater {
         }
 
         // getters and setters
-        public String getProtocolType() { return protocolType; }
-        public void setProtocolType(String protocolType) { this.protocolType = protocolType; }
-        public String getVersion() { return version; }
-        public void setVersion(String version) { this.version = version; }
-        public String getManufacturer() { return manufacturer; }
-        public void setManufacturer(String manufacturer) { this.manufacturer = manufacturer; }
-        public Date getUpdateTime() { return updateTime; }
-        public void setUpdateTime(Date updateTime) { this.updateTime = updateTime; }
+        public String getProtocolType() {
+            return protocolType;
+        }
+
+        public void setProtocolType(String protocolType) {
+            this.protocolType = protocolType;
+        }
+
+        public String getVersion() {
+            return version;
+        }
+
+        public void setVersion(String version) {
+            this.version = version;
+        }
+
+        public String getManufacturer() {
+            return manufacturer;
+        }
+
+        public void setManufacturer(String manufacturer) {
+            this.manufacturer = manufacturer;
+        }
+
+        public Date getUpdateTime() {
+            return updateTime;
+        }
+
+        public void setUpdateTime(Date updateTime) {
+            this.updateTime = updateTime;
+        }
     }
 
     /**
@@ -882,10 +976,21 @@ public class ProtocolAdapterHotUpdater {
         }
 
         // getters and setters
-        public boolean isSuccess() { return success; }
-        public void setSuccess(boolean success) { this.success = success; }
-        public String getMessage() { return message; }
-        public void setMessage(String message) { this.message = message; }
+        public boolean isSuccess() {
+            return success;
+        }
+
+        public void setSuccess(boolean success) {
+            this.success = success;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
     }
 
     /**

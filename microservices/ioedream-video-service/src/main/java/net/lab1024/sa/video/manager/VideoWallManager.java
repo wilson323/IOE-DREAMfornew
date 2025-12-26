@@ -1,13 +1,14 @@
 package net.lab1024.sa.video.manager;
 
+import java.util.List;
+
 import lombok.extern.slf4j.Slf4j;
+
 import net.lab1024.sa.video.dao.VideoWallDao;
-import net.lab1024.sa.video.dao.VideoWallWindowDao;
 import net.lab1024.sa.video.dao.VideoWallPresetDao;
+import net.lab1024.sa.video.dao.VideoWallWindowDao;
 import net.lab1024.sa.video.entity.VideoWallEntity;
 import net.lab1024.sa.video.entity.VideoWallWindowEntity;
-
-import java.util.List;
 
 /**
  * 电视墙管理器
@@ -38,13 +39,13 @@ public class VideoWallManager {
     /**
      * 构造函数注入依赖
      *
-     * @param videoWallDao 电视墙数据访问层
+     * @param videoWallDao       电视墙数据访问层
      * @param videoWallWindowDao 窗口数据访问层
      * @param videoWallPresetDao 预案数据访问层
      */
     public VideoWallManager(VideoWallDao videoWallDao,
-                           VideoWallWindowDao videoWallWindowDao,
-                           VideoWallPresetDao videoWallPresetDao) {
+            VideoWallWindowDao videoWallWindowDao,
+            VideoWallPresetDao videoWallPresetDao) {
         this.videoWallDao = videoWallDao;
         this.videoWallWindowDao = videoWallWindowDao;
         this.videoWallPresetDao = videoWallPresetDao;
@@ -98,14 +99,14 @@ public class VideoWallManager {
      * 根据行数和列数创建窗口，自动计算窗口位置和大小
      * </p>
      *
-     * @param wallId 电视墙ID
-     * @param rows 行数
-     * @param cols 列数
-     * @param screenWidth 单屏宽度（像素）
+     * @param wallId       电视墙ID
+     * @param rows         行数
+     * @param cols         列数
+     * @param screenWidth  单屏宽度（像素）
      * @param screenHeight 单屏高度（像素）
      */
     private void initializeWindows(Long wallId, Integer rows, Integer cols,
-                                   Integer screenWidth, Integer screenHeight) {
+            Integer screenWidth, Integer screenHeight) {
         log.info("[电视墙管理] 初始化窗口布局: wallId={}, rows={}, cols={}, screenWidth={}, screenHeight={}",
                 wallId, rows, cols, screenWidth, screenHeight);
 
@@ -148,14 +149,14 @@ public class VideoWallManager {
      * 更新行数和列数，重新初始化窗口布局
      * </p>
      *
-     * @param wallId 电视墙ID
-     * @param rows 新行数
-     * @param cols 新列数
-     * @param screenWidth 单屏宽度（像素）
+     * @param wallId       电视墙ID
+     * @param rows         新行数
+     * @param cols         新列数
+     * @param screenWidth  单屏宽度（像素）
      * @param screenHeight 单屏高度（像素）
      */
     public void updateWallLayout(Long wallId, Integer rows, Integer cols,
-                                 Integer screenWidth, Integer screenHeight) {
+            Integer screenWidth, Integer screenHeight) {
         log.info("[电视墙管理] 更新电视墙布局: wallId={}, rows={}, cols={}",
                 wallId, rows, cols);
 

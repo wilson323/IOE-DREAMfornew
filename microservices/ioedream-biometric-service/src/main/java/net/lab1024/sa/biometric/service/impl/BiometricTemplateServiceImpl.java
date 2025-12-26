@@ -1,8 +1,26 @@
 package net.lab1024.sa.biometric.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.HttpMethod;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import com.fasterxml.jackson.core.type.TypeReference;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import net.lab1024.sa.common.util.QueryBuilder;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+
+import jakarta.annotation.Resource;
 import net.lab1024.sa.biometric.dao.BiometricTemplateDao;
 import net.lab1024.sa.biometric.domain.entity.BiometricTemplateEntity;
 import net.lab1024.sa.biometric.domain.entity.BiometricType;
@@ -13,30 +31,16 @@ import net.lab1024.sa.biometric.domain.vo.BiometricTemplateVO;
 import net.lab1024.sa.biometric.manager.BiometricTemplateManager;
 import net.lab1024.sa.biometric.service.BiometricTemplateService;
 import net.lab1024.sa.biometric.service.BiometricTemplateSyncService;
-import net.lab1024.sa.common.exception.BusinessException;
-import net.lab1024.sa.common.openapi.domain.response.PageResult;
+import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.common.exception.BusinessException;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
-import net.lab1024.sa.common.organization.dao.AreaUserDao;
 import net.lab1024.sa.common.organization.dao.AreaDeviceDao;
+import net.lab1024.sa.common.organization.dao.AreaUserDao;
 import net.lab1024.sa.common.organization.entity.AreaDeviceEntity;
 import net.lab1024.sa.common.organization.entity.AreaUserEntity;
-import net.lab1024.sa.common.security.entity.UserEntity;
-import net.lab1024.sa.common.util.SmartBeanUtil;
-import org.springframework.http.HttpMethod;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import jakarta.annotation.Resource;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+import net.lab1024.sa.common.organization.entity.UserEntity;
+import org.springframework.beans.BeanUtils;
 
 /**
  * 生物模板管理服务实现
@@ -52,10 +56,11 @@ import java.util.stream.Collectors;
  * @version 1.0.0
  * @since 2025-12-18
  */
-@Slf4j
 @Service
 @Transactional(rollbackFor = Exception.class)
+@Slf4j
 public class BiometricTemplateServiceImpl implements BiometricTemplateService {
+
 
     @Resource
     private BiometricTemplateDao biometricTemplateDao;
@@ -79,7 +84,7 @@ public class BiometricTemplateServiceImpl implements BiometricTemplateService {
     private static final Integer DEVICE_TYPE_ACCESS = 1;
 
     @Override
-    @CacheEvict(value = {"biometric:template:user", "biometric:template:user:type"}, key = "#addForm.userId")
+    @CacheEvict(value = { "biometric:template:user", "biometric:template:user:type" }, key = "#addForm.userId")
     public ResponseDTO<BiometricTemplateVO> addTemplate(BiometricTemplateAddForm addForm) {
         try {
             log.info("[生物模板管理] 添加模板开始 userId={}, biometricType={}",
@@ -93,8 +98,7 @@ public class BiometricTemplateServiceImpl implements BiometricTemplateService {
                     addForm.getUserId(),
                     addForm.getBiometricType(),
                     addForm.getFeatureData(),
-                    addForm.getQualityScore()
-            );
+                    addForm.getQualityScore());
 
             // 3. 转换为VO
             BiometricTemplateVO templateVO = convertToVO(template);
@@ -113,7 +117,8 @@ public class BiometricTemplateServiceImpl implements BiometricTemplateService {
     }
 
     @Override
-    @CacheEvict(value = {"biometric:template:detail", "biometric:template:user", "biometric:template:user:type"}, allEntries = true)
+    @CacheEvict(value = { "biometric:template:detail", "biometric:template:user",
+            "biometric:template:user:type" }, allEntries = true)
     public ResponseDTO<Void> updateTemplate(BiometricTemplateUpdateForm updateForm) {
         try {
             log.info("[生物模板管理] 更新模板开始 templateId={}", updateForm.getTemplateId());
@@ -148,7 +153,8 @@ public class BiometricTemplateServiceImpl implements BiometricTemplateService {
     }
 
     @Override
-    @CacheEvict(value = {"biometric:template:detail", "biometric:template:user", "biometric:template:user:type"}, allEntries = true)
+    @CacheEvict(value = { "biometric:template:detail", "biometric:template:user",
+            "biometric:template:user:type" }, allEntries = true)
     public ResponseDTO<Void> deleteTemplate(Long templateId) {
         try {
             log.info("[生物模板管理] 删除模板开始 templateId={}", templateId);
@@ -172,7 +178,8 @@ public class BiometricTemplateServiceImpl implements BiometricTemplateService {
     }
 
     @Override
-    @CacheEvict(value = {"biometric:template:user", "biometric:template:user:type"}, key = "#userId + ':' + #biometricType")
+    @CacheEvict(value = { "biometric:template:user",
+            "biometric:template:user:type" }, key = "#userId + ':' + #biometricType")
     public ResponseDTO<Void> deleteTemplateByUserAndType(Long userId, Integer biometricType) {
         try {
             log.info("[生物模板管理] 删除用户模板开始 userId={}, biometricType={}", userId, biometricType);
@@ -191,7 +198,7 @@ public class BiometricTemplateServiceImpl implements BiometricTemplateService {
 
     @Override
     @Transactional(readOnly = true)
-    @Cacheable(value = "biometric:template:detail", key = "#templateId", unless = "#result == null || !#result.getOk()")
+    @Cacheable(value = "biometric:template:detail", key = "#templateId", unless = "#result == null || !#result.isSuccess()")
     public ResponseDTO<BiometricTemplateVO> getTemplateById(Long templateId) {
         try {
             BiometricTemplateEntity template = biometricTemplateDao.selectById(templateId);
@@ -210,7 +217,7 @@ public class BiometricTemplateServiceImpl implements BiometricTemplateService {
 
     @Override
     @Transactional(readOnly = true)
-    @Cacheable(value = "biometric:template:user", key = "#userId", unless = "#result == null || !#result.getOk()")
+    @Cacheable(value = "biometric:template:user", key = "#userId", unless = "#result == null || !#result.isSuccess()")
     public ResponseDTO<List<BiometricTemplateVO>> getTemplatesByUserId(Long userId) {
         try {
             List<BiometricTemplateEntity> templates = biometricTemplateDao.selectByUserId(userId);
@@ -227,7 +234,7 @@ public class BiometricTemplateServiceImpl implements BiometricTemplateService {
 
     @Override
     @Transactional(readOnly = true)
-    @Cacheable(value = "biometric:template:user:type", key = "#userId + ':' + #biometricType", unless = "#result == null || !#result.getOk()")
+    @Cacheable(value = "biometric:template:user:type", key = "#userId + ':' + #biometricType", unless = "#result == null || !#result.isSuccess()")
     public ResponseDTO<BiometricTemplateVO> getTemplateByUserAndType(Long userId, Integer biometricType) {
         try {
             List<BiometricTemplateEntity> templates = biometricTemplateDao.selectByUserIdAndType(userId, biometricType);
@@ -251,10 +258,13 @@ public class BiometricTemplateServiceImpl implements BiometricTemplateService {
             // 构建查询条件
             LambdaQueryWrapper<BiometricTemplateEntity> queryWrapper = new LambdaQueryWrapper<>();
             queryWrapper.eq(queryForm.getUserId() != null, BiometricTemplateEntity::getUserId, queryForm.getUserId())
-                    .eq(queryForm.getBiometricType() != null, BiometricTemplateEntity::getBiometricType, queryForm.getBiometricType())
-                    .eq(queryForm.getTemplateStatus() != null, BiometricTemplateEntity::getTemplateStatus, queryForm.getTemplateStatus())
+                    .eq(queryForm.getBiometricType() != null, BiometricTemplateEntity::getBiometricType,
+                            queryForm.getBiometricType())
+                    .eq(queryForm.getTemplateStatus() != null, BiometricTemplateEntity::getTemplateStatus,
+                            queryForm.getTemplateStatus())
                     .eq(queryForm.getDeviceId() != null, BiometricTemplateEntity::getDeviceId, queryForm.getDeviceId())
-                    .like(queryForm.getTemplateName() != null, BiometricTemplateEntity::getTemplateName, queryForm.getTemplateName())
+                    .like(queryForm.getTemplateName() != null, BiometricTemplateEntity::getTemplateName,
+                            queryForm.getTemplateName())
                     .orderByDesc(BiometricTemplateEntity::getCreateTime);
 
             // 分页查询
@@ -271,8 +281,7 @@ public class BiometricTemplateServiceImpl implements BiometricTemplateService {
                     templateVOs,
                     pageResult.getTotal(),
                     queryForm.getPageNum(),
-                    queryForm.getPageSize()
-            );
+                    queryForm.getPageSize());
 
             return ResponseDTO.ok(result);
 
@@ -283,7 +292,8 @@ public class BiometricTemplateServiceImpl implements BiometricTemplateService {
     }
 
     @Override
-    @CacheEvict(value = {"biometric:template:detail", "biometric:template:user", "biometric:template:user:type"}, allEntries = true)
+    @CacheEvict(value = { "biometric:template:detail", "biometric:template:user",
+            "biometric:template:user:type" }, allEntries = true)
     public ResponseDTO<Void> updateTemplateStatus(Long templateId, Integer templateStatus) {
         try {
             int rows = biometricTemplateDao.updateTemplateStatus(templateId, templateStatus);
@@ -331,24 +341,26 @@ public class BiometricTemplateServiceImpl implements BiometricTemplateService {
      * 转换为VO
      */
     private BiometricTemplateVO convertToVO(BiometricTemplateEntity template) {
-        BiometricTemplateVO vo = SmartBeanUtil.copy(template, BiometricTemplateVO.class);
-        
+        BiometricTemplateVO vo = new BiometricTemplateVO();
+        BeanUtils.copyProperties(template, vo);
+
         // 设置描述字段
         if (template.getBiometricType() != null) {
             BiometricType type = BiometricType.fromCode(template.getBiometricType());
             vo.setBiometricTypeDesc(type.getName());
         }
         if (template.getTemplateStatus() != null) {
-            BiometricTemplateEntity.TemplateStatus status = BiometricTemplateEntity.TemplateStatus.fromCode(template.getTemplateStatus());
+            BiometricTemplateEntity.TemplateStatus status = BiometricTemplateEntity.TemplateStatus
+                    .fromCode(template.getTemplateStatus());
             vo.setTemplateStatusDesc(status.getDescription());
         }
-        
+
         // 获取用户姓名
         if (template.getUserId() != null) {
             String userName = getUserName(template.getUserId());
             vo.setUserName(userName);
         }
-        
+
         // 计算成功率
         if (template.getUseCount() != null && template.getUseCount() > 0) {
             double successRate = (double) template.getSuccessCount() / template.getUseCount() * 100;
@@ -363,11 +375,12 @@ public class BiometricTemplateServiceImpl implements BiometricTemplateService {
      */
     private String getUserName(Long userId) {
         try {
+            @SuppressWarnings("unchecked")
             ResponseDTO<UserEntity> response = gatewayServiceClient.callCommonService(
                     "/api/v1/users/" + userId,
                     HttpMethod.GET,
                     null,
-                    UserEntity.class
+                    new TypeReference<ResponseDTO<UserEntity>>() {}
             );
 
             if (response != null && response.isSuccess() && response.getData() != null) {
@@ -408,8 +421,7 @@ public class BiometricTemplateServiceImpl implements BiometricTemplateService {
             for (AreaUserEntity permission : permissions) {
                 List<AreaDeviceEntity> devices = areaDeviceDao.selectByAreaIdAndDeviceType(
                         permission.getAreaId(),
-                        DEVICE_TYPE_ACCESS
-                );
+                        DEVICE_TYPE_ACCESS);
                 devices.forEach(d -> targetDeviceIds.add(d.getDeviceId()));
             }
 

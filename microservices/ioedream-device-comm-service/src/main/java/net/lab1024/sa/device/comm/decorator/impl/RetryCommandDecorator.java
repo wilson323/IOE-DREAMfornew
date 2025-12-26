@@ -1,12 +1,14 @@
 package net.lab1024.sa.device.comm.decorator.impl;
 
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.concurrent.TimeUnit;
+
+import org.springframework.stereotype.Component;
+
 import net.lab1024.sa.device.comm.decorator.DeviceCommandDecorator;
 import net.lab1024.sa.device.comm.decorator.IDeviceCommandExecutor;
 import net.lab1024.sa.device.comm.protocol.domain.DeviceCommandRequest;
-import org.springframework.stereotype.Component;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * 重试命令装饰器
@@ -19,8 +21,8 @@ import java.util.concurrent.TimeUnit;
  * @version 1.0.0
  * @since 2025-12-18
  */
-@Slf4j
 @Component
+@Slf4j
 public class RetryCommandDecorator extends DeviceCommandDecorator {
 
     /**
@@ -43,9 +45,9 @@ public class RetryCommandDecorator extends DeviceCommandDecorator {
     }
 
     @Override
-    public DeviceCommandResult execute(DeviceCommandRequest command) {
+    public DeviceCommandDecorator.DeviceCommandResult execute(DeviceCommandRequest command) {
         int retryCount = 0;
-        DeviceCommandResult result = null;
+        DeviceCommandDecorator.DeviceCommandResult result = null;
 
         while (retryCount <= MAX_RETRY_COUNT) {
             try {
@@ -64,7 +66,8 @@ public class RetryCommandDecorator extends DeviceCommandDecorator {
                 if (retryCount < MAX_RETRY_COUNT) {
                     retryCount++;
                     log.warn("[重试装饰器] 命令执行失败，准备重试（{}/{}）, deviceId={}, commandType={}, error={}",
-                            retryCount, MAX_RETRY_COUNT, command.getDeviceId(), command.getCommandType(), result.getMessage());
+                            retryCount, MAX_RETRY_COUNT, command.getDeviceId(), command.getCommandType(),
+                            result.getMessage());
 
                     // 延迟后重试
                     try {
@@ -72,7 +75,7 @@ public class RetryCommandDecorator extends DeviceCommandDecorator {
                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt();
                         log.error("[重试装饰器] 重试延迟被中断", e);
-                        return DeviceCommandResult.failed("重试被中断");
+                        return DeviceCommandDecorator.DeviceCommandResult.failed("重试被中断");
                     }
                 } else {
                     // 达到最大重试次数，返回失败
@@ -85,25 +88,26 @@ public class RetryCommandDecorator extends DeviceCommandDecorator {
                 if (retryCount < MAX_RETRY_COUNT) {
                     retryCount++;
                     log.warn("[重试装饰器] 命令执行异常，准备重试（{}/{}）, deviceId={}, commandType={}, error={}",
-                            retryCount, MAX_RETRY_COUNT, command.getDeviceId(), command.getCommandType(), e.getMessage());
+                            retryCount, MAX_RETRY_COUNT, command.getDeviceId(), command.getCommandType(),
+                            e.getMessage());
 
                     try {
                         TimeUnit.MILLISECONDS.sleep(RETRY_DELAY_MS);
                     } catch (InterruptedException ie) {
                         Thread.currentThread().interrupt();
                         log.error("[重试装饰器] 重试延迟被中断", ie);
-                        return DeviceCommandResult.failed("重试被中断: " + e.getMessage());
+                        return DeviceCommandDecorator.DeviceCommandResult.failed("重试被中断: " + e.getMessage());
                     }
                 } else {
                     // 达到最大重试次数，返回失败
                     log.error("[重试装饰器] 命令执行异常（已重试{}次）, deviceId={}, commandType={}",
                             MAX_RETRY_COUNT, command.getDeviceId(), command.getCommandType(), e);
-                    return DeviceCommandResult.failed("执行异常: " + e.getMessage());
+                    return DeviceCommandDecorator.DeviceCommandResult.failed("执行异常: " + e.getMessage());
                 }
             }
         }
 
         // 理论上不会到达这里
-        return result != null ? result : DeviceCommandResult.failed("未知错误");
+        return result != null ? result : DeviceCommandDecorator.DeviceCommandResult.failed("未知错误");
     }
 }

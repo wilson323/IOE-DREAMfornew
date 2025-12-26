@@ -106,3 +106,4 @@ public class MultiObjectiveOptimizationResult {
         return objectiveAchievements;
     }
 }
+

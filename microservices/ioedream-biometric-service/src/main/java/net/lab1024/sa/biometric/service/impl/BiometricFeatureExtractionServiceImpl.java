@@ -40,8 +40,8 @@ import java.util.Map;
  * @version 1.0.0
  * @since 2025-12-18
  */
-@Slf4j
 @Service
+@Slf4j
 public class BiometricFeatureExtractionServiceImpl implements BiometricFeatureExtractionService {
 
     /**
@@ -365,3 +365,4 @@ public class BiometricFeatureExtractionServiceImpl implements BiometricFeatureEx
         }
     }
 }
+

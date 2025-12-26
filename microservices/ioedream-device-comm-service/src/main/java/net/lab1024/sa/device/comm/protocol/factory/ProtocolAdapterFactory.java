@@ -1,15 +1,16 @@
 package net.lab1024.sa.device.comm.protocol.factory;
 
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.device.comm.protocol.ProtocolAdapter;
-import net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter;
-import net.lab1024.sa.device.comm.protocol.zkteco.ConsumeZktecoV10Adapter;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.stereotype.Component;
 
 import jakarta.annotation.Resource;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import net.lab1024.sa.device.comm.protocol.ProtocolAdapter;
+import net.lab1024.sa.device.comm.protocol.entropy.AccessEntropyV48Adapter;
+import net.lab1024.sa.device.comm.protocol.zkteco.ConsumeZktecoV10Adapter;
 
 /**
  * 协议适配器工厂
@@ -22,27 +23,27 @@ import java.util.concurrent.ConcurrentHashMap;
  * @version 1.0.0
  * @since 2025-12-16
  */
-@Slf4j
 @Component
+@Slf4j
 public class ProtocolAdapterFactory {
 
     /**
      * 协议适配器注册表
      * Key: 协议类型, Value: 协议适配器实例
      */
-    private final Map<String, ProtocolAdapter> adapterRegistry = new ConcurrentHashMap<>();
+    private final Map<String, ProtocolAdapter> adapterRegistry = new HashMap<>();
 
     /**
      * 设备型号到协议类型的映射
      * Key: 设备型号, Value: 协议类型
      */
-    private final Map<String, String> deviceModelToProtocolMap = new ConcurrentHashMap<>();
+    private final Map<String, String> deviceModelToProtocolMap = new HashMap<>();
 
     /**
      * 设备SN到协议类型的缓存
      * Key: 设备SN, Value: 协议类型
      */
-    private final Map<String, String> deviceSnToProtocolCache = new ConcurrentHashMap<>();
+    private final Map<String, String> deviceSnToProtocolCache = new HashMap<>();
 
     @Resource
     private AccessEntropyV48Adapter accessEntropyV48Adapter;
@@ -97,7 +98,7 @@ public class ProtocolAdapterFactory {
         }
 
         log.info("[协议适配器工厂] 协议适配器注册成功: {} (支持设备型号: {})",
-            protocolType, supportedModels != null ? supportedModels.length : 0);
+                protocolType, supportedModels != null ? supportedModels.length : 0);
     }
 
     /**
@@ -209,7 +210,7 @@ public class ProtocolAdapterFactory {
      * @return 设备型号列表
      */
     public java.util.List<String> getSupportedDeviceModels() {
-        return new java.util.ArrayList<>(deviceModelToProtocolMap.keySet());
+        return new java.util.ArrayList<String>(deviceModelToProtocolMap.keySet());
     }
 
     /**
@@ -261,20 +262,19 @@ public class ProtocolAdapterFactory {
 
             // 清理设备SN缓存中该协议类型的条目
             deviceSnToProtocolCache.entrySet().removeIf(
-                entry -> protocolType.equals(entry.getValue())
-            );
+                    entry -> protocolType.equals(entry.getValue()));
         }
     }
 
     /**
      * 更新设备SN到协议类型的缓存
      *
-     * @param deviceSn 设备SN
+     * @param deviceSn     设备SN
      * @param protocolType 协议类型
      */
     public void updateDeviceSnProtocolCache(String deviceSn, String protocolType) {
         if (deviceSn != null && !deviceSn.trim().isEmpty() &&
-            protocolType != null && !protocolType.trim().isEmpty()) {
+                protocolType != null && !protocolType.trim().isEmpty()) {
 
             deviceSnToProtocolCache.put(deviceSn, protocolType);
             log.debug("[协议适配器工厂] 更新设备SN协议缓存: {} -> {}", deviceSn, protocolType);
@@ -325,7 +325,7 @@ public class ProtocolAdapterFactory {
             adapterInfo.put("manufacturer", adapter.getManufacturer());
             adapterInfo.put("version", adapter.getVersion());
             adapterInfo.put("supportedModelCount",
-                adapter.getSupportedDeviceModels() != null ? adapter.getSupportedDeviceModels().length : 0);
+                    adapter.getSupportedDeviceModels() != null ? adapter.getSupportedDeviceModels().length : 0);
             adapterInfo.put("status", adapter.getAdapterStatus());
 
             adapterStats.put(protocolType, adapterInfo);

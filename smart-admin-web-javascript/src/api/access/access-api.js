@@ -256,6 +256,43 @@ export const checkPermission = (userId, permissionCode) => {
   return getRequest(`/access/permission/check`, { userId, permissionCode });
 };
 
+// ==================== 地图功能API ====================
+
+/**
+ * 获取设备位置列表
+ */
+export const getDeviceLocations = (params) => {
+  return getRequest('/access/map/device-locations', params);
+};
+
+/**
+ * 获取区域边界
+ */
+export const getAreaBoundaries = () => {
+  return getRequest('/access/map/area-boundaries');
+};
+
+/**
+ * 获取通行轨迹
+ */
+export const getAccessTrajectories = (params) => {
+  return getRequest('/access/map/trajectories', params);
+};
+
+/**
+ * 更新设备位置
+ */
+export const updateDeviceLocation = (deviceId, data) => {
+  return postRequest(`/access/map/device-location/${deviceId}`, data);
+};
+
+/**
+ * 更新区域边界
+ */
+export const updateAreaBoundary = (areaId, data) => {
+  return postRequest(`/access/map/area-boundary/${areaId}`, data);
+};
+
 // ==================== 导出默认对象 ====================
 
 export default {
@@ -307,4 +344,11 @@ export default {
   getUserPermissions,
   assignPermissions,
   checkPermission,
+
+  // 地图功能
+  getDeviceLocations,
+  getAreaBoundaries,
+  getAccessTrajectories,
+  updateDeviceLocation,
+  updateAreaBoundary,
 };

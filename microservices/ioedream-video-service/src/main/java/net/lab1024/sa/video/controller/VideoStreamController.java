@@ -3,8 +3,10 @@ package net.lab1024.sa.video.controller;
 import java.util.List;
 import java.util.Map;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,11 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.common.openapi.domain.response.PageResult;
 import net.lab1024.sa.common.permission.annotation.PermissionCheck;
 import net.lab1024.sa.video.domain.form.VideoStreamQueryForm;
 import net.lab1024.sa.video.domain.form.VideoStreamStartForm;
@@ -41,16 +42,16 @@ import net.lab1024.sa.video.service.VideoStreamService;
  * @version 1.0.0
  * @since 2025-12-16
  */
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/video/streams")
-@RequiredArgsConstructor
-@Slf4j
 @Tag(name = "视频流管理", description = "视频流生命周期管理、质量控制、录制等功能")
 @ConditionalOnProperty(name = "spring.application.name", havingValue = "ioedream-video-service")
 @PermissionCheck(value = "VIDEO_STREAM", description = "视频流管理模块权限")
 public class VideoStreamController {
 
-    private final VideoStreamService videoStreamService;
+    @Resource
+    private VideoStreamService videoStreamService;
 
     /**
      * 启动视频流
@@ -111,7 +112,7 @@ public class VideoStreamController {
         log.info("[视频流] 收到恢复流请求: streamId={}", streamId);
         // 当前版本未提供真实“恢复”能力：先降级为重启流（保持接口可用、可编译）
         ResponseDTO<VideoStreamSessionVO> restartResult = videoStreamService.restartStream(streamId);
-        if (restartResult != null && restartResult.getOk()) {
+        if (restartResult != null && restartResult.isSuccess()) {
             return ResponseDTO.ok();
         }
         return ResponseDTO.<Void>error("RESUME_STREAM_FAILED", "恢复视频流失败");
@@ -183,10 +184,10 @@ public class VideoStreamController {
      * @param queryForm 查询条件
      * @return 分页结果
      */
-    @PostMapping("/query")
+    @GetMapping("/query")
     @Operation(summary = "分页查询视频流", description = "根据条件分页查询视频流")
     @PermissionCheck(value = { "VIDEO_VIEWER", "VIDEO_OPERATOR", "VIDEO_MANAGER" }, description = "视频查看、操作或管理权限")
-    public ResponseDTO<PageResult<VideoStreamVO>> queryStreams(@Valid @RequestBody VideoStreamQueryForm queryForm) {
+    public ResponseDTO<PageResult<VideoStreamVO>> queryStreams(@Valid @ModelAttribute VideoStreamQueryForm queryForm) {
         log.info("[视频流] 收到分页查询请求: {}", queryForm);
         PageResult<VideoStreamVO> pageResult = videoStreamService.queryStreams(queryForm);
         return ResponseDTO.ok(pageResult);
@@ -226,7 +227,7 @@ public class VideoStreamController {
         // Service层提供 recordStream（单位：秒）。Controller 入参为分钟，做一次换算。
         Integer seconds = duration == null ? null : duration * 60;
         ResponseDTO<Map<String, Object>> recordResult = videoStreamService.recordStream(streamId, seconds);
-        if (recordResult != null && recordResult.getOk()) {
+        if (recordResult != null && recordResult.isSuccess()) {
             return ResponseDTO.ok();
         }
         return ResponseDTO.<Void>error("RECORD_START_FAILED", "启动录制失败");

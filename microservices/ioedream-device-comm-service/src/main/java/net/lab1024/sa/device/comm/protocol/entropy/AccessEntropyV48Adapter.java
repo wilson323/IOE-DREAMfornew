@@ -1,18 +1,30 @@
 package net.lab1024.sa.device.comm.protocol.entropy;
 
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.device.comm.protocol.ProtocolAdapter;
-import net.lab1024.sa.device.comm.protocol.domain.*;
-import net.lab1024.sa.device.comm.protocol.entity.ProtocolMessageEntity;
-import net.lab1024.sa.device.comm.protocol.exception.ProtocolParseException;
-import net.lab1024.sa.device.comm.protocol.exception.ProtocolBuildException;
-import org.springframework.stereotype.Component;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
+
+import org.springframework.stereotype.Component;
+
+import net.lab1024.sa.device.comm.protocol.ProtocolAdapter;
+import net.lab1024.sa.device.comm.protocol.domain.ProtocolDeviceStatus;
+import net.lab1024.sa.device.comm.protocol.domain.ProtocolErrorInfo;
+import net.lab1024.sa.device.comm.protocol.domain.ProtocolErrorResponse;
+import net.lab1024.sa.device.comm.protocol.domain.ProtocolHeartbeatResult;
+import net.lab1024.sa.device.comm.protocol.domain.ProtocolInitResult;
+import net.lab1024.sa.device.comm.protocol.domain.ProtocolMessage;
+import net.lab1024.sa.device.comm.protocol.domain.ProtocolPermissionResult;
+import net.lab1024.sa.device.comm.protocol.domain.ProtocolProcessResult;
+import net.lab1024.sa.device.comm.protocol.domain.ProtocolRegistrationResult;
+import net.lab1024.sa.device.comm.protocol.domain.ProtocolValidationResult;
+import net.lab1024.sa.device.comm.protocol.exception.ProtocolBuildException;
+import net.lab1024.sa.device.comm.protocol.exception.ProtocolParseException;
 
 /**
  * 熵基科技门禁协议V4.8适配器实现
@@ -33,8 +45,8 @@ import java.util.concurrent.Future;
  * @version 1.0.0
  * @since 2025-12-16
  */
-@Slf4j
 @Component
+@Slf4j
 public class AccessEntropyV48Adapter implements ProtocolAdapter {
 
     // ==================== 协议常量定义 ====================
@@ -46,35 +58,35 @@ public class AccessEntropyV48Adapter implements ProtocolAdapter {
 
     /** 支持的设备型号 */
     private static final String[] SUPPORTED_DEVICE_MODELS = {
-        "MA300", "MA300T", "SC405", "SC700", "SC705",
-        "F18", "TA800C", "TA800T", "WK2600", "WK2600P"
+            "MA300", "MA300T", "SC405", "SC700", "SC705",
+            "F18", "TA800C", "TA800T", "WK2600", "WK2600P"
     };
 
     /** 消息类型代码 */
-    private static final int MSG_TYPE_REAL_TIME_EVENT = 0x01;      // 实时事件上传
-    private static final int MSG_TYPE_DEVICE_STATUS = 0x02;        // 设备状态上报
-    private static final int MSG_TYPE_HEARTBEAT = 0x03;            // 心跳包
-    private static final int MSG_TYPE_PERMISSION_REQUEST = 0x04;   // 权限请求
-    private static final int MSG_TYPE_VERIFY_RESULT = 0x05;        // 验证结果
-    private static final int MSG_TYPE_ERROR_REPORT = 0x06;         // 错误报告
+    private static final int MSG_TYPE_REAL_TIME_EVENT = 0x01; // 实时事件上传
+    private static final int MSG_TYPE_DEVICE_STATUS = 0x02; // 设备状态上报
+    private static final int MSG_TYPE_HEARTBEAT = 0x03; // 心跳包
+    private static final int MSG_TYPE_PERMISSION_REQUEST = 0x04; // 权限请求
+    private static final int MSG_TYPE_VERIFY_RESULT = 0x05; // 验证结果
+    private static final int MSG_TYPE_ERROR_REPORT = 0x06; // 错误报告
 
     /** 事件类型代码 */
-    private static final int EVENT_TYPE_CARD = 0x01;               // 刷卡事件
-    private static final int EVENT_TYPE_FACE = 0x02;               // 人脸识别事件
-    private static final int EVENT_TYPE_FINGERPRINT = 0x03;         // 指纹识别事件
-    private static final int EVENT_TYPE_PASSWORD = 0x04;           // 密码验证事件
-    private static final int EVENT_TYPE_QR_CODE = 0x05;            // 二维码事件
-    private static final int EVENT_TYPE_DURESS = 0x06;             // 胁迫事件
-    private static final int EVENT_TYPE_TAILGATING = 0x07;          // 尾随事件
-    private static final int EVENT_TYPE_ANTI_PASSBACK = 0x08;      // 反潜回事件
-    private static final int EVENT_TYPE_DOOR_MAGNETIC = 0x09;      // 门磁状态事件
-    private static final int EVENT_TYPE_ALARM = 0x0A;               // 报警事件
+    private static final int EVENT_TYPE_CARD = 0x01; // 刷卡事件
+    private static final int EVENT_TYPE_FACE = 0x02; // 人脸识别事件
+    private static final int EVENT_TYPE_FINGERPRINT = 0x03; // 指纹识别事件
+    private static final int EVENT_TYPE_PASSWORD = 0x04; // 密码验证事件
+    private static final int EVENT_TYPE_QR_CODE = 0x05; // 二维码事件
+    private static final int EVENT_TYPE_DURESS = 0x06; // 胁迫事件
+    private static final int EVENT_TYPE_TAILGATING = 0x07; // 尾随事件
+    private static final int EVENT_TYPE_ANTI_PASSBACK = 0x08; // 反潜回事件
+    private static final int EVENT_TYPE_DOOR_MAGNETIC = 0x09; // 门磁状态事件
+    private static final int EVENT_TYPE_ALARM = 0x0A; // 报警事件
 
     /** 验证结果代码 */
-    private static final int VERIFY_SUCCESS = 0x00;                // 验证成功
-    private static final int VERIFY_FAILED = 0x01;                 // 验证失败
-    private static final int VERIFY_TIMEOUT = 0x02;                // 验证超时
-    private static final int VERIFY_INVALID = 0x03;                // 验证无效
+    private static final int VERIFY_SUCCESS = 0x00; // 验证成功
+    private static final int VERIFY_FAILED = 0x01; // 验证失败
+    private static final int VERIFY_TIMEOUT = 0x02; // 验证超时
+    private static final int VERIFY_INVALID = 0x03; // 验证无效
 
     // ==================== 协议标识接口实现 ====================
 
@@ -190,7 +202,7 @@ public class AccessEntropyV48Adapter implements ProtocolAdapter {
             }
 
             log.debug("[熵基门禁协议V4.8] 消息解析完成, messageType={}, deviceSn={}",
-                message.getMessageTypeName(), message.getDeviceSn());
+                    message.getMessageTypeName(), message.getDeviceSn());
 
             return message;
 
@@ -220,7 +232,8 @@ public class AccessEntropyV48Adapter implements ProtocolAdapter {
     }
 
     @Override
-    public byte[] buildDeviceResponse(String messageType, Map<String, Object> businessData, Long deviceId) throws ProtocolBuildException {
+    public byte[] buildDeviceResponse(String messageType, Map<String, Object> businessData, Long deviceId)
+            throws ProtocolBuildException {
         log.debug("[熵基门禁协议V4.8] 开始构建设备响应, messageType={}, deviceId={}", messageType, deviceId);
 
         try {
@@ -234,9 +247,9 @@ public class AccessEntropyV48Adapter implements ProtocolAdapter {
             buffer.putShort((short) 0);
 
             buffer.putShort((short) 0x0480); // 版本号 V4.8
-            buffer.put((byte) 0x00);        // 响应消息类型
-            buffer.put((byte) 0x00);        // 响应命令代码
-            buffer.putInt(0);               // 序列号
+            buffer.put((byte) 0x00); // 响应消息类型
+            buffer.put((byte) 0x00); // 响应命令代码
+            buffer.putInt(0); // 序列号
             buffer.putLong(System.currentTimeMillis() / 1000); // 时间戳
 
             // 2. 根据消息类型构建业务数据
@@ -281,7 +294,8 @@ public class AccessEntropyV48Adapter implements ProtocolAdapter {
     }
 
     @Override
-    public String buildDeviceResponseHex(String messageType, Map<String, Object> businessData, Long deviceId) throws ProtocolBuildException {
+    public String buildDeviceResponseHex(String messageType, Map<String, Object> businessData, Long deviceId)
+            throws ProtocolBuildException {
         byte[] response = buildDeviceResponse(messageType, businessData, deviceId);
         return bytesToHexString(response);
     }
@@ -328,7 +342,7 @@ public class AccessEntropyV48Adapter implements ProtocolAdapter {
 
             // 4. 设备型号验证
             if (entropyMessage.getDeviceModel() != null &&
-                !isDeviceModelSupported(entropyMessage.getDeviceModel())) {
+                    !isDeviceModelSupported(entropyMessage.getDeviceModel())) {
                 result.setValid(false);
                 result.setErrorCode("DEVICE_MODEL_UNSUPPORTED");
                 result.setErrorMessage("不支持的设备型号: " + entropyMessage.getDeviceModel());
@@ -395,7 +409,8 @@ public class AccessEntropyV48Adapter implements ProtocolAdapter {
     // ==================== 业务数据处理接口实现 ====================
 
     @Override
-    public Future<ProtocolProcessResult> processAccessBusiness(String businessType, Map<String, Object> businessData, Long deviceId) {
+    public Future<ProtocolProcessResult> processAccessBusiness(String businessType, Map<String, Object> businessData,
+            Long deviceId) {
         return CompletableFuture.supplyAsync(() -> {
             ProtocolProcessResult result = new ProtocolProcessResult();
 
@@ -431,7 +446,8 @@ public class AccessEntropyV48Adapter implements ProtocolAdapter {
     }
 
     @Override
-    public Future<ProtocolProcessResult> processAttendanceBusiness(String businessType, Map<String, Object> businessData, Long deviceId) {
+    public Future<ProtocolProcessResult> processAttendanceBusiness(String businessType,
+            Map<String, Object> businessData, Long deviceId) {
         return CompletableFuture.supplyAsync(() -> {
             ProtocolProcessResult result = new ProtocolProcessResult();
             result.setSuccess(false);
@@ -442,7 +458,8 @@ public class AccessEntropyV48Adapter implements ProtocolAdapter {
     }
 
     @Override
-    public Future<ProtocolProcessResult> processConsumeBusiness(String businessType, Map<String, Object> businessData, Long deviceId) {
+    public Future<ProtocolProcessResult> processConsumeBusiness(String businessType, Map<String, Object> businessData,
+            Long deviceId) {
         return CompletableFuture.supplyAsync(() -> {
             ProtocolProcessResult result = new ProtocolProcessResult();
             result.setSuccess(false);
@@ -516,9 +533,8 @@ public class AccessEntropyV48Adapter implements ProtocolAdapter {
         // 通行时间 (8字节)
         long accessTime = buffer.getLong() * 1000;
         message.setAccessTime(java.time.LocalDateTime.ofInstant(
-            java.time.Instant.ofEpochMilli(accessTime),
-            java.time.ZoneId.systemDefault()
-        ));
+                java.time.Instant.ofEpochMilli(accessTime),
+                java.time.ZoneId.systemDefault()));
     }
 
     /**
@@ -609,16 +625,14 @@ public class AccessEntropyV48Adapter implements ProtocolAdapter {
         // 有效开始时间 (8字节)
         long validStartTime = buffer.getLong() * 1000;
         message.setValidStartTime(java.time.LocalDateTime.ofInstant(
-            java.time.Instant.ofEpochMilli(validStartTime),
-            java.time.ZoneId.systemDefault()
-        ));
+                java.time.Instant.ofEpochMilli(validStartTime),
+                java.time.ZoneId.systemDefault()));
 
         // 有效结束时间 (8字节)
         long validEndTime = buffer.getLong() * 1000;
         message.setValidEndTime(java.time.LocalDateTime.ofInstant(
-            java.time.Instant.ofEpochMilli(validEndTime),
-            java.time.ZoneId.systemDefault()
-        ));
+                java.time.Instant.ofEpochMilli(validEndTime),
+                java.time.ZoneId.systemDefault()));
 
         // 是否需要多因素认证 (1字节)
         int multiFactorRequired = buffer.get() & 0xFF;
@@ -819,17 +833,28 @@ public class AccessEntropyV48Adapter implements ProtocolAdapter {
      */
     private String getEventTypeName(int eventTypeCode) {
         switch (eventTypeCode) {
-            case EVENT_TYPE_CARD: return "刷卡事件";
-            case EVENT_TYPE_FACE: return "人脸识别事件";
-            case EVENT_TYPE_FINGERPRINT: return "指纹识别事件";
-            case EVENT_TYPE_PASSWORD: return "密码验证事件";
-            case EVENT_TYPE_QR_CODE: return "二维码事件";
-            case EVENT_TYPE_DURESS: return "胁迫事件";
-            case EVENT_TYPE_TAILGATING: return "尾随事件";
-            case EVENT_TYPE_ANTI_PASSBACK: return "反潜回事件";
-            case EVENT_TYPE_DOOR_MAGNETIC: return "门磁状态事件";
-            case EVENT_TYPE_ALARM: return "报警事件";
-            default: return "未知事件";
+            case EVENT_TYPE_CARD:
+                return "刷卡事件";
+            case EVENT_TYPE_FACE:
+                return "人脸识别事件";
+            case EVENT_TYPE_FINGERPRINT:
+                return "指纹识别事件";
+            case EVENT_TYPE_PASSWORD:
+                return "密码验证事件";
+            case EVENT_TYPE_QR_CODE:
+                return "二维码事件";
+            case EVENT_TYPE_DURESS:
+                return "胁迫事件";
+            case EVENT_TYPE_TAILGATING:
+                return "尾随事件";
+            case EVENT_TYPE_ANTI_PASSBACK:
+                return "反潜回事件";
+            case EVENT_TYPE_DOOR_MAGNETIC:
+                return "门磁状态事件";
+            case EVENT_TYPE_ALARM:
+                return "报警事件";
+            default:
+                return "未知事件";
         }
     }
 
@@ -838,12 +863,18 @@ public class AccessEntropyV48Adapter implements ProtocolAdapter {
      */
     private String getVerifyMethodName(int verifyMethodCode) {
         switch (verifyMethodCode) {
-            case 0x01: return "CARD";
-            case 0x02: return "FACE";
-            case 0x03: return "FINGER";
-            case 0x04: return "PASSWORD";
-            case 0x05: return "QR";
-            default: return "UNKNOWN";
+            case 0x01:
+                return "CARD";
+            case 0x02:
+                return "FACE";
+            case 0x03:
+                return "FINGER";
+            case 0x04:
+                return "PASSWORD";
+            case 0x05:
+                return "QR";
+            default:
+                return "UNKNOWN";
         }
     }
 
@@ -852,11 +883,16 @@ public class AccessEntropyV48Adapter implements ProtocolAdapter {
      */
     private String getVerifyResultName(int verifyResultCode) {
         switch (verifyResultCode) {
-            case VERIFY_SUCCESS: return "SUCCESS";
-            case VERIFY_FAILED: return "FAILED";
-            case VERIFY_TIMEOUT: return "TIMEOUT";
-            case VERIFY_INVALID: return "INVALID";
-            default: return "UNKNOWN";
+            case VERIFY_SUCCESS:
+                return "SUCCESS";
+            case VERIFY_FAILED:
+                return "FAILED";
+            case VERIFY_TIMEOUT:
+                return "TIMEOUT";
+            case VERIFY_INVALID:
+                return "INVALID";
+            default:
+                return "UNKNOWN";
         }
     }
 
@@ -865,11 +901,16 @@ public class AccessEntropyV48Adapter implements ProtocolAdapter {
      */
     private String getLivenessResultName(int livenessResultCode) {
         switch (livenessResultCode) {
-            case 0x01: return "REAL";
-            case 0x02: return "PHOTO";
-            case 0x03: return "VIDEO";
-            case 0x04: return "MASK";
-            default: return "UNKNOWN";
+            case 0x01:
+                return "REAL";
+            case 0x02:
+                return "PHOTO";
+            case 0x03:
+                return "VIDEO";
+            case 0x04:
+                return "MASK";
+            default:
+                return "UNKNOWN";
         }
     }
 
@@ -878,9 +919,12 @@ public class AccessEntropyV48Adapter implements ProtocolAdapter {
      */
     private String getDoorStatusName(int doorStatusCode) {
         switch (doorStatusCode) {
-            case 0x01: return "OPEN";
-            case 0x02: return "CLOSE";
-            default: return "UNKNOWN";
+            case 0x01:
+                return "OPEN";
+            case 0x02:
+                return "CLOSE";
+            default:
+                return "UNKNOWN";
         }
     }
 
@@ -889,10 +933,14 @@ public class AccessEntropyV48Adapter implements ProtocolAdapter {
      */
     private String getLockStatusName(int lockStatusCode) {
         switch (lockStatusCode) {
-            case 0x01: return "LOCKED";
-            case 0x02: return "UNLOCKED";
-            case 0x03: return "FAULT";
-            default: return "UNKNOWN";
+            case 0x01:
+                return "LOCKED";
+            case 0x02:
+                return "UNLOCKED";
+            case 0x03:
+                return "FAULT";
+            default:
+                return "UNKNOWN";
         }
     }
 
@@ -901,9 +949,12 @@ public class AccessEntropyV48Adapter implements ProtocolAdapter {
      */
     private String getAccessDirectionName(int directionCode) {
         switch (directionCode) {
-            case 0x01: return "IN";
-            case 0x02: return "OUT";
-            default: return "UNKNOWN";
+            case 0x01:
+                return "IN";
+            case 0x02:
+                return "OUT";
+            default:
+                return "UNKNOWN";
         }
     }
 
@@ -912,11 +963,16 @@ public class AccessEntropyV48Adapter implements ProtocolAdapter {
      */
     private String getAccessLevelName(int accessLevelCode) {
         switch (accessLevelCode) {
-            case 0x01: return "NORMAL";
-            case 0x02: return "VIP";
-            case 0x03: return "SECURITY";
-            case 0x04: return "ADMIN";
-            default: return "UNKNOWN";
+            case 0x01:
+                return "NORMAL";
+            case 0x02:
+                return "VIP";
+            case 0x03:
+                return "SECURITY";
+            case 0x04:
+                return "ADMIN";
+            default:
+                return "UNKNOWN";
         }
     }
 
@@ -925,11 +981,16 @@ public class AccessEntropyV48Adapter implements ProtocolAdapter {
      */
     private String getAlarmLevelName(int alarmLevelCode) {
         switch (alarmLevelCode) {
-            case 0x01: return "LOW";
-            case 0x02: return "MEDIUM";
-            case 0x03: return "HIGH";
-            case 0x04: return "CRITICAL";
-            default: return "UNKNOWN";
+            case 0x01:
+                return "LOW";
+            case 0x02:
+                return "MEDIUM";
+            case 0x03:
+                return "HIGH";
+            case 0x04:
+                return "CRITICAL";
+            default:
+                return "UNKNOWN";
         }
     }
 
@@ -946,7 +1007,7 @@ public class AccessEntropyV48Adapter implements ProtocolAdapter {
      */
     private boolean isValidMessageType(int messageTypeCode) {
         return messageTypeCode >= MSG_TYPE_REAL_TIME_EVENT &&
-               messageTypeCode <= MSG_TYPE_ERROR_REPORT;
+                messageTypeCode <= MSG_TYPE_ERROR_REPORT;
     }
 
     // ==================== 其他接口实现（简化版本）====================

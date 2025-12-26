@@ -70,3 +70,4 @@ class VideoPlayControllerTest {
         verify(videoPlayService).getVideoStream(eq(deviceId), eq(channelId), eq(streamType));
     }
 }
+

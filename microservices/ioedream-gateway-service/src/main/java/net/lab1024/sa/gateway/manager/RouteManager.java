@@ -1,12 +1,14 @@
 package net.lab1024.sa.gateway.manager;
 
+import lombok.extern.slf4j.Slf4j;
+
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * 路由管理器
@@ -24,6 +26,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class RouteManager {
+
 
     private final Map<String, RouteDefinition> routeCache = new ConcurrentHashMap<>();
 

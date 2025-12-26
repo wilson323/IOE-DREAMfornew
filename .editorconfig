@@ -1,80 +1,67 @@
-# IOE-DREAM 项目EditorConfig配置
-# 根源性解决编码问题，确保所有开发环境使用一致的编码
+# EditorConfig is awesome: https://EditorConfig.org
 
-# 设定根目录
+# 顶层配置文件
 root = true
 
-# 所有文件的通用设置
+# 所有文件通用设置
 [*]
 charset = utf-8
-end_of_line = crlf
+end_of_line = lf
 insert_final_newline = true
 trim_trailing_whitespace = true
 
 # Java文件
 [*.java]
-charset = utf-8
 indent_style = space
 indent_size = 4
-continuation_indent_size = 8
+max_line_length = 120
 
 # XML文件
 [*.xml]
-charset = utf-8
 indent_style = space
 indent_size = 2
 
 # YAML文件
-[*.{yml,yaml}]
-charset = utf-8
-indent_style = space
-indent_size = 2
-
-# Properties文件
-[*.properties]
-charset = utf-8
-end_of_line = crlf
-
-# JavaScript/TypeScript文件
-[*.{js,ts,jsx,tsx}]
-charset = utf-8
-indent_style = space
-indent_size = 2
-
-# HTML文件
-[*.html]
-charset = utf-8
-indent_style = space
-indent_size = 2
-
-# CSS/SCSS文件
-[*.{css,scss,sass}]
-charset = utf-8
+[*.yml]
+[*.yaml]
 indent_style = space
 indent_size = 2
 
 # Markdown文件
 [*.md]
-charset = utf-8
-end_of_line = crlf
 trim_trailing_whitespace = false
+max_line_length = off
 
 # JSON文件
 [*.json]
-charset = utf-8
 indent_style = space
 indent_size = 2
 
-# SQL文件
-[*.sql]
-charset = utf-8
-end_of_line = crlf
+# Properties文件
+[*.properties]
+indent_style = space
+indent_size = 4
 
-# Shell/Batch脚本
-[*.{sh,bat}]
-charset = utf-8
-end_of_line = crlf
+# PowerShell脚本
+[*.ps1]
+indent_style = space
+indent_size = 4
+max_line_length = 120
 
-# 配置文件
-[*.{conf,config,ini,toml}]
-charset = utf-8
+# JavaScript/TypeScript文件
+[*.js]
+[*.ts]
+indent_style = space
+indent_size = 2
+max_line_length = 120
+
+# Vue文件
+[*.vue]
+indent_style = space
+indent_size = 2
+
+# CSS文件
+[*.css]
+[*.scss]
+indent_style = space
+indent_size = 2

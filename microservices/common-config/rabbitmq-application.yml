@@ -267,18 +267,19 @@ management:
       show-details: always
     rabbitmq:
       enabled: true
-  metrics:
-    export:
-      prometheus:
+  prometheus:
+    metrics:
+      export:
         enabled: true
+  metrics:
     tags:
       application: ${spring.application.name}
       component: rabbitmq
     distribution:
       percentiles-histogram:
-        spring.rabbitmq: true
+        "[spring.rabbitmq]": true
       percentiles:
-        spring.rabbitmq: 0.5,0.9,0.95,0.99
+        "[spring.rabbitmq]": 0.5,0.9,0.95,0.99
 
 # ============================================================
 # 日志配置

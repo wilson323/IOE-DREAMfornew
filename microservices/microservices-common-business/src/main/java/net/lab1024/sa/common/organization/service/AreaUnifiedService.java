@@ -7,36 +7,25 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * 统一区域空间管理服务接口
- * <p>
- * 贯彻区域空间概念，为所有业务模块提供统一的区域管理能力
- * </p>
- * <p>
- * 核心职责：
- * - 统一区域空间管理
- * - 区域层次结构维护
- * - 区域权限控制
- * - 区域业务属性管理
- * </p>
+ * 统一区域管理服务接口
  *
  * @author IOE-DREAM Team
- * @version 1.0.0
- * @since 2025-12-08
+ * @since 2025-12-20
  */
 public interface AreaUnifiedService {
 
     /**
-     * 获取完整区域树
+     * 获取区域树
      *
-     * @return 区域树结构
+     * @return 区域树列表
      */
     List<AreaEntity> getAreaTree();
 
     /**
-     * 根据用户ID获取可访问区域列表
+     * 获取用户可访问的区域列表
      *
      * @param userId 用户ID
-     * @return 可访问区域列表
+     * @return 可访问的区域列表
      */
     List<AreaEntity> getUserAccessibleAreas(Long userId);
 
@@ -47,10 +36,10 @@ public interface AreaUnifiedService {
      * @param areaId 区域ID
      * @return 是否有权限
      */
-    boolean hasAreaAccess(Long userId, Long areaId);
+    Boolean hasAreaAccess(Long userId, Long areaId);
 
     /**
-     * 根据区域编码获取区域信息
+     * 根据区域编码获取区域
      *
      * @param areaCode 区域编码
      * @return 区域实体
@@ -58,15 +47,15 @@ public interface AreaUnifiedService {
     AreaEntity getAreaByCode(String areaCode);
 
     /**
-     * 获取区域的完整路径
+     * 获取区域路径
      *
      * @param areaId 区域ID
-     * @return 区域路径列表（从根节点到当前节点）
+     * @return 区域路径列表
      */
     List<AreaEntity> getAreaPath(Long areaId);
 
     /**
-     * 获取指定区域的所有子区域
+     * 获取子区域列表
      *
      * @param parentAreaId 父区域ID
      * @return 子区域列表
@@ -74,38 +63,10 @@ public interface AreaUnifiedService {
     List<AreaEntity> getChildAreas(Long parentAreaId);
 
     /**
-     * 获取区域业务属性
-     *
-     * @param areaId 区域ID
-     * @param businessModule 业务模块标识（如：access、consume、attendance等）
-     * @return 业务属性Map
-     */
-    Map<String, Object> getAreaBusinessAttributes(Long areaId, String businessModule);
-
-    /**
-     * 设置区域业务属性
-     *
-     * @param areaId 区域ID
-     * @param businessModule 业务模块标识
-     * @param attributes 业务属性
-     * @return 设置结果
-     */
-    boolean setAreaBusinessAttributes(Long areaId, String businessModule, Map<String, Object> attributes);
-
-    /**
-     * 获取区域的设备信息
-     *
-     * @param areaId 区域ID
-     * @param deviceType 设备类型（可选）
-     * @return 设备信息列表
-     */
-    List<Map<String, Object>> getAreaDevices(Long areaId, String deviceType);
-
-    /**
      * 获取区域统计信息
      *
      * @param areaId 区域ID
-     * @return 统计信息（包含各业务模块的数据）
+     * @return 统计信息
      */
     Map<String, Object> getAreaStatistics(Long areaId);
 
@@ -118,19 +79,48 @@ public interface AreaUnifiedService {
     List<AreaEntity> getAreasByBusinessType(String businessType);
 
     /**
-     * 检查区域是否支持指定业务
+     * 检查区域是否支持业务模块
      *
      * @param areaId 区域ID
      * @param businessModule 业务模块
      * @return 是否支持
      */
-    boolean isAreaSupportBusiness(Long areaId, String businessModule);
+    Boolean isAreaSupportBusiness(Long areaId, String businessModule);
 
     /**
-     * 获取区域的所有业务模块支持情况
+     * 获取区域支持的业务模块列表
      *
      * @param areaId 区域ID
-     * @return 支持的业务模块列表
+     * @return 业务模块列表
      */
     Set<String> getAreaSupportedBusinessModules(Long areaId);
+
+    /**
+     * 获取区域业务属性
+     *
+     * @param areaId 区域ID
+     * @param businessModule 业务模块
+     * @return 业务属性Map
+     */
+    Map<String, Object> getAreaBusinessAttributes(Long areaId, String businessModule);
+
+    /**
+     * 设置区域业务属性
+     *
+     * @param areaId 区域ID
+     * @param businessModule 业务模块
+     * @param attributes 业务属性Map
+     * @return 是否设置成功
+     */
+    boolean setAreaBusinessAttributes(Long areaId, String businessModule, Map<String, Object> attributes);
+
+    /**
+     * 获取区域设备列表
+     *
+     * @param areaId 区域ID
+     * @param deviceType 设备类型（可选）
+     * @return 设备列表
+     */
+    List<Map<String, Object>> getAreaDevices(Long areaId, String deviceType);
 }
+

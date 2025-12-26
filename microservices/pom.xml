@@ -1,806 +1,1115 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-         http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
 
-    <groupId>net.lab1024.sa</groupId>
-    <artifactId>ioedream-microservices-parent</artifactId>
-    <version>1.0.0</version>
-    <packaging>pom</packaging>
+  <groupId>net.lab1024.sa</groupId>
+  <artifactId>ioedream-microservices-parent</artifactId>
+  <version>1.0.0</version>
+  <packaging>pom</packaging>
 
-    <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
-        <java.version>17</java.version>
+  <properties>
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
+    <java.version>17</java.version>
 
-        <!-- PMD 配置：默认启用（如需跳过，使用: mvn ... -Dpmd.skip=true） -->
-        <pmd.skip>false</pmd.skip>
+    <!-- PMD 配置：默认启用（如需跳过，使用: mvn ... -Dpmd.skip=true） -->
+    <pmd.skip>false</pmd.skip>
 
-        <!-- Spring Boot & Cloud Versions -->
-        <spring-boot.version>3.5.8</spring-boot.version>
-        <spring-cloud.version>2025.0.0</spring-cloud.version>
-        <spring-cloud-alibaba.version>2025.0.0.0</spring-cloud-alibaba.version>
+    <!-- Spring Boot & Cloud Versions -->
+    <spring-boot.version>3.5.8</spring-boot.version>
+    <spring-cloud.version>2025.0.0</spring-cloud.version>
+    <spring-cloud-alibaba.version>2025.0.0.0</spring-cloud-alibaba.version>
 
-        <!-- Distributed Transaction -->
-        <seata.version>2.0.0</seata.version>
+    <!-- Distributed Transaction -->
+    <seata.version>2.0.0</seata.version>
 
-        <!-- Database Versions -->
-        <mysql.version>8.0.35</mysql.version>
-        <mybatis-plus.version>3.5.15</mybatis-plus.version>
-        <druid.version>1.2.25</druid.version>
+    <!-- Database Versions -->
+    <mysql.version>8.0.35</mysql.version>
+    <mybatis-plus.version>3.5.15</mybatis-plus.version>
+    <druid.version>1.2.25</druid.version>
 
-        <!-- Common Library Versions -->
-        <lombok.version>1.18.42</lombok.version>
-        <junit.version>5.11.0</junit.version>
+    <!-- Common Library Versions -->
+    <!-- 升级到1.18.32以解决注解处理器问题 -->
+    <lombok.version>1.18.32</lombok.version>
+    <junit.version>5.11.0</junit.version>
 
-        <!-- API & Documentation -->
-        <swagger.version>2.2.0</swagger.version>
-        <jakarta-validation.version>3.0.2</jakarta-validation.version>
+    <!-- API & Documentation -->
+    <swagger.version>2.2.0</swagger.version>
+    <jakarta-validation.version>3.0.2</jakarta-validation.version>
 
-        <!-- JSON & XML Processing -->
-        <jackson.version>2.18.2</jackson.version>
+    <!-- JSON & XML Processing -->
+    <jackson.version>2.18.2</jackson.version>
 
-        <!-- Excel & PDF Processing -->
-        <easyexcel.version>3.3.4</easyexcel.version>
-        <itextpdf.version>8.0.5</itextpdf.version>
+    <!-- Excel & PDF Processing -->
+    <easyexcel.version>3.3.4</easyexcel.version>
+    <itextpdf.version>8.0.5</itextpdf.version>
 
-        <!-- Security & Authentication -->
-        <jjwt.version>0.12.6</jjwt.version>
-        <bouncycastle.version>1.80</bouncycastle.version>
+    <!-- Security & Authentication -->
+    <jjwt.version>0.12.6</jjwt.version>
+    <bouncycastle.version>1.80</bouncycastle.version>
 
-        <!-- Monitoring & Metrics -->
-        <micrometer.version>1.13.6</micrometer.version>
-        <micrometer-prometheus.version>1.13.6</micrometer-prometheus.version>
+    <!-- Monitoring & Metrics -->
+    <micrometer.version>1.13.6</micrometer.version>
+    <micrometer-prometheus.version>1.13.6</micrometer-prometheus.version>
 
-        <!-- Cache -->
-        <caffeine.version>3.1.8</caffeine.version>
-        <redisson.version>3.35.0</redisson.version>
+    <!-- Cache -->
+    <caffeine.version>3.1.8</caffeine.version>
+    <redisson.version>3.35.0</redisson.version>
+    <satoken.version>1.34.0</satoken.version>
 
-        <!-- Resilience4j -->
-        <resilience4j.version>2.1.0</resilience4j.version>
+    <!-- Resilience4j -->
+    <resilience4j.version>2.1.0</resilience4j.version>
 
-        <!-- HTTP Client -->
-        <httpclient5.version>5.4.1</httpclient5.version>
+    <!-- HTTP Client -->
+    <httpclient5.version>5.4.1</httpclient5.version>
 
-        <!-- Common Utilities -->
-        <commons-lang3.version>3.17.0</commons-lang3.version>
-        <commons-collections4.version>4.4</commons-collections4.version>
-        <commons-text.version>1.13.0</commons-text.version>
+    <!-- Common Utilities -->
+    <commons-lang3.version>3.17.0</commons-lang3.version>
+    <commons-collections4.version>4.4</commons-collections4.version>
+    <commons-text.version>1.13.0</commons-text.version>
 
-        <!-- Servlet -->
-        <jakarta-servlet.version>6.1.0</jakarta-servlet.version>
-        <jakarta-platform.version>10.0.0</jakarta-platform.version>
+    <!-- Servlet -->
+    <jakarta-servlet.version>6.1.0</jakarta-servlet.version>
+    <jakarta-platform.version>10.0.0</jakarta-platform.version>
 
-        <!-- Testing -->
-        <mockito.version>5.15.2</mockito.version>
+    <!-- Testing -->
+    <mockito.version>5.15.2</mockito.version>
 
-        <!-- Tencent Cloud -->
-        <tencentcloud-ocr.version>3.1.1115</tencentcloud-ocr.version>
+    <!-- Tencent Cloud -->
+    <tencentcloud-ocr.version>3.1.1115</tencentcloud-ocr.version>
 
-        <!-- ZXing (QR Code) - 统一版本 -->
-        <zxing.version>3.5.4</zxing.version>
+    <!-- ZXing (QR Code) - 统一版本 -->
+    <zxing.version>3.5.4</zxing.version>
 
-        <!-- Aviator Expression Engine - 统一版本 -->
-        <aviator.version>5.4.3</aviator.version>
+    <!-- Aviator Expression Engine - 统一版本 -->
+    <aviator.version>5.4.3</aviator.version>
 
-        <!-- Springdoc OpenAPI - 统一版本 -->
-        <springdoc.version>2.6.0</springdoc.version>
-    </properties>
+    <!-- Springdoc OpenAPI - 统一版本 -->
+    <springdoc.version>2.6.0</springdoc.version>
 
-    <modules>
-        <!-- 公共库模块（按依赖顺序排列） -->
-        <!-- 第1层：最底层模块，无内部依赖 -->
-        <module>microservices-common-core</module>
-        <module>microservices-common-data</module>
-        <module>microservices-common-cache</module>
-        <!-- 第2层：依赖第1层 -->
-        <module>microservices-common-security</module>
-        <module>microservices-common-export</module>
-        <module>microservices-common-workflow</module>
-        <module>microservices-common-storage</module>
-        <!-- 第3层：依赖security和cache -->
-        <module>microservices-common-permission</module>
-        <module>microservices-common-monitor</module>
-        <!-- 第4层：依赖多个common模块 -->
-        <module>microservices-common-business</module>
-        <module>microservices-common</module>
-        <!-- 数据库初始化模块 -->
-        <module>ioedream-db-init</module>
-        <!-- 业务微服务模块 -->
-        <module>ioedream-gateway-service</module>
-        <module>ioedream-common-service</module>
-        <module>ioedream-device-comm-service</module>
-        <module>ioedream-oa-service</module>
-        <module>ioedream-access-service</module>
-        <module>ioedream-attendance-service</module>
-        <module>ioedream-video-service</module>
-        <module>ioedream-consume-service</module>
-        <module>ioedream-visitor-service</module>
-        <module>ioedream-database-service</module>
-        <module>ioedream-biometric-service</module>
-    </modules>
+    <!-- Payment SDKs -->
+    <alipay.version>4.40.572.ALL</alipay.version>
+    <wechatpay.version>0.2.17</wechatpay.version>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-dependencies</artifactId>
-                <version>${spring-boot.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
+    <!-- 新增版本属性（依赖优化） -->
+    <eclipse-jdt-annotation.version>2.3.0</eclipse-jdt-annotation.version>
+    <micrometer-context-propagation.version>1.1.1</micrometer-context-propagation.version>
+    <logstash-logback-encoder.version>7.4</logstash-logback-encoder.version>
+    <aliyun-dysmsapi.version>4.3.0</aliyun-dysmsapi.version>
+    <flowable.version>7.2.0</flowable.version>
+    <hutool.version>5.8.26</hutool.version>
+    <minio.version>8.5.7</minio.version>
+    <aliyun-oss.version>3.17.4</aliyun-oss.version>
+    <opencv.version>4.5.1-2</opencv.version>
+  </properties>
 
-            <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-dependencies</artifactId>
-                <version>${spring-cloud.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
+  <modules>
+    <!-- 公共库模块（按依赖顺序排列） -->
+    <!-- 第1层：最底层模块，无内部依赖 -->
+    <module>microservices-common-core</module>
+    <!-- 实体模块：提供基础实体类 -->
+    <module>microservices-common-entity</module>
+    <!-- 第2层：依赖第1层 -->
+    <module>microservices-common-storage</module>
+    <!-- 第2.5层：细粒度公共模块（依赖common-core，可并行构建） -->
+    <module>microservices-common-data</module>
+    <module>microservices-common-cache</module>
+    <module>microservices-common-security</module>
+    <module>microservices-common-monitor</module>
+    <module>microservices-common-export</module>
+    <module>microservices-common-workflow</module>
+    <module>microservices-common-business</module>
+    <module>microservices-common-permission</module>
+    <!-- Common Util (工具类模块，包含QueryBuilder) -->
+    <module>microservices-common-util</module>
+    <!-- 第3层：依赖多个common模块 -->
+    <module>microservices-common</module>
+    <!-- Gateway客户端模块（独立模块，避免业务服务同时依赖microservices-common和细粒度模块） -->
+    <module>microservices-common-gateway-client</module>
+    <!-- 数据库初始化模块 -->
+    <module>ioedream-db-init</module>
+    <!-- 业务微服务模块 -->
+    <module>ioedream-gateway-service</module>
+    <module>ioedream-common-service</module>
+    <module>ioedream-device-comm-service</module>
+    <module>ioedream-oa-service</module>
+    <module>ioedream-access-service</module>
+    <module>ioedream-attendance-service</module>
+    <module>ioedream-video-service</module>
+    <module>ioedream-consume-service</module>
+    <module>ioedream-visitor-service</module>
+    <module>ioedream-database-service</module>
+    <module>ioedream-biometric-service</module>
+  </modules>
 
-            <dependency>
-                <groupId>com.alibaba.cloud</groupId>
-                <artifactId>spring-cloud-alibaba-dependencies</artifactId>
-                <version>${spring-cloud-alibaba.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>${spring-boot.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
 
-            <dependency>
-                <groupId>mysql</groupId>
-                <artifactId>mysql-connector-java</artifactId>
-                <version>${mysql.version}</version>
-            </dependency>
+      <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-dependencies</artifactId>
+        <version>${spring-cloud.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
 
-            <dependency>
-                <groupId>com.baomidou</groupId>
-                <artifactId>mybatis-plus-boot-starter</artifactId>
-                <version>${mybatis-plus.version}</version>
-            </dependency>
+      <dependency>
+        <groupId>com.alibaba.cloud</groupId>
+        <artifactId>spring-cloud-alibaba-dependencies</artifactId>
+        <version>${spring-cloud-alibaba.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
 
-            <dependency>
-                <groupId>com.baomidou</groupId>
-                <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
-                <version>${mybatis-plus.version}</version>
-            </dependency>
+      <dependency>
+        <groupId>mysql</groupId>
+        <artifactId>mysql-connector-java</artifactId>
+        <version>${mysql.version}</version>
+      </dependency>
 
-            <dependency>
-                <groupId>com.alibaba</groupId>
-                <artifactId>druid-spring-boot-starter</artifactId>
-                <version>${druid.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.alibaba</groupId>
-                <artifactId>druid-spring-boot-3-starter</artifactId>
-                <version>${druid.version}</version>
-            </dependency>
+      <dependency>
+        <groupId>com.baomidou</groupId>
+        <artifactId>mybatis-plus-boot-starter</artifactId>
+        <version>${mybatis-plus.version}</version>
+      </dependency>
 
-            <dependency>
-                <groupId>org.projectlombok</groupId>
-                <artifactId>lombok</artifactId>
-                <version>${lombok.version}</version>
-                <optional>true</optional>
-            </dependency>
+      <dependency>
+        <groupId>com.baomidou</groupId>
+        <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
+        <version>${mybatis-plus.version}</version>
+      </dependency>
 
-            <!-- Eclipse JDT Annotations for Null Analysis -->
-            <dependency>
-                <groupId>org.eclipse.jdt</groupId>
-                <artifactId>org.eclipse.jdt.annotation</artifactId>
-                <version>2.3.0</version>
-            </dependency>
+      <dependency>
+        <groupId>com.alibaba</groupId>
+        <artifactId>druid-spring-boot-starter</artifactId>
+        <version>${druid.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.alibaba</groupId>
+        <artifactId>druid-spring-boot-3-starter</artifactId>
+        <version>${druid.version}</version>
+      </dependency>
 
-            <!-- Jakarta EE Dependencies (Java 17+) -->
-            <dependency>
-                <groupId>jakarta.platform</groupId>
-                <artifactId>jakarta.jakartaee-api</artifactId>
-                <version>${jakarta-platform.version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>jakarta.servlet</groupId>
-                <artifactId>jakarta.servlet-api</artifactId>
-                <version>${jakarta-servlet.version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>jakarta.validation</groupId>
-                <artifactId>jakarta.validation-api</artifactId>
-                <version>${jakarta-validation.version}</version>
-            </dependency>
+      <dependency>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok</artifactId>
+        <version>${lombok.version}</version>
+        <optional>true</optional>
+      </dependency>
 
-            <!-- Micrometer Dependencies -->
-            <dependency>
-                <groupId>io.micrometer</groupId>
-                <artifactId>micrometer-registry-prometheus</artifactId>
-                <version>${micrometer.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.micrometer</groupId>
-                <artifactId>micrometer-prometheus</artifactId>
-                <version>${micrometer.version}</version>
-            </dependency>
+      <!-- Eclipse JDT Annotations for Null Analysis -->
+      <dependency>
+        <groupId>org.eclipse.jdt</groupId>
+        <artifactId>org.eclipse.jdt.annotation</artifactId>
+        <version>${eclipse-jdt-annotation.version}</version>
+      </dependency>
 
-            <!-- Zipkin/Brave Dependencies -->
-            <!-- 注意：Spring Boot 3.5.8的BOM未管理此依赖，需要手动指定版本 -->
-            <!-- 使用与Spring Boot 3.5.8兼容的micrometer-tracing 1.4.x版本 -->
-            <dependency>
-                <groupId>io.micrometer</groupId>
-                <artifactId>micrometer-tracing-bridge-brave</artifactId>
-                <version>1.4.4</version>
-            </dependency>
-            <dependency>
-                <groupId>io.zipkin.reporter2</groupId>
-                <artifactId>zipkin-reporter-brave</artifactId>
-                <version>3.4.2</version>
-            </dependency>
-            <dependency>
-                <groupId>io.zipkin.reporter2</groupId>
-                <artifactId>zipkin-sender-okhttp3</artifactId>
-                <version>3.4.2</version>
-            </dependency>
-            <dependency>
-                <groupId>io.zipkin.brave</groupId>
-                <artifactId>brave</artifactId>
-                <version>6.1.0</version>
-            </dependency>
-            <dependency>
-                <groupId>io.zipkin.brave</groupId>
-                <artifactId>brave-context-slf4j</artifactId>
-                <version>6.1.0</version>
-            </dependency>
-            <dependency>
-                <groupId>io.zipkin.brave</groupId>
-                <artifactId>brave-propagation-brave</artifactId>
-                <version>6.1.0</version>
-            </dependency>
-            <dependency>
-                <groupId>io.zipkin.brave</groupId>
-                <artifactId>brave-sampler-bean</artifactId>
-                <version>6.1.0</version>
-            </dependency>
-            <dependency>
-                <groupId>io.zipkin.brave</groupId>
-                <artifactId>brave-spring-beans</artifactId>
-                <version>6.1.0</version>
-            </dependency>
+      <!-- Jakarta EE Dependencies (Java 17+) -->
+      <dependency>
+        <groupId>jakarta.platform</groupId>
+        <artifactId>jakarta.jakartaee-api</artifactId>
+        <version>${jakarta-platform.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>jakarta.servlet</groupId>
+        <artifactId>jakarta.servlet-api</artifactId>
+        <version>${jakarta-servlet.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>jakarta.validation</groupId>
+        <artifactId>jakarta.validation-api</artifactId>
+        <version>${jakarta-validation.version}</version>
+      </dependency>
 
-            <!-- Swagger Dependencies -->
-            <dependency>
-                <groupId>io.swagger.core.v3</groupId>
-                <artifactId>swagger-annotations</artifactId>
-                <version>${swagger.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.swagger.core.v3</groupId>
-                <artifactId>swagger-models</artifactId>
-                <version>${swagger.version}</version>
-            </dependency>
+      <!-- Micrometer Dependencies -->
+      <dependency>
+        <groupId>io.micrometer</groupId>
+        <artifactId>micrometer-registry-prometheus</artifactId>
+        <version>${micrometer.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.micrometer</groupId>
+        <artifactId>micrometer-prometheus</artifactId>
+        <version>${micrometer.version}</version>
+      </dependency>
 
-            <!-- Seata Dependencies -->
-            <dependency>
-                <groupId>io.seata</groupId>
-                <artifactId>seata-spring-boot-starter</artifactId>
-                <version>${seata.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.alibaba.cloud</groupId>
-                <artifactId>spring-cloud-starter-alibaba-seata</artifactId>
-                <version>${spring-cloud-alibaba.version}</version>
-            </dependency>
+      <!-- Zipkin/Brave Dependencies -->
+      <!-- 注意：Spring Boot 3.5.8的BOM未管理此依赖，需要手动指定版本 -->
+      <!-- 使用与Spring Boot 3.5.8兼容的micrometer-tracing 1.4.x版本 -->
+      <dependency>
+        <groupId>io.micrometer</groupId>
+        <artifactId>micrometer-tracing-bridge-brave</artifactId>
+        <version>1.4.4</version>
+      </dependency>
+      <dependency>
+        <groupId>io.zipkin.reporter2</groupId>
+        <artifactId>zipkin-reporter-brave</artifactId>
+        <version>3.4.2</version>
+      </dependency>
+      <dependency>
+        <groupId>io.zipkin.reporter2</groupId>
+        <artifactId>zipkin-sender-okhttp3</artifactId>
+        <version>3.4.2</version>
+      </dependency>
+      <dependency>
+        <groupId>io.zipkin.brave</groupId>
+        <artifactId>brave</artifactId>
+        <version>6.1.0</version>
+      </dependency>
+      <dependency>
+        <groupId>io.zipkin.brave</groupId>
+        <artifactId>brave-context-slf4j</artifactId>
+        <version>6.1.0</version>
+      </dependency>
+      <dependency>
+        <groupId>io.zipkin.brave</groupId>
+        <artifactId>brave-propagation-brave</artifactId>
+        <version>6.1.0</version>
+      </dependency>
+      <dependency>
+        <groupId>io.zipkin.brave</groupId>
+        <artifactId>brave-sampler-bean</artifactId>
+        <version>6.1.0</version>
+      </dependency>
+      <dependency>
+        <groupId>io.zipkin.brave</groupId>
+        <artifactId>brave-spring-beans</artifactId>
+        <version>6.1.0</version>
+      </dependency>
 
-            <!-- Resilience4j Dependencies -->
-            <dependency>
-                <groupId>io.github.resilience4j</groupId>
-                <artifactId>resilience4j-spring-boot3</artifactId>
-                <version>${resilience4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.github.resilience4j</groupId>
-                <artifactId>resilience4j-retry</artifactId>
-                <version>${resilience4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.github.resilience4j</groupId>
-                <artifactId>resilience4j-circuitbreaker</artifactId>
-                <version>${resilience4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.github.resilience4j</groupId>
-                <artifactId>resilience4j-ratelimiter</artifactId>
-                <version>${resilience4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.github.resilience4j</groupId>
-                <artifactId>resilience4j-bulkhead</artifactId>
-                <version>${resilience4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.github.resilience4j</groupId>
-                <artifactId>resilience4j-timelimiter</artifactId>
-                <version>${resilience4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.github.resilience4j</groupId>
-                <artifactId>resilience4j-micrometer</artifactId>
-                <version>${resilience4j.version}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
+      <!-- Logstash Logback Encoder (JSON日志格式) -->
+      <dependency>
+        <groupId>net.logstash.logback</groupId>
+        <artifactId>logstash-logback-encoder</artifactId>
+        <version>${logstash-logback-encoder.version}</version>
+      </dependency>
 
-    <build>
-        <!-- 强制UTF-8编码的资源过滤 -->
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-                <includes>
-                    <include>**/*.properties</include>
-                    <include>**/*.xml</include>
-                    <include>**/*.yml</include>
-                    <include>**/*.yaml</include>
-                </includes>
-            </resource>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>false</filtering>
-                <excludes>
-                    <exclude>**/*.properties</exclude>
-                    <exclude>**/*.xml</exclude>
-                    <exclude>**/*.yml</exclude>
-                    <exclude>**/*.yaml</exclude>
-                </excludes>
-            </resource>
-        </resources>
+      <!-- Swagger Dependencies -->
+      <dependency>
+        <groupId>io.swagger.core.v3</groupId>
+        <artifactId>swagger-annotations</artifactId>
+        <version>${swagger.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.swagger.core.v3</groupId>
+        <artifactId>swagger-models</artifactId>
+        <version>${swagger.version}</version>
+      </dependency>
 
-        <!-- 测试资源的UTF-8编码配置 -->
-        <testResources>
-            <testResource>
-                <directory>src/test/resources</directory>
-                <filtering>true</filtering>
-                <includes>
-                    <include>**/*.properties</include>
-                    <include>**/*.xml</include>
-                    <include>**/*.yml</include>
-                    <include>**/*.yaml</include>
-                </includes>
-            </testResource>
-            <testResource>
-                <directory>src/test/resources</directory>
-                <filtering>false</filtering>
-                <excludes>
-                    <exclude>**/*.properties</exclude>
-                    <exclude>**/*.xml</exclude>
-                    <exclude>**/*.yml</exclude>
-                    <exclude>**/*.yaml</exclude>
-                </excludes>
-            </testResource>
-        </testResources>
+      <!-- SpringDoc OpenAPI Dependencies -->
+      <dependency>
+        <groupId>org.springdoc</groupId>
+        <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+        <version>${springdoc.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springdoc</groupId>
+        <artifactId>springdoc-openapi-starter-webmvc-api</artifactId>
+        <version>${springdoc.version}</version>
+      </dependency>
 
-        <plugins>
-            <!-- 增强的Maven编译器插件 - 完整UTF-8支持和注解处理器配置 -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.13.0</version>
-                <configuration>
-                    <!-- 使用 release 替代 source/target，自动设置系统模块位置 -->
-                    <release>17</release>
-                    <encoding>UTF-8</encoding>
-                    <!-- 启用注解处理器（默认行为，无需显式配置proc） -->
-                    <compilerArgs>
-                        <arg>-parameters</arg>
-                        <arg>-Xlint:unchecked</arg>
-                        <arg>-Xlint:-deprecation</arg>
-                        <arg>-encoding</arg>
-                        <arg>UTF-8</arg>
-                        <arg>-J-Dfile.encoding=UTF-8</arg>
-                    </compilerArgs>
-                    <showWarnings>true</showWarnings>
-                    <showDeprecation>false</showDeprecation>
-                    <!-- 配置注解处理器路径 - 解决编译器配置警告 -->
-                    <annotationProcessorPaths>
-                        <!-- Lombok 注解处理器 -->
-                        <path>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                            <version>${lombok.version}</version>
-                        </path>
-                        <!-- Eclipse JDT 注解处理器（null 分析支持） -->
-                        <path>
-                            <groupId>org.eclipse.jdt</groupId>
-                            <artifactId>org.eclipse.jdt.annotation</artifactId>
-                            <version>2.3.0</version>
-                        </path>
-                        <!-- Spring Boot 配置处理器 -->
-                        <path>
-                            <groupId>org.springframework.boot</groupId>
-                            <artifactId>spring-boot-configuration-processor</artifactId>
-                            <version>${spring-boot.version}</version>
-                        </path>
-                    </annotationProcessorPaths>
-                </configuration>
-            </plugin>
+      <!-- Seata Dependencies -->
+      <dependency>
+        <groupId>io.seata</groupId>
+        <artifactId>seata-spring-boot-starter</artifactId>
+        <version>${seata.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.alibaba.cloud</groupId>
+        <artifactId>spring-cloud-starter-alibaba-seata</artifactId>
+        <version>${spring-cloud-alibaba.version}</version>
+      </dependency>
 
-            <!-- Maven资源过滤插件 - UTF-8编码保障 -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>3.3.1</version>
-                <configuration>
-                    <encoding>UTF-8</encoding>
-                    <propertiesEncoding>UTF-8</propertiesEncoding>
-                    <nonFilteredFileExtensions>
-                        <nonFilteredFileExtension>jpg</nonFilteredFileExtension>
-                        <nonFilteredFileExtension>jpeg</nonFilteredFileExtension>
-                        <nonFilteredFileExtension>gif</nonFilteredFileExtension>
-                        <nonFilteredFileExtension>png</nonFilteredFileExtension>
-                        <nonFilteredFileExtension>ico</nonFilteredFileExtension>
-                        <nonFilteredFileExtension>svg</nonFilteredFileExtension>
-                        <nonFilteredFileExtension>pdf</nonFilteredFileExtension>
-                        <nonFilteredFileExtension>doc</nonFilteredFileExtension>
-                        <nonFilteredFileExtension>docx</nonFilteredFileExtension>
-                        <nonFilteredFileExtension>xls</nonFilteredFileExtension>
-                        <nonFilteredFileExtension>xlsx</nonFilteredFileExtension>
-                        <nonFilteredFileExtension>ttf</nonFilteredFileExtension>
-                        <nonFilteredFileExtension>woff</nonFilteredFileExtension>
-                        <nonFilteredFileExtension>woff2</nonFilteredFileExtension>
-                    </nonFilteredFileExtensions>
-                </configuration>
-            </plugin>
+      <!-- Resilience4j Dependencies -->
+      <dependency>
+        <groupId>io.github.resilience4j</groupId>
+        <artifactId>resilience4j-spring-boot3</artifactId>
+        <version>${resilience4j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.github.resilience4j</groupId>
+        <artifactId>resilience4j-retry</artifactId>
+        <version>${resilience4j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.github.resilience4j</groupId>
+        <artifactId>resilience4j-circuitbreaker</artifactId>
+        <version>${resilience4j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.github.resilience4j</groupId>
+        <artifactId>resilience4j-ratelimiter</artifactId>
+        <version>${resilience4j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.github.resilience4j</groupId>
+        <artifactId>resilience4j-bulkhead</artifactId>
+        <version>${resilience4j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.github.resilience4j</groupId>
+        <artifactId>resilience4j-timelimiter</artifactId>
+        <version>${resilience4j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.github.resilience4j</groupId>
+        <artifactId>resilience4j-micrometer</artifactId>
+        <version>${resilience4j.version}</version>
+      </dependency>
 
-            <!-- Maven 单一构建真相源：强制 Java/Maven 版本 -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-enforcer-plugin</artifactId>
-                <version>3.5.0</version>
-                <executions>
-                    <execution>
-                        <id>enforce-java-maven</id>
-                        <goals>
-                            <goal>enforce</goal>
-                        </goals>
-                        <configuration>
-                            <rules>
-                                <requireJavaVersion>
-                                    <version>[17,)</version>
-                                </requireJavaVersion>
-                                <requireMavenVersion>
-                                    <version>[3.8.6,)</version>
-                                </requireMavenVersion>
-                            </rules>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+      <!-- 新增依赖版本管理（依赖优化） -->
+      <!-- Micrometer Context Propagation -->
+      <dependency>
+        <groupId>io.micrometer</groupId>
+        <artifactId>context-propagation</artifactId>
+        <version>${micrometer-context-propagation.version}</version>
+      </dependency>
 
-            <!-- Spring Boot Maven插件 - 增强编码支持 -->
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>${spring-boot.version}</version>
-                <configuration>
-                    <!-- 运行时的JVM参数 -->
-                    <jvmArguments>
-                        -Dfile.encoding=UTF-8
-                        -Dsun.jnu.encoding=UTF-8
-                        -Dconsole.encoding=UTF-8
-                        -Duser.timezone=Asia/Shanghai
-                        -Duser.country=CN
-                        -Duser.language=zh
-                    </jvmArguments>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>repackage</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+      <!-- 阿里云短信SDK -->
+      <dependency>
+        <groupId>com.aliyun</groupId>
+        <artifactId>dysmsapi20170525</artifactId>
+        <version>${aliyun-dysmsapi.version}</version>
+      </dependency>
 
-            <!-- PMD Plugin - 代码质量分析 -->
-            <!-- 注意：PMD 分析某些复杂文件时可能出现 "aktStatus is NULL: maximum Iterations exceeded" 错误 -->
-            <!-- 默认启用 PMD 检查；如需跳过，使用: mvn clean install -Dpmd.skip=true -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-pmd-plugin</artifactId>
-                <version>3.21.2</version>
-                <configuration>
-                    <skip>${pmd.skip}</skip>
-                    <targetJdk>17</targetJdk>
-                    <!-- 使用项目自定义规则集：聚焦高价值、低噪声规则 -->
-                    <rulesets>
-                        <ruleset>${maven.multiModuleProjectDirectory}/pmd-ruleset.xml</ruleset>
-                    </rulesets>
-                    <!-- 门禁：只要触发规则即失败（以 service/manager 目录为重点） -->
-                    <failOnViolation>true</failOnViolation>
-                    <printFailingErrors>true</printFailingErrors>
-                    <minimumTokens>50</minimumTokens>
-                    <analysisCache>true</analysisCache>
-                    <skipEmptyReport>true</skipEmptyReport>
-                    <maxAllowedViolations>0</maxAllowedViolations>
-                    <includes>
-                        <include>**/service/**/*.java</include>
-                        <include>**/manager/**/*.java</include>
-                    </includes>
-                    <!-- 排除可能导致PMD迭代超限的文件和目录 -->
-                    <excludes>
-                        <exclude>**/generated/**</exclude>
-                        <exclude>**/target/**</exclude>
-                        <exclude>**/*Entity.java</exclude>
-                        <exclude>**/*VO.java</exclude>
-                        <exclude>**/*Form.java</exclude>
-                        <exclude>**/*DTO.java</exclude>
-                        <exclude>**/model/**</exclude>
-                        <exclude>**/entity/**</exclude>
-                        <exclude>**/domain/**</exclude>
-                    </excludes>
-                    <includeTests>false</includeTests>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+      <!-- Flowable工作流引擎 -->
+      <dependency>
+        <groupId>org.flowable</groupId>
+        <artifactId>flowable-spring-boot-starter-process</artifactId>
+        <version>${flowable.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.flowable</groupId>
+        <artifactId>flowable-spring-boot-starter-cmmn</artifactId>
+        <version>${flowable.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.flowable</groupId>
+        <artifactId>flowable-spring-boot-starter-dmn</artifactId>
+        <version>${flowable.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.flowable</groupId>
+        <artifactId>flowable-dmn-api</artifactId>
+        <version>${flowable.version}</version>
+      </dependency>
 
-            <!-- Maven Surefire Plugin - 单元测试编码保障 -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.2.5</version>
-                <configuration>
-                    <!-- 追加 JaCoCo 注入的 ${argLine}，避免覆盖导致覆盖率与 Sonar 失效 -->
-                    <argLine>${argLine} -Dfile.encoding=UTF-8 -Duser.timezone=Asia/Shanghai</argLine>
-                    <systemPropertyVariables>
-                        <file.encoding>UTF-8</file.encoding>
-                        <user.timezone>Asia/Shanghai</user.timezone>
-                        <user.country>CN</user.country>
-                        <user.language>zh</user.language>
-                    </systemPropertyVariables>
-                    <includes>
-                        <include>**/*Test.java</include>
-                        <include>**/*Tests.java</include>
-                    </includes>
-                    <!--
+      <!-- Hutool工具库 -->
+      <dependency>
+        <groupId>cn.hutool</groupId>
+        <artifactId>hutool-all</artifactId>
+        <version>${hutool.version}</version>
+      </dependency>
+
+      <!-- MinIO对象存储 -->
+      <dependency>
+        <groupId>io.minio</groupId>
+        <artifactId>minio</artifactId>
+        <version>${minio.version}</version>
+      </dependency>
+
+      <!-- 阿里云OSS SDK -->
+      <dependency>
+        <groupId>com.aliyun.oss</groupId>
+        <artifactId>aliyun-sdk-oss</artifactId>
+        <version>${aliyun-oss.version}</version>
+      </dependency>
+
+      <!-- OpenCV图像处理 -->
+      <dependency>
+        <groupId>org.openpnp</groupId>
+        <artifactId>opencv</artifactId>
+        <version>${opencv.version}</version>
+      </dependency>
+
+      <!-- Apache Tika (文件类型检测) -->
+      <dependency>
+        <groupId>org.apache.tika</groupId>
+        <artifactId>tika-core</artifactId>
+        <version>2.9.1</version>
+      </dependency>
+
+      <!-- Sa-Token认证框架 -->
+      <dependency>
+        <groupId>cn.dev33</groupId>
+        <artifactId>sa-token-core</artifactId>
+        <version>${satoken.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>cn.dev33</groupId>
+        <artifactId>sa-token-jwt</artifactId>
+        <version>${satoken.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <build>
+    <!-- 强制UTF-8编码的资源过滤 -->
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+        <includes>
+          <include>**/*.properties</include>
+          <include>**/*.xml</include>
+          <include>**/*.yml</include>
+          <include>**/*.yaml</include>
+        </includes>
+      </resource>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>false</filtering>
+        <excludes>
+          <exclude>**/*.properties</exclude>
+          <exclude>**/*.xml</exclude>
+          <exclude>**/*.yml</exclude>
+          <exclude>**/*.yaml</exclude>
+        </excludes>
+      </resource>
+    </resources>
+
+    <!-- 测试资源的UTF-8编码配置 -->
+    <testResources>
+      <testResource>
+        <directory>src/test/resources</directory>
+        <filtering>true</filtering>
+        <includes>
+          <include>**/*.properties</include>
+          <include>**/*.xml</include>
+          <include>**/*.yml</include>
+          <include>**/*.yaml</include>
+        </includes>
+      </testResource>
+      <testResource>
+        <directory>src/test/resources</directory>
+        <filtering>false</filtering>
+        <excludes>
+          <exclude>**/*.properties</exclude>
+          <exclude>**/*.xml</exclude>
+          <exclude>**/*.yml</exclude>
+          <exclude>**/*.yaml</exclude>
+        </excludes>
+      </testResource>
+    </testResources>
+
+    <plugins>
+      <!-- 增强的Maven编译器插件 - 完整UTF-8支持和注解处理器配置 -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.13.0</version>
+        <configuration>
+          <!-- 使用 release 替代 source/target，自动设置系统模块位置 -->
+          <release>17</release>
+          <encoding>UTF-8</encoding>
+          <!-- 启用注解处理器（默认行为，无需显式配置proc） -->
+          <compilerArgs>
+            <arg>-parameters</arg>
+            <arg>-Xlint:unchecked</arg>
+            <arg>-Xlint:-deprecation</arg>
+            <arg>-encoding</arg>
+            <arg>UTF-8</arg>
+            <arg>-J-Dfile.encoding=UTF-8</arg>
+          </compilerArgs>
+          <showWarnings>true</showWarnings>
+          <showDeprecation>false</showDeprecation>
+          <!-- 配置注解处理器路径 - 解决编译器配置警告 -->
+          <annotationProcessorPaths>
+            <!-- Lombok 注解处理器 -->
+            <path>
+              <groupId>org.projectlombok</groupId>
+              <artifactId>lombok</artifactId>
+              <version>${lombok.version}</version>
+            </path>
+            <!-- Eclipse JDT 注解处理器（null 分析支持） -->
+            <path>
+              <groupId>org.eclipse.jdt</groupId>
+              <artifactId>org.eclipse.jdt.annotation</artifactId>
+              <version>2.3.0</version>
+            </path>
+            <!-- Spring Boot 配置处理器 -->
+            <path>
+              <groupId>org.springframework.boot</groupId>
+              <artifactId>spring-boot-configuration-processor</artifactId>
+              <version>${spring-boot.version}</version>
+            </path>
+          </annotationProcessorPaths>
+        </configuration>
+      </plugin>
+
+      <!-- Maven资源过滤插件 - UTF-8编码保障 -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>3.3.1</version>
+        <configuration>
+          <encoding>UTF-8</encoding>
+          <propertiesEncoding>UTF-8</propertiesEncoding>
+          <nonFilteredFileExtensions>
+            <nonFilteredFileExtension>jpg</nonFilteredFileExtension>
+            <nonFilteredFileExtension>jpeg</nonFilteredFileExtension>
+            <nonFilteredFileExtension>gif</nonFilteredFileExtension>
+            <nonFilteredFileExtension>png</nonFilteredFileExtension>
+            <nonFilteredFileExtension>ico</nonFilteredFileExtension>
+            <nonFilteredFileExtension>svg</nonFilteredFileExtension>
+            <nonFilteredFileExtension>pdf</nonFilteredFileExtension>
+            <nonFilteredFileExtension>doc</nonFilteredFileExtension>
+            <nonFilteredFileExtension>docx</nonFilteredFileExtension>
+            <nonFilteredFileExtension>xls</nonFilteredFileExtension>
+            <nonFilteredFileExtension>xlsx</nonFilteredFileExtension>
+            <nonFilteredFileExtension>ttf</nonFilteredFileExtension>
+            <nonFilteredFileExtension>woff</nonFilteredFileExtension>
+            <nonFilteredFileExtension>woff2</nonFilteredFileExtension>
+          </nonFilteredFileExtensions>
+        </configuration>
+      </plugin>
+
+      <!-- Maven 单一构建真相源：强制 Java/Maven 版本 -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>3.5.0</version>
+        <executions>
+          <execution>
+            <id>enforce-java-maven</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireJavaVersion>
+                  <version>[17,)</version>
+                </requireJavaVersion>
+                <requireMavenVersion>
+                  <version>[3.8.6,)</version>
+                </requireMavenVersion>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- Spring Boot Maven插件 - 增强编码支持 -->
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <version>${spring-boot.version}</version>
+        <configuration>
+          <!-- 运行时的JVM参数 -->
+          <jvmArguments>
+            -Dfile.encoding=UTF-8
+            -Dsun.jnu.encoding=UTF-8
+            -Dconsole.encoding=UTF-8
+            -Duser.timezone=Asia/Shanghai
+            -Duser.country=CN
+            -Duser.language=zh
+          </jvmArguments>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>repackage</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- PMD Plugin - 代码质量分析 -->
+      <!-- 注意：PMD 分析某些复杂文件时可能出现 "aktStatus is NULL: maximum Iterations exceeded" 错误 -->
+      <!-- 默认启用 PMD 检查；如需跳过，使用: mvn clean install -Dpmd.skip=true -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <version>3.21.2</version>
+        <configuration>
+          <skip>${pmd.skip}</skip>
+          <targetJdk>17</targetJdk>
+          <!-- 使用项目自定义规则集：聚焦高价值、低噪声规则 -->
+          <rulesets>
+            <ruleset>${maven.multiModuleProjectDirectory}/pmd-ruleset.xml</ruleset>
+          </rulesets>
+          <!-- 门禁：只要触发规则即失败（以 service/manager 目录为重点） -->
+          <failOnViolation>true</failOnViolation>
+          <printFailingErrors>true</printFailingErrors>
+          <minimumTokens>50</minimumTokens>
+          <analysisCache>true</analysisCache>
+          <skipEmptyReport>true</skipEmptyReport>
+          <maxAllowedViolations>0</maxAllowedViolations>
+          <includes>
+            <include>**/service/**/*.java</include>
+            <include>**/manager/**/*.java</include>
+          </includes>
+          <!-- 排除可能导致PMD迭代超限的文件和目录 -->
+          <excludes>
+            <exclude>**/generated/**</exclude>
+            <exclude>**/target/**</exclude>
+            <exclude>**/*Entity.java</exclude>
+            <exclude>**/*VO.java</exclude>
+            <exclude>**/*Form.java</exclude>
+            <exclude>**/*DTO.java</exclude>
+            <exclude>**/model/**</exclude>
+            <exclude>**/entity/**</exclude>
+            <exclude>**/domain/**</exclude>
+          </excludes>
+          <includeTests>false</includeTests>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>verify</phase>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- Maven Surefire Plugin - 单元测试编码保障 -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.2.5</version>
+        <configuration>
+          <!-- 追加 JaCoCo 注入的 ${jacocoArgLine}，避免覆盖导致覆盖率与 Sonar 失效 -->
+          <argLine>${jacocoArgLine} -Dfile.encoding=UTF-8 -Duser.timezone=Asia/Shanghai</argLine>
+          <systemPropertyVariables>
+            <file.encoding>UTF-8</file.encoding>
+            <user.timezone>Asia/Shanghai</user.timezone>
+            <user.country>CN</user.country>
+            <user.language>zh</user.language>
+          </systemPropertyVariables>
+          <includes>
+            <include>**/*Test.java</include>
+            <include>**/*Tests.java</include>
+          </includes>
+          <!--
                       避免将集成测试（*IT / *IntegrationTest）在 test 阶段重复执行。
                       集成测试交由 maven-failsafe-plugin（integration-test/verify 阶段）执行。
                     -->
-                    <excludes>
-                        <exclude>**/*IT.java</exclude>
-                        <exclude>**/*IntegrationTest.java</exclude>
-                        <!--
+          <excludes>
+            <exclude>**/*IT.java</exclude>
+            <exclude>**/*IntegrationTest.java</exclude>
+            <!--
                           DAO 测试通常依赖真实数据库/容器，属于集成测试范畴；
                           统一从 surefire（test 阶段）排除，避免本地/CI 因缺少 DB 环境失败。
                         -->
-                        <exclude>**/*DaoTest.java</exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
+            <exclude>**/*DaoTest.java</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
 
-            <!-- Maven Failsafe Plugin - 集成测试编码保障 -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <version>3.2.5</version>
-                <configuration>
-                    <!-- 追加 JaCoCo 注入的 ${argLine}，避免覆盖导致覆盖率与 Sonar 失效 -->
-                    <argLine>${argLine} -Dfile.encoding=UTF-8 -Duser.timezone=Asia/Shanghai</argLine>
-                    <systemPropertyVariables>
-                        <file.encoding>UTF-8</file.encoding>
-                        <user.timezone>Asia/Shanghai</user.timezone>
-                        <user.country>CN</user.country>
-                        <user.language>zh</user.language>
-                    </systemPropertyVariables>
-                    <includes>
-                        <include>**/*IT.java</include>
-                        <include>**/*IntegrationTest.java</include>
-                    </includes>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>integration-test</goal>
-                            <goal>verify</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+      <!-- Maven Failsafe Plugin - 集成测试编码保障 -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <version>3.2.5</version>
+        <configuration>
+          <!-- 追加 JaCoCo 注入的 ${jacocoArgLine}，避免覆盖导致覆盖率与 Sonar 失效 -->
+          <argLine>${jacocoArgLine} -Dfile.encoding=UTF-8 -Duser.timezone=Asia/Shanghai</argLine>
+          <systemPropertyVariables>
+            <file.encoding>UTF-8</file.encoding>
+            <user.timezone>Asia/Shanghai</user.timezone>
+            <user.country>CN</user.country>
+            <user.language>zh</user.language>
+          </systemPropertyVariables>
+          <includes>
+            <include>**/*IT.java</include>
+            <include>**/*IntegrationTest.java</include>
+          </includes>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
 
-            <!-- Maven Javadoc Plugin - UTF-8编码 -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.6.3</version>
-                <configuration>
-                    <docencoding>UTF-8</docencoding>
-                    <charset>UTF-8</charset>
-                    <encoding>UTF-8</encoding>
-                    <doclint>none</doclint>
-                </configuration>
-            </plugin>
+      <!-- Maven Javadoc Plugin - UTF-8编码 -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.6.3</version>
+        <configuration>
+          <docencoding>UTF-8</docencoding>
+          <charset>UTF-8</charset>
+          <encoding>UTF-8</encoding>
+          <doclint>none</doclint>
+        </configuration>
+      </plugin>
 
-            <!-- Maven Clean Plugin -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-clean-plugin</artifactId>
-                <version>3.3.1</version>
-            </plugin>
+      <!-- Maven Clean Plugin -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-clean-plugin</artifactId>
+        <version>3.3.1</version>
+      </plugin>
 
-            <!-- Manager Bean编译期检查插件 -->
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>3.1.1</version>
-                <executions>
-                    <!-- 在validate阶段执行检查 -->
-                    <execution>
-                        <id>check-manager-bean-registration</id>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>powershell</executable>
-                            <workingDirectory>${project.basedir}/../..</workingDirectory>
-                            <arguments>
-                                <argument>-ExecutionPolicy</argument>
-                                <argument>Bypass</argument>
-                                <argument>-File</argument>
-                                <argument>${project.basedir}/../../scripts/maven-check-manager-beans.ps1</argument>
-                                <argument>-FailOnMissing</argument>
-                            </arguments>
-                            <skip>true</skip>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+      <!-- Manager Bean编译期检查插件 -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>3.1.1</version>
+        <executions>
+          <!-- 在validate阶段执行检查 -->
+          <execution>
+            <id>check-manager-bean-registration</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>powershell</executable>
+              <workingDirectory>${project.basedir}/../..</workingDirectory>
+              <arguments>
+                <argument>-ExecutionPolicy</argument>
+                <argument>Bypass</argument>
+                <argument>-File</argument>
+                <argument>
+                  ${project.basedir}/../../scripts/maven-check-manager-beans.ps1</argument>
+                <argument>-FailOnMissing</argument>
+              </arguments>
+              <skip>true</skip>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
 
-            <!-- SonarQube Maven插件 -->
-            <plugin>
-                <groupId>org.sonarsource.scanner.maven</groupId>
-                <artifactId>sonar-maven-plugin</artifactId>
-                <version>3.10.0.2594</version>
-            </plugin>
+      <!-- SonarQube Maven插件 -->
+      <plugin>
+        <groupId>org.sonarsource.scanner.maven</groupId>
+        <artifactId>sonar-maven-plugin</artifactId>
+        <version>3.10.0.2594</version>
+      </plugin>
 
-            <!-- JaCoCo代码覆盖率插件 -->
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.12</version>
-                <executions>
-                    <!-- 准备JaCoCo代理 -->
-                    <execution>
-                        <id>jacoco-prepare-agent</id>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-                    <!-- 生成测试覆盖率报告 -->
-                    <execution>
-                        <id>jacoco-report</id>
-                        <phase>test</phase>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                    </execution>
-                    <!-- 检查覆盖率阈值 -->
-                    <execution>
-                        <id>jacoco-check</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                        <configuration>
-                            <rules>
-                                <!-- 总体覆盖率规则 -->
-                                <rule>
-                                    <element>BUNDLE</element>
-                                    <limits>
-                                        <limit>
-                                            <counter>LINE</counter>
-                                            <value>COVEREDRATIO</value>
-                                            <minimum>0.80</minimum>
-                                        </limit>
-                                        <limit>
-                                            <counter>BRANCH</counter>
-                                            <value>COVEREDRATIO</value>
-                                            <minimum>0.75</minimum>
-                                        </limit>
-                                    </limits>
-                                </rule>
-                                <!-- Service层覆盖率规则 -->
-                                <rule>
-                                    <element>PACKAGE</element>
-                                    <includes>
-                                        <include>**/service/impl/**</include>
-                                    </includes>
-                                    <limits>
-                                        <limit>
-                                            <counter>LINE</counter>
-                                            <value>COVEREDRATIO</value>
-                                            <minimum>0.80</minimum>
-                                        </limit>
-                                    </limits>
-                                </rule>
-                                <!-- Manager层覆盖率规则 -->
-                                <rule>
-                                    <element>PACKAGE</element>
-                                    <includes>
-                                        <include>**/manager/**</include>
-                                    </includes>
-                                    <limits>
-                                        <limit>
-                                            <counter>LINE</counter>
-                                            <value>COVEREDRATIO</value>
-                                            <minimum>0.75</minimum>
-                                        </limit>
-                                    </limits>
-                                </rule>
-                                <!-- Controller层覆盖率规则 -->
-                                <rule>
-                                    <element>PACKAGE</element>
-                                    <includes>
-                                        <include>**/controller/**</include>
-                                    </includes>
-                                    <limits>
-                                        <limit>
-                                            <counter>LINE</counter>
-                                            <value>COVEREDRATIO</value>
-                                            <minimum>0.60</minimum>
-                                        </limit>
-                                    </limits>
-                                </rule>
-                                <!-- DAO层覆盖率规则 -->
-                                <rule>
-                                    <element>PACKAGE</element>
-                                    <includes>
-                                        <include>**/dao/**</include>
-                                    </includes>
-                                    <limits>
-                                        <limit>
-                                            <counter>LINE</counter>
-                                            <value>COVEREDRATIO</value>
-                                            <minimum>0.70</minimum>
-                                        </limit>
-                                    </limits>
-                                </rule>
-                            </rules>
-                        </configuration>
-                    </execution>
-                </executions>
-                <configuration>
-                    <!-- 排除不需要覆盖的类 -->
-                    <excludes>
-                        <exclude>**/entity/**</exclude>
-                        <exclude>**/domain/vo/**</exclude>
-                        <exclude>**/domain/form/**</exclude>
-                        <exclude>**/config/**</exclude>
-                        <exclude>**/constant/**</exclude>
-                        <exclude>**/enum/**</exclude>
-                        <exclude>**/exception/**</exclude>
-                        <exclude>**/dto/**</exclude>
-                        <exclude>**/*Application.class</exclude>
-                        <exclude>**/*Configuration.class</exclude>
-                    </excludes>
-                    <!-- 输出目录 -->
-                    <outputDirectory>${project.reporting.outputDirectory}/jacoco</outputDirectory>
-                </configuration>
-            </plugin>
-        </plugins>
+      <!-- JaCoCo代码覆盖率插件（增强版） -->
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>0.8.12</version>
+        <configuration>
+          <!-- 数据文件路径 -->
+          <dataFile>${project.build.directory}/jacoco.exec</dataFile>
 
-        <pluginManagement>
-            <plugins>
-                <!-- Maven Lifecycle Mapping Plugin (用于IDE生命周期映射 - 所有子模块继承) -->
-                <!--
+          <!-- 输出目录 -->
+          <outputDirectory>${project.reporting.outputDirectory}/jacoco</outputDirectory>
+
+          <!-- 包含的类 -->
+          <includes>
+            <include>**/*.class</include>
+          </includes>
+
+          <!-- 排除的类 -->
+          <excludes>
+            <!-- 测试相关 -->
+            <exclude>**/*Test*.class</exclude>
+            <exclude>**/*Tests.class</exclude>
+
+            <!-- 配置类 -->
+            <exclude>**/*Application.class</exclude>
+            <exclude>**/*Config*.class</exclude>
+            <exclude>**/*Configuration.class</exclude>
+
+            <!-- DTO/VO/Form -->
+            <exclude>**/dto/**/*.class</exclude>
+            <exclude>**/vo/**/*.class</exclude>
+            <exclude>**/form/**/*.class</exclude>
+
+            <!-- 实体类 -->
+            <exclude>**/entity/**/*.class</exclude>
+
+            <!-- 常量类 -->
+            <exclude>**/constant/**/*.class</exclude>
+            <exclude>**/constants/**/*.class</exclude>
+
+            <!-- 异常类 -->
+            <exclude>**/exception/**/*.class</exclude>
+            <exclude>**/*Exception.class</exclude>
+
+            <!-- 枚举类 -->
+            <exclude>**/*Enum.class</exclude>
+
+            <!-- 第三方生成的类 -->
+            <exclude>**/generated/**/*.class</exclude>
+            <exclude>**/openapi/**/*.class</exclude>
+          </excludes>
+
+          <!-- 报告格式 -->
+          <formats>
+            <format>HTML</format>
+            <format>XML</format>
+            <format>CSV</format>
+          </formats>
+
+          <!-- UTF-8编码 -->
+          <encoding>UTF-8</encoding>
+
+          <!-- 报告标题 -->
+          <title>IOE-DREAM 代码覆盖率报告</title>
+        </configuration>
+        <executions>
+          <!-- 准备JaCoCo代理 -->
+          <execution>
+            <id>jacoco-prepare-agent</id>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+            <configuration>
+              <!-- 设置属性名称，以便其他插件使用 -->
+              <propertyName>jacocoArgLine</propertyName>
+            </configuration>
+          </execution>
+
+          <!-- 生成单元测试覆盖率报告 -->
+          <execution>
+            <id>jacoco-report</id>
+            <phase>test</phase>
+            <goals>
+              <goal>report</goal>
+            </goals>
+          </execution>
+
+          <!-- 生成集成测试覆盖率报告 -->
+          <execution>
+            <id>jacoco-integration-test</id>
+            <phase>integration-test</phase>
+            <goals>
+              <goal>report</goal>
+            </goals>
+            <configuration>
+              <dataFile>${project.build.directory}/jacoco-it.exec</dataFile>
+              <outputDirectory>${project.reporting.outputDirectory}/jacoco-it</outputDirectory>
+            </configuration>
+          </execution>
+
+          <!-- 合并测试报告 -->
+          <execution>
+            <id>jacoco-merge</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>merge</goal>
+            </goals>
+            <configuration>
+              <fileSets>
+                <fileSet>
+                  <directory>${project.build.directory}</directory>
+                  <includes>
+                    <include>*.exec</include>
+                  </includes>
+                </fileSet>
+              </fileSets>
+              <destFile>${project.build.directory}/jacoco-merged.exec</destFile>
+            </configuration>
+          </execution>
+
+          <!-- 生成合并后的报告 -->
+          <execution>
+            <id>jacoco-merged-report</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>report</goal>
+            </goals>
+            <configuration>
+              <dataFile>${project.build.directory}/jacoco-merged.exec</dataFile>
+              <outputDirectory>${project.reporting.outputDirectory}/jacoco-merged</outputDirectory>
+            </configuration>
+          </execution>
+
+          <!-- 检查覆盖率阈值（企业级标准） -->
+          <execution>
+            <id>jacoco-check</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>check</goal>
+            </goals>
+            <configuration>
+              <dataFile>${project.build.directory}/jacoco-merged.exec</dataFile>
+              <rules>
+                <!-- 总体覆盖率规则（80%标准） -->
+                <rule>
+                  <element>BUNDLE</element>
+                  <limits>
+                    <limit>
+                      <counter>LINE</counter>
+                      <value>COVEREDRATIO</value>
+                      <minimum>0.80</minimum> <!-- 80% 行覆盖率 -->
+                    </limit>
+                    <limit>
+                      <counter>BRANCH</counter>
+                      <value>COVEREDRATIO</value>
+                      <minimum>0.75</minimum> <!-- 75% 分支覆盖率 -->
+                    </limit>
+                    <limit>
+                      <counter>METHOD</counter>
+                      <value>COVEREDRATIO</value>
+                      <minimum>0.75</minimum> <!-- 75% 方法覆盖率 -->
+                    </limit>
+                    <limit>
+                      <counter>CLASS</counter>
+                      <value>COVEREDRATIO</value>
+                      <minimum>0.70</minimum> <!-- 70% 类覆盖率 -->
+                    </limit>
+                  </limits>
+                </rule>
+
+                <!-- Controller层覆盖率规则（85%标准） -->
+                <rule>
+                  <element>PACKAGE</element>
+                  <includes>
+                    <include>**/controller/**</include>
+                  </includes>
+                  <limits>
+                    <limit>
+                      <counter>LINE</counter>
+                      <value>COVEREDRATIO</value>
+                      <minimum>0.85</minimum> <!-- 85% 行覆盖率 -->
+                    </limit>
+                    <limit>
+                      <counter>BRANCH</counter>
+                      <value>COVEREDRATIO</value>
+                      <minimum>0.80</minimum> <!-- 80% 分支覆盖率 -->
+                    </limit>
+                  </limits>
+                </rule>
+
+                <!-- Service层覆盖率规则（90%标准） -->
+                <rule>
+                  <element>PACKAGE</element>
+                  <includes>
+                    <include>**/service/impl/**</include>
+                  </includes>
+                  <limits>
+                    <limit>
+                      <counter>LINE</counter>
+                      <value>COVEREDRATIO</value>
+                      <minimum>0.90</minimum> <!-- 90% 行覆盖率 -->
+                    </limit>
+                    <limit>
+                      <counter>BRANCH</counter>
+                      <value>COVEREDRATIO</value>
+                      <minimum>0.85</minimum> <!-- 85% 分支覆盖率 -->
+                    </limit>
+                  </limits>
+                </rule>
+
+                <!-- Manager层覆盖率规则（85%标准） -->
+                <rule>
+                  <element>PACKAGE</element>
+                  <includes>
+                    <include>**/manager/**</include>
+                  </includes>
+                  <limits>
+                    <limit>
+                      <counter>LINE</counter>
+                      <value>COVEREDRATIO</value>
+                      <minimum>0.85</minimum> <!-- 85% 行覆盖率 -->
+                    </limit>
+                    <limit>
+                      <counter>BRANCH</counter>
+                      <value>COVEREDRATIO</value>
+                      <minimum>0.80</minimum> <!-- 80% 分支覆盖率 -->
+                    </limit>
+                  </limits>
+                </rule>
+
+                <!-- DAO层覆盖率规则（80%标准） -->
+                <rule>
+                  <element>PACKAGE</element>
+                  <includes>
+                    <include>**/dao/**</include>
+                  </includes>
+                  <limits>
+                    <limit>
+                      <counter>LINE</counter>
+                      <value>COVEREDRATIO</value>
+                      <minimum>0.80</minimum> <!-- 80% 行覆盖率 -->
+                    </limit>
+                    <limit>
+                      <counter>BRANCH</counter>
+                      <value>COVEREDRATIO</value>
+                      <minimum>0.75</minimum> <!-- 75% 分支覆盖率 -->
+                    </limit>
+                  </limits>
+                </rule>
+
+                <!-- 公共模块覆盖率规则（90%标准） -->
+                <rule>
+                  <element>PACKAGE</element>
+                  <includes>
+                    <include>net.lab1024.sa.common.**</include>
+                  </includes>
+                  <limits>
+                    <limit>
+                      <counter>LINE</counter>
+                      <value>COVEREDRATIO</value>
+                      <minimum>0.90</minimum> <!-- 90% 行覆盖率 -->
+                    </limit>
+                    <limit>
+                      <counter>BRANCH</counter>
+                      <value>COVEREDRATIO</value>
+                      <minimum>0.85</minimum> <!-- 85% 分支覆盖率 -->
+                    </limit>
+                  </limits>
+                </rule>
+
+                <!-- 复杂度检查 -->
+                <rule>
+                  <element>METHOD</element>
+                  <limits>
+                    <limit>
+                      <counter>COMPLEXITY</counter>
+                      <value>TOTALCOUNT</value>
+                      <maximum>15</maximum> <!-- 方法圈复杂度不超过15 -->
+                    </limit>
+                    <limit>
+                      <counter>COMPLEXITY</counter>
+                      <value>TOTALCOUNT</value>
+                      <minimum>0</minimum>
+                    </limit>
+                  </limits>
+                </rule>
+
+                <!-- 类复杂度检查 -->
+                <rule>
+                  <element>CLASS</element>
+                  <limits>
+                    <limit>
+                      <counter>COMPLEXITY</counter>
+                      <value>TOTALCOUNT</value>
+                      <maximum>150</maximum> <!-- 类圈复杂度不超过150 -->
+                    </limit>
+                  </limits>
+                </rule>
+              </rules>
+
+              <!-- 覆盖率失败时跳过构建（可选） -->
+              <skip>${skip.jacoco.check}</skip>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+
+    <pluginManagement>
+      <plugins>
+        <!-- Maven Lifecycle Mapping Plugin (用于IDE生命周期映射 - 所有子模块继承) -->
+        <!--
                     此配置用于解决 Eclipse M2E 插件的生命周期映射问题
                     作用：在 Eclipse IDE 中忽略 exec-maven-plugin 的执行，避免 IDE 构建失败
 
@@ -812,33 +1121,33 @@
 
                     注意：此配置仅影响 Eclipse IDE，不影响 Maven 命令行构建
                 -->
-                <plugin>
-                    <groupId>org.eclipse.m2e</groupId>
-                    <artifactId>lifecycle-mapping</artifactId>
-                    <version>1.0.0</version>
-                    <configuration>
-                        <lifecycleMappingMetadata>
-                            <pluginExecutions>
-                                <!-- 忽略 exec-maven-plugin 的执行（Manager Bean 检查） -->
-                                <pluginExecution>
-                                    <pluginExecutionFilter>
-                                        <groupId>org.codehaus.mojo</groupId>
-                                        <artifactId>exec-maven-plugin</artifactId>
-                                        <versionRange>[3.1.1,)</versionRange>
-                                        <goals>
-                                            <goal>exec</goal>
-                                        </goals>
-                                    </pluginExecutionFilter>
-                                    <action>
-                                        <!-- ignore: 完全忽略此插件的执行 -->
-                                        <ignore />
-                                    </action>
-                                </pluginExecution>
-                            </pluginExecutions>
-                        </lifecycleMappingMetadata>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-    </build>
+        <plugin>
+          <groupId>org.eclipse.m2e</groupId>
+          <artifactId>lifecycle-mapping</artifactId>
+          <version>1.0.0</version>
+          <configuration>
+            <lifecycleMappingMetadata>
+              <pluginExecutions>
+                <!-- 忽略 exec-maven-plugin 的执行（Manager Bean 检查） -->
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>exec-maven-plugin</artifactId>
+                    <versionRange>[3.1.1,)</versionRange>
+                    <goals>
+                      <goal>exec</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                  <action>
+                    <!-- ignore: 完全忽略此插件的执行 -->
+                    <ignore />
+                  </action>
+                </pluginExecution>
+              </pluginExecutions>
+            </lifecycleMappingMetadata>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
 </project>

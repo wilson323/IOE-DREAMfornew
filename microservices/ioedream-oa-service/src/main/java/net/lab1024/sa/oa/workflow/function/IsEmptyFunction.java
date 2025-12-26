@@ -1,12 +1,14 @@
 package net.lab1024.sa.oa.workflow.function;
 
-import com.googlecode.aviator.runtime.function.AbstractFunction;
-import com.googlecode.aviator.runtime.type.AviatorBoolean;
-import com.googlecode.aviator.runtime.type.AviatorObject;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collection;
 import java.util.Map;
+
+
+import com.googlecode.aviator.runtime.function.AbstractFunction;
+import com.googlecode.aviator.runtime.type.AviatorBoolean;
+import com.googlecode.aviator.runtime.type.AviatorObject;
 
 /**
  * 判断为空函数
@@ -21,6 +23,7 @@ import java.util.Map;
  */
 @Slf4j
 public class IsEmptyFunction extends AbstractFunction {
+
 
     @Override
     public String getName() {
@@ -73,6 +76,3 @@ public class IsEmptyFunction extends AbstractFunction {
         return false;
     }
 }
-
-
-

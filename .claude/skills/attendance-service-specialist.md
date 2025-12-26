@@ -33,15 +33,17 @@
 
 ### ⏰ 考勤打卡处理
 ```java
-// 考勤打卡处理 (Jakarta EE 3.0+)
+// 考勤打卡处理 (Spring Boot 3.5.8 + MyBatis-Plus)
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import jakarta.transaction.Transactional;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import jakarta.persistence.Id;
-import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.baomidou.mybatisplus.annotation.Version;
+import lombok.Data;
 
 // Controller层 - REST接口
 @RestController

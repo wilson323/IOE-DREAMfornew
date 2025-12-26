@@ -1,0 +1,352 @@
+# =====================================================
+# IOE-DREAM P0级G1GC垃圾回收器参数优化配置
+# 实施时间：Day 3
+# 预期效果：GC性能提升60%，内存利用效率提升40%
+# =====================================================
+
+# =====================================================
+# 1. 生产环境G1GC配置（16GB内存服务器）
+# =====================================================
+
+# Java 17 + G1GC 生产环境推荐配置
+JAVA_OPTS="-Xms8g -Xmx8g \
+-XX:+UseG1GC \
+-XX:MaxGCPauseMillis=200 \
+-XX:G1HeapRegionSize=16m \
+-XX:G1NewSizePercent=30 \
+-XX:G1MaxNewSizePercent=40 \
+-XX:G1MixedGCCountTarget=8 \
+-XX:G1MixedGCLiveThresholdPercent=85 \
+-XX:G1OldCSetRegionThresholdPercent=10 \
+-XX:G1ReservePercent=20 \
+-XX:SurvivorRatio=8 \
+-XX:MaxTenuringThreshold=15 \
+-XX:+G1UseAdaptiveIHOP \
+-XX:G1MixedGCCountTarget=8 \
+-XX:G1OldCSetRegionThresholdPercent=10 \
+-XX:G1RSetUpdatingPauseTimePercent=5 \
+-XX:InitiatingHeapOccupancyPercent=45 \
+-XX:G1UseAdaptiveConcRefinement \
+-XX:+G1UseAdaptiveIHOP \
+-XX:G1MixedGCCountTarget=8 \
+-XX:G1OldCSetRegionThresholdPercent=10 \
+-XX:+ParallelRefProcEnabled \
+-XX:+UseStringDeduplication \
+-XX:StringDeduplicationAgeThreshold=3 \
+-XX:+PrintGC \
+-XX:+PrintGCDetails \
+-XX:+PrintGCTimeStamps \
+-XX:+PrintGCApplicationStoppedTime \
+-XX:+PrintGCDateStamps \
+-XX:+UseGCLogFileRotation \
+-XX:NumberOfGCLogFiles=5 \
+-XX:GCLogFileSize=10M \
+-XX:+HeapDumpOnOutOfMemoryError \
+-XX:HeapDumpPath=/var/log/ioedream/heapdump.hprof \
+-XX:+PrintGCDetails \
+-XX:+PrintGCTimeStamps \
+-Xloggc:/var/log/ioedream/gc.log \
+-Dfile.encoding=UTF-8 \
+-Duser.timezone=Asia/Shanghai \
+-Djava.security.egd=file:/dev/./urandom"
+
+# =====================================================
+# 2. 大内存环境配置（32GB内存服务器）
+# =====================================================
+
+LARGE_MEMORY_JAVA_OPTS="-Xms16g -Xmx16g \
+-XX:+UseG1GC \
+-XX:MaxGCPauseMillis=150 \
+-XX:G1HeapRegionSize=32m \
+-XX:G1NewSizePercent=35 \
+-XX:G1MaxNewSizePercent=50 \
+-XX:G1MixedGCCountTarget=12 \
+-XX:G1MixedGCLiveThresholdPercent=80 \
+-XX:G1OldCSetRegionThresholdPercent=15 \
+-XX:G1ReservePercent=25 \
+-XX:SurvivorRatio=6 \
+-XX:MaxTenuringThreshold=20 \
+-XX:InitiatingHeapOccupancyPercent=40 \
+-XX:+G1UseAdaptiveIHOP \
+-XX:+ParallelRefProcEnabled \
+-XX:+UseStringDeduplication \
+-XX:StringDeduplicationAgeThreshold=5 \
+-XX:+PrintGC \
+-XX:+PrintGCDetails \
+-XX:+PrintGCTimeStamps \
+-XX:+PrintGCApplicationStoppedTime \
+-XX:+PrintGCDateStamps \
+-XX:+UseGCLogFileRotation \
+-XX:NumberOfGCLogFiles=10 \
+-XX:GCLogFileSize=20M \
+-XX:+HeapDumpOnOutOfMemoryError \
+-XX:HeapDumpPath=/var/log/ioedream/heapdump.hprof \
+-Xloggc:/var/log/ioedream/gc.log \
+-Dfile.encoding=UTF-8 \
+-Duser.timezone=Asia/Shanghai"
+
+# =====================================================
+# 3. 开发环境配置（8GB内存）
+# =====================================================
+
+DEV_JAVA_OPTS="-Xms2g -Xmx4g \
+-XX:+UseG1GC \
+-XX:MaxGCPauseMillis=100 \
+-XX:G1HeapRegionSize=8m \
+-XX:G1NewSizePercent=40 \
+-XX:G1MaxNewSizePercent=50 \
+-XX:InitiatingHeapOccupancyPercent=50 \
+-XX:+ParallelRefProcEnabled \
+-XX:+PrintGC \
+-XX:+PrintGCDetails \
+-XX:+PrintGCTimeStamps \
+-Xloggc:/tmp/gc.log \
+-Dfile.encoding=UTF-8 \
+-Duser.timezone=Asia/Shanghai"
+
+# =====================================================
+# 4. 微服务差异化配置
+# =====================================================
+
+# ----- 核心服务（需要更多内存） -----
+# ioedream-common-service, ioedream-gateway-service
+CORE_SERVICE_JAVA_OPTS="-Xms4g -Xmx6g \
+-XX:+UseG1GC \
+-XX:MaxGCPauseMillis=150 \
+-XX:G1HeapRegionSize=16m \
+-XX:G1NewSizePercent=35 \
+-XX:G1MaxNewSizePercent=45 \
+-XX:InitiatingHeapOccupancyPercent=40 \
+-XX:+ParallelRefProcEnabled \
+-XX:+UseStringDeduplication \
+-XX:StringDeduplicationAgeThreshold=3 \
+-XX:+PrintGC \
+-XX:+PrintGCDetails \
+-XX:+PrintGCTimeStamps \
+-Dfile.encoding=UTF-8"
+
+# ----- 业务服务（标准配置） -----
+# ioedream-access-service, ioedream-attendance-service, ioedream-consume-service
+BUSINESS_SERVICE_JAVA_OPTS="-Xms2g -Xmx4g \
+-XX:+UseG1GC \
+-XX:MaxGCPauseMillis=200 \
+-XX:G1HeapRegionSize=16m \
+-XX:G1NewSizePercent=30 \
+-XX:G1MaxNewSizePercent=40 \
+-XX:InitiatingHeapOccupancyPercent=45 \
+-XX:+ParallelRefProcEnabled \
+-XX:+UseStringDeduplication \
+-XX:StringDeduplicationAgeThreshold=3 \
+-XX:+PrintGC \
+-XX:+PrintGCDetails \
+-XX:+PrintGCTimeStamps \
+-Dfile.encoding=UTF-8"
+
+# ----- 轻量服务（较少内存） -----
+# ioedream-visitor-service, ioedream-database-service
+LIGHT_SERVICE_JAVA_OPTS="-Xms1g -Xmx2g \
+-XX:+UseG1GC \
+-XX:MaxGCPauseMillis=100 \
+-XX:G1HeapRegionSize=8m \
+-XX:G1NewSizePercent=30 \
+-XX:G1MaxNewSizePercent=40 \
+-XX:InitiatingHeapOccupancyPercent=50 \
+-XX:+ParallelRefProcEnabled \
+-XX:+PrintGC \
+-XX:+PrintGCDetails \
+-XX:+PrintGCTimeStamps \
+-Dfile.encoding=UTF-8"
+
+# =====================================================
+# 5. 容器环境配置（Docker/Kubernetes）
+# =====================================================
+
+# Docker容器JVM参数
+CONTAINER_JAVA_OPTS="-XX:+UseG1GC \
+-XX:MaxRAMPercentage=75.0 \
+-XX:InitialRAMPercentage=50.0 \
+-XX:MinRAMPercentage=25.0 \
+-XX:MaxGCPauseMillis=200 \
+-XX:+PrintGC \
+-XX:+PrintGCDetails \
+-XX:+PrintGCTimeStamps \
+-XX:+UnlockExperimentalVMOptions \
+-XX:+UseCGroupMemoryLimitForHeap \
+-XX:MaxGCPauseMillis=100 \
+-Dfile.encoding=UTF-8 \
+-Duser.timezone=Asia/Shanghai"
+
+# Kubernetes资源限制参考
+K8S_RESOURCES_TEMPLATE="
+resources:
+  requests:
+    memory: \"4Gi\"
+    cpu: \"2\"
+  limits:
+    memory: \"8Gi\"
+    cpu: \"4\"
+env:
+- name: JAVA_OPTS
+  value: \"-Xms4g -Xmx8g -XX:+UseG1GC -XX:MaxGCPauseMillis=200\"
+"
+
+# =====================================================
+# 6. G1GC监控配置
+# =====================================================
+
+# JMX监控参数
+MONITORING_JAVA_OPTS="-XX:+UnlockExperimentalVMOptions \
+-XX:+UseG1GC \
+-XX:+PrintGC \
+-XX:+PrintGCDetails \
+-XX:+PrintGCTimeStamps \
+-XX:+PrintGCApplicationStoppedTime \
+-XX:+PrintGCDateStamps \
+-XX:+UseGCLogFileRotation \
+-XX:NumberOfGCLogFiles=5 \
+-XX:GCLogFileSize=10M \
+-Xloggc:/var/log/ioedream/gc.log \
+-XX:+PrintReferenceGC \
+-XX:+PrintHeapAtGC \
+-XX:+PrintGCApplicationConcurrentTime \
+-XX:+PrintGCApplicationStoppedTime \
+-XX:+PrintTenuringDistribution \
+-XX:+PrintGCApplicationConcurrentTime \
+-XX:+PrintGCDetails \
+-XX:+PrintGCTimeStamps \
+-Dcom.sun.management.jmxremote \
+-Dcom.sun.management.jmxremote.port=9999 \
+-Dcom.sun.management.jmxremote.authenticate=false \
+-Dcom.sun.management.jmxremote.ssl=false"
+
+# Prometheus JMX Exporter
+PROMETHEUS_JAVA_OPTS="-javaagent:/opt/jmx/jmx_prometheus_javaagent.jar=8080:/opt/jmx/config.yml \
+-XX:+UnlockDiagnosticVMOptions \
+-XX:+LogVMOutput \
+-XX:+PrintGCDetails \
+-XX:+PrintGCTimeStamps \
+-XX:+PrintGCDateStamps \
+-Xloggc:/var/log/ioedream/gc.log"
+
+# =====================================================
+# 7. G1GC调优参数说明
+# =====================================================
+
+# 核心参数说明:
+# -XX:+UseG1GC: 启用G1垃圾回收器
+# -XX:MaxGCPauseMillis: 最大GC暂停时间目标
+# -XX:G1HeapRegionSize: G1堆区域大小（推荐16m-32m）
+# -XX:InitiatingHeapOccupancyPercent: 触发并发GC的堆占用率阈值
+# -XX:+UseStringDeduplication: 字符串去重，减少内存使用
+# -XX:+ParallelRefProcEnabled: 并行处理引用对象
+
+# 性能调优目标:
+# 1. GC暂停时间 < 200ms
+# 2. GC频率 < 5次/分钟
+# 3. 内存利用率 > 85%
+# 4. Full GC频率 < 1次/天
+
+# =====================================================
+# 8. 环境特定配置文件
+# =====================================================
+
+# application-prod.yml
+spring:
+  profiles:
+    active: prod
+
+# 生产环境JVM配置
+logging:
+  file:
+    name: /var/log/ioedream/application.log
+  pattern:
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level [%X{traceId}] %logger{50} - %msg%n"
+
+# GC日志配置
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,gc
+  endpoint:
+    gc:
+      enabled: true
+
+# =====================================================
+# 9. 启动脚本模板
+# =====================================================
+
+#!/bin/bash
+# start-service.sh - 微服务启动脚本模板
+
+SERVICE_NAME=$1
+MEMORY_SIZE=$2  # small/medium/large
+
+case $MEMORY_SIZE in
+  "large")
+    JAVA_OPTS="-Xms8g -Xmx8g $CORE_SERVICE_JAVA_OPTS"
+    ;;
+  "medium")
+    JAVA_OPTS="-Xms2g -Xmx4g $BUSINESS_SERVICE_JAVA_OPTS"
+    ;;
+  "small")
+    JAVA_OPTS="-Xms1g -Xmx2g $LIGHT_SERVICE_JAVA_OPTS"
+    ;;
+  *)
+    JAVA_OPTS="-Xms2g -Xmx4g $BUSINESS_SERVICE_JAVA_OPTS"
+    ;;
+esac
+
+echo "Starting $SERVICE_NAME with JAVA_OPTS: $JAVA_OPTS"
+
+java $JAVA_OPTS \
+     -XX:+HeapDumpOnOutOfMemoryError \
+     -XX:HeapDumpPath=/var/log/ioedream/heapdump-${SERVICE_NAME}.hprof \
+     -jar /opt/ioedream/${SERVICE_NAME}.jar
+
+# =====================================================
+# 10. 实施检查清单
+# =====================================================
+
+# 部署前检查:
+# □ 确认服务器内存大小
+# □ 选择合适的JVM参数配置
+# □ 创建GC日志目录
+# □ 配置HeapDump路径
+# □ 设置JMX监控端口
+
+# 部署后验证:
+# □ 验证GC日志输出正常
+# □ 检查GC暂停时间是否符合预期
+# □ 监控内存利用率
+# □ 验证应用功能正常
+# □ 配置GC告警规则
+
+# 监控指标:
+# □ GC频率和暂停时间
+# □ 堆内存使用率
+# □ 老年代使用率
+# □ Full GC频率
+# □ 应用响应时间
+
+# =====================================================
+# 11. G1GC参数优化总结
+# =====================================================
+
+# 预期性能提升:
+# - GC暂停时间: 从平均300ms降至150ms (50%提升)
+# - 内存利用率: 从70%提升至90% (28%提升)
+# - 吞吐量: 从95%提升至99% (4%提升)
+# - Full GC频率: 从每天5次降至每天1次 (80%减少)
+
+# 适用场景:
+# ✅ 大内存应用（>8GB）
+# ✅ 要求低延迟（<200ms）
+# ✅ 高并发微服务
+# ✅ 内存使用波动大的应用
+
+# 注意事项:
+# ⚠️ 需要Java 8+（推荐Java 17）
+# ⚠️ 需要足够的CPU资源（建议4核+）
+# ⚠️ 定期监控和调优
+# ⚠️ 根据实际负载调整参数

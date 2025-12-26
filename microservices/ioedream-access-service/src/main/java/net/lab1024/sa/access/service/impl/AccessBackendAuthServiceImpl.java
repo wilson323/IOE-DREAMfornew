@@ -75,7 +75,7 @@ public class AccessBackendAuthServiceImpl implements AccessBackendAuthService {
                 return null;
             }
 
-            String deviceId = device.getDeviceId();
+            String deviceId = device.getDeviceId() != null ? device.getDeviceId().toString() : null;
 
             // 3. 写入缓存（TTL: 1小时）
             redisTemplate.opsForValue().set(cacheKey, deviceId, AccessCacheConstants.CACHE_EXPIRE_DEVICE);

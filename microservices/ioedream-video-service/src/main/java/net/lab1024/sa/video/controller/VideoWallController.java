@@ -1,5 +1,6 @@
 package net.lab1024.sa.video.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import io.micrometer.observation.annotation.Observed;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -7,7 +8,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.permission.annotation.PermissionCheck;
 import net.lab1024.sa.video.domain.form.VideoDecoderAddForm;
@@ -55,7 +55,7 @@ import java.util.List;
 @RequestMapping("/api/v1/video/wall")
 @Tag(name = "解码上墙管理", description = "电视墙管理、上墙任务、预案、轮巡等API")
 @PermissionCheck(value = "VIDEO_WALL", description = "解码上墙管理模块权限")
-public class VideoWallController {
+ public class VideoWallController {
 
     @Resource
     private VideoWallService videoWallService;

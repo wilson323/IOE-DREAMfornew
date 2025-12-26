@@ -1,5 +1,7 @@
 package net.lab1024.sa.oa.workflow.websocket;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.Map;
 
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -12,7 +14,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.micrometer.observation.annotation.Observed;
 import jakarta.annotation.Resource;
-import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.exception.BusinessException;
 import net.lab1024.sa.common.exception.ParamException;
 import net.lab1024.sa.common.exception.SystemException;
@@ -25,9 +26,9 @@ import net.lab1024.sa.common.exception.SystemException;
  * @since 2025-01-30
  * @version 3.0.0
  */
-@Slf4j
 @Controller
 @SuppressWarnings("null")
+@Slf4j
 public class WorkflowWebSocketController {
 
     @Resource
@@ -48,9 +49,8 @@ public class WorkflowWebSocketController {
     public Map<String, Object> handleHeartbeat(Map<String, Object> message) {
         log.debug("收到心跳消息: {}", message);
         return Map.of(
-            "type", "PONG",
-            "timestamp", System.currentTimeMillis()
-        );
+                "type", "PONG",
+                "timestamp", System.currentTimeMillis());
     }
 
     /**
@@ -63,33 +63,30 @@ public class WorkflowWebSocketController {
     public Map<String, Object> handleSubscribe() {
         log.info("客户端订阅工作流通知");
         return Map.of(
-            "type", "SUBSCRIBE_SUCCESS",
-            "message", "已成功订阅工作流通知",
-            "timestamp", System.currentTimeMillis()
-        );
+                "type", "SUBSCRIBE_SUCCESS",
+                "message", "已成功订阅工作流通知",
+                "timestamp", System.currentTimeMillis());
     }
 
     /**
      * 发送新任务通知
      *
-     * @param userId 用户ID
+     * @param userId   用户ID
      * @param taskData 任务数据
      */
     @Observed(name = "websocket.sendNewTaskNotification", contextualName = "websocket-send-new-task-notification")
     public void sendNewTaskNotification(Long userId, Map<String, Object> taskData) {
         try {
             Map<String, Object> message = Map.of(
-                "type", "NEW_TASK",
-                "data", taskData,
-                "timestamp", System.currentTimeMillis()
-            );
+                    "type", "NEW_TASK",
+                    "data", taskData,
+                    "timestamp", System.currentTimeMillis());
 
             // 发送点对点消息给指定用户
             messagingTemplate.convertAndSendToUser(
-                userId.toString(),
-                "/queue/workflow/tasks",
-                message
-            );
+                    userId.toString(),
+                    "/queue/workflow/tasks",
+                    message);
 
             log.info("发送新任务通知，用户ID: {}, 任务ID: {}", userId, taskData.get("taskId"));
         } catch (ParamException | BusinessException e) {
@@ -104,23 +101,21 @@ public class WorkflowWebSocketController {
     /**
      * 发送任务状态变更通知
      *
-     * @param userId 用户ID
+     * @param userId   用户ID
      * @param taskData 任务数据
      */
     @Observed(name = "websocket.sendTaskStatusChangedNotification", contextualName = "websocket-send-task-status-changed")
     public void sendTaskStatusChangedNotification(Long userId, Map<String, Object> taskData) {
         try {
             Map<String, Object> message = Map.of(
-                "type", "TASK_STATUS_CHANGED",
-                "data", taskData,
-                "timestamp", System.currentTimeMillis()
-            );
+                    "type", "TASK_STATUS_CHANGED",
+                    "data", taskData,
+                    "timestamp", System.currentTimeMillis());
 
             messagingTemplate.convertAndSendToUser(
-                userId.toString(),
-                "/queue/workflow/tasks",
-                message
-            );
+                    userId.toString(),
+                    "/queue/workflow/tasks",
+                    message);
 
             log.info("发送任务状态变更通知，用户ID: {}, 任务ID: {}", userId, taskData.get("taskId"));
         } catch (ParamException | BusinessException e) {
@@ -135,23 +130,21 @@ public class WorkflowWebSocketController {
     /**
      * 发送流程实例状态变更通知
      *
-     * @param userId 用户ID
+     * @param userId       用户ID
      * @param instanceData 流程实例数据
      */
     @Observed(name = "websocket.sendInstanceStatusChangedNotification", contextualName = "websocket-send-instance-status-changed")
     public void sendInstanceStatusChangedNotification(Long userId, Map<String, Object> instanceData) {
         try {
             Map<String, Object> message = Map.of(
-                "type", "INSTANCE_STATUS_CHANGED",
-                "data", instanceData,
-                "timestamp", System.currentTimeMillis()
-            );
+                    "type", "INSTANCE_STATUS_CHANGED",
+                    "data", instanceData,
+                    "timestamp", System.currentTimeMillis());
 
             messagingTemplate.convertAndSendToUser(
-                userId.toString(),
-                "/queue/workflow/instances",
-                message
-            );
+                    userId.toString(),
+                    "/queue/workflow/instances",
+                    message);
 
             log.info("发送流程实例状态变更通知，用户ID: {}, 实例ID: {}", userId, instanceData.get("instanceId"));
         } catch (ParamException | BusinessException e) {
@@ -182,8 +175,4 @@ public class WorkflowWebSocketController {
         }
     }
 }
-
-
-
-
 

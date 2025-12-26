@@ -1,5 +1,8 @@
 package net.lab1024.sa.common.notification.controller;
 
+import lombok.extern.slf4j.Slf4j;
+
+
 import io.micrometer.observation.annotation.Observed;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -7,7 +10,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.notification.domain.form.NotificationConfigAddForm;
@@ -34,12 +36,13 @@ import org.springframework.web.bind.annotation.*;
  * @version 1.0.0
  * @since 2025-01-30
  */
-@Slf4j
 @RestController
 @RequestMapping("/api/v1/notification/config")
 @Tag(name = "通知配置管理", description = "通知配置管理相关接口，支持管理员通过界面配置通知渠道启用状态")
 @Validated
+@Slf4j
 public class NotificationConfigController {
+
 
     @Resource
     private NotificationConfigService notificationConfigService;
@@ -223,4 +226,5 @@ public class NotificationConfigController {
         return notificationConfigService.refreshAlertConfig();
     }
 }
+
 

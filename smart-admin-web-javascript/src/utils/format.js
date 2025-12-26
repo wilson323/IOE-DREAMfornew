@@ -365,3 +365,104 @@ export function formatArray(array, separator = ', ', maxItems = 5) {
   const remaining = array.length - maxItems
   return `${displayed.join(separator)} ... (+${remaining}项)`
 }
+
+// ==================== 消费模块专用格式化函数 ====================
+
+/**
+ * 金额格式化（消费模块专用）
+ * @param {number|string} amount - 金额数值
+ * @param {number} decimals - 小数位数，默认2位
+ * @returns {string} 格式化后的金额字符串
+ * @example
+ * formatAmount(1234567.891) // "1,234,567.89"
+ * formatAmount(100) // "100.00"
+ * formatAmount(null) // "-"
+ */
+export function formatAmount(amount, decimals = 2) {
+  if (amount === null || amount === undefined || amount === '') {
+    return '-'
+  }
+
+  const num = Number(amount)
+  if (isNaN(num)) {
+    return '-'
+  }
+
+  return num.toLocaleString('zh-CN', {
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals
+  })
+}
+
+/**
+ * 格式化金额（带货币符号）
+ * @param {number|string} amount - 金额数值
+ * @param {string} symbol - 货币符号，默认"¥"
+ * @returns {string} 格式化后的金额字符串
+ */
+export function formatAmountWithSymbol(amount, symbol = '¥') {
+  const formatted = formatAmount(amount)
+  return formatted === '-' ? '-' : `${symbol}${formatted}`
+}
+
+/**
+ * 获取嵌套对象属性值（避免undefined错误）
+ * @param {object} obj - 对象
+ * @param {string} path - 属性路径，如"a.b.c"
+ * @param {*} defaultValue - 默认值
+ * @returns {*} 属性值或默认值
+ */
+export function getNestedValue(obj, path, defaultValue = '-') {
+  if (!obj || !path) return defaultValue
+
+  const keys = path.split('.')
+  let result = obj
+
+  for (const key of keys) {
+    if (result === null || result === undefined) {
+      return defaultValue
+    }
+    result = result[key]
+  }
+
+  return result !== null && result !== undefined ? result : defaultValue
+}
+
+/**
+ * 手机号脱敏（中间4位显示为星号）
+ * @param {string} phone - 手机号
+ * @returns {string} 脱敏后的手机号
+ */
+export function maskPhone(phone) {
+  if (!phone) return '-'
+  const str = String(phone)
+  if (str.length !== 11) return phone
+  return `${str.substring(0, 3)}****${str.substring(7)}`
+}
+
+/**
+ * 身份证号脱敏（中间部分显示为星号）
+ * @param {string} idCard - 身份证号
+ * @returns {string} 脱敏后的身份证号
+ */
+export function maskIdCard(idCard) {
+  if (!idCard) return '-'
+  const str = String(idCard)
+  if (str.length < 8) return idCard
+  const len = str.length
+  return `${str.substring(0, 6)}${'*'.repeat(len - 8)}${str.substring(len - 2)}`
+}
+
+/**
+ * 获取状态配置（用于a-tag组件）
+ * @param {string} status - 状态码
+ * @param {object} statusMap - 状态映射表 { [key]: { text, color } }
+ * @returns {object} { text: string, color: string }
+ */
+export function getStatusConfig(status, statusMap) {
+  if (!status || !statusMap) {
+    return { text: status || '-', color: 'default' }
+  }
+
+  return statusMap[status] || { text: status || '-', color: 'default' }
+}

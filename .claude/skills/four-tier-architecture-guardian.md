@@ -4,6 +4,7 @@
 **🎯 技能定位**: IOE-DREAM智慧园区四层架构守护专家，严格确保Controller→Service→Manager→DAO架构规范的执行，防止跨层访问和架构违规
 
 **⚡ 技能等级**: ★★★★★ (顶级专家)
+**🎯 当前状态**: 🚨 项目存在严重架构违规，需要立即修复
 **🎯 适用场景**: 架构合规检查、代码审查、规范培训、架构重构、违规修复
 **📊 技能覆盖**: 架构验证 | 跨层检查 | 规范执行 | 违规修复 | 代码审查 | 架构培训
 
@@ -27,6 +28,9 @@
 - **架构规范培训**: 团队架构规范培训和指导
 - **代码质量保障**: 确保代码符合企业级架构标准
 - **技术栈统一**: 确保所有代码使用统一技术栈标准
+- **依赖注入规范**: 强制使用@Resource注解，禁止@Autowired
+- **Mapper规范**: 统一使用@Mapper注解，禁止@Repository
+- **Spring Boot 3.x兼容**: 确保jakarta包名规范，禁用javax包名
 
 ---
 
@@ -432,13 +436,22 @@ public class JakartaPackageChecker {
         "javax.annotation.Resource", "jakarta.annotation.Resource",
         "javax.validation.Valid", "jakarta.validation.Valid",
         "javax.validation.constraints", "jakarta.validation.constraints",
-        "javax.persistence.Entity", "jakarta.persistence.Entity",
-        "javax.persistence.Table", "jakarta.persistence.Table",
-        "javax.persistence.Column", "jakarta.persistence.Column",
-        "javax.persistence.Id", "jakarta.persistence.Id",
         "javax.transaction.Transactional", "jakarta.transaction.Transactional",
         "javax.servlet.http.HttpServletRequest", "jakarta.servlet.http.HttpServletRequest",
         "javax.servlet.http.HttpServletResponse", "jakarta.servlet.http.HttpServletResponse"
+    );
+
+    // MyBatis-Plus注解替换JPA注解
+    private static final Map<String, String> JPA_TO_MYBATIS_MAPPINGS = Map.of(
+        "jakarta.persistence.Entity", "@Data\n@TableName(\"table_name\")",
+        "jakarta.persistence.Table", "@TableName(\"table_name\")",
+        "jakarta.persistence.Column", "@TableField(\"column_name\")",
+        "jakarta.persistence.Id", "@TableId(type = IdType.AUTO)",
+        "jakarta.persistence.GeneratedValue", "@TableId(type = IdType.AUTO)",
+        "jakarta.persistence.OneToOne", "@TableField",
+        "jakarta.persistence.OneToMany", "@TableField",
+        "jakarta.persistence.ManyToOne", "@TableField",
+        "jakarta.persistence.ManyToMany", "@TableField"
     );
 
     /**

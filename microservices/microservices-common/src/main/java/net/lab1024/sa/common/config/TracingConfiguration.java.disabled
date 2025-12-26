@@ -1,0 +1,36 @@
+package net.lab1024.sa.common.config;
+
+import io.micrometer.tracing.Tracer;
+import io.micrometer.tracing.propagation.Propagator;
+import net.lab1024.sa.common.tracing.TracingUtils;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+/**
+ * 分布式追踪配置类
+ * <p>
+ * 注册TracingUtils为Spring Bean，支持依赖注入
+ * 使用@ConditionalOnMissingBean避免重复注册
+ * </p>
+ *
+ * @author IOE-DREAM架构团队
+ * @version 1.0.0
+ * @since 2025-12-20
+ */
+@Configuration
+public class TracingConfiguration {
+
+    /**
+     * 注册TracingUtils Bean
+     *
+     * @param tracer 分布式追踪器
+     * @param propagator 传播器
+     * @return TracingUtils实例
+     */
+    @Bean
+    @ConditionalOnMissingBean(TracingUtils.class)
+    public TracingUtils tracingUtils(Tracer tracer, Propagator propagator) {
+        return new TracingUtils(tracer, propagator);
+    }
+}

@@ -1,11 +1,10 @@
 package net.lab1024.sa.oa.workflow.config;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.flowable.common.engine.api.delegate.event.FlowableEngineEventType;
 import org.flowable.common.engine.api.delegate.event.FlowableEvent;
 import org.flowable.common.engine.api.delegate.event.FlowableEventListener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Flowable事件监听器
  *
@@ -13,9 +12,9 @@ import org.slf4j.LoggerFactory;
  * @version 1.0.0
  * @since 2025-01-17
  */
+@Slf4j
 public class FlowableEventLogger implements FlowableEventListener {
 
-    private static final Logger log = LoggerFactory.getLogger(FlowableEventLogger.class);
 
     @Override
     public void onEvent(FlowableEvent event) {

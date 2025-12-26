@@ -1,4 +1,4 @@
-# ============================================================
+﻿# ============================================================
 # IOE-DREAM Device Communication Service - Spring Boot 3.5.8 配置
 # 设备通讯服务 - 企业级生产环境配置
 #
@@ -123,18 +123,18 @@ management:
       show-components: always
     metrics:
       enabled: true
-  metrics:
-    export:
-      prometheus:
+  prometheus:
+    metrics:
+      export:
         enabled: true
 
 # ==================== 日志配置 (Spring Boot 3.x标准) ====================
 logging:
   level:
     root: INFO
-    net.lab1024.sa.device.comm: DEBUG
-    org.springframework.web: INFO
-    com.alibaba.druid: INFO
+    "net.lab1024.sa.device.comm": DEBUG
+    "org.springframework.web": INFO
+    "com.alibaba.druid": INFO
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
     file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"

@@ -1,18 +1,18 @@
 package net.lab1024.sa.attendance.memory;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicLong;
-import java.lang.ref.WeakReference;
 import java.lang.ref.SoftReference;
-import java.util.Map;
-import java.util.LinkedHashMap;
-import java.util.HashMap;
-import java.util.List;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
+
+import org.springframework.stereotype.Component;
 
 /**
  * 内存优化器
@@ -24,8 +24,8 @@ import java.util.Collections;
  * @version 1.0.0
  * @since 2025-12-16
  */
-@Slf4j
 @Component
+@Slf4j
 public class MemoryOptimizer {
 
     // 内存使用统计
@@ -39,28 +39,27 @@ public class MemoryOptimizer {
     private static final int MAX_CACHE_SIZE = 1000;
 
     // 对象池
-    private final Map<String, ObjectPool<Object>> objectPools = new ConcurrentHashMap<>();
+    private final Map<String, ObjectPool<Object>> objectPools = new HashMap<>();
 
     // LRU缓存
     private final Map<String, Object> lruCache = Collections.synchronizedMap(
-        new LinkedHashMap<String, Object>(16, 0.75f, true) {
-            @Override
-            protected boolean removeEldestEntry(Map.Entry<String, Object> eldest) {
-                boolean shouldRemove = size() > MAX_CACHE_SIZE;
-                if (shouldRemove) {
-                    cachedObjectsCount.decrementAndGet();
-                    log.debug("LRU缓存淘汰对象: key={}", eldest.getKey());
+            new LinkedHashMap<String, Object>(16, 0.75f, true) {
+                @Override
+                protected boolean removeEldestEntry(Map.Entry<String, Object> eldest) {
+                    boolean shouldRemove = size() > MAX_CACHE_SIZE;
+                    if (shouldRemove) {
+                        cachedObjectsCount.decrementAndGet();
+                        log.debug("LRU缓存淘汰对象: key={}", eldest.getKey());
+                    }
+                    return shouldRemove;
                 }
-                return shouldRemove;
-            }
-        }
-    );
+            });
 
     // 软引用缓存 - 内存不足时自动回收
-    private final Map<String, SoftReference<Object>> softCache = new ConcurrentHashMap<>();
+    private final Map<String, SoftReference<Object>> softCache = new HashMap<>();
 
     // 弱引用缓存 - GC时自动回收
-    private final Map<String, WeakReference<Object>> weakCache = new ConcurrentHashMap<>();
+    private final Map<String, WeakReference<Object>> weakCache = new HashMap<>();
 
     /**
      * 内存优化配置
@@ -75,20 +74,61 @@ public class MemoryOptimizer {
         private int gcTriggerInterval = 60; // 秒
 
         // Getters and Setters
-        public long getWarningThreshold() { return warningThreshold; }
-        public void setWarningThreshold(long warningThreshold) { this.warningThreshold = warningThreshold; }
-        public long getCriticalThreshold() { return criticalThreshold; }
-        public void setCriticalThreshold(long criticalThreshold) { this.criticalThreshold = criticalThreshold; }
-        public int getMaxCacheSize() { return maxCacheSize; }
-        public void setMaxCacheSize(int maxCacheSize) { this.maxCacheSize = maxCacheSize; }
-        public boolean isEnableSoftCache() { return enableSoftCache; }
-        public void setEnableSoftCache(boolean enableSoftCache) { this.enableSoftCache = enableSoftCache; }
-        public boolean isEnableWeakCache() { return enableWeakCache; }
-        public void setEnableWeakCache(boolean enableWeakCache) { this.enableWeakCache = enableWeakCache; }
-        public boolean isEnableObjectPool() { return enableObjectPool; }
-        public void setEnableObjectPool(boolean enableObjectPool) { this.enableObjectPool = enableObjectPool; }
-        public int getGcTriggerInterval() { return gcTriggerInterval; }
-        public void setGcTriggerInterval(int gcTriggerInterval) { this.gcTriggerInterval = gcTriggerInterval; }
+        public long getWarningThreshold() {
+            return warningThreshold;
+        }
+
+        public void setWarningThreshold(long warningThreshold) {
+            this.warningThreshold = warningThreshold;
+        }
+
+        public long getCriticalThreshold() {
+            return criticalThreshold;
+        }
+
+        public void setCriticalThreshold(long criticalThreshold) {
+            this.criticalThreshold = criticalThreshold;
+        }
+
+        public int getMaxCacheSize() {
+            return maxCacheSize;
+        }
+
+        public void setMaxCacheSize(int maxCacheSize) {
+            this.maxCacheSize = maxCacheSize;
+        }
+
+        public boolean isEnableSoftCache() {
+            return enableSoftCache;
+        }
+
+        public void setEnableSoftCache(boolean enableSoftCache) {
+            this.enableSoftCache = enableSoftCache;
+        }
+
+        public boolean isEnableWeakCache() {
+            return enableWeakCache;
+        }
+
+        public void setEnableWeakCache(boolean enableWeakCache) {
+            this.enableWeakCache = enableWeakCache;
+        }
+
+        public boolean isEnableObjectPool() {
+            return enableObjectPool;
+        }
+
+        public void setEnableObjectPool(boolean enableObjectPool) {
+            this.enableObjectPool = enableObjectPool;
+        }
+
+        public int getGcTriggerInterval() {
+            return gcTriggerInterval;
+        }
+
+        public void setGcTriggerInterval(int gcTriggerInterval) {
+            this.gcTriggerInterval = gcTriggerInterval;
+        }
     }
 
     private final MemoryConfig config;
@@ -113,17 +153,17 @@ public class MemoryOptimizer {
 
         // 初始化常用对象池
         objectPools.put("StringBuffer",
-                new ObjectPool<>(() -> new StringBuffer(256), obj -> ((StringBuffer) obj).setLength(0)));
+                new ObjectPool<Object>(() -> new StringBuffer(256), obj -> ((StringBuffer) obj).setLength(0)));
         objectPools.put("StringBuilder",
-                new ObjectPool<>(() -> new StringBuilder(256), obj -> ((StringBuilder) obj).setLength(0)));
+                new ObjectPool<Object>(() -> new StringBuilder(256), obj -> ((StringBuilder) obj).setLength(0)));
         objectPools.put("ArrayList",
-                new ObjectPool<>(() -> new ArrayList<>(16), obj -> ((List<?>) obj).clear()));
+                new ObjectPool<Object>(() -> new ArrayList<>(16), obj -> ((List<?>) obj).clear()));
         objectPools.put("HashMap",
-                new ObjectPool<>(() -> new HashMap<>(16), obj -> ((Map<?, ?>) obj).clear()));
+                new ObjectPool<Object>(() -> new HashMap<>(16), obj -> ((Map<?, ?>) obj).clear()));
         objectPools.put("ConcurrentHashMap",
-                new ObjectPool<>(() -> new ConcurrentHashMap<>(16), obj -> ((Map<?, ?>) obj).clear()));
+                new ObjectPool<Object>(() -> new HashMap<>(16), obj -> ((Map<?, ?>) obj).clear()));
         objectPools.put("LinkedHashMap",
-                new ObjectPool<>(() -> new LinkedHashMap<>(16), obj -> ((Map<?, ?>) obj).clear()));
+                new ObjectPool<Object>(() -> new LinkedHashMap<>(16), obj -> ((Map<?, ?>) obj).clear()));
 
         log.info("初始化对象池完成，池数量: {}", objectPools.size());
     }
@@ -169,10 +209,10 @@ public class MemoryOptimizer {
         double memoryUsageRatio = (double) usedMemory / maxMemory;
 
         log.debug("内存使用情况 - 已用: {}MB, 总计: {}MB, 使用率: {:.1f}%, 缓存对象数: {}",
-            usedMemory / 1024 / 1024,
-            maxMemory / 1024 / 1024,
-            memoryUsageRatio * 100,
-            cachedObjectsCount.get());
+                usedMemory / 1024 / 1024,
+                maxMemory / 1024 / 1024,
+                memoryUsageRatio * 100,
+                cachedObjectsCount.get());
 
         // 内存警告
         if (usedMemory > config.getCriticalThreshold()) {
@@ -378,7 +418,7 @@ public class MemoryOptimizer {
             return;
         }
 
-        softCache.put(key, new SoftReference<>(value));
+        softCache.put(key, new SoftReference<Object>(value));
     }
 
     /**
@@ -401,7 +441,7 @@ public class MemoryOptimizer {
             return;
         }
 
-        weakCache.put(key, new WeakReference<>(value));
+        weakCache.put(key, new WeakReference<Object>(value));
     }
 
     /**
@@ -427,18 +467,18 @@ public class MemoryOptimizer {
         long usedMemory = totalMemory - freeMemory;
 
         return MemoryStats.builder()
-            .totalMemory(totalMemory)
-            .usedMemory(usedMemory)
-            .freeMemory(freeMemory)
-            .maxMemory(maxMemory)
-            .memoryUsageRatio((double) usedMemory / maxMemory)
-            .cachedObjectsCount(cachedObjectsCount.get())
-            .memoryOptimizationsCount(memoryOptimizationsCount.get())
-            .lruCacheSize(lruCache.size())
-            .softCacheSize(softCache.size())
-            .weakCacheSize(weakCache.size())
-            .objectPoolCount(objectPools.size())
-            .build();
+                .totalMemory(totalMemory)
+                .usedMemory(usedMemory)
+                .freeMemory(freeMemory)
+                .maxMemory(maxMemory)
+                .memoryUsageRatio((double) usedMemory / maxMemory)
+                .cachedObjectsCount(cachedObjectsCount.get())
+                .memoryOptimizationsCount(memoryOptimizationsCount.get())
+                .lruCacheSize(lruCache.size())
+                .softCacheSize(softCache.size())
+                .weakCacheSize(weakCache.size())
+                .objectPoolCount(objectPools.size())
+                .build();
     }
 
     /**
@@ -479,8 +519,10 @@ public class MemoryOptimizer {
         private final java.util.Queue<T> pool = new java.util.concurrent.ConcurrentLinkedQueue<>();
         private final java.util.function.Supplier<T> factory;
         private final java.util.function.Consumer<T> resetFunction;
-        private final java.util.concurrent.atomic.AtomicInteger createdCount = new java.util.concurrent.atomic.AtomicInteger(0);
-        private final java.util.concurrent.atomic.AtomicInteger borrowedCount = new java.util.concurrent.atomic.AtomicInteger(0);
+        private final java.util.concurrent.atomic.AtomicInteger createdCount = new java.util.concurrent.atomic.AtomicInteger(
+                0);
+        private final java.util.concurrent.atomic.AtomicInteger borrowedCount = new java.util.concurrent.atomic.AtomicInteger(
+                0);
 
         public ObjectPool(java.util.function.Supplier<T> factory, java.util.function.Consumer<T> resetFunction) {
             this.factory = factory;

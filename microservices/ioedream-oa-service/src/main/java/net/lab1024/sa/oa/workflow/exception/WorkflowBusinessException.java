@@ -20,9 +20,9 @@ import lombok.EqualsAndHashCode;
 public class WorkflowBusinessException extends RuntimeException {
 
     /**
-     * 异常代码
+     * 异常代码（符合统一规范）
      */
-    private String code;
+    private String errorCode;
 
     /**
      * 操作类型
@@ -127,7 +127,7 @@ public class WorkflowBusinessException extends RuntimeException {
      */
     public WorkflowBusinessException(String code, String message, String operation) {
         super(message);
-        this.code = code;
+        this.errorCode = code;
         this.operation = operation;
     }
 
@@ -141,7 +141,7 @@ public class WorkflowBusinessException extends RuntimeException {
      */
     public WorkflowBusinessException(String code, String message, String operation, String businessId) {
         super(message);
-        this.code = code;
+        this.errorCode = code;
         this.operation = operation;
         this.businessId = businessId;
     }
@@ -157,7 +157,7 @@ public class WorkflowBusinessException extends RuntimeException {
      */
     public WorkflowBusinessException(String code, String message, String operation, String businessId, Object context) {
         super(message);
-        this.code = code;
+        this.errorCode = code;
         this.operation = operation;
         this.businessId = businessId;
         this.context = context;
@@ -173,7 +173,7 @@ public class WorkflowBusinessException extends RuntimeException {
      */
     public WorkflowBusinessException(String code, String message, String operation, Throwable cause) {
         super(message, cause);
-        this.code = code;
+        this.errorCode = code;
         this.operation = operation;
     }
 
@@ -269,5 +269,42 @@ public class WorkflowBusinessException extends RuntimeException {
     public static WorkflowBusinessException workflowNodeConfigError(String nodeId, String error) {
         return new WorkflowBusinessException(WORKFLOW_NODE_CONFIG_ERROR,
                 "节点配置错误: " + nodeId + " - " + error, OPERATION_DEPLOY_PROCESS, nodeId);
+    }
+
+    // ==================== 标准化方法 ====================
+
+    /**
+     * 获取错误代码（符合统一规范）
+     */
+    public String getErrorCode() {
+        return errorCode;
+    }
+
+    /**
+     * 获取详细信息（符合统一规范）
+     */
+    public Object getDetails() {
+        return context;
+    }
+
+    /**
+     * 获取操作类型
+     */
+    public String getOperation() {
+        return operation;
+    }
+
+    /**
+     * 获取业务对象ID
+     */
+    public String getBusinessId() {
+        return businessId;
+    }
+
+    /**
+     * 获取上下文信息
+     */
+    public Object getContext() {
+        return context;
     }
 }

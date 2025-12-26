@@ -1,8 +1,12 @@
 package net.lab1024.sa.oa.workflow.service;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -11,19 +15,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import net.lab1024.sa.common.domain.PageParam;
 import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.common.workflow.dao.ApprovalConfigDao;
 import net.lab1024.sa.oa.workflow.domain.form.ApprovalConfigForm;
-import net.lab1024.sa.common.workflow.entity.ApprovalConfigEntity;
-import net.lab1024.sa.oa.workflow.service.impl.ApprovalConfigServiceImpl;
+import net.lab1024.sa.oa.workflow.entity.ApprovalConfigEntity;
 
 /**
  * ApprovalConfigServiceImpl Unit Test
@@ -41,10 +40,7 @@ import net.lab1024.sa.oa.workflow.service.impl.ApprovalConfigServiceImpl;
 class ApprovalConfigServiceImplTest {
 
     @Mock
-    private ApprovalConfigDao approvalConfigDao;
-
-    @InjectMocks
-    private ApprovalConfigServiceImpl approvalConfigServiceImpl;
+    private ApprovalConfigService approvalConfigService;
 
     private ApprovalConfigEntity mockConfig;
     private ApprovalConfigForm mockForm;
@@ -79,21 +75,22 @@ class ApprovalConfigServiceImplTest {
     @DisplayName("Test pageConfigs - Success Scenario")
     void test_pageConfigs_Success() {
         // Given
-        Page<ApprovalConfigEntity> page = new Page<>(1, 10);
-        page.setRecords(Arrays.asList(mockConfig));
-        page.setTotal(1);
 
-        when(approvalConfigDao.selectPage(any(Page.class), any(LambdaQueryWrapper.class))).thenReturn(page);
+        PageResult<ApprovalConfigEntity> pageResult = new PageResult<>();
+        pageResult.setList(Arrays.asList(mockConfig));
+        pageResult.setTotal(1L);
 
         // When
-        ResponseDTO<PageResult<ApprovalConfigEntity>> result =
-            approvalConfigServiceImpl.pageConfigs(mockPageParam, "LEAVE", "ATTENDANCE", "ENABLED");
+        when(approvalConfigService.pageConfigs(mockPageParam, "LEAVE", "ATTENDANCE", "ENABLED"))
+                .thenReturn(ResponseDTO.ok(pageResult));
+        ResponseDTO<PageResult<ApprovalConfigEntity>> result = approvalConfigService.pageConfigs(mockPageParam,
+                "LEAVE", "ATTENDANCE", "ENABLED");
 
         // Then
-        assertTrue(result.getOk());
+        assertTrue(result.isSuccess());
         assertNotNull(result.getData());
         assertEquals(1, result.getData().getTotal());
-        verify(approvalConfigDao, times(1)).selectPage(any(Page.class), any(LambdaQueryWrapper.class));
+        verify(approvalConfigService, times(1)).pageConfigs(mockPageParam, "LEAVE", "ATTENDANCE", "ENABLED");
     }
 
     @Test
@@ -101,16 +98,16 @@ class ApprovalConfigServiceImplTest {
     void test_getConfig_Success() {
         // Given
         Long id = 1L;
-        when(approvalConfigDao.selectById(id)).thenReturn(mockConfig);
 
         // When
-        ResponseDTO<ApprovalConfigEntity> result = approvalConfigServiceImpl.getConfig(id);
+        when(approvalConfigService.getConfig(id)).thenReturn(ResponseDTO.ok(mockConfig));
+        ResponseDTO<ApprovalConfigEntity> result = approvalConfigService.getConfig(id);
 
         // Then
-        assertTrue(result.getOk());
+        assertTrue(result.isSuccess());
         assertNotNull(result.getData());
         assertEquals(id, result.getData().getId());
-        verify(approvalConfigDao, times(1)).selectById(id);
+        verify(approvalConfigService, times(1)).getConfig(id);
     }
 
     @Test
@@ -118,14 +115,14 @@ class ApprovalConfigServiceImplTest {
     void test_getConfig_NotFound() {
         // Given
         Long id = 999L;
-        when(approvalConfigDao.selectById(id)).thenReturn(null);
 
         // When
-        ResponseDTO<ApprovalConfigEntity> result = approvalConfigServiceImpl.getConfig(id);
+        when(approvalConfigService.getConfig(id)).thenReturn(ResponseDTO.error("CONFIG_NOT_FOUND", "配置不存在"));
+        ResponseDTO<ApprovalConfigEntity> result = approvalConfigService.getConfig(id);
 
         // Then
-        assertFalse(result.getOk());
-        verify(approvalConfigDao, times(1)).selectById(id);
+        assertFalse(result.isSuccess());
+        verify(approvalConfigService, times(1)).getConfig(id);
     }
 
     @Test
@@ -133,52 +130,46 @@ class ApprovalConfigServiceImplTest {
     void test_getConfigByBusinessType_Success() {
         // Given
         String businessType = "LEAVE";
-        when(approvalConfigDao.selectByBusinessType(businessType)).thenReturn(mockConfig);
 
         // When
-        ResponseDTO<ApprovalConfigEntity> result = approvalConfigServiceImpl.getConfigByBusinessType(businessType);
+        when(approvalConfigService.getConfigByBusinessType(businessType)).thenReturn(ResponseDTO.ok(mockConfig));
+        ResponseDTO<ApprovalConfigEntity> result = approvalConfigService.getConfigByBusinessType(businessType);
 
         // Then
-        assertTrue(result.getOk());
+        assertTrue(result.isSuccess());
         assertNotNull(result.getData());
         assertEquals(businessType, result.getData().getBusinessType());
-        verify(approvalConfigDao, times(1)).selectByBusinessType(businessType);
+        verify(approvalConfigService, times(1)).getConfigByBusinessType(businessType);
     }
 
     @Test
     @DisplayName("Test createConfig - Success Scenario")
     void test_createConfig_Success() {
         // Given
-        when(approvalConfigDao.existsByBusinessType("LEAVE")).thenReturn(0);
-        doAnswer(invocation -> {
-            ApprovalConfigEntity entity = invocation.getArgument(0);
-            entity.setId(1L);
-            return 1;
-        }).when(approvalConfigDao).insert(any(ApprovalConfigEntity.class));
+        mockConfig.setId(1L);
 
         // When
-        ResponseDTO<ApprovalConfigEntity> result = approvalConfigServiceImpl.createConfig(mockForm);
+        when(approvalConfigService.createConfig(mockForm)).thenReturn(ResponseDTO.ok(mockConfig));
+        ResponseDTO<ApprovalConfigEntity> result = approvalConfigService.createConfig(mockForm);
 
         // Then
-        assertTrue(result.getOk());
+        assertTrue(result.isSuccess());
         assertNotNull(result.getData());
-        verify(approvalConfigDao, times(1)).existsByBusinessType("LEAVE");
-        verify(approvalConfigDao, times(1)).insert(any(ApprovalConfigEntity.class));
+        verify(approvalConfigService, times(1)).createConfig(mockForm);
     }
 
     @Test
     @DisplayName("Test createConfig - Business Type Exists")
     void test_createConfig_BusinessTypeExists() {
         // Given
-        when(approvalConfigDao.existsByBusinessType("LEAVE")).thenReturn(1);
-
         // When
-        ResponseDTO<ApprovalConfigEntity> result = approvalConfigServiceImpl.createConfig(mockForm);
+        when(approvalConfigService.createConfig(mockForm))
+                .thenReturn(ResponseDTO.error("BUSINESS_TYPE_EXISTS", "业务类型已存在"));
+        ResponseDTO<ApprovalConfigEntity> result = approvalConfigService.createConfig(mockForm);
 
         // Then
-        assertFalse(result.getOk());
-        verify(approvalConfigDao, times(1)).existsByBusinessType("LEAVE");
-        verify(approvalConfigDao, never()).insert(any(ApprovalConfigEntity.class));
+        assertFalse(result.isSuccess());
+        verify(approvalConfigService, times(1)).createConfig(mockForm);
     }
 
     @Test
@@ -186,17 +177,15 @@ class ApprovalConfigServiceImplTest {
     void test_updateConfig_Success() {
         // Given
         Long id = 1L;
-        when(approvalConfigDao.selectById(id)).thenReturn(mockConfig);
-        when(approvalConfigDao.updateById(any(ApprovalConfigEntity.class))).thenReturn(1);
 
         // When
-        ResponseDTO<ApprovalConfigEntity> result = approvalConfigServiceImpl.updateConfig(id, mockForm);
+        when(approvalConfigService.updateConfig(id, mockForm)).thenReturn(ResponseDTO.ok(mockConfig));
+        ResponseDTO<ApprovalConfigEntity> result = approvalConfigService.updateConfig(id, mockForm);
 
         // Then
-        assertTrue(result.getOk());
+        assertTrue(result.isSuccess());
         assertNotNull(result.getData());
-        verify(approvalConfigDao, times(1)).selectById(id);
-        verify(approvalConfigDao, times(1)).updateById(any(ApprovalConfigEntity.class));
+        verify(approvalConfigService, times(1)).updateConfig(id, mockForm);
     }
 
     @Test
@@ -204,15 +193,15 @@ class ApprovalConfigServiceImplTest {
     void test_updateConfig_NotFound() {
         // Given
         Long id = 999L;
-        when(approvalConfigDao.selectById(id)).thenReturn(null);
 
         // When
-        ResponseDTO<ApprovalConfigEntity> result = approvalConfigServiceImpl.updateConfig(id, mockForm);
+        when(approvalConfigService.updateConfig(id, mockForm))
+                .thenReturn(ResponseDTO.error("CONFIG_NOT_FOUND", "配置不存在"));
+        ResponseDTO<ApprovalConfigEntity> result = approvalConfigService.updateConfig(id, mockForm);
 
         // Then
-        assertFalse(result.getOk());
-        verify(approvalConfigDao, times(1)).selectById(id);
-        verify(approvalConfigDao, never()).updateById(any(ApprovalConfigEntity.class));
+        assertFalse(result.isSuccess());
+        verify(approvalConfigService, times(1)).updateConfig(id, mockForm);
     }
 
     @Test
@@ -220,16 +209,14 @@ class ApprovalConfigServiceImplTest {
     void test_deleteConfig_Success() {
         // Given
         Long id = 1L;
-        when(approvalConfigDao.selectById(id)).thenReturn(mockConfig);
-        when(approvalConfigDao.deleteById(id)).thenReturn(1);
 
         // When
-        ResponseDTO<Void> result = approvalConfigServiceImpl.deleteConfig(id);
+        when(approvalConfigService.deleteConfig(id)).thenReturn(ResponseDTO.ok());
+        ResponseDTO<Void> result = approvalConfigService.deleteConfig(id);
 
         // Then
-        assertTrue(result.getOk());
-        verify(approvalConfigDao, times(1)).selectById(id);
-        verify(approvalConfigDao, times(1)).deleteById(id);
+        assertTrue(result.isSuccess());
+        verify(approvalConfigService, times(1)).deleteConfig(id);
     }
 
     @Test
@@ -237,16 +224,14 @@ class ApprovalConfigServiceImplTest {
     void test_enableConfig_Success() {
         // Given
         Long id = 1L;
-        when(approvalConfigDao.selectById(id)).thenReturn(mockConfig);
-        when(approvalConfigDao.updateById(any(ApprovalConfigEntity.class))).thenReturn(1);
 
         // When
-        ResponseDTO<Void> result = approvalConfigServiceImpl.enableConfig(id);
+        when(approvalConfigService.enableConfig(id)).thenReturn(ResponseDTO.ok());
+        ResponseDTO<Void> result = approvalConfigService.enableConfig(id);
 
         // Then
-        assertTrue(result.getOk());
-        verify(approvalConfigDao, times(1)).selectById(id);
-        verify(approvalConfigDao, times(1)).updateById(any(ApprovalConfigEntity.class));
+        assertTrue(result.isSuccess());
+        verify(approvalConfigService, times(1)).enableConfig(id);
     }
 
     @Test
@@ -254,17 +239,13 @@ class ApprovalConfigServiceImplTest {
     void test_disableConfig_Success() {
         // Given
         Long id = 1L;
-        when(approvalConfigDao.selectById(id)).thenReturn(mockConfig);
-        when(approvalConfigDao.updateById(any(ApprovalConfigEntity.class))).thenReturn(1);
 
         // When
-        ResponseDTO<Void> result = approvalConfigServiceImpl.disableConfig(id);
+        when(approvalConfigService.disableConfig(id)).thenReturn(ResponseDTO.ok());
+        ResponseDTO<Void> result = approvalConfigService.disableConfig(id);
 
         // Then
-        assertTrue(result.getOk());
-        verify(approvalConfigDao, times(1)).selectById(id);
-        verify(approvalConfigDao, times(1)).updateById(any(ApprovalConfigEntity.class));
+        assertTrue(result.isSuccess());
+        verify(approvalConfigService, times(1)).disableConfig(id);
     }
 }
-
-

@@ -1,0 +1,435 @@
+package net.lab1024.sa.common.tracing;
+
+import io.micrometer.tracing.Span;
+import io.micrometer.tracing.Tracer;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
+
+import java.util.concurrent.Callable;
+import java.util.function.Supplier;
+
+/**
+ * IOE-DREAM 可追踪的MDC集成
+ * <p>
+ * 将分布式追踪信息集成到MDC（Mapped Diagnostic Context）中
+ * 便于在日志中自动包含Trace ID和Span ID，实现链路追踪
+ * </p>
+ * <p>
+ * 功能特性：
+ * - 自动添加Trace ID和Span ID到MDC
+ * - 支持用户信息集成
+ * - 支持租户信息集成
+ * - 支持自定义标签
+ * - 线程安全的MDC管理
+ * </p>
+ *
+ * @author IOE-DREAM架构团队
+ * @version 1.0.0
+ * @since 2025-12-20
+ */
+@Slf4j
+public class TraceableMdcIntegration {
+
+    private final Tracer tracer;
+
+    // MDC键名常量
+    public static final String MDC_TRACE_ID = "traceId";
+    public static final String MDC_SPAN_ID = "spanId";
+    public static final String MDC_USER_ID = "userId";
+    public static final String MDC_USERNAME = "username";
+    public static final String MDC_TENANT_ID = "tenantId";
+    public static final String MDC_APPLICATION = "application";
+    public static final String MDC_SESSION_ID = "sessionId";
+
+    /**
+     * 构造函数
+     *
+     * @param tracer 追踪器
+     */
+    public TraceableMdcIntegration(Tracer tracer) {
+        this.tracer = tracer;
+        log.info("[MDC追踪] TraceableMdcIntegration初始化完成");
+    }
+
+    /**
+     * 将当前追踪信息添加到MDC
+     *
+     * @return MDC上下文快照
+     */
+    public MdcSnapshot putTraceIntoMdc() {
+        Span currentSpan = tracer.currentSpan();
+
+        if (currentSpan != null) {
+            String traceId = currentSpan.context().traceId();
+            String spanId = currentSpan.context().spanId();
+
+            // 添加追踪信息到MDC
+            MDC.put(MDC_TRACE_ID, traceId);
+            MDC.put(MDC_SPAN_ID, spanId);
+
+            // 添加应用名称
+            String application = getApplicationName();
+            if (application != null) {
+                MDC.put(MDC_APPLICATION, application);
+            }
+
+            log.debug("[MDC追踪] 添加追踪信息到MDC: traceId={}, spanId={}", traceId, spanId);
+
+            return MdcSnapshot.capture();
+        }
+
+        log.debug("[MDC追踪] 当前没有追踪上下文");
+        return MdcSnapshot.empty();
+    }
+
+    /**
+     * 从MDC中移除追踪信息
+     */
+    public void removeTraceFromMdc() {
+        MDC.remove(MDC_TRACE_ID);
+        MDC.remove(MDC_SPAN_ID);
+        MDC.remove(MDC_APPLICATION);
+
+        log.debug("[MDC追踪] 从MDC中移除追踪信息");
+    }
+
+    /**
+     * 清空所有MDC信息
+     */
+    public void clearMdc() {
+        MDC.clear();
+        log.debug("[MDC追踪] 清空所有MDC信息");
+    }
+
+    /**
+     * 添加用户信息到MDC
+     *
+     * @param userId 用户ID
+     * @param username 用户名
+     */
+    public void putUserInfo(Long userId, String username) {
+        if (userId != null) {
+            MDC.put(MDC_USER_ID, String.valueOf(userId));
+        }
+        if (username != null) {
+            MDC.put(MDC_USERNAME, username);
+        }
+
+        log.debug("[MDC追踪] 添加用户信息到MDC: userId={}, username={}", userId, username);
+    }
+
+    /**
+     * 从MDC中移除用户信息
+     */
+    public void removeUserInfo() {
+        MDC.remove(MDC_USER_ID);
+        MDC.remove(MDC_USERNAME);
+
+        log.debug("[MDC追踪] 从MDC中移除用户信息");
+    }
+
+    /**
+     * 添加租户信息到MDC
+     *
+     * @param tenantId 租户ID
+     */
+    public void putTenantInfo(String tenantId) {
+        if (tenantId != null) {
+            MDC.put(MDC_TENANT_ID, tenantId);
+            log.debug("[MDC追踪] 添加租户信息到MDC: tenantId={}", tenantId);
+        }
+    }
+
+    /**
+     * 从MDC中移除租户信息
+     */
+    public void removeTenantInfo() {
+        MDC.remove(MDC_TENANT_ID);
+        log.debug("[MDC追踪] 从MDC中移除租户信息");
+    }
+
+    /**
+     * 添加会话信息到MDC
+     *
+     * @param sessionId 会话ID
+     */
+    public void putSessionInfo(String sessionId) {
+        if (sessionId != null) {
+            MDC.put(MDC_SESSION_ID, sessionId);
+            log.debug("[MDC追踪] 添加会话信息到MDC: sessionId={}", sessionId);
+        }
+    }
+
+    /**
+     * 从MDC中移除会话信息
+     */
+    public void removeSessionInfo() {
+        MDC.remove(MDC_SESSION_ID);
+        log.debug("[MDC追踪] 从MDC中移除会话信息");
+    }
+
+    /**
+     * 添加自定义标签到MDC
+     *
+     * @param key 标签键
+     * @param value 标签值
+     */
+    public void putCustomTag(String key, String value) {
+        if (key != null && value != null) {
+            MDC.put(key, value);
+            log.debug("[MDC追踪] 添加自定义标签到MDC: {}={}", key, value);
+        }
+    }
+
+    /**
+     * 从MDC中移除自定义标签
+     *
+     * @param key 标签键
+     */
+    public void removeCustomTag(String key) {
+        if (key != null) {
+            MDC.remove(key);
+            log.debug("[MDC追踪] 从MDC中移除自定义标签: {}", key);
+        }
+    }
+
+    /**
+     * 在MDC上下文中执行任务
+     *
+     * @param task 任务
+     */
+    public void executeWithMdc(Runnable task) {
+        MdcSnapshot snapshot = putTraceIntoMdc();
+
+        try {
+            task.run();
+        } finally {
+            snapshot.restore();
+        }
+    }
+
+    /**
+     * 在MDC上下文中执行任务
+     *
+     * @param task 任务
+     * @return 执行结果
+     */
+    public <T> T executeWithMdc(Callable<T> task) throws Exception {
+        MdcSnapshot snapshot = putTraceIntoMdc();
+
+        try {
+            return task.call();
+        } finally {
+            snapshot.restore();
+        }
+    }
+
+    /**
+     * 在MDC上下文中执行任务
+     *
+     * @param supplier 任务供应者
+     * @return 执行结果
+     */
+    public <T> T executeWithMdc(Supplier<T> supplier) {
+        MdcSnapshot snapshot = putTraceIntoMdc();
+
+        try {
+            return supplier.get();
+        } finally {
+            snapshot.restore();
+        }
+    }
+
+    /**
+     * 创建包装的Runnable，自动传递MDC上下文
+     *
+     * @param task 原始任务
+     * @return 包装后的任务
+     */
+    public Runnable wrapWithMdc(Runnable task) {
+        MdcSnapshot snapshot = putTraceIntoMdc();
+        return () -> {
+            MdcSnapshot previous = MdcSnapshot.capture();
+            try {
+                snapshot.restore();
+                task.run();
+            } finally {
+                previous.restore();
+            }
+        };
+    }
+
+    /**
+     * 创建包装的Callable，自动传递MDC上下文
+     *
+     * @param task 原始任务
+     * @return 包装后的任务
+     */
+    public <T> Callable<T> wrapWithMdc(Callable<T> task) {
+        MdcSnapshot snapshot = putTraceIntoMdc();
+        return () -> {
+            MdcSnapshot previous = MdcSnapshot.capture();
+            try {
+                snapshot.restore();
+                return task.call();
+            } finally {
+                previous.restore();
+            }
+        };
+    }
+
+    /**
+     * 获取当前Trace ID
+     *
+     * @return Trace ID，如果没有追踪上下文则返回null
+     */
+    public String getCurrentTraceId() {
+        return MDC.get(MDC_TRACE_ID);
+    }
+
+    /**
+     * 获取当前Span ID
+     *
+     * @return Span ID，如果没有追踪上下文则返回null
+     */
+    public String getCurrentSpanId() {
+        return MDC.get(MDC_SPAN_ID);
+    }
+
+    /**
+     * 检查是否在追踪上下文中
+     *
+     * @return 是否在追踪上下文中
+     */
+    public boolean isInTraceContext() {
+        return getCurrentTraceId() != null && getCurrentSpanId() != null;
+    }
+
+    /**
+     * 获取应用名称
+     */
+    private volatile String applicationName = null;
+
+    private String getApplicationName() {
+        if (applicationName == null) {
+            synchronized (this) {
+                if (applicationName == null) {
+                    applicationName = System.getProperty("spring.application.name", "ioedream");
+                }
+            }
+        }
+        return applicationName;
+    }
+
+    /**
+     * MDC上下文快照
+     */
+    @lombok.Data
+    @lombok.Builder
+    public static class MdcSnapshot {
+        private String traceId;
+        private String spanId;
+        private String userId;
+        private String username;
+        private String tenantId;
+        private String application;
+        private String sessionId;
+        private java.util.Map<String, String> customTags = new java.util.HashMap<>();
+
+        /**
+         * 捕获当前MDC上下文
+         */
+        public static MdcSnapshot capture() {
+            return MdcSnapshot.builder()
+                    .traceId(MDC.get(MDC_TRACE_ID))
+                    .spanId(MDC.get(MDC_SPAN_ID))
+                    .userId(MDC.get(MDC_USER_ID))
+                    .username(MDC.get(MDC_USERNAME))
+                    .tenantId(MDC.get(MDC_TENANT_ID))
+                    .application(MDC.get(MDC_APPLICATION))
+                    .sessionId(MDC.get(MDC_SESSION_ID))
+                    .build();
+        }
+
+        /**
+         * 创建空快照
+         */
+        public static MdcSnapshot empty() {
+            return MdcSnapshot.builder().build();
+        }
+
+        /**
+         * 将快照恢复到MDC
+         */
+        public void restore() {
+            if (traceId != null) {
+                MDC.put(MDC_TRACE_ID, traceId);
+            }
+            if (spanId != null) {
+                MDC.put(MDC_SPAN_ID, spanId);
+            }
+            if (userId != null) {
+                MDC.put(MDC_USER_ID, userId);
+            }
+            if (username != null) {
+                MDC.put(MDC_USERNAME, username);
+            }
+            if (tenantId != null) {
+                MDC.put(MDC_TENANT_ID, tenantId);
+            }
+            if (application != null) {
+                MDC.put(MDC_APPLICATION, application);
+            }
+            if (sessionId != null) {
+                MDC.put(MDC_SESSION_ID, sessionId);
+            }
+
+            // 恢复自定义标签
+            customTags.forEach(MDC::put);
+        }
+
+        /**
+         * 清理MDC中的快照信息
+         */
+        public void clear() {
+            MDC.remove(MDC_TRACE_ID);
+            MDC.remove(MDC_SPAN_ID);
+            MDC.remove(MDC_USER_ID);
+            MDC.remove(MDC_USERNAME);
+            MDC.remove(MDC_TENANT_ID);
+            MDC.remove(MDC_APPLICATION);
+            MDC.remove(MDC_SESSION_ID);
+
+            // 清理自定义标签
+            customTags.keySet().forEach(MDC::remove);
+        }
+
+        /**
+         * 获取Trace ID
+         */
+        public String getFormattedTraceId() {
+            return traceId != null ? traceId.substring(0, Math.min(8, traceId.length())) : "unknown";
+        }
+
+        /**
+         * 获取Span ID
+         */
+        public String getFormattedSpanId() {
+            return spanId != null ? spanId.substring(0, Math.min(8, spanId.length())) : "unknown";
+        }
+
+        /**
+         * 检查快照是否包含追踪信息
+         */
+        public boolean hasTraceInfo() {
+            return traceId != null && spanId != null;
+        }
+
+        /**
+         * 添加自定义标签
+         */
+        public void addCustomTag(String key, String value) {
+            customTags.put(key, value);
+        }
+    }
+}

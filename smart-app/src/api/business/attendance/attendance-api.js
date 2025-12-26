@@ -298,15 +298,202 @@ export const travelApi = {
     getRequest('/api/attendance/mobile/travel/records', params)
 }
 
+// 打卡记录相关接口
+export const recordApi = {
+  /**
+   * 获取打卡记录列表（按日期分组）
+   * @param {Object} params 查询参数
+   * @param {Number} params.employeeId 员工ID
+   * @param {String} params.startDate 开始日期
+   * @param {String} params.endDate 结束日期
+   * @param {String} params.status 状态筛选(可选)
+   * @param {Number} params.pageSize 页大小
+   * @param {Number} params.pageNum 页码
+   * @returns {Promise}
+   */
+  getDailyRecords: (params) =>
+    getRequest('/api/attendance/mobile/records/daily', params),
+
+  /**
+   * 获取月度打卡记录
+   * @param {Object} params 查询参数
+   * @param {Number} params.employeeId 员工ID
+   * @param {String} params.month 月份(YYYY-MM)
+   * @returns {Promise}
+   */
+  getMonthlyRecords: (params) =>
+    getRequest('/api/attendance/mobile/records/monthly', params),
+
+  /**
+   * 获取打卡统计摘要
+   * @param {Object} params 查询参数
+   * @param {Number} params.employeeId 员工ID
+   * @param {String} params.startDate 开始日期
+   * @param {String} params.endDate 结束日期
+   * @returns {Promise}
+   */
+  getRecordsSummary: (params) =>
+    getRequest('/api/attendance/mobile/records/summary', params)
+}
+
+// 消息通知相关接口
+export const notificationApi = {
+  /**
+   * 获取消息列表
+   * @param {Object} params 查询参数
+   * @param {Number} params.employeeId 员工ID
+   * @param {String} params.type 消息类型(可选: APPROVAL/ATTENDANCE/SYSTEM)
+   * @param {Number} params.pageSize 页大小
+   * @param {Number} params.pageNum 页码
+   * @returns {Promise}
+   */
+  getMessageList: (params) =>
+    getRequest('/api/attendance/mobile/notification/list', params),
+
+  /**
+   * 获取未读消息数量
+   * @param {Object} params 查询参数
+   * @param {Number} params.employeeId 员工ID
+   * @returns {Promise}
+   */
+  getUnreadCount: (params) =>
+    getRequest('/api/attendance/mobile/notification/unread-count', params),
+
+  /**
+   * 标记消息为已读
+   * @param {Object} data 消息数据
+   * @param {Number} data.messageId 消息ID
+   * @returns {Promise}
+   */
+  markAsRead: (data) => postRequest('/api/attendance/mobile/notification/mark-read', data),
+
+  /**
+   * 批量标记消息为已读
+   * @param {Object} data 数据
+   * @param {Array} data.messageIds 消息ID列表
+   * @returns {Promise}
+   */
+  batchMarkAsRead: (data) => postRequest('/api/attendance/mobile/notification/batch-mark-read', data),
+
+  /**
+   * 标记所有消息为已读
+   * @param {Object} data 数据
+   * @param {Number} data.employeeId 员工ID
+   * @param {String} data.type 消息类型(可选)
+   * @returns {Promise}
+   */
+  markAllAsRead: (data) => postRequest('/api/attendance/mobile/notification/mark-all-read', data),
+
+  /**
+   * 删除消息
+   * @param {Object} data 数据
+   * @param {Number} data.messageId 消息ID
+   * @returns {Promise}
+   */
+  deleteMessage: (data) => postRequest('/api/attendance/mobile/notification/delete', data),
+
+  /**
+   * 批量删除消息
+   * @param {Object} data 数据
+   * @param {Array} data.messageIds 消息ID列表
+   * @returns {Promise}
+   */
+  batchDelete: (data) => postRequest('/api/attendance/mobile/notification/batch-delete', data)
+}
+
+// 排班管理相关接口（扩展）
+export const scheduleApiExt = {
+  /**
+   * 获取月度排班统计
+   * @param {Object} params 查询参数
+   * @param {Number} params.employeeId 员工ID
+   * @param {String} params.startDate 开始日期
+   * @param {String} params.endDate 结束日期
+   * @returns {Promise}
+   */
+  getMonthScheduleStats: (params) =>
+    getRequest('/api/attendance/mobile/schedule/month-stats', params),
+
+  /**
+   * 获取月度排班日历
+   * @param {Object} params 查询参数
+   * @param {Number} params.employeeId 员工ID
+   * @param {String} params.startDate 开始日期
+   * @param {String} params.endDate 结束日期
+   * @returns {Promise}
+   */
+  getMonthCalendar: (params) =>
+    getRequest('/api/attendance/mobile/schedule/month-calendar', params),
+
+  /**
+   * 获取今日排班详情
+   * @param {Object} params 查询参数
+   * @param {Number} params.employeeId 员工ID
+   * @returns {Promise}
+   */
+  getTodayShifts: (params) =>
+    getRequest('/api/attendance/mobile/schedule/today-shifts', params),
+
+  /**
+   * 获取排班冲突列表
+   * @param {Object} params 查询参数
+   * @param {Number} params.employeeId 员工ID
+   * @param {String} params.startDate 开始日期
+   * @param {String} params.endDate 结束日期
+   * @returns {Promise}
+   */
+  getScheduleConflicts: (params) =>
+    getRequest('/api/attendance/mobile/schedule/conflicts', params),
+
+  /**
+   * 获取排班优化建议
+   * @param {Object} params 查询参数
+   * @param {Number} params.employeeId 员工ID
+   * @param {String} params.startDate 开始日期
+   * @param {String} params.endDate 结束日期
+   * @returns {Promise}
+   */
+  getOptimizationSuggestions: (params) =>
+    getRequest('/api/attendance/mobile/schedule/suggestions', params),
+
+  /**
+   * 复制上周排班
+   * @param {Object} data 数据
+   * @param {Number} data.employeeId 员工ID
+   * @param {String} data.targetDate 目标日期
+   * @returns {Promise}
+   */
+  copyPreviousWeek: (data) => postRequest('/api/attendance/mobile/schedule/copy-previous-week', data),
+
+  /**
+   * 应用优化建议
+   * @param {Object} data 数据
+   * @param {Number} data.employeeId 员工ID
+   * @param {Number} data.suggestionId 建议ID
+   * @returns {Promise}
+   */
+  applyOptimization: (data) => postRequest('/api/attendance/mobile/schedule/apply-optimization', data),
+
+  /**
+   * 删除排班
+   * @param {Object} data 数据
+   * @param {Number} data.shiftId 排班ID
+   * @returns {Promise}
+   */
+  deleteShift: (data) => postRequest('/api/attendance/mobile/schedule/delete', data)
+}
+
 // 导出所有API
 export default {
-  ...punchApi,
-  ...locationApi,
-  ...offlineApi,
-  ...leaveApi,
-  ...overtimeApi,
-  ...statisticsApi,
-  ...scheduleApi,
-  ...supplementApi,
-  ...travelApi
+  punchApi,
+  locationApi,
+  offlineApi,
+  leaveApi,
+  overtimeApi,
+  statisticsApi,
+  scheduleApi: { ...scheduleApi, ...scheduleApiExt },
+  supplementApi,
+  travelApi,
+  recordApi,
+  notificationApi
 }

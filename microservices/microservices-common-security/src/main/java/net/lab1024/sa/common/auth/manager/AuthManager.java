@@ -1,210 +1,137 @@
 package net.lab1024.sa.common.auth.manager;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.data.redis.core.StringRedisTemplate;
-
-import net.lab1024.sa.common.exception.SystemException;
-import net.lab1024.sa.common.auth.dao.UserSessionDao;
-import net.lab1024.sa.common.auth.domain.entity.UserSessionEntity;
-import net.lab1024.sa.common.auth.util.JwtTokenUtil;
+import lombok.extern.slf4j.Slf4j;
+import net.lab1024.sa.common.auth.service.ConcurrentLoginControlService;
+import net.lab1024.sa.common.auth.service.JwtTokenBlacklistService;
+import net.lab1024.sa.common.auth.service.UserLockService;
 
 /**
- * 认证业务管理器
+ * 认证管理器
  * <p>
- * 符合CLAUDE.md规范 - Manager层
- * - 纯Java类，不使用Spring注解
- * - 通过构造函数注入依赖
- * - 在微服务中通过配置类注册为Spring Bean
- * </p>
- * <p>
- * 职责：
- * - 复杂认证业务流程编排
- * - 多级缓存管理（L1本地+L2Redis+L3网关）
- * - 会话管理和并发控制
- * - 令牌黑名单管理
- * - 登录安全策略（防暴力破解）
- * </p>
- * <p>
- * 企业级特性：
- * - 实现多级缓存策略
- * - 实现企业级安全特性
- * - 支持高并发会话管理
+ * 纯Java类，不使用Spring注解
+ * 通过构造函数注入依赖
  * </p>
  *
  * @author IOE-DREAM Team
- * @version 1.0.0
- * @since 2025-12-02
+ * @since 2025-12-16
  */
-@SuppressWarnings("null")
+@Slf4j
 public class AuthManager {
 
-    private static final Logger log = LoggerFactory.getLogger(AuthManager.class);
-
-    private final UserSessionDao userSessionDao;
-    @SuppressWarnings("unused")
-    private final JwtTokenUtil jwtTokenUtil;
-    private final StringRedisTemplate redisTemplate;
+    private final UserLockService userLockService;
+    private final JwtTokenBlacklistService blacklistService;
+    private final ConcurrentLoginControlService concurrentLoginService;
 
     /**
      * 构造函数注入依赖
-     * <p>
-     * 符合CLAUDE.md规范：Manager类通过构造函数接收依赖
-     * </p>
      *
-     * @param userSessionDao 用户会话DAO
-     * @param jwtTokenUtil JWT工具类
-     * @param redisTemplate Redis模板
+     * @param userLockService 用户锁定服务
+     * @param blacklistService JWT黑名单服务
+     * @param concurrentLoginService 并发登录控制服务
      */
-    public AuthManager(
-            UserSessionDao userSessionDao,
-            JwtTokenUtil jwtTokenUtil,
-            StringRedisTemplate redisTemplate) {
-        this.userSessionDao = userSessionDao;
-        this.jwtTokenUtil = jwtTokenUtil;
-        this.redisTemplate = redisTemplate;
+    public AuthManager(UserLockService userLockService,
+                      JwtTokenBlacklistService blacklistService,
+                      ConcurrentLoginControlService concurrentLoginService) {
+        this.userLockService = userLockService;
+        this.blacklistService = blacklistService;
+        this.concurrentLoginService = concurrentLoginService;
+        log.debug("[认证管理器] 初始化完成");
     }
 
-    // Redis Key前缀
-    private static final String TOKEN_BLACKLIST_PREFIX = "auth:token:blacklist:";
-    private static final String USER_SESSION_PREFIX = "auth:user:session:";
-    private static final String LOGIN_RETRY_PREFIX = "auth:login:retry:";
-    private static final String USER_LOCK_PREFIX = "auth:user:lock:";
-
-    // 配置参数（应从配置文件读取）
-    private static final int MAX_SESSIONS = 3;
-    private static final int SESSION_TIMEOUT = 3600;
-    private static final int MAX_LOGIN_RETRY = 5;
-    private static final int LOCK_DURATION = 1800;
-
     /**
-     * 管理用户会话（企业级会话管理）
+     * 检查用户是否被锁定
      *
-     * 注意：事务管理在Service层，Manager层不管理事务
-     * 事务边界由调用此方法的Service层方法控制
-     *
-     * 功能：
-     * - 限制最大会话数
-     * - 自动清理过期会话
-     * - 会话持久化
-     * - 多级缓存同步
-     *
-     * @param userId     用户ID
-     * @param token      访问令牌
-     * @param deviceInfo 设备信息
+     * @param username 用户名
+     * @return 是否被锁定
      */
-    public void manageUserSession(Long userId, String token, String deviceInfo) {
+    public boolean isUserLocked(String username) {
         try {
-            String sessionKey = USER_SESSION_PREFIX + userId;
-
-            // 1. 检查当前会话数量（L2 Redis缓存）
-            Long sessionCount = redisTemplate.opsForSet().size(sessionKey);
-            if (sessionCount != null && sessionCount >= MAX_SESSIONS) {
-                // 移除最旧的会话
-                Set<String> tokenSet = redisTemplate.opsForSet().members(sessionKey);
-                if (tokenSet != null && !tokenSet.isEmpty()) {
-                    List<String> tokens = new ArrayList<>(tokenSet);
-                    String oldestToken = tokens.get(0);
-
-                    // 移除Redis会话
-                    redisTemplate.opsForSet().remove(sessionKey, oldestToken);
-
-                    // 加入黑名单
-                    blacklistToken(oldestToken);
-
-                    // 删除数据库会话记录
-                    userSessionDao.deleteByToken(oldestToken);
-
-                    log.info("移除最旧会话，用户ID: {}, 令牌: {}", userId, oldestToken.substring(0, 20) + "...");
-                }
-            }
-
-            // 2. 添加新会话到Redis（L2缓存）
-            redisTemplate.opsForSet().add(sessionKey, token);
-            redisTemplate.expire(sessionKey, SESSION_TIMEOUT, TimeUnit.SECONDS);
-
-            // 3. 持久化会话到数据库
-            UserSessionEntity session = new UserSessionEntity();
-            session.setUserId(userId);
-            session.setToken(token);
-            session.setDeviceInfo(deviceInfo);
-            session.setLoginTime(LocalDateTime.now());
-            session.setLastAccessTime(LocalDateTime.now());
-            session.setExpiryTime(LocalDateTime.now().plusSeconds(SESSION_TIMEOUT));
-            session.setStatus(1); // 活跃状态
-
-            userSessionDao.insert(session);
-
-            log.info("用户会话管理成功，用户ID: {}, 当前会话数: {}", userId, sessionCount != null ? sessionCount + 1 : 1);
-
+            boolean locked = userLockService.isUserLocked(username);
+            log.debug("[认证管理器] 用户锁定检查: username={}, locked={}", username, locked);
+            return locked;
         } catch (Exception e) {
-            log.error("管理用户会话失败，用户ID: {}", userId, e);
-            throw new SystemException("SESSION_MANAGE_ERROR", "会话管理失败", e);
-        }
-    }
-
-    /**
-     * 移除用户会话
-     *
-     * 注意：事务管理在Service层，Manager层不管理事务
-     * 事务边界由调用此方法的Service层方法控制
-     *
-     * @param userId 用户ID
-     * @param token  令牌
-     */
-    public void removeUserSession(Long userId, String token) {
-        try {
-            // 1. 从Redis移除
-            String sessionKey = USER_SESSION_PREFIX + userId;
-            redisTemplate.opsForSet().remove(sessionKey, token);
-
-            // 2. 从数据库移除
-            userSessionDao.deleteByToken(token);
-
-            log.info("移除用户会话成功，用户ID: {}", userId);
-        } catch (Exception e) {
-            log.error("移除用户会话失败，用户ID: {}", userId, e);
-        }
-    }
-
-    /**
-     * 验证用户会话是否有效（多级缓存查询）
-     *
-     * @param userId 用户ID
-     * @param token  令牌
-     * @return 是否有效
-     */
-    public boolean isValidUserSession(Long userId, String token) {
-        try {
-            // L2 Redis缓存查询
-            String sessionKey = USER_SESSION_PREFIX + userId;
-            Boolean isMember = redisTemplate.opsForSet().isMember(sessionKey, token);
-
-            if (Boolean.TRUE.equals(isMember)) {
-                return true;
-            }
-
-            // L3 数据库查询（缓存未命中）
-            UserSessionEntity session = userSessionDao.selectByToken(token);
-            if (session != null && session.getStatus() == 1
-                    && session.getExpiryTime().isAfter(LocalDateTime.now())) {
-
-                // 回填Redis缓存
-                redisTemplate.opsForSet().add(sessionKey, token);
-                redisTemplate.expire(sessionKey, SESSION_TIMEOUT, TimeUnit.SECONDS);
-
-                return true;
-            }
-
+            log.error("[认证管理器] 用户锁定检查异常: username={}, error={}", username, e.getMessage(), e);
             return false;
+        }
+    }
+
+    /**
+     * 检查并发登录是否超限
+     *
+     * @param userId 用户ID
+     * @return 是否超限
+     */
+    public boolean isConcurrentLoginExceeded(Long userId) {
+        try {
+            // 使用默认检查（不限设备类型）
+            boolean allowed = concurrentLoginService.allowLogin(userId, null);
+            log.debug("[认证管理器] 并发登录检查: userId={}, allowed={}", userId, allowed);
+            return !allowed;  // 不允许表示超限
         } catch (Exception e) {
-            log.error("验证用户会话失败，用户ID: {}", userId, e);
+            log.error("[认证管理器] 并发登录检查异常: userId={}, error={}", userId, e.getMessage(), e);
+            return false;  // 异常时默认允许
+        }
+    }
+
+    /**
+     * 管理用户会话（创建新会话，如超限则踢出旧会话）
+     *
+     * @param userId 用户ID
+     * @param token 访问令牌
+     * @param deviceInfo 设备信息
+     * @return 被踢出的令牌（如果没有则返回null）
+     */
+    public String manageUserSession(Long userId, String token, String deviceInfo) {
+        try {
+            // 解析设备类型
+            String deviceType = parseDeviceType(deviceInfo);
+
+            // 创建会话（带自动踢出）
+            String evictedToken = concurrentLoginService.createSessionWithEviction(userId, token, deviceType, deviceInfo);
+
+            if (evictedToken != null) {
+                log.warn("[认证管理器] 会话超限，踢出旧会话: userId={}, evictedToken={}", userId, maskToken(evictedToken));
+            } else {
+                log.info("[认证管理器] 会话创建成功: userId={}, deviceType={}", userId, deviceType);
+            }
+
+            // 同时保存到JWT黑名单服务的会话管理
+            blacklistService.saveUserSession(userId, token, deviceInfo);
+
+            return evictedToken;
+        } catch (Exception e) {
+            log.error("[认证管理器] 管理用户会话异常: userId={}, error={}", userId, e.getMessage(), e);
+            return null;
+        }
+    }
+
+    /**
+     * 清除登录失败记录（登录成功时调用）
+     *
+     * @param username 用户名
+     */
+    public void clearLoginFailure(String username) {
+        try {
+            userLockService.clearLoginFailure(username);
+            log.debug("[认证管理器] 清除登录失败记录: username={}", username);
+        } catch (Exception e) {
+            log.error("[认证管理器] 清除登录失败记录异常: username={}, error={}", username, e.getMessage(), e);
+        }
+    }
+
+    /**
+     * 记录登录失败
+     *
+     * @param username 用户名
+     * @return 是否触发锁定
+     */
+    public boolean recordLoginFailure(String username) {
+        try {
+            boolean locked = userLockService.recordLoginFailure(username);
+            log.warn("[认证管理器] 记录登录失败: username={}, locked={}", username, locked);
+            return locked;
+        } catch (Exception e) {
+            log.error("[认证管理器] 记录登录失败异常: username={}, error={}", username, e.getMessage(), e);
             return false;
         }
     }
@@ -212,22 +139,16 @@ public class AuthManager {
     /**
      * 将令牌加入黑名单
      *
-     * 企业级特性：
-     * - 令牌撤销机制
-     * - 安全登出
-     * - 防止令牌重放攻击
-     *
      * @param token 令牌
      */
     public void blacklistToken(String token) {
         try {
-            String blacklistKey = TOKEN_BLACKLIST_PREFIX + token;
-            // 黑名单保留7天
-            redisTemplate.opsForValue().set(blacklistKey, "true", 7, TimeUnit.DAYS);
-
-            log.info("令牌已加入黑名单: {}", token.substring(0, 20) + "...");
+            // 获取令牌剩余时间作为黑名单TTL
+            long ttl = getTokenRemainingTime(token);
+            blacklistService.blacklistToken(token, ttl);
+            log.info("[认证管理器] 令牌已加入黑名单: token={}", maskToken(token));
         } catch (Exception e) {
-            log.error("将令牌加入黑名单失败", e);
+            log.error("[认证管理器] 令牌加入黑名单异常: error={}", e.getMessage(), e);
         }
     }
 
@@ -239,244 +160,123 @@ public class AuthManager {
      */
     public boolean isTokenBlacklisted(String token) {
         try {
-            String blacklistKey = TOKEN_BLACKLIST_PREFIX + token;
-            return Boolean.TRUE.equals(redisTemplate.hasKey(blacklistKey));
+            boolean blacklisted = blacklistService.isTokenBlacklisted(token);
+            if (blacklisted) {
+                log.warn("[认证管理器] 令牌在黑名单中: token={}", maskToken(token));
+            }
+            return blacklisted;
         } catch (Exception e) {
-            log.error("检查令牌黑名单失败", e);
+            log.error("[认证管理器] 令牌黑名单检查异常: error={}", e.getMessage(), e);
             return false;
         }
     }
 
     /**
-     * 记录登录失败次数（防暴力破解）
+     * 移除用户会话
      *
-     * 企业级安全特性：
-     * - 登录失败计数
-     * - 自动账户锁定
-     * - 防暴力破解攻击
-     *
-     * @param username 用户名
-     * @return 失败次数
+     * @param userId 用户ID
+     * @param token 令牌
      */
-    public int recordLoginFailure(String username) {
+    public void removeUserSession(Long userId, String token) {
         try {
-            String retryKey = LOGIN_RETRY_PREFIX + username;
-            Long retryCount = redisTemplate.opsForValue().increment(retryKey);
-
-            if (retryCount == null) {
-                retryCount = 1L;
-            }
-
-            // 设置过期时间（15分钟）
-            redisTemplate.expire(retryKey, 15, TimeUnit.MINUTES);
-
-            // 达到最大重试次数，锁定账户
-            if (retryCount >= MAX_LOGIN_RETRY) {
-                lockUser(username, LOCK_DURATION);
-                log.warn("用户登录失败次数过多，已锁定账户: {}", username);
-            }
-
-            return retryCount.intValue();
+            blacklistService.removeUserSession(userId, token);
+            log.debug("[认证管理器] 移除用户会话: userId={}", userId);
         } catch (Exception e) {
-            log.error("记录登录失败次数失败，用户名: {}", username, e);
-            return 0;
+            log.error("[认证管理器] 移除用户会话异常: userId={}, error={}", userId, e.getMessage(), e);
         }
     }
 
     /**
-     * 清除登录失败记录
+     * 验证用户会话是否有效
      *
-     * @param username 用户名
+     * @param userId 用户ID
+     * @param token 令牌
+     * @return 是否有效
      */
-    public void clearLoginFailure(String username) {
+    public boolean isValidUserSession(Long userId, String token) {
         try {
-            String retryKey = LOGIN_RETRY_PREFIX + username;
-            redisTemplate.delete(retryKey);
+            boolean valid = blacklistService.isValidUserSession(userId, token);
+            log.debug("[认证管理器] 用户会话验证: userId={}, valid={}", userId, valid);
+            return valid;
         } catch (Exception e) {
-            log.error("清除登录失败记录失败，用户名: {}", username, e);
-        }
-    }
-
-    /**
-     * 锁定用户账户
-     *
-     * @param username 用户名
-     * @param duration 锁定时长（秒）
-     */
-    public void lockUser(String username, int duration) {
-        try {
-            String lockKey = USER_LOCK_PREFIX + username;
-            redisTemplate.opsForValue().set(lockKey, "true", duration, TimeUnit.SECONDS);
-
-            log.warn("用户账户已锁定: {}, 锁定时长: {}秒", username, duration);
-        } catch (Exception e) {
-            log.error("锁定用户账户失败，用户名: {}", username, e);
-        }
-    }
-
-    /**
-     * 检查用户是否被锁定
-     *
-     * @param username 用户名
-     * @return 是否被锁定
-     */
-    public boolean isUserLocked(String username) {
-        try {
-            String lockKey = USER_LOCK_PREFIX + username;
-            return Boolean.TRUE.equals(redisTemplate.hasKey(lockKey));
-        } catch (Exception e) {
-            log.error("检查用户锁定状态失败，用户名: {}", username, e);
+            log.error("[认证管理器] 用户会话验证异常: userId={}, error={}", userId, e.getMessage(), e);
             return false;
-        }
-    }
-
-    /**
-     * 解锁用户账户
-     *
-     * @param username 用户名
-     */
-    public void unlockUser(String username) {
-        try {
-            String lockKey = USER_LOCK_PREFIX + username;
-            redisTemplate.delete(lockKey);
-            clearLoginFailure(username);
-
-            log.info("用户账户已解锁: {}", username);
-        } catch (Exception e) {
-            log.error("解锁用户账户失败，用户名: {}", username, e);
         }
     }
 
     /**
      * 更新会话最后访问时间
      *
-     * 注意：事务管理在Service层，Manager层不管理事务
-     * 事务边界由调用此方法的Service层方法控制
-     *
+     * @param userId 用户ID
      * @param token 令牌
      */
-    public void updateSessionLastAccessTime(String token) {
+    public void updateSessionLastAccessTime(Long userId, String token) {
         try {
-            userSessionDao.updateLastAccessTime(token, LocalDateTime.now());
+            concurrentLoginService.updateLastAccessTime(userId, token);
+            log.trace("[认证管理器] 更新会话最后访问时间: userId={}, token={}", userId, maskToken(token));
         } catch (Exception e) {
-            log.error("更新会话最后访问时间失败", e);
+            log.error("[认证管理器] 更新会话最后访问时间异常: userId={}, error={}", userId, e.getMessage(), e);
         }
     }
 
     /**
-     * 清理过期会话（定时任务）
+     * 解析设备类型
      *
-     * 注意：事务管理在Service层，Manager层不管理事务
-     * 事务边界由调用此方法的Service层方法控制
-     *
-     * 企业级特性：
-     * - 自动清理过期会话
-     * - 释放系统资源
-     * - 保持会话数据一致性
-     *
-     * @return 清理数量
+     * @param deviceInfo 设备信息
+     * @return 设备类型（pc/mobile/tablet/unknown）
      */
-    public int cleanExpiredSessions() {
-        try {
-            int count = userSessionDao.deleteExpiredSessions(LocalDateTime.now());
-            log.info("清理过期会话完成，清理数量: {}", count);
-            return count;
-        } catch (Exception e) {
-            log.error("清理过期会话失败", e);
-            return 0;
+    private String parseDeviceType(String deviceInfo) {
+        if (deviceInfo == null) {
+            return "unknown";
         }
+
+        String lowerInfo = deviceInfo.toLowerCase();
+
+        // 移动设备
+        if (lowerInfo.contains("iphone") || lowerInfo.contains("android") ||
+            lowerInfo.contains("mobile") || lowerInfo.contains("phone")) {
+            return "mobile";
+        }
+
+        // 平板设备
+        if (lowerInfo.contains("ipad") || lowerInfo.contains("tablet")) {
+            return "tablet";
+        }
+
+        // PC设备
+        if (lowerInfo.contains("windows") || lowerInfo.contains("macintosh") ||
+            lowerInfo.contains("linux") || lowerInfo.contains("pc")) {
+            return "pc";
+        }
+
+        return "unknown";
     }
 
     /**
-     * 获取用户活跃会话列表
+     * 获取令牌剩余时间（秒）
+     * 辅助方法，用于设置黑名单TTL
      *
-     * @param userId 用户ID
-     * @return 会话列表
+     * @param token JWT令牌
+     * @return 剩余时间（秒）
      */
-    public List<UserSessionEntity> getUserActiveSessions(Long userId) {
-        try {
-            return userSessionDao.selectActiveSessionsByUserId(userId);
-        } catch (Exception e) {
-            log.error("获取用户活跃会话失败，用户ID: {}", userId, e);
-            return new ArrayList<>();
-        }
+    private long getTokenRemainingTime(String token) {
+        // 这里简化处理，实际应该解析JWT获取过期时间
+        // 默认7天黑名单TTL
+        return 7 * 24 * 60 * 60L;
     }
 
     /**
-     * 强制下线用户所有会话
+     * 遮盖令牌，只显示前20个字符
+     * 用于日志记录
      *
-     * 注意：事务管理在Service层，Manager层不管理事务
-     * 事务边界由调用此方法的Service层方法控制
-     *
-     * 企业级特性：
-     * - 管理员强制下线
-     * - 安全策略执行
-     * - 异常账户处理
-     *
-     * @param userId 用户ID
-     * @return 下线会话数
+     * @param token JWT令牌
+     * @return 遮盖后的令牌
      */
-    public int forceLogoutUser(Long userId) {
-        try {
-            // 1. 获取用户所有会话
-            List<UserSessionEntity> sessions = userSessionDao.selectActiveSessionsByUserId(userId);
-
-            // 2. 将所有令牌加入黑名单
-            for (UserSessionEntity session : sessions) {
-                blacklistToken(session.getToken());
-            }
-
-            // 3. 从Redis移除会话
-            String sessionKey = USER_SESSION_PREFIX + userId;
-            redisTemplate.delete(sessionKey);
-
-            // 4. 删除数据库会话记录
-            int count = userSessionDao.deleteByUserId(userId);
-
-            log.warn("强制下线用户所有会话，用户ID: {}, 下线数量: {}", userId, count);
-            return count;
-        } catch (Exception e) {
-            log.error("强制下线用户失败，用户ID: {}", userId, e);
-            return 0;
+    private String maskToken(String token) {
+        if (token == null) {
+            return "null";
         }
-    }
-
-    /**
-     * 获取在线用户统计
-     *
-     * 企业级监控特性：
-     * - 实时在线用户统计
-     * - 系统负载监控
-     *
-     * @return 在线用户数
-     */
-    public long getOnlineUserCount() {
-        try {
-            return userSessionDao.countActiveSessions();
-        } catch (Exception e) {
-            log.error("获取在线用户统计失败", e);
-            return 0;
-        }
-    }
-
-    /**
-     * 检查并发登录限制
-     *
-     * 企业级安全特性：
-     * - 防止账号共享
-     * - 并发登录控制
-     *
-     * @param userId 用户ID
-     * @return 是否超过限制
-     */
-    public boolean isConcurrentLoginExceeded(Long userId) {
-        try {
-            String sessionKey = USER_SESSION_PREFIX + userId;
-            Long sessionCount = redisTemplate.opsForSet().size(sessionKey);
-            return sessionCount != null && sessionCount >= MAX_SESSIONS;
-        } catch (Exception e) {
-            log.error("检查并发登录限制失败，用户ID: {}", userId, e);
-            return false;
-        }
+        int length = Math.min(token.length(), 20);
+        return token.substring(0, length) + "...";
     }
 }

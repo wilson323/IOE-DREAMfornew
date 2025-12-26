@@ -1,0 +1,57 @@
+name: Local Test Reporter
+description: Local replacement for dorny/test-reporter
+inputs:
+  name:
+    description: Report name
+    required: true
+  path:
+    description: Report path
+    required: true
+  reporter:
+    description: Reporter type
+    required: false
+runs:
+  using: composite
+  steps:
+    - name: Collect test reports (bash)
+      if: runner.os != 'Windows'
+      shell: bash
+      run: |
+        set -euo pipefail
+        NAME="${INPUT_NAME:-test-reports}"
+        PATHS="${INPUT_PATH:-}"
+        DEST="artifacts/test-reports/${NAME}"
+        mkdir -p "$DEST"
+        shopt -s nullglob globstar
+        count=0
+        while IFS= read -r pattern; do
+          [ -z "$pattern" ] && continue
+          matches=( $pattern )
+          for m in "${matches[@]}"; do
+            if [ -e "$m" ]; then
+              count=$((count+1))
+              cp -R "$m" "$DEST/"
+            fi
+          done
+        done <<< "$PATHS"
+        echo "Collected $count report file(s) to $DEST"
+    - name: Collect test reports (pwsh)
+      if: runner.os == 'Windows'
+      shell: pwsh
+      run: |
+        $ErrorActionPreference = "Stop"
+        $name = $env:INPUT_NAME
+        if ([string]::IsNullOrWhiteSpace($name)) { $name = "test-reports" }
+        $paths = $env:INPUT_PATH
+        $dest = Join-Path -Path "artifacts/test-reports" -ChildPath $name
+        New-Item -ItemType Directory -Path $dest -Force | Out-Null
+        $count = 0
+        foreach ($pattern in ($paths -split "`n")) {
+          if ([string]::IsNullOrWhiteSpace($pattern)) { continue }
+          $items = Get-ChildItem -Path $pattern -ErrorAction SilentlyContinue
+          foreach ($item in $items) {
+            $count++
+            Copy-Item -Path $item.FullName -Destination $dest -Recurse -Force
+          }
+        }
+        Write-Host "Collected $count report file(s) to $dest"

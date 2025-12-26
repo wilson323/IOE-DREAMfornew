@@ -1,30 +1,47 @@
 package net.lab1024.sa.common.system.domain.vo;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-import java.time.LocalDateTime;
+
+import java.io.Serializable;
 
 /**
- * 字典VO
- * 整合自ioedream-system-service
+ * 字典视图对象
  *
  * @author IOE-DREAM Team
- * @version 1.0.0
- * @since 2025-12-02（整合自system-service）
+ * @since 2025-12-21
  */
 @Data
-public class DictVO {
+@Schema(description = "字典视图对象")
+public class DictVO implements Serializable {
 
-    private Long dictDataId;
-    private Long dictTypeId;
+    private static final long serialVersionUID = 1L;
+
+    @Schema(description = "字典ID", example = "1001")
+    private Long dictId;
+
+    @Schema(description = "字典类型编码", example = "GENDER")
     private String dictTypeCode;
-    private String dictLabel;
-    private String dictValue;
-    private String cssClass;
-    private String listClass;
-    private Integer isDefault;
+
+    @Schema(description = "字典类型名称", example = "性别")
+    private String dictTypeName;
+
+    @Schema(description = "字典数据编码", example = "MALE")
+    private String dictDataCode;
+
+    @Schema(description = "字典数据值", example = "男")
+    private String dictDataValue;
+
+    @Schema(description = "排序号", example = "1")
     private Integer sortOrder;
+
+    @Schema(description = "状态", example = "1")
     private Integer status;
+
+    @Schema(description = "状态描述", example = "启用")
+    private String statusDesc;
+
+    @Schema(description = "备注", example = "性别字典")
     private String remark;
-    private LocalDateTime createTime;
 }
 

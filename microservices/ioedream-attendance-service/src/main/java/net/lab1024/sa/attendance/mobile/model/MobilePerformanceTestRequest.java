@@ -29,6 +29,19 @@ public class MobilePerformanceTestRequest {
      */
     @Schema(description = "测试次数", example = "10")
     private Integer testCount;
+
+    /**
+     * 是否测试网关
+     */
+    @Schema(description = "是否测试网关", example = "false")
+    private Boolean testGateway;
+
+    /**
+     * 检查是否测试网关
+     */
+    public boolean isTestGateway() {
+        return Boolean.TRUE.equals(testGateway);
+    }
 }
 
 

@@ -38,6 +38,36 @@ public class MobileScheduleResult {
      */
     @Schema(description = "排班列表")
     private List<Map<String, Object>> schedules;
+
+    /**
+     * 总记录数（分页使用）
+     */
+    @Schema(description = "总记录数", example = "100")
+    private Long totalCount;
+
+    /**
+     * 当前页码（分页使用）
+     */
+    @Schema(description = "当前页码", example = "1")
+    private Integer pageNum;
+
+    /**
+     * 每页大小（分页使用）
+     */
+    @Schema(description = "每页大小", example = "20")
+    private Integer pageSize;
+
+    /**
+     * 是否有下一页（分页使用）
+     */
+    @Schema(description = "是否有下一页", example = "true")
+    private Boolean hasNext;
+
+    /**
+     * 是否有上一页（分页使用）
+     */
+    @Schema(description = "是否有上一页", example = "false")
+    private Boolean hasPrev;
 }
 
 

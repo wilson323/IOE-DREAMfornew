@@ -1,11 +1,15 @@
 package net.lab1024.sa.video.manager;
 
-import lombok.extern.slf4j.Slf4j;
-
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+
+import lombok.extern.slf4j.Slf4j;
+
+import net.lab1024.sa.video.detection.DBSCANKMeans;
 
 /**
  * 行为检测管理器
@@ -25,6 +29,8 @@ public class BehaviorDetectionManager {
     // 配置参数
     private static final int LOITERING_THRESHOLD_SECONDS = 300; // 徘徊阈值：5分钟
     private static final int GATHERING_THRESHOLD_COUNT = 5; // 聚集阈值：5人
+    private static final int DBSCAN_MIN_PTS = 3; // DBSCAN最小邻居点数
+    private static final int DBSCAN_EPSILON = 150; // DBSCAN邻域半径（像素）
 
     /**
      * 跌倒检测置信度阈值
@@ -37,13 +43,16 @@ public class BehaviorDetectionManager {
     @SuppressWarnings("unused")
     private static final double FALL_DETECTION_THRESHOLD = 0.8; // 跌倒检测置信度阈值
 
+    // DBSCAN聚类算法实例
+    private final DBSCANKMeans dbscan = new DBSCANKMeans(DBSCAN_MIN_PTS, DBSCAN_EPSILON);
+
     /**
      * 徘徊检测
      *
-     * @param cameraId 摄像头ID
-     * @param personId 人员标识
-     * @param x 位置X
-     * @param y 位置Y
+     * @param cameraId  摄像头ID
+     * @param personId  人员标识
+     * @param x         位置X
+     * @param y         位置Y
      * @param timestamp 时间戳
      * @return 是否检测到徘徊
      */
@@ -65,70 +74,83 @@ public class BehaviorDetectionManager {
 
     /**
      * 聚集检测
+     * <p>
+     * 使用DBSCAN密度聚类算法检测人员聚集
+     * - 自动发现聚集区域
+     * - 计算聚集中心点和半径
+     * - 支持多区域同时检测
+     * </p>
      *
-     * @param cameraId 摄像头ID
+     * @param cameraId        摄像头ID
      * @param personPositions 人员位置列表
-     * @return 聚集检测结果
+     * @return 聚集检测结果（返回最大的聚集区域）
      */
     public GatheringResult detectGathering(String cameraId, List<PersonPosition> personPositions) {
         if (personPositions.size() < GATHERING_THRESHOLD_COUNT) {
+            log.debug("[行为检测] 人员数量不足，跳过聚集检测: count={}", personPositions.size());
             return new GatheringResult(false, 0, 0, 0, personPositions.size());
         }
 
-        // 简化实现：检查是否有多人在同一区域
-        // TODO: 实现基于密度的聚类算法（如DBSCAN）
-        // 说明：当前使用简单的平均值计算，未来将集成DBSCAN等聚类算法
-        // 以更准确地识别人员聚集区域和聚集半径
-        int avgX = (int) personPositions.stream().mapToInt(PersonPosition::x).average().orElse(0);
-        int avgY = (int) personPositions.stream().mapToInt(PersonPosition::y).average().orElse(0);
+        try {
+            // 转换为PersonPoint列表
+            List<DBSCANKMeans.PersonPoint> points = personPositions.stream()
+                    .map(pos -> new DBSCANKMeans.PersonPoint(pos.personId(), pos.x(), pos.y()))
+                    .collect(Collectors.toList());
 
-        log.warn("[行为检测] 检测到聚集行为，cameraId={}, count={}", cameraId, personPositions.size());
-        return new GatheringResult(true, avgX, avgY, 100, personPositions.size());
+            // 执行DBSCAN聚类
+            List<List<DBSCANKMeans.PersonPoint>> clusters = dbscan.cluster(points);
+
+            if (clusters.isEmpty()) {
+                log.debug("[行为检测] 未检测到聚集: cameraId={}", cameraId);
+                return new GatheringResult(false, 0, 0, 0, personPositions.size());
+            }
+
+            // 找到最大的聚类
+            List<DBSCANKMeans.PersonPoint> largestCluster = clusters.stream()
+                    .max((c1, c2) -> Integer.compare(c1.size(), c2.size()))
+                    .orElse(null);
+
+            if (largestCluster == null || largestCluster.size() < GATHERING_THRESHOLD_COUNT) {
+                log.debug("[行为检测] 最大聚类人数不足: maxSize={}", largestCluster != null ? largestCluster.size() : 0);
+                return new GatheringResult(false, 0, 0, 0, personPositions.size());
+            }
+
+            // 计算聚类信息
+            DBSCANKMeans.ClusterInfo clusterInfo = dbscan.calculateClusterInfo(largestCluster);
+
+            log.warn("[行为检测] 检测到聚集行为: cameraId={}, clusterCount={}, maxClusterSize={}, center=({},{})",
+                    cameraId, clusters.size(), largestCluster.size(),
+                    clusterInfo.centerX(), clusterInfo.centerY());
+
+            return new GatheringResult(
+                    true,
+                    clusterInfo.centerX(),
+                    clusterInfo.centerY(),
+                    clusterInfo.radius(),
+                    clusterInfo.pointCount()
+            );
+
+        } catch (Exception e) {
+            log.error("[行为检测] 聚集检测失败: cameraId={}, error={}", cameraId, e.getMessage(), e);
+            return new GatheringResult(false, 0, 0, 0, personPositions.size());
+        }
     }
 
-    /**
-     * 跌倒检测
-     * <p>
-     * 当前实现：返回默认结果（未检测到跌倒）
-     * 未来扩展：集成跌倒检测AI模型
-     * - 使用FALL_DETECTION_THRESHOLD作为置信度阈值
-     * - 支持实时视频流分析和批量图片分析
-     * - 返回跌倒位置坐标和置信度
-     * </p>
-     *
-     * @param cameraId 摄像头ID
-     * @param frameData 视频帧数据
-     * @return 跌倒检测结果
-     */
-    public FallDetectionResult detectFall(String cameraId, byte[] frameData) {
-        log.info("[行为检测] 跌倒检测，cameraId={}", cameraId);
-        // TODO: 集成跌倒检测AI模型
-        // 说明：待AI模型集成后，将使用FALL_DETECTION_THRESHOLD判断检测结果
-        // 当前返回默认结果，表示未检测到跌倒
-        return new FallDetectionResult(false, 0.0, 0, 0);
-    }
+    // ============================================================
+    // ⚠️ 架构违规修复（2025-01-30）
+    // ============================================================
+    // 以下方法已被删除，违反边缘计算架构原则：
+    // - detectFall(String cameraId, byte[] frameData)
+    // - detectAbnormalBehaviors(String cameraId, byte[] frameData)
+    //
+    // 正确架构：
+    // 设备端完成AI分析，服务器通过 DeviceAIEventReceiver 接收结构化事件。
+   //
+    // 参考文档：
+    // - openspec/changes/refactor-video-edge-ai-architecture/proposal.md
+    // - CLAUDE.md (Mode 5: 边缘AI计算)
+    // ============================================================
 
-    /**
-     * 异常行为检测（综合）
-     * <p>
-     * 当前实现：返回空列表（未检测到异常行为）
-     * 未来扩展：集成异常行为检测AI模型
-     * - 支持多种异常行为类型检测（打架、奔跑、攀爬等）
-     * - 返回异常行为类型、置信度、位置坐标和描述信息
-     * - 支持自定义异常行为规则配置
-     * </p>
-     *
-     * @param cameraId 摄像头ID
-     * @param frameData 视频帧数据
-     * @return 异常行为列表
-     */
-    public List<AbnormalBehavior> detectAbnormalBehaviors(String cameraId, byte[] frameData) {
-        log.info("[行为检测] 综合异常行为检测，cameraId={}", cameraId);
-        // TODO: 集成异常行为检测AI模型
-        // 说明：待AI模型集成后，将返回检测到的异常行为列表
-        // 当前返回空列表，表示未检测到异常行为
-        return List.of();
-    }
 
     /**
      * 清理过期轨迹
@@ -214,9 +236,22 @@ public class BehaviorDetectionManager {
     }
 
     // 记录类型
-    public record PersonPosition(String personId, int x, int y) {}
-    public record LoiteringResult(boolean detected, String personId, long durationSeconds, int x, int y) {}
-    public record GatheringResult(boolean detected, int centerX, int centerY, int radius, int personCount) {}
-    public record FallDetectionResult(boolean detected, double confidence, int x, int y) {}
-    public record AbnormalBehavior(String type, double confidence, int x, int y, String description) {}
+    public record PersonPosition(String personId, int x, int y) {
+    }
+
+    public record LoiteringResult(boolean detected, String personId, long durationSeconds, int x, int y) {
+    }
+
+    public record GatheringResult(boolean detected, int centerX, int centerY, int radius, int personCount) {
+    }
+
+    // ============================================================
+    // ⚠️ 以下record已被删除（2025-01-30）
+    // ============================================================
+    // - FallDetectionResult: 用于服务器端AI分析，已违反架构
+    // - AbnormalBehavior: 用于服务器端AI分析，已违反架构
+    //
+    // 替代方案：
+    // 使用 DeviceAIEvent 实体类接收设备上报的结构化事件
+    // ============================================================
 }

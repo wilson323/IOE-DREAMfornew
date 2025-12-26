@@ -1,423 +1,151 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-         http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>net.lab1024.sa</groupId>
-        <artifactId>ioedream-microservices-parent</artifactId>
-        <version>1.0.0</version>
-        <relativePath>../pom.xml</relativePath>
-    </parent>
+  <parent>
+    <groupId>net.lab1024.sa</groupId>
+    <artifactId>ioedream-microservices-parent</artifactId>
+    <version>1.0.0</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
 
-    <artifactId>microservices-common</artifactId>
-    <packaging>jar</packaging>
+  <artifactId>microservices-common</artifactId>
+  <packaging>jar</packaging>
 
-    <name>IOE-DREAM Common Module</name>
-    <description>公共模块，包含Entity、DAO、Manager等公共组件</description>
+  <name>IOE-DREAM Common Module</name>
+  <description>公共模块，包含Entity、DAO、Manager等公共组件</description>
 
-    <dependencies>
-        <!-- ==================== 核心基础模块 ==================== -->
-        <!-- Common Core (最小稳定内核) -->
-        <dependency>
-            <groupId>net.lab1024.sa</groupId>
-            <artifactId>microservices-common-core</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+  <dependencies>
+    <!-- ==================== 核心基础模块 ==================== -->
+    <!-- Common Core (最小稳定内核) -->
+    <dependency>
+      <groupId>net.lab1024.sa</groupId>
+      <artifactId>microservices-common-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
-        <!-- ==================== 细粒度模块（按需引入） ==================== -->
-        <!-- 安全模块：JWT、Spring Security、加密 -->
-        <dependency>
-            <groupId>net.lab1024.sa</groupId>
-            <artifactId>microservices-common-security</artifactId>
-            <version>${project.version}</version>
-            <optional>true</optional>
-        </dependency>
+    <!-- ==================== 配置类所需的最小依赖 ==================== -->
+    <!--
+      注意：microservices-common作为配置类和工具类容器，只保留配置类所需的依赖。
+      所有细粒度模块的聚合依赖已移除，各服务直接依赖需要的细粒度模块。
+      所有框架依赖（MyBatis-Plus、Redis、Druid、Flyway等）已迁移到对应的细粒度模块。
+    -->
 
-        <!-- 数据层模块：MyBatis-Plus、Druid、Flyway -->
-        <dependency>
-            <groupId>net.lab1024.sa</groupId>
-            <artifactId>microservices-common-data</artifactId>
-            <version>${project.version}</version>
-            <optional>true</optional>
-        </dependency>
+    <!-- Spring Boot Starter (用于配置类：@ConfigurationProperties、@Component、@Bean) -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter</artifactId>
+    </dependency>
 
-        <!-- 缓存模块：Caffeine、Redis、Redisson -->
-        <dependency>
-            <groupId>net.lab1024.sa</groupId>
-            <artifactId>microservices-common-cache</artifactId>
-            <version>${project.version}</version>
-            <optional>true</optional>
-        </dependency>
+    <!-- Spring Web (用于其他配置类和Web相关功能) -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
 
-        <!-- 导出模块：EasyExcel、iText PDF、ZXing -->
-        <dependency>
-            <groupId>net.lab1024.sa</groupId>
-            <artifactId>microservices-common-export</artifactId>
-            <version>${project.version}</version>
-            <optional>true</optional>
-        </dependency>
+    <!-- Jackson (用于JacksonConfiguration配置类的ObjectMapper) -->
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
 
-        <!-- 工作流模块：Aviator、Quartz -->
-        <dependency>
-            <groupId>net.lab1024.sa</groupId>
-            <artifactId>microservices-common-workflow</artifactId>
-            <version>${project.version}</version>
-            <optional>true</optional>
-        </dependency>
+    <!-- Swagger/OpenAPI (用于OpenApiConfiguration配置类) -->
+    <dependency>
+      <groupId>io.swagger.core.v3</groupId>
+      <artifactId>swagger-annotations</artifactId>
+      <version>${swagger.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.swagger.core.v3</groupId>
+      <artifactId>swagger-models</artifactId>
+      <version>${swagger.version}</version>
+    </dependency>
 
-        <!-- Common Monitor (监控告警模块) -->
-        <!-- 注释掉避免循环依赖
-        <dependency>
-            <groupId>net.lab1024.sa</groupId>
-            <artifactId>microservices-common-monitor</artifactId>
-            <version>${project.version}</version>
-            <optional>true</optional>
-        </dependency>
-        -->
+    <!-- Micrometer (用于CommonComponentsConfiguration配置类) -->
+    <dependency>
+      <groupId>io.micrometer</groupId>
+      <artifactId>micrometer-core</artifactId>
+      <version>${micrometer.version}</version>
+    </dependency>
 
-        <!-- Common Business (业务公共模块) -->
-        <dependency>
-            <groupId>net.lab1024.sa</groupId>
-            <artifactId>microservices-common-business</artifactId>
-            <version>${project.version}</version>
-            <optional>true</optional>
-        </dependency>
+    <!-- Micrometer Tracing (用于CommonComponentsConfiguration配置类) -->
+    <dependency>
+      <groupId>io.micrometer</groupId>
+      <artifactId>micrometer-tracing-bridge-brave</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.micrometer</groupId>
+      <artifactId>micrometer-observation</artifactId>
+      <version>${micrometer.version}</version>
+    </dependency>
 
-        <!-- ==================== 基础框架依赖 ==================== -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
-        </dependency>
+    <!-- Lombok (用于IoeDreamGatewayProperties的@Data注解) -->
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <optional>true</optional>
+    </dependency>
 
-        <!-- Spring Boot Actuator (监控端点 - 所有微服务必须) -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
+    <!-- Spring Cloud Commons (服务发现，用于其他组件) -->
+    <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-commons</artifactId>
+    </dependency>
 
-        <!-- MyBatis-Plus (Spring Boot 3.x专用) -->
-        <dependency>
-            <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
-            <version>${mybatis-plus.version}</version>
-        </dependency>
+    <!--
+      架构重构说明：
+      1. ExceptionMetricsCollector已迁移到microservices-common-monitor模块
+      2. StrategyFactory已迁移到microservices-common-business模块
+      3. 业务服务直接依赖对应的细粒度模块，符合架构规范
+      4. microservices-common作为配置类容器，不再依赖细粒度模块
+    -->
 
-        <!-- MySQL驱动 -->
-        <dependency>
-            <groupId>com.mysql</groupId>
-            <artifactId>mysql-connector-j</artifactId>
-            <scope>runtime</scope>
-        </dependency>
+    <!-- Jakarta Validation API (用于验证注解) -->
+    <dependency>
+      <groupId>jakarta.validation</groupId>
+      <artifactId>jakarta.validation-api</artifactId>
+    </dependency>
 
-        <!-- Druid数据库连接池 -->
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>druid-spring-boot-3-starter</artifactId>
-            <version>1.2.25</version>
-        </dependency>
+    <!-- ==================== 测试依赖 ==================== -->
+    <!-- JUnit 5 (测试框架) -->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
 
-        <!-- Lombok -->
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <optional>true</optional>
-        </dependency>
+    <!-- H2 Database (测试环境使用内存数据库) -->
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <scope>test</scope>
+    </dependency>
 
-        <!-- Swagger/OpenAPI -->
-        <dependency>
-            <groupId>io.swagger.core.v3</groupId>
-            <artifactId>swagger-annotations</artifactId>
-            <version>${swagger.version}</version>
-        </dependency>
+  </dependencies>
 
-        <!-- Bean Validation（提供Hibernate Validator实现，支持@Valid/@Validated在运行时生效） -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-validation</artifactId>
-        </dependency>
+  <build>
+    <plugins>
+      <!-- Maven Compiler Plugin配置由父POM统一管理 -->
 
-        <!-- Jakarta Transaction API (用于@Transactional注解) -->
-        <dependency>
-            <groupId>jakarta.transaction</groupId>
-            <artifactId>jakarta.transaction-api</artifactId>
-        </dependency>
-
-        <!-- Eclipse JDT 注解（null 分析支持） -->
-        <dependency>
-            <groupId>org.eclipse.jdt</groupId>
-            <artifactId>org.eclipse.jdt.annotation</artifactId>
-            <version>2.3.0</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <!-- Jackson (JSON处理) -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>${jackson.version}</version>
-        </dependency>
-
-        <!-- EasyExcel (Excel导出) -->
-        <!-- 改为optional，仅在需要Excel导出的服务引入 -->
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>easyexcel</artifactId>
-            <version>${easyexcel.version}</version>
-            <optional>true</optional>
-        </dependency>
-
-        <!-- iText PDF (PDF导出) -->
-        <!-- 改为optional，仅在需要PDF导出的服务引入 -->
-        <dependency>
-            <groupId>com.itextpdf</groupId>
-            <artifactId>kernel</artifactId>
-            <version>${itextpdf.version}</version>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>com.itextpdf</groupId>
-            <artifactId>layout</artifactId>
-            <version>${itextpdf.version}</version>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>com.itextpdf</groupId>
-            <artifactId>io</artifactId>
-            <version>${itextpdf.version}</version>
-            <optional>true</optional>
-        </dependency>
-
-        <!-- Spring Data Redis (Redis支持) -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-redis</artifactId>
-        </dependency>
-
-        <!-- Flyway Database Migration (数据库版本管理) -->
-        <dependency>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-mysql</artifactId>
-        </dependency>
-
-        <!-- Spring Security (安全配置) -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
-        </dependency>
-
-        <!-- JWT (JSON Web Token) -->
-        <dependency>
-            <groupId>io.jsonwebtoken</groupId>
-            <artifactId>jjwt-api</artifactId>
-            <version>${jjwt.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.jsonwebtoken</groupId>
-            <artifactId>jjwt-impl</artifactId>
-            <version>${jjwt.version}</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.jsonwebtoken</groupId>
-            <artifactId>jjwt-jackson</artifactId>
-            <version>${jjwt.version}</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <!-- Micrometer (指标监控) -->
-        <dependency>
-            <groupId>io.micrometer</groupId>
-            <artifactId>micrometer-core</artifactId>
-            <version>${micrometer.version}</version>
-        </dependency>
-
-        <!-- Micrometer Tracing (分布式追踪) -->
-        <dependency>
-            <groupId>io.micrometer</groupId>
-            <artifactId>micrometer-tracing-bridge-brave</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.zipkin.reporter2</groupId>
-            <artifactId>zipkin-reporter-brave</artifactId>
-        </dependency>
-
-        <!-- Micrometer Observation (用于@Observed注解) -->
-        <dependency>
-            <groupId>io.micrometer</groupId>
-            <artifactId>micrometer-observation</artifactId>
-            <version>${micrometer.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.micrometer</groupId>
-            <artifactId>context-propagation</artifactId>
-            <version>1.1.1</version>
-        </dependency>
-
-        <!-- Resilience4j（直连/网关调用韧性治理） -->
-        <dependency>
-            <groupId>io.github.resilience4j</groupId>
-            <artifactId>resilience4j-retry</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.github.resilience4j</groupId>
-            <artifactId>resilience4j-circuitbreaker</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.github.resilience4j</groupId>
-            <artifactId>resilience4j-timelimiter</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.github.resilience4j</groupId>
-            <artifactId>resilience4j-micrometer</artifactId>
-        </dependency>
-
-        <!-- Spring Cloud Commons (服务发现) -->
-        <!-- 版本由父POM的Spring Cloud BOM统一管理，无需指定版本号 -->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-commons</artifactId>
-        </dependency>
-
-        <!-- Spring Web (RestTemplate支持) - 已移除，Controller和ServiceImpl已迁移到ioedream-common-service -->
-        <!-- 如果需要RestTemplate，请使用spring-boot-starter-webflux或单独引入spring-web -->
-
-        <!-- Caffeine (本地缓存) -->
-        <dependency>
-            <groupId>com.github.ben-manes.caffeine</groupId>
-            <artifactId>caffeine</artifactId>
-            <version>${caffeine.version}</version>
-        </dependency>
-
-        <!-- Redisson (分布式锁和缓存) -->
-        <dependency>
-            <groupId>org.redisson</groupId>
-            <artifactId>redisson-spring-boot-starter</artifactId>
-            <version>${redisson.version}</version>
-        </dependency>
-
-        <!-- Quartz (任务调度) -->
-        <!-- 改为optional，仅在需要定时任务的服务引入 -->
-        <dependency>
-            <groupId>org.quartz-scheduler</groupId>
-            <artifactId>quartz</artifactId>
-            <optional>true</optional>
-        </dependency>
-
-        <!-- Jakarta Servlet API -->
-        <dependency>
-            <groupId>jakarta.servlet</groupId>
-            <artifactId>jakarta.servlet-api</artifactId>
-            <version>${jakarta-servlet.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <!-- Apache Commons Lang3 -->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>${commons-lang3.version}</version>
-        </dependency>
-
-        <!-- Apache Commons Collections4 -->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-collections4</artifactId>
-            <version>${commons-collections4.version}</version>
-        </dependency>
-
-        <!-- Apache Commons Text -->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-text</artifactId>
-            <version>${commons-text.version}</version>
-        </dependency>
-
-        <!-- Bouncy Castle (加密算法) -->
-        <dependency>
-            <groupId>org.bouncycastle</groupId>
-            <artifactId>bcprov-jdk18on</artifactId>
-            <version>${bouncycastle.version}</version>
-        </dependency>
-
-        <!-- Spring Retry (重试机制) -->
-        <dependency>
-            <groupId>org.springframework.retry</groupId>
-            <artifactId>spring-retry</artifactId>
-        </dependency>
-
-        <!-- Spring AOP -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-aop</artifactId>
-        </dependency>
-
-        <!-- JUnit 5 (测试框架) -->
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- H2 Database (测试环境使用内存数据库) -->
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- Aviator表达式引擎 - 企业级表达式计算引擎 -->
-        <!-- 改为optional，仅在需要表达式计算的服务引入 -->
-        <dependency>
-            <groupId>com.googlecode.aviator</groupId>
-            <artifactId>aviator</artifactId>
-            <version>${aviator.version}</version>
-            <optional>true</optional>
-        </dependency>
-
-        <!-- ZXing (二维码生成和解析) -->
-        <!-- 改为optional，仅在需要二维码功能的服务引入 -->
-        <dependency>
-            <groupId>com.google.zxing</groupId>
-            <artifactId>core</artifactId>
-            <version>${zxing.version}</version>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>com.google.zxing</groupId>
-            <artifactId>javase</artifactId>
-            <version>${zxing.version}</version>
-            <optional>true</optional>
-        </dependency>
-
-    </dependencies>
-
-    <build>
-        <plugins>
-            <!-- Maven Compiler Plugin配置由父POM统一管理 -->
-
-            <!-- Spring Boot Maven Plugin - 跳过repackage，因为这是公共库而非可执行应用 -->
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>${spring-boot.version}</version>
-                <configuration>
-                    <!-- 跳过repackage，因为microservices-common是公共JAR库，不是可执行应用 -->
-                    <skip>true</skip>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+      <!-- Spring Boot Maven Plugin - 跳过repackage，因为这是公共库而非可执行应用 -->
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <version>${spring-boot.version}</version>
+        <configuration>
+          <!-- 跳过repackage，因为microservices-common是公共JAR库，不是可执行应用 -->
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>

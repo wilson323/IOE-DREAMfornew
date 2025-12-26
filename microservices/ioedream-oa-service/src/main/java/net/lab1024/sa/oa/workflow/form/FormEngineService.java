@@ -1,5 +1,7 @@
 package net.lab1024.sa.oa.workflow.form;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,11 +9,9 @@ import java.util.List;
 import java.util.Map;
 
 import jakarta.annotation.Resource;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -26,9 +26,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * @since 2025-01-16
  */
 @Service
-public class FormEngineService {
-
-    private static final Logger log = LoggerFactory.getLogger (FormEngineService.class);
+@Slf4j
+ public class FormEngineService {
 
     @Resource
     private ObjectMapper objectMapper;
@@ -168,8 +167,7 @@ public class FormEngineService {
             }
 
             // 合并表单数据
-            @SuppressWarnings("unchecked")
-            Map<String, Object> existingData = objectMapper.readValue (formInstance.getFormData (), Map.class);
+            Map<String, Object> existingData = objectMapper.readValue(formInstance.getFormData(), new TypeReference<Map<String, Object>>() {});
             if (formVariables != null && !formVariables.isEmpty ()) {
                 existingData.putAll (formVariables);
             }
@@ -287,7 +285,7 @@ public class FormEngineService {
             renderResult.put ("formDefinitionName", formSchema.getFormName ());
             renderResult.put ("formDefinitionVersion", formSchema.getVersion ());
             renderResult.put ("formSchema", objectMapper.readTree (formSchema.getFormSchema ()));
-            renderResult.put ("formData", objectMapper.readValue (formInstance.getFormData (), Map.class));
+            renderResult.put("formData", objectMapper.readValue(formInstance.getFormData(), new TypeReference<Map<String, Object>>() {}));
             renderResult.put ("taskType", taskType);
             renderResult.put ("userId", userId);
             renderResult.put ("renderTime", LocalDateTime.now ().toString ());
@@ -438,3 +436,6 @@ public class FormEngineService {
         }
     }
 }
+
+
+

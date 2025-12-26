@@ -1,6 +1,7 @@
 package net.lab1024.sa.device.comm.protocol;
 
 import lombok.extern.slf4j.Slf4j;
+
 import net.lab1024.sa.device.comm.protocol.domain.*;
 import net.lab1024.sa.device.comm.protocol.exception.ProtocolBuildException;
 import net.lab1024.sa.device.comm.protocol.exception.ProtocolParseException;
@@ -177,3 +178,4 @@ public abstract class AbstractProtocolAdapter implements ProtocolAdapter {
         return stats;
     }
 }
+

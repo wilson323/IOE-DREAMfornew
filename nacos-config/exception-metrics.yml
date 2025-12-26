@@ -21,24 +21,25 @@ management:
       enabled: true
     prometheus:
       enabled: true
-  metrics:
-    export:
-      prometheus:
+  prometheus:
+    metrics:
+      export:
         enabled: true
         step: 30s
         descriptions: true
+  metrics:
     distribution:
       percentiles-histogram:
-        http.server.requests: true
-        spring.data.repository.invocations: true
+        "[http.server.requests]": true
+        "[spring.data.repository.invocations]": true
       percentiles:
-        http.server.requests: 0.5,0.9,0.95,0.99
-        spring.data.repository.invocations: 0.5,0.9,0.95,0.99
+        "[http.server.requests]": 0.5,0.9,0.95,0.99
+        "[spring.data.repository.invocations]": 0.5,0.9,0.95,0.99
       # 内存优化：只收集关键指标，减少内存消耗
       minimum-expected-value:
-        http.server.requests: 10ms
+        "[http.server.requests]": 10ms
       maximum-expected-value:
-        http.server.requests: 5s
+        "[http.server.requests]": 5s
     tags:
       application: ${spring.application.name:unknown}
       environment: ${spring.profiles.active:dev}

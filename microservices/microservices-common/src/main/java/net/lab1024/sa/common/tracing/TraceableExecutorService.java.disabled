@@ -1,0 +1,372 @@
+package net.lab1024.sa.common.tracing;
+
+import io.micrometer.tracing.Span;
+import io.micrometer.tracing.Tracer;
+import io.micrometer.tracing.context.ContextSnapshot;
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.concurrent.*;
+import java.util.function.Supplier;
+
+/**
+ * IOE-DREAM 可追踪的异步任务执行器
+ * <p>
+ * 为异步任务自动传递追踪上下文，确保链路追踪的连续性
+ * 支持CompletableFuture、线程池等多种异步场景
+ * </p>
+ * <p>
+ * 功能特性：
+ * - 自动传递Trace ID和Span ID
+ * - 异步任务执行状态追踪
+ * - 异常信息记录
+ * - 性能指标监控
+ * </p>
+ *
+ * @author IOE-DREAM架构团队
+ * @version 1.0.0
+ * @since 2025-12-20
+ */
+@Slf4j
+public class TraceableExecutorService {
+
+    private final Tracer tracer;
+    private final ExecutorService delegateExecutor;
+
+    /**
+     * 构造函数
+     *
+     * @param tracer 追踪器
+     */
+    public TraceableExecutorService(Tracer tracer) {
+        this.tracer = tracer;
+        this.delegateExecutor = Executors.newCachedThreadPool(r -> {
+            Thread thread = new Thread(r, "traceable-executor-" + System.currentTimeMillis());
+            thread.setDaemon(true);
+            return thread;
+        });
+        log.info("[异步追踪] TraceableExecutorService初始化完成");
+    }
+
+    /**
+     * 提交可追踪的异步任务
+     *
+     * @param task 任务
+     * @return Future
+     */
+    public <T> Future<T> submit(Callable<T> task) {
+        // 捕获当前追踪上下文
+        ContextSnapshot contextSnapshot = ContextSnapshot.captureFrom(tracer.currentTraceContext());
+
+        return delegateExecutor.submit(() -> {
+            // 在新的追踪上下文中执行任务
+            return wrapCallable(task, contextSnapshot).call();
+        });
+    }
+
+    /**
+     * 提交可追踪的异步任务
+     *
+     * @param task 任务
+     * @return Future
+     */
+    public Future<?> submit(Runnable task) {
+        ContextSnapshot contextSnapshot = ContextSnapshot.captureFrom(tracer.currentTraceContext());
+
+        return delegateExecutor.submit(wrapRunnable(task, contextSnapshot));
+    }
+
+    /**
+     * 执行可追踪的异步任务
+     *
+     * @param task 任务
+     */
+    public void execute(Runnable task) {
+        ContextSnapshot contextSnapshot = ContextSnapshot.captureFrom(tracer.currentTraceContext());
+        delegateExecutor.execute(wrapRunnable(task, contextSnapshot));
+    }
+
+    /**
+     * 创建可追踪的CompletableFuture
+     *
+     * @param supplier 任务供应者
+     * @return CompletableFuture
+     */
+    public <T> CompletableFuture<T> supplyAsync(Supplier<T> supplier) {
+        ContextSnapshot contextSnapshot = ContextSnapshot.captureFrom(tracer.currentTraceContext());
+
+        return CompletableFuture.supplyAsync(() -> {
+            return wrapSupplier(supplier, contextSnapshot).get();
+        }, delegateExecutor);
+    }
+
+    /**
+     * 创建可追踪的CompletableFuture
+     *
+     * @param runnable 任务
+     * @return CompletableFuture
+     */
+    public CompletableFuture<Void> runAsync(Runnable runnable) {
+        ContextSnapshot contextSnapshot = ContextSnapshot.captureFrom(tracer.currentTraceContext());
+
+        return CompletableFuture.runAsync(wrapRunnable(runnable, contextSnapshot), delegateExecutor);
+    }
+
+    /**
+     * 包装Callable，传递追踪上下文
+     *
+     * @param callable 原始Callable
+     * @param contextSnapshot 追踪上下文快照
+     * @return 包装后的Callable
+     */
+    private <T> Callable<T> wrapCallable(Callable<T> callable, ContextSnapshot contextSnapshot) {
+        return () -> {
+            Span parentSpan = tracer.nextSpan().name("async-task").start();
+            try (Tracer.SpanInScope ws = tracer.withSpanInScope(parentSpan)) {
+
+                // 恢复追踪上下文
+                contextSnapshot.restore();
+
+                String traceId = parentSpan.context().traceId();
+                log.debug("[异步追踪] 开始执行异步任务: traceId={}", traceId);
+
+                long startTime = System.currentTimeMillis();
+                T result;
+
+                try {
+                    result = callable.call();
+
+                    long executionTime = System.currentTimeMillis() - startTime;
+                    recordAsyncSuccess(parentSpan, executionTime);
+
+                    log.debug("[异步追踪] 异步任务执行成功: traceId={}, 耗时={}ms", traceId, executionTime);
+
+                    return result;
+
+                } catch (Exception e) {
+                    recordAsyncException(parentSpan, e);
+
+                    log.error("[异步追踪] 异步任务执行异常: traceId={}, error={}", traceId, e.getMessage(), e);
+
+                    if (e instanceof RuntimeException) {
+                        throw (RuntimeException) e;
+                    } else {
+                        throw new RuntimeException(e);
+                    }
+                }
+            } finally {
+                parentSpan.end();
+                log.debug("[异步追踪] 异步任务Span结束: traceId={}", traceId);
+            }
+        };
+    }
+
+    /**
+     * 包装Runnable，传递追踪上下文
+     *
+     * @param runnable 原始Runnable
+     * @param contextSnapshot 追踪上下文快照
+     * @return 包装后的Runnable
+     */
+    private Runnable wrapRunnable(Runnable runnable, ContextSnapshot contextSnapshot) {
+        return () -> {
+            Span parentSpan = tracer.nextSpan().name("async-task").start();
+            try (Tracer.SpanInScope ws = tracer.withSpanInScope(parentSpan)) {
+
+                // 恢复追踪上下文
+                contextSnapshot.restore();
+
+                String traceId = parentSpan.context().traceId();
+                log.debug("[异步追踪] 开始执行异步任务: traceId={}", traceId);
+
+                long startTime = System.currentTimeMillis();
+
+                try {
+                    runnable.run();
+
+                    long executionTime = System.currentTimeMillis() - startTime;
+                    recordAsyncSuccess(parentSpan, executionTime);
+
+                    log.debug("[异步追踪] 异步任务执行成功: traceId={}, 耗时={}ms", traceId, executionTime);
+
+                } catch (Exception e) {
+                    recordAsyncException(parentSpan, e);
+
+                    log.error("[异步追踪] 异步任务执行异常: traceId={}, error={}", traceId, e.getMessage(), e);
+
+                    if (e instanceof RuntimeException) {
+                        throw (RuntimeException) e;
+                    } else {
+                        throw new RuntimeException(e);
+                    }
+                }
+            } finally {
+                parentSpan.end();
+                log.debug("[异步追踪] 异步任务Span结束: traceId={}", traceId);
+            }
+        };
+    }
+
+    /**
+     * 包装Supplier，传递追踪上下文
+     *
+     * @param supplier 原始Supplier
+     * @param contextSnapshot 追踪上下文快照
+     * @return 包装后的Supplier
+     */
+    private <T> Supplier<T> wrapSupplier(Supplier<T> supplier, ContextSnapshot contextSnapshot) {
+        return () -> {
+            Span parentSpan = tracer.nextSpan().name("async-task").start();
+            try (Tracer.SpanInScope ws = tracer.withSpanInScope(parentSpan)) {
+
+                // 恢复追踪上下文
+                contextSnapshot.restore();
+
+                String traceId = parentSpan.context().traceId();
+                log.debug("[异步追踪] 开始执行异步任务: traceId={}", traceId);
+
+                long startTime = System.currentTimeMillis();
+                T result;
+
+                try {
+                    result = supplier.get();
+
+                    long executionTime = System.currentTimeMillis() - startTime;
+                    recordAsyncSuccess(parentSpan, executionTime);
+
+                    log.debug("[异步追踪] 异步任务执行成功: traceId={}, 耗时={}ms", traceId, executionTime);
+
+                    return result;
+
+                } catch (Exception e) {
+                    recordAsyncException(parentSpan, e);
+
+                    log.error("[异步追踪] 异步任务执行异常: traceId={}, error={}", traceId, e.getMessage(), e);
+
+                    if (e instanceof RuntimeException) {
+                        throw (RuntimeException) e;
+                    } else {
+                        throw new RuntimeException(e);
+                    }
+                }
+            } finally {
+                parentSpan.end();
+                log.debug("[异步追踪] 异步任务Span结束: traceId={}", traceId);
+            }
+        };
+    }
+
+    /**
+     * 记录异步任务成功执行
+     *
+     * @param span Span对象
+     * @param executionTime 执行时间
+     */
+    private void recordAsyncSuccess(Span span, long executionTime) {
+        span.tag("async.success", "true");
+        span.tag("async.execution.time", String.valueOf(executionTime));
+        span.tag("async.completion", "true");
+        span.event("async_task_completed");
+    }
+
+    /**
+     * 记录异步任务异常
+     *
+     * @param span Span对象
+     * @param exception 异常对象
+     */
+    private void recordAsyncException(Span span, Exception exception) {
+        span.tag("async.success", "false");
+        span.tag("async.error.type", exception.getClass().getSimpleName());
+        span.tag("async.error.message", exception.getMessage());
+        span.tag("async.completion", "false");
+        span.event("async_task_exception");
+    }
+
+    /**
+     * 获取线程池状态信息
+     *
+     * @return 线程池状态
+     */
+    public ThreadPoolStatus getThreadPoolStatus() {
+        if (delegateExecutor instanceof ThreadPoolExecutor) {
+            ThreadPoolExecutor threadPool = (ThreadPoolExecutor) delegateExecutor;
+            return ThreadPoolStatus.builder()
+                    .corePoolSize(threadPool.getCorePoolSize())
+                    .maximumPoolSize(threadPool.getMaximumPoolSize())
+                    .activeCount(threadPool.getActiveCount())
+                    .poolSize(threadPool.getPoolSize())
+                    .queueSize(threadPool.getQueue().size())
+                    .completedTaskCount(threadPool.getCompletedTaskCount())
+                    .taskCount(threadPool.getTaskCount())
+                    .isShutdown(threadPool.isShutdown())
+                    .isTerminated(threadPool.isTerminated())
+                    .build();
+        }
+        return ThreadPoolStatus.empty();
+    }
+
+    /**
+     * 关闭执行器
+     *
+     * @param shutdownNow 是否立即关闭
+     */
+    public void shutdown(boolean shutdownNow) {
+        log.info("[异步追踪] 关闭TraceableExecutorService, shutdownNow={}", shutdownNow);
+
+        if (shutdownNow) {
+            delegateExecutor.shutdownNow();
+        } else {
+            delegateExecutor.shutdown();
+        }
+    }
+
+    /**
+     * 线程池状态信息
+     */
+    @lombok.Data
+    @lombok.Builder
+    public static class ThreadPoolStatus {
+        private int corePoolSize;
+        private int maximumPoolSize;
+        private int activeCount;
+        private int poolSize;
+        private int queueSize;
+        private long completedTaskCount;
+        private long taskCount;
+        private boolean isShutdown;
+        private boolean isTerminated;
+        private long reportTime = System.currentTimeMillis();
+
+        public static ThreadPoolStatus empty() {
+            return ThreadPoolStatus.builder()
+                    .corePoolSize(0)
+                    .maximumPoolSize(0)
+                    .activeCount(0)
+                    .poolSize(0)
+                    .queueSize(0)
+                    .completedTaskCount(0)
+                    .taskCount(0)
+                    .isShutdown(false)
+                    .isTerminated(false)
+                    .build();
+        }
+
+        public double getUtilizationRate() {
+            return maximumPoolSize > 0 ? (double) activeCount / maximumPoolSize * 100 : 0;
+        }
+
+        public String getHealthStatus() {
+            if (isTerminated) {
+                return "已终止";
+            } else if (isShutdown) {
+                return "已关闭";
+            } else if (getUtilizationRate() > 80) {
+                return "高负载";
+            } else if (getUtilizationRate() > 60) {
+                return "正常";
+            } else {
+                return "空闲";
+            }
+        }
+    }
+}

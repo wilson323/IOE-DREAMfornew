@@ -1,9 +1,10 @@
 package net.lab1024.sa.video.adapter.impl;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.common.organization.entity.DeviceEntity;
+import net.lab1024.sa.common.gateway.domain.response.DeviceResponse;
+import net.lab1024.sa.common.util.TypeUtils;
 import net.lab1024.sa.video.adapter.IVideoStreamAdapter;
 import net.lab1024.sa.video.domain.vo.VideoStream;
 
@@ -28,17 +29,17 @@ public class RTMPAdapter implements IVideoStreamAdapter {
     }
 
     @Override
-    public VideoStream createStream(DeviceEntity device) {
+    public VideoStream createStream(DeviceResponse device) {
         // RTMP流URL构建
         String rtmpUrl = buildRTMPUrl(device);
 
         log.debug("[RTMP适配器] 创建RTMP视频流, deviceId={}, url={}", device.getDeviceId(), rtmpUrl);
 
         return VideoStream.builder()
-                .deviceId(device.getDeviceId())
+                .deviceId(TypeUtils.toString(device.getDeviceId()))
                 .streamUrl(rtmpUrl)
                 .protocol("RTMP")
-                .streamId("RTMP_" + device.getDeviceId() + "_" + System.currentTimeMillis())
+                .streamId("RTMP_" + TypeUtils.toString(device.getDeviceId()) + "_" + System.currentTimeMillis())
                 .width(1920) // 默认分辨率
                 .height(1080)
                 .frameRate(25) // 默认帧率
@@ -63,12 +64,12 @@ public class RTMPAdapter implements IVideoStreamAdapter {
      * @param device 设备实体
      * @return RTMP URL
      */
-    private String buildRTMPUrl(DeviceEntity device) {
+    private String buildRTMPUrl(DeviceResponse device) {
         // TODO: 根据设备类型和配置构建RTMP URL
         // 示例：rtmp://ip:port/live/stream
-        String ip = device.getDeviceIp() != null ? device.getDeviceIp() : "127.0.0.1";
-        Integer port = device.getDevicePort() != null ? device.getDevicePort() : 1935;
+        String ip = device.getIpAddress() != null ? device.getIpAddress() : "127.0.0.1";
+        Integer port = device.getPort() != null ? device.getPort() : 1935;
 
-        return String.format("rtmp://%s:%d/live/%s", ip, port, device.getDeviceId());
+        return String.format("rtmp://%s:%d/live/%s", ip, port, TypeUtils.toString(device.getDeviceId()));
     }
 }

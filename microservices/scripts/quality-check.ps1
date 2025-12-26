@@ -1,21 +1,27 @@
-# ============================================================
 # IOE-DREAM 代码质量检查脚本
 #
-# 功能：全面验证代码修复效果，确保企业级质量
-# 检查项：配置合规性、架构规范、安全配置、性能优化
+# 简明实用的代码质量检查，避免过度工程化
+# 专注于核心质量问题：测试覆盖率、代码规范、性能
 #
-# @Author: IOE-DREAM架构委员会
-# @Date: 2025-01-30
-# @Version: v1.0.0-企业级质检版
-# ============================================================
+# @Author: IOE-DREAM Team
+# @Date: 2025-12-20
 
 param(
-    [switch]$Detailed = $false,
-    [switch]$FixIssues = $false
+    [switch]$SkipTests,      # 跳过测试
+    [switch]$CI,            # CI模式，输出格式化结果
+    [string]$ReportPath = ".\reports"  # 报告输出路径
 )
 
-# 设置错误处理
-$ErrorActionPreference = "Stop"
+# 设置工作目录
+$projectRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
+Set-Location $projectRoot
+
+# 创建报告目录
+if (!(Test-Path $ReportPath)) {
+    New-Item -ItemType Directory -Path $ReportPath -Force
+}
+
+Write-Host "🔍 开始 IOE-DREAM 代码质量检查..." -ForegroundColor Green
 
 Write-Host "🔍 开始IOE-DREAM代码质量检查..." -ForegroundColor Green
 Write-Host "📋 检查范围：全局代码质量 + 架构合规性" -ForegroundColor Yellow

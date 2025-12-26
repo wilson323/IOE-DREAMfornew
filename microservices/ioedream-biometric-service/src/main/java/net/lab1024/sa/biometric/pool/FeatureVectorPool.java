@@ -7,12 +7,14 @@ import org.springframework.stereotype.Component;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
+
+import java.time.Duration;
 import java.util.Arrays;
 
 /**
  * 特征向量对象池
  * <p>
- * 严格遵循ENTERPRISE_REFACTORING_COMPLETE_SOLUTION.md文档要求
+ * 严格遵循企业级架构要求
  * 管理特征向量对象的复用，减少内存分配和GC压力
  * - 使用Apache Commons Pool2实现
  * - 512维向量对象池（FaceNet标准）
@@ -23,8 +25,8 @@ import java.util.Arrays;
  * @version 1.0.0
  * @since 2025-12-18
  */
-@Slf4j
 @Component
+@Slf4j
 public class FeatureVectorPool {
 
     /**
@@ -47,7 +49,7 @@ public class FeatureVectorPool {
         config.setTestOnBorrow(true); // 借用时测试对象
         config.setTestOnReturn(false); // 归还时测试对象
         config.setTestWhileIdle(true); // 空闲时测试对象
-        config.setMaxWaitMillis(5000); // 最大等待时间（毫秒）
+        config.setMaxWait(Duration.ofMillis(5000)); // 最大等待时间（毫秒）
 
         this.vectorPool = new GenericObjectPool<>(
                 new FeatureVectorFactory(),

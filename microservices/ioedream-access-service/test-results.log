@@ -1,0 +1,814 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ---------------< net.lab1024.sa:ioedream-access-service >---------------
+[INFO] Building IOE-DREAM Access Service 1.0.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[WARNING] Parameter 'encoding' is unknown for plugin 'jacoco-maven-plugin:0.8.12:prepare-agent (jacoco-prepare-agent)'
+[WARNING] Parameter 'encoding' is unknown for plugin 'jacoco-maven-plugin:0.8.12:report (jacoco-report)'
+[INFO] 
+[INFO] --- enforcer:3.5.0:enforce (enforce-java-maven) @ ioedream-access-service ---
+[INFO] Rule 0: org.apache.maven.enforcer.rules.version.RequireJavaVersion passed
+[INFO] Rule 1: org.apache.maven.enforcer.rules.version.RequireMavenVersion passed
+[INFO] 
+[INFO] --- exec:3.1.1:exec (check-manager-bean-registration) @ ioedream-access-service ---
+[INFO] skipping execute as per configuration
+[INFO] 
+[INFO] --- jacoco:0.8.12:prepare-agent (jacoco-prepare-agent) @ ioedream-access-service ---
+[INFO] jacocoArgLine set to -javaagent:C:\\Users\\10201\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.12\\org.jacoco.agent-0.8.12-runtime.jar=destfile=D:\\IOE-DREAM\\microservices\\ioedream-access-service\\target\\jacoco.exec,includes=**/*.class,excludes=**/*Test*.class:**/*Tests.class:**/*Application.class:**/*Config*.class:**/*Configuration.class:**/dto/**/*.class:**/vo/**/*.class:**/form/**/*.class:**/entity/**/*.class:**/constant/**/*.class:**/constants/**/*.class:**/exception/**/*.class:**/*Exception.class:**/*Enum.class:**/generated/**/*.class:**/openapi/**/*.class
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ ioedream-access-service ---
+[INFO] Copying 7 resources from src\main\resources to target\classes
+[INFO] Copying 10 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ ioedream-access-service ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ ioedream-access-service ---
+[INFO] Copying 1 resource from src\test\resources to target\test-classes
+[INFO] Copying 0 resource from src\test\resources to target\test-classes
+[INFO] 
+[INFO] --- compiler:3.13.0:testCompile (default-testCompile) @ ioedream-access-service ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- surefire:3.2.5:test (default-test) @ ioedream-access-service ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[WARNING] The system property user.timezone is configured twice! The property appears in <argLine/> and any of <systemPropertyVariables/>, <systemProperties/> or user property.
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running net.lab1024.sa.access.service.AccessCapacityServiceTest
+OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+19:00:23.772 [main] INFO net.lab1024.sa.access.service.impl.AccessCapacityServiceImpl -- [容量控制] 重置区域内人数: controlId=1
+19:00:23.792 [main] INFO net.lab1024.sa.access.service.impl.AccessCapacityServiceImpl -- [容量控制] 重置人数成功: controlId=1, result=人数已重置，当前人数: 0/100
+19:00:24.059 [main] INFO net.lab1024.sa.access.service.impl.AccessCapacityServiceImpl -- [容量控制] 更新容量控制启用状态: controlId=1, enabled=0
+19:00:24.061 [main] INFO net.lab1024.sa.access.service.impl.AccessCapacityServiceImpl -- [容量控制] 更新启用状态成功: controlId=1, enabled=0, result=1
+19:00:24.089 [main] INFO net.lab1024.sa.access.service.impl.AccessCapacityServiceImpl -- [容量控制] 查询容量控制详情: controlId=999
+19:00:24.147 [main] INFO net.lab1024.sa.access.service.impl.AccessCapacityServiceImpl -- [容量控制] 查询容量控制详情: controlId=1
+19:00:24.175 [main] INFO net.lab1024.sa.access.service.impl.AccessCapacityServiceImpl -- [容量控制] 增加区域内人数: areaId=1001, count=10
+19:00:24.177 [main] WARN net.lab1024.sa.access.service.impl.AccessCapacityServiceImpl -- [容量控制] 超过最大容量，仅告警: areaId=1001, current=105, max=100
+19:00:24.194 [main] INFO net.lab1024.sa.access.service.impl.AccessCapacityServiceImpl -- [容量控制] 更新容量控制规则: controlId=999
+19:00:24.194 [main] WARN net.lab1024.sa.access.service.impl.AccessCapacityServiceImpl -- [容量控制] 容量控制规则不存在: controlId=999
+19:00:24.218 [main] INFO net.lab1024.sa.access.service.impl.AccessCapacityServiceImpl -- [容量控制] 删除容量控制规则: controlId=1
+19:00:24.219 [main] INFO net.lab1024.sa.access.service.impl.AccessCapacityServiceImpl -- [容量控制] 删除容量控制成功: controlId=1, result=1
+19:00:24.258 [main] INFO net.lab1024.sa.access.service.impl.AccessCapacityServiceImpl -- [容量控制] 减少区域内人数: areaId=1001, count=10
+19:00:24.263 [main] INFO net.lab1024.sa.access.service.impl.AccessCapacityServiceImpl -- [容量控制] 减少人数成功: areaId=1001, result=人数减少成功，当前人数: 50/100
+19:00:24.281 [main] INFO net.lab1024.sa.access.service.impl.AccessCapacityServiceImpl -- [容量控制] 分页查询容量控制规则: AccessCapacityControlQueryForm(areaId=null, controlMode=STRICT, enabled=null)
+19:00:24.320 [main] INFO net.lab1024.sa.access.service.impl.AccessCapacityServiceImpl -- [容量控制] 分页查询容量控制规则: AccessCapacityControlQueryForm(areaId=null, controlMode=null, enabled=null)
+19:00:24.338 [main] INFO net.lab1024.sa.access.service.impl.AccessCapacityServiceImpl -- [容量控制] 增加区域内人数: areaId=1001, count=10
+19:00:24.339 [main] INFO net.lab1024.sa.access.service.impl.AccessCapacityServiceImpl -- [容量控制] 增加人数成功: areaId=1001, result=人数增加成功，当前人数: 60/100
+19:00:24.371 [main] INFO net.lab1024.sa.access.service.impl.AccessCapacityServiceImpl -- [容量控制] 增加区域内人数: areaId=1001, count=10
+19:00:24.374 [main] WARN net.lab1024.sa.access.service.impl.AccessCapacityServiceImpl -- [容量控制] 超过最大容量，禁止进入: areaId=1001, current=105, max=100
+19:00:24.395 [main] INFO net.lab1024.sa.access.service.impl.AccessCapacityServiceImpl -- [容量控制] 更新容量控制规则: controlId=1
+19:00:24.396 [main] INFO net.lab1024.sa.access.service.impl.AccessCapacityServiceImpl -- [容量控制] 更新容量控制成功: controlId=1, result=1
+19:00:24.406 [main] INFO net.lab1024.sa.access.service.impl.AccessCapacityServiceImpl -- [容量控制] 新增容量控制规则: areaId=1002, maxCapacity=50
+19:00:24.406 [main] INFO net.lab1024.sa.access.service.impl.AccessCapacityServiceImpl -- [容量控制] 新增容量控制成功: controlId=null
+[ERROR] Tests run: 19, Failures: 1, Errors: 10, Skipped: 0, Time elapsed: 5.894 s <<< FAILURE! -- in net.lab1024.sa.access.service.AccessCapacityServiceTest
+[ERROR] net.lab1024.sa.access.service.AccessCapacityServiceTest.testResetCount_Success -- Time elapsed: 5.323 s <<< ERROR!
+org.mockito.exceptions.misusing.UnnecessaryStubbingException: 
+
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at net.lab1024.sa.access.service.AccessCapacityServiceTest.setUp(AccessCapacityServiceTest.java:59)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+	at org.mockito.junit.jupiter.MockitoExtension.afterEach(MockitoExtension.java:197)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+[ERROR] net.lab1024.sa.access.service.AccessCapacityServiceTest.testUpdateEnabled_Success -- Time elapsed: 0.028 s <<< ERROR!
+org.mockito.exceptions.misusing.UnnecessaryStubbingException: 
+
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at net.lab1024.sa.access.service.AccessCapacityServiceTest.setUp(AccessCapacityServiceTest.java:59)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+	at org.mockito.junit.jupiter.MockitoExtension.afterEach(MockitoExtension.java:197)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+[ERROR] net.lab1024.sa.access.service.AccessCapacityServiceTest.testGetById_NotFound -- Time elapsed: 0.024 s <<< ERROR!
+org.mockito.exceptions.misusing.UnnecessaryStubbingException: 
+
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at net.lab1024.sa.access.service.AccessCapacityServiceTest.setUp(AccessCapacityServiceTest.java:59)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+	at org.mockito.junit.jupiter.MockitoExtension.afterEach(MockitoExtension.java:197)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+[ERROR] net.lab1024.sa.access.service.AccessCapacityServiceTest.testGetById_Success -- Time elapsed: 0.025 s <<< ERROR!
+org.mockito.exceptions.misusing.UnnecessaryStubbingException: 
+
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at net.lab1024.sa.access.service.AccessCapacityServiceTest.setUp(AccessCapacityServiceTest.java:59)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+	at org.mockito.junit.jupiter.MockitoExtension.afterEach(MockitoExtension.java:197)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+[ERROR] net.lab1024.sa.access.service.AccessCapacityServiceTest.testUpdateControl_NotFound -- Time elapsed: 0.015 s <<< ERROR!
+org.mockito.exceptions.misusing.UnnecessaryStubbingException: 
+
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at net.lab1024.sa.access.service.AccessCapacityServiceTest.setUp(AccessCapacityServiceTest.java:59)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+	at org.mockito.junit.jupiter.MockitoExtension.afterEach(MockitoExtension.java:197)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+[ERROR] net.lab1024.sa.access.service.AccessCapacityServiceTest.testDeleteControl_Success -- Time elapsed: 0.017 s <<< ERROR!
+org.mockito.exceptions.misusing.UnnecessaryStubbingException: 
+
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at net.lab1024.sa.access.service.AccessCapacityServiceTest.setUp(AccessCapacityServiceTest.java:59)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+	at org.mockito.junit.jupiter.MockitoExtension.afterEach(MockitoExtension.java:197)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+[ERROR] net.lab1024.sa.access.service.AccessCapacityServiceTest.testCheckEntryAllowed_NoControl -- Time elapsed: 0.014 s <<< ERROR!
+org.mockito.exceptions.misusing.UnnecessaryStubbingException: 
+
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at net.lab1024.sa.access.service.AccessCapacityServiceTest.setUp(AccessCapacityServiceTest.java:59)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+	at org.mockito.junit.jupiter.MockitoExtension.afterEach(MockitoExtension.java:197)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+[ERROR] net.lab1024.sa.access.service.AccessCapacityServiceTest.testQueryPage_WithControlModeFilter -- Time elapsed: 0.027 s <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "com.baomidou.mybatisplus.core.metadata.IPage.getRecords()" because "pageResult" is null
+	at net.lab1024.sa.access.service.impl.AccessCapacityServiceImpl.queryPage(AccessCapacityServiceImpl.java:73)
+	at net.lab1024.sa.access.service.AccessCapacityServiceTest.testQueryPage_WithControlModeFilter(AccessCapacityServiceTest.java:129)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+[ERROR] net.lab1024.sa.access.service.AccessCapacityServiceTest.testQueryPage_Success -- Time elapsed: 0.021 s <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "com.baomidou.mybatisplus.core.metadata.IPage.getRecords()" because "pageResult" is null
+	at net.lab1024.sa.access.service.impl.AccessCapacityServiceImpl.queryPage(AccessCapacityServiceImpl.java:73)
+	at net.lab1024.sa.access.service.AccessCapacityServiceTest.testQueryPage_Success(AccessCapacityServiceTest.java:105)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+[ERROR] net.lab1024.sa.access.service.AccessCapacityServiceTest.testUpdateControl_Success -- Time elapsed: 0.009 s <<< ERROR!
+org.mockito.exceptions.misusing.UnnecessaryStubbingException: 
+
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at net.lab1024.sa.access.service.AccessCapacityServiceTest.setUp(AccessCapacityServiceTest.java:59)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+	at org.mockito.junit.jupiter.MockitoExtension.afterEach(MockitoExtension.java:197)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+[ERROR] net.lab1024.sa.access.service.AccessCapacityServiceTest.testAddControl_Success -- Time elapsed: 0.010 s <<< FAILURE!
+org.opentest4j.AssertionFailedError: expected: not <null>
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:152)
+	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+	at org.junit.jupiter.api.AssertNotNull.failNull(AssertNotNull.java:49)
+	at org.junit.jupiter.api.AssertNotNull.assertNotNull(AssertNotNull.java:35)
+	at org.junit.jupiter.api.AssertNotNull.assertNotNull(AssertNotNull.java:30)
+	at org.junit.jupiter.api.Assertions.assertNotNull(Assertions.java:304)
+	at net.lab1024.sa.access.service.AccessCapacityServiceTest.testAddControl_Success(AccessCapacityServiceTest.java:180)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+[INFO] Running net.lab1024.sa.access.service.AccessEvacuationServiceTest
+19:00:24.867 [main] INFO net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 触发一键疏散: pointId=1
+19:00:24.870 [main] WARN net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 疏散点未启用: pointId=1
+19:00:24.889 [main] INFO net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 分页查询疏散点: AccessEvacuationPointQueryForm(pointName=null, areaId=null, evacuationType=FIRE, enabled=null)
+19:00:24.942 [main] INFO net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 取消疏散: pointId=999
+19:00:24.942 [main] WARN net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 疏散点不存在: pointId=999
+19:00:24.952 [main] INFO net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 更新疏散点启用状态: pointId=1, enabled=0
+19:00:24.952 [main] INFO net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 更新启用状态成功: pointId=1, enabled=0, result=1
+19:00:24.964 [main] INFO net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 查询疏散点详情: pointId=999
+19:00:24.972 [main] INFO net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 更新疏散点: pointId=999
+19:00:24.972 [main] WARN net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 疏散点不存在: pointId=999
+19:00:24.980 [main] INFO net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 查询疏散点详情: pointId=1
+19:00:24.986 [main] INFO net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 测试疏散点: pointId=999
+19:00:24.988 [main] WARN net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 疏散点不存在: pointId=999
+19:00:25.001 [main] INFO net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 删除疏散点: pointId=1
+19:00:25.002 [main] INFO net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 删除疏散点成功: pointId=1, result=1
+19:00:25.010 [main] INFO net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 分页查询疏散点: AccessEvacuationPointQueryForm(pointName=null, areaId=1001, evacuationType=null, enabled=null)
+19:00:25.018 [main] INFO net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 更新疏散点: pointId=1
+19:00:25.019 [main] INFO net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 更新疏散点成功: pointId=1, result=1
+19:00:25.025 [main] INFO net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 取消疏散: pointId=1
+19:00:25.028 [main] ERROR net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 解析门ID失败: doorIdsStr=[3001, 3002, 3003], error=For input string: " 3002"
+19:00:25.036 [main] INFO net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 分页查询疏散点: AccessEvacuationPointQueryForm(pointName=null, areaId=null, evacuationType=null, enabled=null)
+19:00:25.046 [main] INFO net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 新增疏散点: pointName=B栋消防出口
+19:00:25.046 [main] INFO net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 新增疏散点成功: pointId=null
+19:00:25.057 [main] INFO net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 触发一键疏散: pointId=1
+19:00:25.058 [main] ERROR net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 解析门ID失败: doorIdsStr=[3001, 3002, 3003], error=For input string: " 3002"
+19:00:25.058 [main] WARN net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 疏散点未配置关联门: pointId=1
+19:00:25.068 [main] INFO net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 测试疏散点: pointId=1
+19:00:25.069 [main] ERROR net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 解析门ID失败: doorIdsStr=[3001, 3002, 3003], error=For input string: " 3002"
+19:00:25.078 [main] INFO net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 触发一键疏散: pointId=999
+19:00:25.079 [main] WARN net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 疏散点不存在: pointId=999
+19:00:25.086 [main] INFO net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 删除疏散点: pointId=1
+19:00:25.087 [main] INFO net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 删除疏散点成功: pointId=1, result=0
+[ERROR] Tests run: 18, Failures: 4, Errors: 3, Skipped: 0, Time elapsed: 0.633 s <<< FAILURE! -- in net.lab1024.sa.access.service.AccessEvacuationServiceTest
+[ERROR] net.lab1024.sa.access.service.AccessEvacuationServiceTest.testQueryPage_WithEvacuationTypeFilter -- Time elapsed: 0.049 s <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "com.baomidou.mybatisplus.core.metadata.IPage.getRecords()" because "pageResult" is null
+	at net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl.queryPage(AccessEvacuationServiceImpl.java:78)
+	at net.lab1024.sa.access.service.AccessEvacuationServiceTest.testQueryPage_WithEvacuationTypeFilter(AccessEvacuationServiceTest.java:121)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+[ERROR] net.lab1024.sa.access.service.AccessEvacuationServiceTest.testQueryPage_WithAreaFilter -- Time elapsed: 0.007 s <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "com.baomidou.mybatisplus.core.metadata.IPage.getRecords()" because "pageResult" is null
+	at net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl.queryPage(AccessEvacuationServiceImpl.java:78)
+	at net.lab1024.sa.access.service.AccessEvacuationServiceTest.testQueryPage_WithAreaFilter(AccessEvacuationServiceTest.java:139)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+[ERROR] net.lab1024.sa.access.service.AccessEvacuationServiceTest.testCancelEvacuation_Success -- Time elapsed: 0.008 s <<< FAILURE!
+org.opentest4j.AssertionFailedError: expected: <true> but was: <false>
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+	at org.junit.jupiter.api.AssertTrue.failNotTrue(AssertTrue.java:63)
+	at org.junit.jupiter.api.AssertTrue.assertTrue(AssertTrue.java:36)
+	at org.junit.jupiter.api.AssertTrue.assertTrue(AssertTrue.java:31)
+	at org.junit.jupiter.api.Assertions.assertTrue(Assertions.java:183)
+	at net.lab1024.sa.access.service.AccessEvacuationServiceTest.testCancelEvacuation_Success(AccessEvacuationServiceTest.java:334)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+[ERROR] net.lab1024.sa.access.service.AccessEvacuationServiceTest.testQueryPage_Success -- Time elapsed: 0.006 s <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "com.baomidou.mybatisplus.core.metadata.IPage.getRecords()" because "pageResult" is null
+	at net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl.queryPage(AccessEvacuationServiceImpl.java:78)
+	at net.lab1024.sa.access.service.AccessEvacuationServiceTest.testQueryPage_Success(AccessEvacuationServiceTest.java:98)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+[ERROR] net.lab1024.sa.access.service.AccessEvacuationServiceTest.testAddPoint_Success -- Time elapsed: 0.007 s <<< FAILURE!
+org.opentest4j.AssertionFailedError: expected: not <null>
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:152)
+	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+	at org.junit.jupiter.api.AssertNotNull.failNull(AssertNotNull.java:49)
+	at org.junit.jupiter.api.AssertNotNull.assertNotNull(AssertNotNull.java:35)
+	at org.junit.jupiter.api.AssertNotNull.assertNotNull(AssertNotNull.java:30)
+	at org.junit.jupiter.api.Assertions.assertNotNull(Assertions.java:304)
+	at net.lab1024.sa.access.service.AccessEvacuationServiceTest.testAddPoint_Success(AccessEvacuationServiceTest.java:189)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+[ERROR] net.lab1024.sa.access.service.AccessEvacuationServiceTest.testTriggerEvacuation_Success -- Time elapsed: 0.012 s <<< FAILURE!
+org.opentest4j.AssertionFailedError: expected: <true> but was: <false>
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+	at org.junit.jupiter.api.AssertTrue.failNotTrue(AssertTrue.java:63)
+	at org.junit.jupiter.api.AssertTrue.assertTrue(AssertTrue.java:36)
+	at org.junit.jupiter.api.AssertTrue.assertTrue(AssertTrue.java:31)
+	at org.junit.jupiter.api.Assertions.assertTrue(Assertions.java:183)
+	at net.lab1024.sa.access.service.AccessEvacuationServiceTest.testTriggerEvacuation_Success(AccessEvacuationServiceTest.java:282)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+[ERROR] net.lab1024.sa.access.service.AccessEvacuationServiceTest.testTestPoint_Success -- Time elapsed: 0.010 s <<< FAILURE!
+org.opentest4j.AssertionFailedError: expected: <true> but was: <false>
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+	at org.junit.jupiter.api.AssertTrue.failNotTrue(AssertTrue.java:63)
+	at org.junit.jupiter.api.AssertTrue.assertTrue(AssertTrue.java:36)
+	at org.junit.jupiter.api.AssertTrue.assertTrue(AssertTrue.java:31)
+	at org.junit.jupiter.api.Assertions.assertTrue(Assertions.java:183)
+	at net.lab1024.sa.access.service.AccessEvacuationServiceTest.testTestPoint_Success(AccessEvacuationServiceTest.java:367)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+[INFO] Running net.lab1024.sa.access.service.AccessInterlockServiceTest
+19:00:26.085 [main] INFO net.lab1024.sa.access.service.impl.AccessInterlockServiceImpl -- [互锁管理] 测试互锁规则: ruleId=1
+19:00:26.095 [main] INFO net.lab1024.sa.access.service.impl.AccessInterlockServiceImpl -- [互锁管理] 触发互锁: areaId=1001, doorId=3001, action=DOOR_OPEN
+19:00:26.109 [pool-3-thread-1] INFO net.lab1024.sa.access.service.impl.AccessInterlockServiceImpl -- [互锁管理] 执行互锁规则: ruleId=1, triggerAreaId=1001
+19:00:26.110 [pool-3-thread-1] INFO net.lab1024.sa.access.service.impl.AccessInterlockServiceImpl -- [互锁管理] 互锁执行成功: ruleId=1, targetAreaId=1002
+19:00:26.127 [main] INFO net.lab1024.sa.access.service.impl.AccessInterlockServiceImpl -- [互锁管理] 触发互锁: areaId=1001, doorId=3001, action=DOOR_OPEN
+19:00:26.133 [pool-4-thread-1] INFO net.lab1024.sa.access.service.impl.AccessInterlockServiceImpl -- [互锁管理] 执行互锁规则: ruleId=1, triggerAreaId=1001
+19:00:26.137 [pool-4-thread-1] INFO net.lab1024.sa.access.service.impl.AccessInterlockServiceImpl -- [互锁管理] 互锁执行成功: ruleId=1, targetAreaId=1002
+19:00:26.152 [main] INFO net.lab1024.sa.access.service.impl.AccessInterlockServiceImpl -- [互锁管理] 分页查询互锁规则: queryForm=AccessInterlockRuleQueryForm(pageNum=1, pageSize=10, ruleName=null, interlockMode=BIDIRECTIONAL, unlockCondition=null, enabled=null)
+19:00:26.197 [main] INFO net.lab1024.sa.access.service.impl.AccessInterlockServiceImpl -- [互锁管理] 更新启用状态: ruleId=1, enabled=0
+19:00:26.207 [main] INFO net.lab1024.sa.access.service.impl.AccessInterlockServiceImpl -- [互锁管理] 获取规则详情: ruleId=999
+19:00:26.218 [main] INFO net.lab1024.sa.access.service.impl.AccessInterlockServiceImpl -- [互锁管理] 获取规则详情: ruleId=1
+19:00:26.245 [main] INFO net.lab1024.sa.access.service.impl.AccessInterlockServiceImpl -- [互锁管理] 删除互锁规则: ruleId=1
+19:00:26.282 [main] INFO net.lab1024.sa.access.service.impl.AccessInterlockServiceImpl -- [互锁管理] 触发互锁: areaId=9999, doorId=9999, action=DOOR_OPEN
+19:00:26.295 [main] INFO net.lab1024.sa.access.service.impl.AccessInterlockServiceImpl -- [互锁管理] 更新互锁规则: ruleId=1, updateForm=AccessInterlockRuleUpdateForm(ruleName=更新后的互锁规则, ruleCode=null, areaAId=null, areaBId=null, interlockMode=UNIDIRECTIONAL, areaADoorIds=null, areaBDoorIds=null, unlockCondition=null, unlockDelaySeconds=null, priority=null, description=null)
+19:00:26.397 [main] INFO net.lab1024.sa.access.service.impl.AccessInterlockServiceImpl -- [互锁管理] 更新互锁规则: ruleId=999, updateForm=AccessInterlockRuleUpdateForm(ruleName=更新后的互锁规则, ruleCode=null, areaAId=null, areaBId=null, interlockMode=UNIDIRECTIONAL, areaADoorIds=null, areaBDoorIds=null, unlockCondition=null, unlockDelaySeconds=null, priority=null, description=null)
+19:00:26.439 [main] INFO net.lab1024.sa.access.service.impl.AccessInterlockServiceImpl -- [互锁管理] 新增互锁规则: addForm=AccessInterlockRuleAddForm(ruleName=测试互锁规则, ruleCode=null, areaAId=1001, areaBId=1002, interlockMode=BIDIRECTIONAL, areaADoorIds=[3001, 3002], areaBDoorIds=[3003, 3004], unlockCondition=MANUAL, unlockDelaySeconds=0, priority=100, description=null)
+19:00:26.445 [main] INFO net.lab1024.sa.access.service.impl.AccessInterlockServiceImpl -- [互锁管理] 新增互锁规则成功: ruleId=null
+19:00:26.519 [main] INFO net.lab1024.sa.access.service.impl.AccessInterlockServiceImpl -- [互锁管理] 分页查询互锁规则: queryForm=AccessInterlockRuleQueryForm(pageNum=1, pageSize=10, ruleName=null, interlockMode=null, unlockCondition=null, enabled=null)
+19:00:26.546 [main] INFO net.lab1024.sa.access.service.impl.AccessInterlockServiceImpl -- [互锁管理] 删除互锁规则: ruleId=1
+19:00:26.565 [main] INFO net.lab1024.sa.access.service.impl.AccessInterlockServiceImpl -- [互锁管理] 手动解锁: ruleId=1, areaId=1002
+19:00:26.599 [main] INFO net.lab1024.sa.access.service.impl.AccessInterlockServiceImpl -- [互锁管理] 测试互锁规则: ruleId=999
+19:00:26.616 [main] INFO net.lab1024.sa.access.service.impl.AccessInterlockServiceImpl -- [互锁管理] 手动解锁: ruleId=999, areaId=9998
+[ERROR] Tests run: 17, Failures: 4, Errors: 6, Skipped: 0, Time elapsed: 1.504 s <<< FAILURE! -- in net.lab1024.sa.access.service.AccessInterlockServiceTest
+[ERROR] net.lab1024.sa.access.service.AccessInterlockServiceTest.testTestRule_Success -- Time elapsed: 0.973 s <<< FAILURE!
+org.opentest4j.AssertionFailedError: expected: <true> but was: <false>
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+	at org.junit.jupiter.api.AssertTrue.failNotTrue(AssertTrue.java:63)
+	at org.junit.jupiter.api.AssertTrue.assertTrue(AssertTrue.java:36)
+	at org.junit.jupiter.api.AssertTrue.assertTrue(AssertTrue.java:31)
+	at org.junit.jupiter.api.Assertions.assertTrue(Assertions.java:183)
+	at net.lab1024.sa.access.service.AccessInterlockServiceTest.testTestRule_Success(AccessInterlockServiceTest.java:358)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+[ERROR] net.lab1024.sa.access.service.AccessInterlockServiceTest.testTriggerInterlock_Unidirectional_Success -- Time elapsed: 0.026 s <<< FAILURE!
+Wanted but not invoked:
+gatewayServiceClient.callDeviceCommService(
+    <any string>,
+    <any>,
+    <any>,
+    class java.lang.String
+);
+-> at net.lab1024.sa.common.gateway.GatewayServiceClient.callDeviceCommService(GatewayServiceClient.java:110)
+Actually, there were zero interactions with this mock.
+
+	at net.lab1024.sa.common.gateway.GatewayServiceClient.callDeviceCommService(GatewayServiceClient.java:110)
+	at net.lab1024.sa.access.service.AccessInterlockServiceTest.testTriggerInterlock_Unidirectional_Success(AccessInterlockServiceTest.java:296)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+[ERROR] net.lab1024.sa.access.service.AccessInterlockServiceTest.testTriggerInterlock_Bidirectional_Success -- Time elapsed: 0.016 s <<< FAILURE!
+Wanted but not invoked:
+gatewayServiceClient.callDeviceCommService(
+    <any string>,
+    <any>,
+    <any>,
+    class java.lang.String
+);
+-> at net.lab1024.sa.common.gateway.GatewayServiceClient.callDeviceCommService(GatewayServiceClient.java:110)
+Actually, there were zero interactions with this mock.
+
+	at net.lab1024.sa.common.gateway.GatewayServiceClient.callDeviceCommService(GatewayServiceClient.java:110)
+	at net.lab1024.sa.access.service.AccessInterlockServiceTest.testTriggerInterlock_Bidirectional_Success(AccessInterlockServiceTest.java:278)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+[ERROR] net.lab1024.sa.access.service.AccessInterlockServiceTest.testQueryPage_WithInterlockModeFilter -- Time elapsed: 0.047 s <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "com.baomidou.mybatisplus.extension.plugins.pagination.Page.getRecords()" because "pageResult" is null
+	at net.lab1024.sa.access.service.impl.AccessInterlockServiceImpl.queryPage(AccessInterlockServiceImpl.java:83)
+	at net.lab1024.sa.access.service.AccessInterlockServiceTest.testQueryPage_WithInterlockModeFilter(AccessInterlockServiceTest.java:133)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+[ERROR] net.lab1024.sa.access.service.AccessInterlockServiceTest.testDeleteRule_Success -- Time elapsed: 0.027 s <<< ERROR!
+net.lab1024.sa.common.exception.BusinessException: 互锁规则不存在
+	at net.lab1024.sa.access.service.impl.AccessInterlockServiceImpl.deleteRule(AccessInterlockServiceImpl.java:147)
+	at net.lab1024.sa.access.service.AccessInterlockServiceTest.testDeleteRule_Success(AccessInterlockServiceTest.java:224)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+[ERROR] net.lab1024.sa.access.service.AccessInterlockServiceTest.testUpdateRule_NotFound -- Time elapsed: 0.062 s <<< ERROR!
+net.lab1024.sa.common.exception.BusinessException: 互锁规则不存在
+	at net.lab1024.sa.access.service.impl.AccessInterlockServiceImpl.updateRule(AccessInterlockServiceImpl.java:119)
+	at net.lab1024.sa.access.service.AccessInterlockServiceTest.testUpdateRule_NotFound(AccessInterlockServiceTest.java:209)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+[ERROR] net.lab1024.sa.access.service.AccessInterlockServiceTest.testAddRule_Success -- Time elapsed: 0.025 s <<< FAILURE!
+org.opentest4j.AssertionFailedError: expected: not <null>
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:152)
+	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+	at org.junit.jupiter.api.AssertNotNull.failNull(AssertNotNull.java:49)
+	at org.junit.jupiter.api.AssertNotNull.assertNotNull(AssertNotNull.java:35)
+	at org.junit.jupiter.api.AssertNotNull.assertNotNull(AssertNotNull.java:30)
+	at org.junit.jupiter.api.Assertions.assertNotNull(Assertions.java:304)
+	at net.lab1024.sa.access.service.AccessInterlockServiceTest.testAddRule_Success(AccessInterlockServiceTest.java:182)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+[ERROR] net.lab1024.sa.access.service.AccessInterlockServiceTest.testQueryPage_Success -- Time elapsed: 0.067 s <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "com.baomidou.mybatisplus.extension.plugins.pagination.Page.getRecords()" because "pageResult" is null
+	at net.lab1024.sa.access.service.impl.AccessInterlockServiceImpl.queryPage(AccessInterlockServiceImpl.java:83)
+	at net.lab1024.sa.access.service.AccessInterlockServiceTest.testQueryPage_Success(AccessInterlockServiceTest.java:110)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+[ERROR] net.lab1024.sa.access.service.AccessInterlockServiceTest.testDeleteRule_Failed -- Time elapsed: 0.023 s <<< ERROR!
+net.lab1024.sa.common.exception.BusinessException: 互锁规则不存在
+	at net.lab1024.sa.access.service.impl.AccessInterlockServiceImpl.deleteRule(AccessInterlockServiceImpl.java:147)
+	at net.lab1024.sa.access.service.AccessInterlockServiceTest.testDeleteRule_Failed(AccessInterlockServiceTest.java:238)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+[ERROR] net.lab1024.sa.access.service.AccessInterlockServiceTest.testTestRule_NotFound -- Time elapsed: 0.014 s <<< ERROR!
+net.lab1024.sa.common.exception.BusinessException: 互锁规则不存在
+	at net.lab1024.sa.access.service.impl.AccessInterlockServiceImpl.testRule(AccessInterlockServiceImpl.java:231)
+	at net.lab1024.sa.access.service.AccessInterlockServiceTest.testTestRule_NotFound(AccessInterlockServiceTest.java:370)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+[INFO] Running net.lab1024.sa.access.service.AccessLinkageServiceTest
+19:00:26.883 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 删除联动规则: ruleId=1
+19:00:26.906 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 联动规则删除成功: ruleId=1
+19:00:26.906 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 测试联动规则: ruleId=1
+19:00:26.906 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 执行联动规则: ruleId=1, targetDeviceId=1002, actionType=CAMERA_SNAPSHOT
+19:00:26.907 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 联动执行成功: ruleId=1, result=test success
+19:00:26.907 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 联动规则测试完成: ruleId=1, result=联动执行成功: test success
+19:00:26.918 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 删除联动规则: ruleId=1
+19:00:26.932 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 更新联动规则启用状态: ruleId=1, enabled=0
+19:00:26.933 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 联动规则启用状态更新成功: ruleId=1, enabled=0
+19:00:26.937 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 删除联动规则: ruleId=1
+19:00:26.945 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 删除联动规则: ruleId=1
+19:00:26.946 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 联动规则删除成功: ruleId=1
+19:00:26.946 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 查询联动规则详情: ruleId=1
+19:00:26.965 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 删除联动规则: ruleId=1
+19:00:26.974 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 删除联动规则: ruleId=1
+19:00:26.974 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 联动规则删除成功: ruleId=1
+19:00:26.974 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 更新联动规则: ruleId=1, updateForm=null
+19:00:26.979 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 删除联动规则: ruleId=1
+19:00:26.986 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 删除联动规则: ruleId=1
+19:00:26.995 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 删除联动规则: ruleId=1
+19:00:27.004 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 删除联动规则: ruleId=1
+19:00:27.014 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 删除联动规则: ruleId=1
+19:00:27.026 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 删除联动规则: ruleId=1
+19:00:27.033 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 删除联动规则: ruleId=1
+19:00:27.042 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 删除联动规则: ruleId=1
+[ERROR] Tests run: 15, Failures: 2, Errors: 12, Skipped: 0, Time elapsed: 0.398 s <<< FAILURE! -- in net.lab1024.sa.access.service.AccessLinkageServiceTest
+[ERROR] net.lab1024.sa.access.service.AccessLinkageServiceTest.testTestRule_Success -- Time elapsed: 0.259 s <<< FAILURE!
+org.opentest4j.AssertionFailedError: expected: <true> but was: <false>
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+	at org.junit.jupiter.api.AssertTrue.failNotTrue(AssertTrue.java:63)
+	at org.junit.jupiter.api.AssertTrue.assertTrue(AssertTrue.java:36)
+	at org.junit.jupiter.api.AssertTrue.assertTrue(AssertTrue.java:31)
+	at org.junit.jupiter.api.Assertions.assertTrue(Assertions.java:183)
+	at net.lab1024.sa.access.service.AccessLinkageServiceTest.testTestRule_Success(AccessLinkageServiceTest.java:324)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+[ERROR] net.lab1024.sa.access.service.AccessLinkageServiceTest.testTriggerLinkage_NoMatchingRule -- Time elapsed: 0.009 s <<< ERROR!
+net.lab1024.sa.common.exception.BusinessException: 联动规则不存在
+	at net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl.delete(AccessLinkageServiceImpl.java:150)
+	at net.lab1024.sa.access.service.AccessLinkageServiceTest.testTriggerLinkage_NoMatchingRule(AccessLinkageServiceTest.java:301)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+[ERROR] net.lab1024.sa.access.service.AccessLinkageServiceTest.testGetById_NotFound -- Time elapsed: 0.004 s <<< ERROR!
+org.mockito.exceptions.misusing.PotentialStubbingProblem: 
+
+Strict stubbing argument mismatch. Please check:
+ - this invocation of 'selectById' method:
+    linkageRuleDao.selectById(1L);
+    -> at net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl.delete(AccessLinkageServiceImpl.java:148)
+ - has following stubbing(s) with different arguments:
+    1. linkageRuleDao.selectById(999L);
+      -> at net.lab1024.sa.access.service.AccessLinkageServiceTest.testGetById_NotFound(AccessLinkageServiceTest.java:161)
+Typically, stubbing argument mismatch indicates user mistake when writing tests.
+Mockito fails early so that you can debug potential problem easily.
+However, there are legit scenarios when this exception generates false negative signal:
+  - stubbing the same method multiple times using 'given().will()' or 'when().then()' API
+    Please use 'will().given()' or 'doReturn().when()' API for stubbing.
+  - stubbed method is intentionally invoked with different arguments by code under test
+    Please use default or 'silent' JUnit Rule (equivalent of Strictness.LENIENT).
+For more information see javadoc for PotentialStubbingProblem class.
+	at net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl.delete(AccessLinkageServiceImpl.java:148)
+	at net.lab1024.sa.access.service.AccessLinkageServiceTest.testGetById_NotFound(AccessLinkageServiceTest.java:164)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+[ERROR] net.lab1024.sa.access.service.AccessLinkageServiceTest.testGetById_Success -- Time elapsed: 0.014 s <<< FAILURE!
+org.mockito.exceptions.verification.TooManyActualInvocations: 
+
+linkageRuleDao.selectById(1L);
+Wanted 1 time:
+-> at net.lab1024.sa.access.service.AccessLinkageServiceTest.testGetById_Success(AccessLinkageServiceTest.java:154)
+But was 2 times:
+-> at net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl.delete(AccessLinkageServiceImpl.java:148)
+-> at net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl.getById(AccessLinkageServiceImpl.java:88)
+
+
+	at net.lab1024.sa.access.service.AccessLinkageServiceTest.testGetById_Success(AccessLinkageServiceTest.java:154)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+[ERROR] net.lab1024.sa.access.service.AccessLinkageServiceTest.testDeleteRule_Success -- Time elapsed: 0.009 s <<< ERROR!
+net.lab1024.sa.common.exception.BusinessException: 联动规则不存在
+	at net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl.delete(AccessLinkageServiceImpl.java:150)
+	at net.lab1024.sa.access.service.AccessLinkageServiceTest.testDeleteRule_Success(AccessLinkageServiceTest.java:225)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+[ERROR] net.lab1024.sa.access.service.AccessLinkageServiceTest.testUpdateRule_Success -- Time elapsed: 0.008 s <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "net.lab1024.sa.access.domain.entity.AccessLinkageRuleEntity.getRuleName()" because "updateEntity" is null
+	at net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl.update(AccessLinkageServiceImpl.java:131)
+	at net.lab1024.sa.access.service.AccessLinkageServiceTest.testUpdateRule_Success(AccessLinkageServiceTest.java:196)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+[ERROR] net.lab1024.sa.access.service.AccessLinkageServiceTest.testUpdateRule_NotFound -- Time elapsed: 0.004 s <<< ERROR!
+org.mockito.exceptions.misusing.PotentialStubbingProblem: 
+
+Strict stubbing argument mismatch. Please check:
+ - this invocation of 'selectById' method:
+    linkageRuleDao.selectById(1L);
+    -> at net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl.delete(AccessLinkageServiceImpl.java:148)
+ - has following stubbing(s) with different arguments:
+    1. linkageRuleDao.selectById(999L);
+      -> at net.lab1024.sa.access.service.AccessLinkageServiceTest.testUpdateRule_NotFound(AccessLinkageServiceTest.java:207)
+Typically, stubbing argument mismatch indicates user mistake when writing tests.
+Mockito fails early so that you can debug potential problem easily.
+However, there are legit scenarios when this exception generates false negative signal:
+  - stubbing the same method multiple times using 'given().will()' or 'when().then()' API
+    Please use 'will().given()' or 'doReturn().when()' API for stubbing.
+  - stubbed method is intentionally invoked with different arguments by code under test
+    Please use default or 'silent' JUnit Rule (equivalent of Strictness.LENIENT).
+For more information see javadoc for PotentialStubbingProblem class.
+	at net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl.delete(AccessLinkageServiceImpl.java:148)
+	at net.lab1024.sa.access.service.AccessLinkageServiceTest.testUpdateRule_NotFound(AccessLinkageServiceTest.java:210)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+[ERROR] net.lab1024.sa.access.service.AccessLinkageServiceTest.testAddRule_Success -- Time elapsed: 0.006 s <<< ERROR!
+net.lab1024.sa.common.exception.BusinessException: 联动规则不存在
+	at net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl.delete(AccessLinkageServiceImpl.java:150)
+	at net.lab1024.sa.access.service.AccessLinkageServiceTest.testAddRule_Success(AccessLinkageServiceTest.java:179)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+[ERROR] net.lab1024.sa.access.service.AccessLinkageServiceTest.testQueryPage_Success -- Time elapsed: 0.011 s <<< ERROR!
+net.lab1024.sa.common.exception.BusinessException: 联动规则不存在
+	at net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl.delete(AccessLinkageServiceImpl.java:150)
+	at net.lab1024.sa.access.service.AccessLinkageServiceTest.testQueryPage_Success(AccessLinkageServiceTest.java:108)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+[ERROR] net.lab1024.sa.access.service.AccessLinkageServiceTest.testDeleteRule_Failed -- Time elapsed: 0.006 s <<< ERROR!
+net.lab1024.sa.common.exception.BusinessException: 联动规则不存在
+	at net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl.delete(AccessLinkageServiceImpl.java:150)
+	at net.lab1024.sa.access.service.AccessLinkageServiceTest.testDeleteRule_Failed(AccessLinkageServiceTest.java:237)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+[ERROR] net.lab1024.sa.access.service.AccessLinkageServiceTest.testTestRule_NotFound -- Time elapsed: 0.009 s <<< ERROR!
+org.mockito.exceptions.misusing.PotentialStubbingProblem: 
+
+Strict stubbing argument mismatch. Please check:
+ - this invocation of 'selectById' method:
+    linkageRuleDao.selectById(1L);
+    -> at net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl.delete(AccessLinkageServiceImpl.java:148)
+ - has following stubbing(s) with different arguments:
+    1. linkageRuleDao.selectById(999L);
+      -> at net.lab1024.sa.access.service.AccessLinkageServiceTest.testTestRule_NotFound(AccessLinkageServiceTest.java:333)
+Typically, stubbing argument mismatch indicates user mistake when writing tests.
+Mockito fails early so that you can debug potential problem easily.
+However, there are legit scenarios when this exception generates false negative signal:
+  - stubbing the same method multiple times using 'given().will()' or 'when().then()' API
+    Please use 'will().given()' or 'doReturn().when()' API for stubbing.
+  - stubbed method is intentionally invoked with different arguments by code under test
+    Please use default or 'silent' JUnit Rule (equivalent of Strictness.LENIENT).
+For more information see javadoc for PotentialStubbingProblem class.
+	at net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl.delete(AccessLinkageServiceImpl.java:148)
+	at net.lab1024.sa.access.service.AccessLinkageServiceTest.testTestRule_NotFound(AccessLinkageServiceTest.java:336)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+[ERROR] net.lab1024.sa.access.service.AccessLinkageServiceTest.testTriggerLinkage_WithDelay -- Time elapsed: 0.006 s <<< ERROR!
+net.lab1024.sa.common.exception.BusinessException: 联动规则不存在
+	at net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl.delete(AccessLinkageServiceImpl.java:150)
+	at net.lab1024.sa.access.service.AccessLinkageServiceTest.testTriggerLinkage_WithDelay(AccessLinkageServiceTest.java:284)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+[ERROR] net.lab1024.sa.access.service.AccessLinkageServiceTest.testTriggerLinkage_WithoutDelay -- Time elapsed: 0.006 s <<< ERROR!
+net.lab1024.sa.common.exception.BusinessException: 联动规则不存在
+	at net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl.delete(AccessLinkageServiceImpl.java:150)
+	at net.lab1024.sa.access.service.AccessLinkageServiceTest.testTriggerLinkage_WithoutDelay(AccessLinkageServiceTest.java:266)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+[ERROR] net.lab1024.sa.access.service.AccessLinkageServiceTest.testQueryPage_WithTriggerDeviceFilter -- Time elapsed: 0.007 s <<< ERROR!
+net.lab1024.sa.common.exception.BusinessException: 联动规则不存在
+	at net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl.delete(AccessLinkageServiceImpl.java:150)
+	at net.lab1024.sa.access.service.AccessLinkageServiceTest.testQueryPage_WithTriggerDeviceFilter(AccessLinkageServiceTest.java:131)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+[INFO] 
+[INFO] Results:
+[INFO] 
+[ERROR] Failures: 
+[ERROR]   AccessCapacityServiceTest.testAddControl_Success:180 expected: not <null>
+[ERROR]   AccessEvacuationServiceTest.testAddPoint_Success:189 expected: not <null>
+[ERROR]   AccessEvacuationServiceTest.testCancelEvacuation_Success:334 expected: <true> but was: <false>
+[ERROR]   AccessEvacuationServiceTest.testTestPoint_Success:367 expected: <true> but was: <false>
+[ERROR]   AccessEvacuationServiceTest.testTriggerEvacuation_Success:282 expected: <true> but was: <false>
+[ERROR]   AccessInterlockServiceTest.testAddRule_Success:182 expected: not <null>
+[ERROR]   AccessInterlockServiceTest.testTestRule_Success:358 expected: <true> but was: <false>
+[ERROR]   AccessInterlockServiceTest.testTriggerInterlock_Bidirectional_Success:278 
+Wanted but not invoked:
+gatewayServiceClient.callDeviceCommService(
+    <any string>,
+    <any>,
+    <any>,
+    class java.lang.String
+);
+-> at net.lab1024.sa.common.gateway.GatewayServiceClient.callDeviceCommService(GatewayServiceClient.java:110)
+Actually, there were zero interactions with this mock.
+
+[ERROR]   AccessInterlockServiceTest.testTriggerInterlock_Unidirectional_Success:296 
+Wanted but not invoked:
+gatewayServiceClient.callDeviceCommService(
+    <any string>,
+    <any>,
+    <any>,
+    class java.lang.String
+);
+-> at net.lab1024.sa.common.gateway.GatewayServiceClient.callDeviceCommService(GatewayServiceClient.java:110)
+Actually, there were zero interactions with this mock.
+
+[ERROR]   AccessLinkageServiceTest.testGetById_Success:154 
+linkageRuleDao.selectById(1L);
+Wanted 1 time:
+-> at net.lab1024.sa.access.service.AccessLinkageServiceTest.testGetById_Success(AccessLinkageServiceTest.java:154)
+But was 2 times:
+-> at net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl.delete(AccessLinkageServiceImpl.java:148)
+-> at net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl.getById(AccessLinkageServiceImpl.java:88)
+
+
+[ERROR]   AccessLinkageServiceTest.testTestRule_Success:324 expected: <true> but was: <false>
+[ERROR] Errors: 
+[ERROR]   AccessCapacityServiceTest.testCheckEntryAllowed_NoControl » UnnecessaryStubbing 
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at net.lab1024.sa.access.service.AccessCapacityServiceTest.setUp(AccessCapacityServiceTest.java:59)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+[ERROR]   AccessCapacityServiceTest.testDeleteControl_Success » UnnecessaryStubbing 
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at net.lab1024.sa.access.service.AccessCapacityServiceTest.setUp(AccessCapacityServiceTest.java:59)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+[ERROR]   AccessCapacityServiceTest.testGetById_NotFound » UnnecessaryStubbing 
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at net.lab1024.sa.access.service.AccessCapacityServiceTest.setUp(AccessCapacityServiceTest.java:59)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+[ERROR]   AccessCapacityServiceTest.testGetById_Success » UnnecessaryStubbing 
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at net.lab1024.sa.access.service.AccessCapacityServiceTest.setUp(AccessCapacityServiceTest.java:59)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+[ERROR]   AccessCapacityServiceTest.testQueryPage_Success:105 » NullPointer Cannot invoke "com.baomidou.mybatisplus.core.metadata.IPage.getRecords()" because "pageResult" is null
+[ERROR]   AccessCapacityServiceTest.testQueryPage_WithControlModeFilter:129 » NullPointer Cannot invoke "com.baomidou.mybatisplus.core.metadata.IPage.getRecords()" because "pageResult" is null
+[ERROR]   AccessCapacityServiceTest.testResetCount_Success » UnnecessaryStubbing 
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at net.lab1024.sa.access.service.AccessCapacityServiceTest.setUp(AccessCapacityServiceTest.java:59)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+[ERROR]   AccessCapacityServiceTest.testUpdateControl_NotFound » UnnecessaryStubbing 
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at net.lab1024.sa.access.service.AccessCapacityServiceTest.setUp(AccessCapacityServiceTest.java:59)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+[ERROR]   AccessCapacityServiceTest.testUpdateControl_Success » UnnecessaryStubbing 
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at net.lab1024.sa.access.service.AccessCapacityServiceTest.setUp(AccessCapacityServiceTest.java:59)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+[ERROR]   AccessCapacityServiceTest.testUpdateEnabled_Success » UnnecessaryStubbing 
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at net.lab1024.sa.access.service.AccessCapacityServiceTest.setUp(AccessCapacityServiceTest.java:59)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+[ERROR]   AccessEvacuationServiceTest.testQueryPage_Success:98 » NullPointer Cannot invoke "com.baomidou.mybatisplus.core.metadata.IPage.getRecords()" because "pageResult" is null
+[ERROR]   AccessEvacuationServiceTest.testQueryPage_WithAreaFilter:139 » NullPointer Cannot invoke "com.baomidou.mybatisplus.core.metadata.IPage.getRecords()" because "pageResult" is null
+[ERROR]   AccessEvacuationServiceTest.testQueryPage_WithEvacuationTypeFilter:121 » NullPointer Cannot invoke "com.baomidou.mybatisplus.core.metadata.IPage.getRecords()" because "pageResult" is null
+[ERROR]   AccessInterlockServiceTest.testDeleteRule_Failed:238 » Business 互锁规则不存在
+[ERROR]   AccessInterlockServiceTest.testDeleteRule_Success:224 » Business 互锁规则不存在
+[ERROR]   AccessInterlockServiceTest.testQueryPage_Success:110 » NullPointer Cannot invoke "com.baomidou.mybatisplus.extension.plugins.pagination.Page.getRecords()" because "pageResult" is null
+[ERROR]   AccessInterlockServiceTest.testQueryPage_WithInterlockModeFilter:133 » NullPointer Cannot invoke "com.baomidou.mybatisplus.extension.plugins.pagination.Page.getRecords()" because "pageResult" is null
+[ERROR]   AccessInterlockServiceTest.testTestRule_NotFound:370 » Business 互锁规则不存在
+[ERROR]   AccessInterlockServiceTest.testUpdateRule_NotFound:209 » Business 互锁规则不存在
+[ERROR]   AccessLinkageServiceTest.testAddRule_Success:179 » Business 联动规则不存在
+[ERROR]   AccessLinkageServiceTest.testDeleteRule_Failed:237 » Business 联动规则不存在
+[ERROR]   AccessLinkageServiceTest.testDeleteRule_Success:225 » Business 联动规则不存在
+[ERROR]   AccessLinkageServiceTest.testGetById_NotFound:164 » PotentialStubbingProblem 
+Strict stubbing argument mismatch. Please check:
+ - this invocation of 'selectById' method:
+    linkageRuleDao.selectById(1L);
+    -> at net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl.delete(AccessLinkageServiceImpl.java:148)
+ - has following stubbing(s) with different arguments:
+    1. linkageRuleDao.selectById(999L);
+      -> at net.lab1024.sa.access.service.AccessLinkageServiceTest.testGetById_NotFound(AccessLinkageServiceTest.java:161)
+Typically, stubbing argument mismatch indicates user mistake when writing tests.
+Mockito fails early so that you can debug potential problem easily.
+However, there are legit scenarios when this exception generates false negative signal:
+  - stubbing the same method multiple times using 'given().will()' or 'when().then()' API
+    Please use 'will().given()' or 'doReturn().when()' API for stubbing.
+  - stubbed method is intentionally invoked with different arguments by code under test
+    Please use default or 'silent' JUnit Rule (equivalent of Strictness.LENIENT).
+For more information see javadoc for PotentialStubbingProblem class.
+[ERROR]   AccessLinkageServiceTest.testQueryPage_Success:108 » Business 联动规则不存在
+[ERROR]   AccessLinkageServiceTest.testQueryPage_WithTriggerDeviceFilter:131 » Business 联动规则不存在
+[ERROR]   AccessLinkageServiceTest.testTestRule_NotFound:336 » PotentialStubbingProblem 
+Strict stubbing argument mismatch. Please check:
+ - this invocation of 'selectById' method:
+    linkageRuleDao.selectById(1L);
+    -> at net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl.delete(AccessLinkageServiceImpl.java:148)
+ - has following stubbing(s) with different arguments:
+    1. linkageRuleDao.selectById(999L);
+      -> at net.lab1024.sa.access.service.AccessLinkageServiceTest.testTestRule_NotFound(AccessLinkageServiceTest.java:333)
+Typically, stubbing argument mismatch indicates user mistake when writing tests.
+Mockito fails early so that you can debug potential problem easily.
+However, there are legit scenarios when this exception generates false negative signal:
+  - stubbing the same method multiple times using 'given().will()' or 'when().then()' API
+    Please use 'will().given()' or 'doReturn().when()' API for stubbing.
+  - stubbed method is intentionally invoked with different arguments by code under test
+    Please use default or 'silent' JUnit Rule (equivalent of Strictness.LENIENT).
+For more information see javadoc for PotentialStubbingProblem class.
+[ERROR]   AccessLinkageServiceTest.testTriggerLinkage_NoMatchingRule:301 » Business 联动规则不存在
+[ERROR]   AccessLinkageServiceTest.testTriggerLinkage_WithDelay:284 » Business 联动规则不存在
+[ERROR]   AccessLinkageServiceTest.testTriggerLinkage_WithoutDelay:266 » Business 联动规则不存在
+[ERROR]   AccessLinkageServiceTest.testUpdateRule_NotFound:210 » PotentialStubbingProblem 
+Strict stubbing argument mismatch. Please check:
+ - this invocation of 'selectById' method:
+    linkageRuleDao.selectById(1L);
+    -> at net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl.delete(AccessLinkageServiceImpl.java:148)
+ - has following stubbing(s) with different arguments:
+    1. linkageRuleDao.selectById(999L);
+      -> at net.lab1024.sa.access.service.AccessLinkageServiceTest.testUpdateRule_NotFound(AccessLinkageServiceTest.java:207)
+Typically, stubbing argument mismatch indicates user mistake when writing tests.
+Mockito fails early so that you can debug potential problem easily.
+However, there are legit scenarios when this exception generates false negative signal:
+  - stubbing the same method multiple times using 'given().will()' or 'when().then()' API
+    Please use 'will().given()' or 'doReturn().when()' API for stubbing.
+  - stubbed method is intentionally invoked with different arguments by code under test
+    Please use default or 'silent' JUnit Rule (equivalent of Strictness.LENIENT).
+For more information see javadoc for PotentialStubbingProblem class.
+[ERROR]   AccessLinkageServiceTest.testUpdateRule_Success:196 » NullPointer Cannot invoke "net.lab1024.sa.access.domain.entity.AccessLinkageRuleEntity.getRuleName()" because "updateEntity" is null
+[INFO] 
+[ERROR] Tests run: 69, Failures: 11, Errors: 31, Skipped: 0
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  18.371 s
+[INFO] Finished at: 2025-12-25T19:00:27+08:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:3.2.5:test (default-test) on project ioedream-access-service: There are test failures.
+[ERROR] 
+[ERROR] Please refer to D:\IOE-DREAM\microservices\ioedream-access-service\target\surefire-reports for the individual test results.
+[ERROR] Please refer to dump files (if any exist) [date].dump, [date]-jvmRun[N].dump and [date].dumpstream.
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

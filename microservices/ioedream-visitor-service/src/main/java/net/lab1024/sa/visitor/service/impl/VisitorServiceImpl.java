@@ -1,10 +1,11 @@
 package net.lab1024.sa.visitor.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import io.micrometer.observation.annotation.Observed;
-import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.exception.BusinessException;
 import net.lab1024.sa.common.exception.SystemException;
@@ -36,10 +37,11 @@ import jakarta.annotation.Resource;
  * @version 1.0.0
  * @since 2025-01-30
  */
-@Slf4j
 @Service
 @Transactional(rollbackFor = Exception.class)
+@Slf4j
 public class VisitorServiceImpl implements VisitorService {
+
 
     @Resource
     private VisitorAppointmentDao visitorAppointmentDao;

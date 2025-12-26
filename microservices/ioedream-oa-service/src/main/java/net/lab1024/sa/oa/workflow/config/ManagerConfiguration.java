@@ -1,13 +1,13 @@
 package net.lab1024.sa.oa.workflow.config;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.RedisTemplate;
-import io.micrometer.core.instrument.MeterRegistry;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import io.micrometer.core.instrument.MeterRegistry;
 import net.lab1024.sa.oa.workflow.cache.WorkflowCacheManager;
 
 /**
@@ -28,9 +28,8 @@ import net.lab1024.sa.oa.workflow.cache.WorkflowCacheManager;
  * @updated 2025-01-30 添加WorkflowCacheManager Bean注册
  */
 @Configuration("oaManagerConfiguration")
+@Slf4j
 public class ManagerConfiguration {
-
-    private static final Logger log = LoggerFactory.getLogger(ManagerConfiguration.class);
 
     /**
      * 注册WorkflowCacheManager（cache包）为Spring Bean
@@ -72,8 +71,3 @@ public class ManagerConfiguration {
         return new net.lab1024.sa.oa.workflow.performance.WorkflowCacheManager(redisTemplate, meterRegistry);
     }
 }
-
-
-
-
-

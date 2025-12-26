@@ -1,7 +1,8 @@
 package net.lab1024.sa.common.organization.controller;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import jakarta.annotation.Resource;
 import net.lab1024.sa.common.dto.ResponseDTO;
 
 import org.springframework.validation.annotation.Validated;
@@ -24,15 +25,15 @@ import java.util.List;
  * @version 1.0.0
  * @since 2025-01-16
  */
-@Slf4j
 @RestController
 @RequestMapping("/api/v1/organization/area-permission")
-@RequiredArgsConstructor
 @Validated
+@Slf4j
 public class AreaPermissionManageController {
 
     // TODO: 临时注释 - AreaPermissionService实现类未完成，P1阶段恢复
-    // private final AreaPermissionService areaPermissionService;
+    // @Resource
+    // private AreaPermissionService areaPermissionService;
 
     @PostMapping("/grant")
     public ResponseDTO<String> grantAreaPermission() {

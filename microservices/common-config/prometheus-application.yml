@@ -59,6 +59,16 @@ management:
       enabled: true
 
   # 指标配置
+  # Prometheus 指标导出（Spring Boot 3.5.x 推荐键）
+  # 说明：旧键 management.metrics.export.prometheus.* 已弃用
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+        step: 30s
+        pushgateway:
+          enabled: false
+
   metrics:
     tags:
       application: ${spring.application.name}
@@ -67,31 +77,24 @@ management:
       version: ${project.version:1.0.0}
       instance: ${HOSTNAME:${spring.application.name}-local}
 
-    export:
-      prometheus:
-        enabled: true
-        step: 30s
-        pushgateway:
-          enabled: false
-
     # 指标统计
     distribution:
       percentiles-histogram:
-        http.server.requests: true
-        spring.data.redis: true
-        spring.jdbc: true
-        resilience4j: true
+        "[http.server.requests]": true
+        "[spring.data.redis]": true
+        "[spring.jdbc]": true
+        "[resilience4j]": true
 
       percentiles:
-        http.server.requests: 0.5,0.9,0.95,0.99
-        spring.data.redis: 0.5,0.9,0.95,0.99
-        spring.jdbc: 0.5,0.9,0.95,0.99
-        resilience4j.circuitbreaker.calls: 0.5,0.9,0.95,0.99
+        "[http.server.requests]": 0.5,0.9,0.95,0.99
+        "[spring.data.redis]": 0.5,0.9,0.95,0.99
+        "[spring.jdbc]": 0.5,0.9,0.95,0.99
+        "[resilience4j.circuitbreaker.calls]": 0.5,0.9,0.95,0.99
 
       sla:
-        http.server.requests: 100ms,200ms,500ms,1s,2s,5s
-        spring.data.redis: 10ms,50ms,100ms,500ms,1s
-        spring.jdbc: 50ms,100ms,200ms,500ms,1s
+        "[http.server.requests]": 100ms,200ms,500ms,1s,2s,5s
+        "[spring.data.redis]": 10ms,50ms,100ms,500ms,1s
+        "[spring.jdbc]": 50ms,100ms,200ms,500ms,1s
 
     # 计时器配置
     timers:

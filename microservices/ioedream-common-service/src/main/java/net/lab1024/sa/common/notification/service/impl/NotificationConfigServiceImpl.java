@@ -1,5 +1,8 @@
 package net.lab1024.sa.common.notification.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
+
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,7 +17,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 import io.micrometer.observation.annotation.Observed;
 import jakarta.annotation.Resource;
-import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.monitoring.AlertManager;
@@ -45,10 +47,11 @@ import net.lab1024.sa.common.exception.ParamException;
  * @version 1.0.0
  * @since 2025-01-30
  */
-@Slf4j
 @Service
 @Transactional(rollbackFor = Exception.class)
+@Slf4j
 public class NotificationConfigServiceImpl implements NotificationConfigService {
+
 
     @Resource
     private NotificationConfigDao notificationConfigDao;
@@ -430,13 +433,12 @@ public class NotificationConfigServiceImpl implements NotificationConfigService 
                     .collect(Collectors.toList());
 
             // 4. 构建分页结果
-            PageResult<NotificationConfigVO> result = PageResult.<NotificationConfigVO>builder()
-                    .records(voList)
-                    .total(pageResult.getTotal())
-                    .pageNum(form.getPageNum())
-                    .pageSize(form.getPageSize())
-                    .totalPages((int) pageResult.getPages())
-                    .build();
+            PageResult<NotificationConfigVO> result = PageResult.of(
+                    voList,
+                    pageResult.getTotal(),
+                    form.getPageNum(),
+                    form.getPageSize()
+            );
 
             log.info("[通知配置] 分页查询通知配置成功，记录数={}", voList.size());
             return ResponseDTO.ok(result);

@@ -48,6 +48,23 @@ spring:
       # ===========================================
       # 监控配置
       # ===========================================
+      # Druid监控页面配置（所有环境）
+      stat-view-servlet:
+        enabled: true
+        url-pattern: /druid/*
+        reset-enable: false
+        login-username: ${DRUID_ADMIN_USERNAME:admin}
+        login-password: ${DRUID_ADMIN_PASSWORD}
+        allow: ${DRUID_ALLOW_IPS:127.0.0.1,192.168.0.0/16,10.0.0.0/8}
+
+      # Web监控配置（所有环境）
+      web-stat-filter:
+        enabled: true
+        url-pattern: /*
+        exclusions: "*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*,/actuator/*"
+        session-stat-enable: true
+        session-stat-max-count: 1000
+
       filter:
         stat:
           enabled: true

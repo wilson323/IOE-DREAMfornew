@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ============================================================
+  IOE-DREAM 公共核心模块 POM 模板
+
+  适用模块:
+    - microservices-common-core (最小稳定内核)
+
+  特征:
+    - ❌ 不依赖 Spring Boot/Cloud
+    - ❌ 不依赖其他内部模块
+    - ✅ 只依赖纯 Java 库
+
+  使用说明:
+    1. 复制此模板到目标模块
+    2. 修改 <artifactId> 为实际模块名
+    3. 修改 <name> 和 <description>
+    4. 根据需要调整依赖
+
+  注意:
+    - 此模板生成的 JAR 不能直接运行
+    - 必须先于所有其他模块构建
+  ============================================================
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <!-- ============================================================
+       父 POM 配置
+       ============================================================ -->
+  <parent>
+    <groupId>net.lab1024.sa</groupId>
+    <artifactId>ioedream-microservices-parent</artifactId>
+    <version>1.0.0</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+
+  <!-- ============================================================
+       模块基本信息
+       ============================================================ -->
+  <artifactId>microservices-common-core</artifactId>
+  <packaging>jar</packaging>
+
+  <name>IOE-DREAM Common Core</name>
+  <description>最小稳定内核：统一响应、异常、常量等</description>
+
+  <!-- ============================================================
+       构建配置
+       ============================================================ -->
+  <build>
+    <plugins>
+      <!--
+        禁用 spring-boot-maven-plugin 的 repackage
+        原因: 这是一个库模块,不需要生成可执行 JAR
+      -->
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+        <executions>
+          <execution>
+            <id>repackage</id>
+            <phase>none</phase>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <!-- ============================================================
+       依赖管理
+       ============================================================ -->
+  <dependencies>
+    <!-- ==================== 核心基础库 ==================== -->
+
+    <!-- SLF4J (日志API,不包含实现) -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+
+    <!-- Lombok (代码生成,编译时依赖) -->
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <optional>true</optional>
+    </dependency>
+
+    <!-- Swagger/OpenAPI 注解 (API文档注解) -->
+    <!--
+       用途: PageResult 等领域对象使用 @Schema 注解
+       原因: 必须在核心模块,因为其他模块都依赖 PageResult
+    -->
+    <dependency>
+      <groupId>io.swagger.core.v3</groupId>
+      <artifactId>swagger-annotations</artifactId>
+    </dependency>
+
+    <!-- ==================== 工具库 ==================== -->
+
+    <!-- Apache Commons Lang3 (通用工具类) -->
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+    </dependency>
+
+    <!-- ==================== 测试依赖 ==================== -->
+
+    <!-- JUnit Jupiter (单元测试框架) -->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- Mockito Core (Mock框架) -->
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- Mockito JUnit Jupiter (Mockito与JUnit集成) -->
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- Spring Boot Test (测试支持) -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+</project>

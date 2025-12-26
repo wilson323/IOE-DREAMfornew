@@ -1,0 +1,242 @@
+package net.lab1024.sa.common.tracing;
+
+import io.micrometer.tracing.Span;
+import io.micrometer.tracing.Tracer;
+import lombok.extern.slf4j.Slf4j;
+import org.aopalliance.intercept.MethodInterceptor;
+import org.aopalliance.intercept.MethodInvocation;
+
+import java.lang.reflect.Method;
+import java.util.concurrent.ConcurrentHashMap;
+
+/**
+ * IOE-DREAM 链路追踪拦截器
+ * <p>
+ * 基于AOP的方法级链路追踪拦截器
+ * 自动为Controller和Service层方法添加追踪埋点
+ * </p>
+ * <p>
+ * 功能特性：
+ * - 自动生成Span
+ * - 记录方法执行时间
+ * - 捕获异常信息
+ * - 添加业务标签
+ * </p>
+ *
+ * @author IOE-DREAM架构团队
+ * @version 1.0.0
+ * @since 2025-12-20
+ */
+@Slf4j
+public class TracingInterceptor implements MethodInterceptor {
+
+    private final Tracer tracer;
+    private final ConcurrentHashMap<String, String> methodTags = new ConcurrentHashMap<>();
+
+    /**
+     * 构造函数
+     *
+     * @param tracer 追踪器
+     */
+    public TracingInterceptor(Tracer tracer) {
+        this.tracer = tracer;
+        log.info("[链路追踪] TracingInterceptor初始化完成");
+    }
+
+    @Override
+    public Object invoke(MethodInvocation invocation) throws Throwable {
+        Method method = invocation.getMethod();
+        String className = method.getDeclaringClass().getSimpleName();
+        String methodName = method.getName();
+        String spanName = className + "." + methodName;
+
+        // 获取当前追踪上下文
+        Span parentSpan = tracer.currentSpan();
+        String traceId = parentSpan != null ? parentSpan.context().traceId() : "unknown";
+
+        // 开始新的Span
+        Span span = tracer.nextSpan().name(spanName).start();
+
+        try {
+            // 添加业务标签
+            addMethodTags(span, method, className, methodName);
+
+            // 在追踪上下文中执行方法
+            try (Tracer.SpanInScope ws = tracer.withSpanInScope(span)) {
+                log.debug("[链路追踪] 开始执行方法: traceId={}, span={}", traceId, spanName);
+
+                long startTime = System.currentTimeMillis();
+                Object result = invocation.proceed();
+                long executionTime = System.currentTimeMillis() - startTime;
+
+                // 记录成功执行
+                recordSuccess(span, executionTime);
+
+                log.debug("[链路追踪] 方法执行成功: traceId={}, span={}, 耗时={}ms",
+                         traceId, spanName, executionTime);
+
+                return result;
+            }
+        } catch (Exception e) {
+            // 记录异常信息
+            recordException(span, e);
+
+            log.error("[链路追踪] 方法执行异常: traceId={}, span={}, error={}",
+                     traceId, spanName, e.getMessage(), e);
+
+            throw e;
+        } finally {
+            // 结束Span
+            span.end();
+            log.debug("[链路追踪] Span结束: traceId={}, span={}", traceId, spanName);
+        }
+    }
+
+    /**
+     * 添加方法标签
+     *
+     * @param span Span对象
+     * @param method 方法对象
+     * @param className 类名
+     * @param methodName 方法名
+     */
+    private void addMethodTags(Span span, Method method, String className, String methodName) {
+        // 添加类和方法标签
+        span.tag("class", className);
+        span.tag("method", methodName);
+        span.tag("method.signature", method.toString());
+
+        // 添加包名标签
+        String packageName = method.getDeclaringClass().getPackage().getName();
+        span.tag("package", packageName);
+
+        // 添加层类型标签
+        String layerType = determineLayerType(packageName, className);
+        span.tag("layer", layerType);
+
+        // 添加业务标签
+        String methodKey = className + "." + methodName;
+        String businessTag = methodTags.get(methodKey);
+        if (businessTag != null) {
+            span.tag("business", businessTag);
+        }
+
+        // 添加参数数量标签
+        span.tag("parameter.count", String.valueOf(method.getParameterCount()));
+    }
+
+    /**
+     * 记录成功执行
+     *
+     * @param span Span对象
+     * @param executionTime 执行时间
+     */
+    private void recordSuccess(Span span, long executionTime) {
+        span.tag("execution.success", "true");
+        span.tag("execution.time", String.valueOf(executionTime));
+
+        // 根据执行时间添加性能标签
+        if (executionTime < 100) {
+            span.tag("performance", "fast");
+        } else if (executionTime < 1000) {
+            span.tag("performance", "normal");
+        } else if (executionTime < 5000) {
+            span.tag("performance", "slow");
+        } else {
+            span.tag("performance", "very_slow");
+        }
+
+        // 记录执行时间事件
+        span.event("execution_completed");
+    }
+
+    /**
+     * 记录异常信息
+     *
+     * @param span Span对象
+     * @param exception 异常对象
+     */
+    private void recordException(Span span, Exception exception) {
+        span.tag("execution.success", "false");
+        span.tag("error.type", exception.getClass().getSimpleName());
+        span.tag("error.message", exception.getMessage());
+
+        // 记录异常堆栈（仅记录前5行）
+        StringBuilder stackTrace = new StringBuilder();
+        StackTraceElement[] elements = exception.getStackTrace();
+        for (int i = 0; i < Math.min(5, elements.length); i++) {
+            stackTrace.append(elements[i].toString()).append("\n");
+        }
+        span.tag("error.stacktrace", stackTrace.toString());
+
+        // 记录异常事件
+        span.event("exception_occurred");
+    }
+
+    /**
+     * 确定层类型
+     *
+     * @param packageName 包名
+     * @param className 类名
+     * @return 层类型
+     */
+    private String determineLayerType(String packageName, String className) {
+        if (className.endsWith("Controller")) {
+            return "controller";
+        } else if (className.endsWith("Service") || className.endsWith("ServiceImpl")) {
+            return "service";
+        } else if (className.endsWith("Manager") || className.endsWith("ManagerImpl")) {
+            return "manager";
+        } else if (className.endsWith("Dao") || className.endsWith("Mapper")) {
+            return "dao";
+        } else if (packageName.contains("controller")) {
+            return "controller";
+        } else if (packageName.contains("service")) {
+            return "service";
+        } else if (packageName.contains("manager")) {
+            return "manager";
+        } else if (packageName.contains("dao") || packageName.contains("mapper")) {
+            return "dao";
+        } else {
+            return "unknown";
+        }
+    }
+
+    /**
+     * 添加业务标签映射
+     *
+     * @param methodKey 方法键
+     * @param businessTag 业务标签
+     */
+    public void addBusinessTag(String methodKey, String businessTag) {
+        methodTags.put(methodKey, businessTag);
+        log.debug("[链路追踪] 添加业务标签: method={}, tag={}", methodKey, businessTag);
+    }
+
+    /**
+     * 移除业务标签映射
+     *
+     * @param methodKey 方法键
+     */
+    public void removeBusinessTag(String methodKey) {
+        methodTags.remove(methodKey);
+        log.debug("[链路追踪] 移除业务标签: method={}", methodKey);
+    }
+
+    /**
+     * 获取所有业务标签映射
+     *
+     * @return 业务标签映射
+     */
+    public java.util.Map<String, String> getBusinessTags() {
+        return new ConcurrentHashMap<>(methodTags);
+    }
+
+    /**
+     * 清空业务标签映射
+     */
+    public void clearBusinessTags() {
+        methodTags.clear();
+        log.info("[链路追踪] 业务标签映射已清空");
+    }
+}

@@ -1,0 +1,1 @@
+net.lab1024.sa:ioedream-microservices-parent:pom:1.0.0

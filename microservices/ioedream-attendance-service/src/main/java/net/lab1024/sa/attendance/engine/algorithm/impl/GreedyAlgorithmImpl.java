@@ -1,10 +1,6 @@
 package net.lab1024.sa.attendance.engine.algorithm.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.attendance.engine.algorithm.ScheduleAlgorithm;
-import net.lab1024.sa.attendance.engine.algorithm.AlgorithmMetadata;
-import net.lab1024.sa.attendance.engine.model.ScheduleData;
-import net.lab1024.sa.attendance.engine.model.ScheduleResult;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -15,10 +11,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+
+import net.lab1024.sa.attendance.engine.algorithm.AlgorithmMetadata;
+import net.lab1024.sa.attendance.engine.algorithm.ScheduleAlgorithm;
+import net.lab1024.sa.attendance.engine.model.ScheduleData;
+import net.lab1024.sa.attendance.engine.model.ScheduleResult;
+
 /**
  * 贪心算法实现类
  * <p>
- * 说明：此前版本引入了与当前 {@link ScheduleData} 不一致的“第二套模型/接口”（例如 Employee/Shift/ScheduleConstraint
+ * 说明：此前版本引入了与当前 {@link ScheduleData} 不一致的“第二套模型/接口”（例如
+ * Employee/Shift/ScheduleConstraint
  * 等），导致编译期出现大量“找不到符号”，并且会在修复前置错误后被逐步暴露，造成“问题忽多忽少”的错觉。
  * </p>
  * <p>
@@ -36,6 +39,7 @@ import java.util.UUID;
  */
 @Slf4j
 public class GreedyAlgorithmImpl implements ScheduleAlgorithm {
+
 
     /** 算法参数 */
     private Map<String, Object> parameters;
@@ -108,8 +112,8 @@ public class GreedyAlgorithmImpl implements ScheduleAlgorithm {
 
                 for (ScheduleData.ShiftData shift : scheduleData.getAvailableShifts()) {
                     int required = shift != null && shift.getRequiredEmployeeCount() != null
-                        ? Math.max(0, shift.getRequiredEmployeeCount())
-                        : 1;
+                            ? Math.max(0, shift.getRequiredEmployeeCount())
+                            : 1;
 
                     // required=0 时跳过
                     if (required <= 0) {
@@ -128,16 +132,19 @@ public class GreedyAlgorithmImpl implements ScheduleAlgorithm {
                         }
 
                         records.add(ScheduleResult.ScheduleRecord.builder()
-                            .recordId(null)
-                            .userId(employee.getEmployeeId())
-                            .departmentId(employee.getDepartmentId())
-                            .shiftId(shift != null ? shift.getShiftId() : null)
-                            .scheduleDate(date.toString())
-                            .startTime(shift != null && shift.getStartTime() != null ? shift.getStartTime().toString() : null)
-                            .endTime(shift != null && shift.getEndTime() != null ? shift.getEndTime().toString() : null)
-                            .workLocation(shift != null ? shift.getWorkLocation() : null)
-                            .status("SCHEDULED")
-                            .build());
+                                .recordId(null)
+                                .userId(employee.getEmployeeId())
+                                .departmentId(employee.getDepartmentId())
+                                .shiftId(shift != null ? shift.getShiftId() : null)
+                                .scheduleDate(date.toString())
+                                .workStartTime(
+                                        shift != null && shift.getWorkStartTime() != null ? shift.getWorkStartTime().toString()
+                                                : null)
+                                .workEndTime(shift != null && shift.getWorkEndTime() != null ? shift.getWorkEndTime().toString()
+                                        : null)
+                                .workLocation(shift != null ? shift.getWorkLocation() : null)
+                                .status("SCHEDULED")
+                                .build());
 
                         assigned++;
                     }
@@ -147,22 +154,22 @@ public class GreedyAlgorithmImpl implements ScheduleAlgorithm {
             }
 
             ScheduleResult result = ScheduleResult.builder()
-                .resultId(null)
-                .planId(scheduleData.getPlanId())
-                .status("SUCCESS")
-                .message("贪心排班生成成功")
-                .scheduleRecords(records)
-                .conflicts(new ArrayList<>())
-                .statistics(null)
-                .executionTime(System.currentTimeMillis() - start)
-                .algorithmUsed(getAlgorithmType())
-                .optimizationMetrics(new HashMap<>())
-                .qualityScore(0.6)
-                .needsReview(false)
-                .recommendations(Arrays.asList("如需更高质量结果，可尝试遗传算法/启发式算法"))
-                .completedAt(LocalDateTime.now())
-                .extendedAttributes(Map.of("traceId", "greedy-" + UUID.randomUUID()))
-                .build();
+                    .resultId(null)
+                    .planId(scheduleData.getPlanId())
+                    .status("SUCCESS")
+                    .message("贪心排班生成成功")
+                    .scheduleRecords(records)
+                    .conflicts(new ArrayList<>())
+                    .statistics(null)
+                    .executionTime(System.currentTimeMillis() - start)
+                    .algorithmUsed(getAlgorithmType())
+                    .optimizationMetrics(new HashMap<>())
+                    .qualityScore(0.6)
+                    .needsReview(false)
+                    .recommendations(Arrays.asList("如需更高质量结果，可尝试遗传算法/启发式算法"))
+                    .completedAt(LocalDateTime.now())
+                    .extendedAttributes(Map.of("traceId", "greedy-" + UUID.randomUUID()))
+                    .build();
 
             status = AlgorithmStatus.COMPLETED;
             return result;
@@ -207,11 +214,12 @@ public class GreedyAlgorithmImpl implements ScheduleAlgorithm {
     @Override
     public long estimateExecutionTime(ScheduleData scheduleData) {
         if (scheduleData == null || scheduleData.getEmployees() == null || scheduleData.getAvailableShifts() == null
-            || scheduleData.getStartDate() == null || scheduleData.getEndDate() == null) {
+                || scheduleData.getStartDate() == null || scheduleData.getEndDate() == null) {
             return 0;
         }
 
-        int days = Math.max(1, (int) (scheduleData.getEndDate().toEpochDay() - scheduleData.getStartDate().toEpochDay() + 1));
+        int days = Math.max(1,
+                (int) (scheduleData.getEndDate().toEpochDay() - scheduleData.getStartDate().toEpochDay() + 1));
         long base = (long) scheduleData.getEmployees().size() * scheduleData.getAvailableShifts().size() * days;
         return Math.min(60_000L, base); // 粗略估计，最多60s
     }
@@ -298,22 +306,22 @@ public class GreedyAlgorithmImpl implements ScheduleAlgorithm {
 
     private ScheduleResult buildFailedResult(String message, long start) {
         return ScheduleResult.builder()
-            .resultId(null)
-            .planId(null)
-            .status("FAILED")
-            .message(message)
-            .scheduleRecords(new ArrayList<>())
-            .conflicts(new ArrayList<>())
-            .statistics(null)
-            .executionTime(System.currentTimeMillis() - start)
-            .algorithmUsed(getAlgorithmType())
-            .optimizationMetrics(new HashMap<>())
-            .qualityScore(0.0)
-            .needsReview(true)
-            .recommendations(Arrays.asList("检查输入数据与约束配置"))
-            .completedAt(LocalDateTime.now())
-            .extendedAttributes(new HashMap<>())
-            .build();
+                .resultId(null)
+                .planId(null)
+                .status("FAILED")
+                .message(message)
+                .scheduleRecords(new ArrayList<>())
+                .conflicts(new ArrayList<>())
+                .statistics(null)
+                .executionTime(System.currentTimeMillis() - start)
+                .algorithmUsed(getAlgorithmType())
+                .optimizationMetrics(new HashMap<>())
+                .qualityScore(0.0)
+                .needsReview(true)
+                .recommendations(Arrays.asList("检查输入数据与约束配置"))
+                .completedAt(LocalDateTime.now())
+                .extendedAttributes(new HashMap<>())
+                .build();
     }
 
     @Override

@@ -1,7 +1,8 @@
 package net.lab1024.sa.common.storage.config;
 
-import io.minio.MinioClient;
 import lombok.extern.slf4j.Slf4j;
+
+import io.minio.MinioClient;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,9 +17,9 @@ import jakarta.annotation.Resource;
  * @author IOE-DREAM Team
  * @since 2025-12-18
  */
-@Slf4j
 @Configuration
 @ConditionalOnProperty(prefix = "file.storage", name = "type", havingValue = "minio")
+@Slf4j
 public class MinIOConfig {
 
     @Resource

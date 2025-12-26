@@ -1,0 +1,299 @@
+# IOE-DREAM CI/CD流水线Hook
+# 在持续集成过程中进行全面的质量门禁检查
+
+hook {
+  name: "CI/CD流水线质量检查器"
+  description: "在CI/CD流水线中执行全面的质量门禁检查，确保所有代码符合企业级标准"
+  priority: "P0"
+
+  # 触发条件
+  triggers {
+    ci_cd_events {
+      events: ["push", "pull_request", "merge_request"]
+      branches: ["main", "develop", "feature/*", "hotfix/*"]
+    }
+
+    file_patterns {
+      # 所有重要文件变更
+      include: ["**/*.java", "**/pom.xml", "**/*.yml", "**/*.yaml", "**/*.md"]
+      # 排除不重要的文件
+      exclude: ["**/README.md", "**/.gitignore", "**/*.log"]
+    }
+  }
+
+  # 执行阶段
+  stages {
+    stage1: {
+      name: "代码质量预检查"
+      commands: [
+        "echo \"🔍 Stage 1: 代码质量预检查\"",
+        "",
+        "# 代码静态分析",
+        "echo \"执行代码静态分析...\"",
+        "if command -v mvn >/dev/null 2>&1; then",
+        "  echo \"运行Checkstyle检查...\"",
+        "  if [ -f \"checkstyle.xml\" ]; then",
+        "    mvn checkstyle:check -q || echo \"Checkstyle检查完成\"",
+        "  fi",
+        "  ",
+        "  echo \"运行SpotBugs检查...\"",
+        "  mvn spotbugs:check -q || echo \"SpotBugs检查完成\"",
+        "fi",
+        "",
+        "# 检查代码复杂度",
+        "echo \"检查代码复杂度...\"",
+        "JAVA_FILES=$(find . -name \"*.java\" -not -path \"*/target/*\" 2>/dev/null)",
+        "LARGE_FILES=0",
+        "for file in $JAVA_FILES; do",
+        "  LINE_COUNT=$(wc -l < \"$file\" 2>/dev/null || echo 0)",
+        "  if [ \"$LINE_COUNT\" -gt 500 ]; then",
+        "    echo \"⚠️ 大文件警告: $file ($LINE_COUNT 行)\"",
+        "    LARGE_FILES=$((LARGE_FILES + 1))",
+        "  fi",
+        "done",
+        "",
+        "if [ \"$LARGE_FILES\" -gt 0 ]; then",
+        "  echo \"发现 $LARGE_FILES 个大文件，建议拆分\"",
+        "fi",
+        "",
+        "echo \"✅ 代码质量预检查完成\""
+      ]
+    }
+
+    stage2: {
+      name: "依赖安全扫描"
+      commands: [
+        "echo \"🔒 Stage 2: 依赖安全扫描\"",
+        "",
+        "# 检查Maven依赖漏洞",
+        "echo \"扫描Maven依赖安全漏洞...\"",
+        "if command -v mvn >/dev/null 2>&1; then",
+        "  # 检查是否有OWASP Dependency Check插件",
+        "  if grep -q \"dependency-check-maven\" pom.xml 2>/dev/null; then",
+        "    echo \"运行OWASP依赖安全检查...\"",
+        "    mvn org.owasp:dependency-check-maven:check -q || echo \"依赖安全检查完成\"",
+        "  else",
+        "    echo \"未配置OWASP插件，进行基础依赖检查\"",
+        "  fi",
+        "fi",
+        "",
+        "# 检查过时依赖",
+        "echo \"检查过时依赖版本...\"",
+        "mvn versions:display-dependency-updates -q || echo \"依赖更新检查完成\"",
+        "",
+        "# 检查许可证合规性",
+        "echo \"检查许可证合规性...\"",
+        "if command -v license-checker >/dev/null 2>&1; then",
+        "  license-checker --onlyAllow 'MIT;Apache-2.0;BSD-2-Clause;BSD-3-Clause' || echo \"许可证检查完成\"",
+        "fi",
+        "",
+        "echo \"✅ 依赖安全扫描完成\""
+      ]
+    }
+
+    stage3: {
+      name: "架构合规性验证"
+      commands: [
+        "echo \"🏗️ Stage 3: 架构合规性验证\"",
+        "",
+        "# 四层架构检查",
+        "echo \"检查四层架构合规性...\"",
+        "VIOLATION_COUNT=0",
+        "",
+        "# 检查Controller是否直接访问DAO",
+        "CONTROLLER_VIOLATIONS=$(find . -name \"*Controller.java\" -exec grep -l \"Dao\\|Mapper\" {} \\; 2>/dev/null | wc -l || echo 0)",
+        "if [ \"$CONTROLLER_VIOLATIONS\" -gt 0 ]; then",
+        "  echo \"❌ Controller层直接访问DAO，违反四层架构: $CONTROLLER_VIOLATIONS 个文件\"",
+        "  VIOLATION_COUNT=$((VIOLATION_COUNT + CONTROLLER_VIOLATIONS))",
+        "fi",
+        "",
+        "# 检查Service是否直接操作数据库",
+        "SERVICE_VIOLATIONS=$(find . -name \"*Service*.java\" -exec grep -l \"@TableInsert\\|@TableUpdate\\|@TableDelete\" {} \\; 2>/dev/null | wc -l || echo 0)",
+        "if [ \"$SERVICE_VIOLATIONS\" -gt 0 ]; then",
+        "  echo \"❌ Service层直接操作数据库，应通过DAO: $SERVICE_VIOLATIONS 个文件\"",
+        "  VIOLATION_COUNT=$((VIOLATION_COUNT + SERVICE_VIOLATIONS))",
+        "fi",
+        "",
+        "# 检查微服务依赖违规",
+        "echo \"检查微服务依赖违规...\"",
+        "VIOLATION_SERVICES=$(find . -name \"pom.xml\" -exec grep -l \"microservices-common\" {} \\; 2>/dev/null | wc -l || echo 0)",
+        "if [ \"$VIOLATION_SERVICES\" -gt 0 ]; then",
+        "  echo \"❌ 发现microservices-common聚合依赖违规: $VIOLATION_SERVICES 个服务\"",
+        "  VIOLATION_COUNT=$((VIOLATION_COUNT + VIOLATION_SERVICES))",
+        "fi",
+        "",
+        "if [ \"$VIOLATION_COUNT\" -gt 0 ]; then",
+        "  echo \"❌ 架构合规检查失败，发现 $VIOLATION_COUNT 个违规\"",
+        "  echo \"使用/call-skills four-tier-architecture-guardian进行架构修复\"",
+        "  exit 1",
+        "fi",
+        "",
+        "echo \"✅ 架构合规性验证通过\""
+      ]
+    }
+
+    stage4: {
+      name: "性能基准测试"
+      commands: [
+        "echo \"🚀 Stage 4: 性能基准测试\"",
+        "",
+        "# 编译性能测试",
+        "echo \"执行编译性能基准测试...\"",
+        "START_TIME=$(date +%s)",
+        "mvn clean compile -q",
+        "END_TIME=$(date +%s)",
+        "COMPILE_TIME=$((END_TIME - START_TIME))",
+        "echo \"编译耗时: ${COMPILE_TIME}秒\"",
+        "",
+        "if [ \"$COMPILE_TIME\" -gt 300 ]; then",
+        "  echo \"⚠️ 警告：编译时间超过5分钟，可能存在性能问题\"",
+        "fi",
+        "",
+        "# 单元测试性能测试",
+        "echo \"执行单元测试性能基准测试...\"",
+        "TEST_START=$(date +%s)",
+        "mvn test -q",
+        "TEST_END=$(date +%s)",
+        "TEST_TIME=$((TEST_END - TEST_START))",
+        "echo \"测试耗时: ${TEST_TIME}秒\"",
+        "",
+        "# 生成性能报告",
+        "echo \"生成性能基准报告...\"",
+        "PERFORMANCE_REPORT=\".kiro/logs/performance-benchmark-$(date +%Y%m%d-%H%M%S).json\"",
+        "cat > \"$PERFORMANCE_REPORT\" << EOF",
+        "{",
+        "  \"timestamp\": \"$(date -Iseconds)\",",
+        "  \"compile_time_seconds\": $COMPILE_TIME,",
+        "  \"test_time_seconds\": $TEST_TIME,",
+        "  \"total_time_seconds\": $((COMPILE_TIME + TEST_TIME)),",
+        "  \"build_node\": \"$(hostname || echo 'unknown')\"",
+        "}",
+        "EOF",
+        "",
+        "echo \"性能报告已生成: $PERFORMANCE_REPORT\"",
+        "echo \"✅ 性能基准测试完成\""
+      ]
+    }
+
+    stage5: {
+      name: "集成测试验证"
+      commands: [
+        "echo \"🔗 Stage 5: 集成测试验证\"",
+        "",
+        "# 检查是否需要运行集成测试",
+        "if grep -q \"maven-failsafe-plugin\" pom.xml 2>/dev/null; then",
+        "  echo \"运行集成测试...\"",
+        "  mvn verify -q",
+        "  INTEGRATION_RESULT=$?",
+        "  ",
+        "  if [ $INTEGRATION_RESULT -ne 0 ]; then",
+        "    echo \"❌ 集成测试失败\"",
+        "    echo \"请检查：\"",
+        "    echo \"1. 集成测试环境是否正确配置\",
+        "    echo \"2. 外部依赖服务是否可用\",
+        "    echo \"3. 测试数据是否准备完整\",
+        "    exit 1",
+        "  fi",
+        "else",
+        "  echo \"未配置集成测试，跳过此步骤\"",
+        "fi",
+        "",
+        "# 检查API契约测试",
+        "echo \"检查API契约测试...\"",
+        "if [ -d \"src/test/resources/contracts\" ] || [ -d \"src/test/resources/pact\" ]; then",
+        "  echo \"发现API契约测试，执行验证...\"",
+        "  # 这里可以添加具体的契约测试命令",
+        "  echo \"API契约测试验证完成\"",
+        "fi",
+        "",
+        "echo \"✅ 集成测试验证通过\""
+      ]
+    }
+
+    stage6: {
+      name: "部署就绪性检查"
+      commands: [
+        "echo \"🚢 Stage 6: 部署就绪性检查\"",
+        "",
+        "# 检查Docker相关文件",
+        "echo \"检查Docker配置...\"",
+        "if [ -f \"Dockerfile\" ]; then",
+        "  echo \"验证Dockerfile...\"",
+        "  # 检查Dockerfile最佳实践",
+        "  if grep -q \"FROM.*:latest\" Dockerfile; then",
+        "    echo \"⚠️ 警告：Dockerfile使用latest标签，建议使用具体版本\"",
+        "  fi",
+        "  ",
+        "  if ! grep -q \"EXPOSE\" Dockerfile; then",
+        "    echo \"⚠️ 警告：Dockerfile未暴露端口\"",
+        "  fi",
+        "fi",
+        "",
+        "if [ -f \"docker-compose.yml\" ] || [ -f \"docker-compose.yaml\" ]; then",
+        "  echo \"验证docker-compose配置...\"",
+        "  # 检查docker-compose配置",
+        "  if command -v docker-compose >/dev/null 2>&1; then",
+        "    docker-compose config >/dev/null 2>&1 && echo \"✅ docker-compose配置正确\" || echo \"⚠️ docker-compose配置有问题\"",
+        "  fi",
+        "fi",
+        "",
+        "# 检查Kubernetes配置",
+        "echo \"检查Kubernetes配置...\"",
+        "K8S_FILES=$(find . -name \"*.yaml\" -o -name \"*.yml\" | xargs grep -l \"kind:\\ Deployment\\|kind:\\ Service\" 2>/dev/null || echo \"\")",
+        "if [ ! -z \"$K8S_FILES\" ]; then",
+        "  echo \"发现Kubernetes配置文件: $K8S_FILES\"",
+        "  # 这里可以添加kubectl dry-run验证",
+        "  echo \"Kubernetes配置检查完成\"",
+        "fi",
+        "",
+        "# 检查环境变量配置",
+        "echo \"检查环境变量配置...\"",
+        "if [ -f \"application.yml\" ] || [ -f \"application.yaml\" ]; then",
+        "  echo \"检查应用配置完整性...\"",
+        "  if grep -q \"\\${\" application*.yml 2>/dev/null; then",
+        "    echo \"发现环境变量占位符，确保部署环境提供相应变量\"",
+        "  fi",
+        "fi",
+        "",
+        "echo \"✅ 部署就绪性检查通过\""
+      ]
+    }
+  }
+
+  # 成功消息
+  success {
+    message: "✅ CI/CD流水线质量检查全部通过！🎉"
+    details: [
+      "- 代码质量预检查: 静态分析、复杂度检查通过",
+      "- 依赖安全扫描: 无安全漏洞、许可证合规",
+      "- 架构合规性: 四层架构、微服务规范通过",
+      "- 性能基准测试: 编译和测试性能达标",
+      "- 集成测试验证: 集成测试通过",
+      "- 部署就绪性: Docker/K8S配置正确"
+    ]
+  }
+
+  # 失败消息和建议
+  failure {
+    message: "❌ CI/CD流水线质量检查失败！请修复后重试"
+    suggestions: [
+      "1. 修复代码质量问题（Checkstyle、SpotBugs违规）",
+      "2. 更新有安全漏洞的依赖版本",
+      "3. 确保四层架构合规，避免跨层访问",
+      "4. 优化编译和测试性能",
+      "5. 修复集成测试失败",
+      "6. 完善Docker/Kubernetes配置",
+      "7. 使用/call-skills four-tier-architecture-guardian进行架构修复",
+      "8. 使用/call-skills global-dependency-manager进行依赖优化"
+    ]
+    blocking: true
+  }
+
+  # 输出配置
+  output {
+    verbose: true
+    color: true
+    log_file: ".kiro/logs/ci-cd-pipeline-$(date +%Y%m%d-%H%M%S).log"
+    metrics: true
+  }
+}

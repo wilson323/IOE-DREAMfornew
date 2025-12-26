@@ -1,17 +1,23 @@
 package net.lab1024.sa.device.comm.service.impl;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.annotation.Resource;
-import org.springframework.transaction.annotation.Transactional;
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.device.comm.monitor.HighPrecisionDeviceMonitor;
-import net.lab1024.sa.device.comm.service.HighPrecisionDeviceMonitorService;
-import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.annotation.Resource;
+import net.lab1024.sa.device.comm.monitor.HighPrecisionDeviceMonitor;
+import net.lab1024.sa.device.comm.service.HighPrecisionDeviceMonitorService;
 
 /**
  * 高精度设备监控服务实现
@@ -27,10 +33,10 @@ import java.util.stream.Collectors;
  * @version 1.0.0
  * @since 2025-12-16
  */
-@Slf4j
 @Service
 @Transactional(rollbackFor = Exception.class)
 @Schema(description = "高精度设备监控服务实现")
+@Slf4j
 public class HighPrecisionDeviceMonitorServiceImpl implements HighPrecisionDeviceMonitorService {
 
     @Resource
@@ -47,8 +53,8 @@ public class HighPrecisionDeviceMonitorServiceImpl implements HighPrecisionDevic
             }
 
             // 调用Monitor层处理
-            HighPrecisionDeviceMonitor.DeviceStatusSnapshot snapshot =
-                    highPrecisionDeviceMonitor.getDeviceRealTimeStatus(deviceId);
+            HighPrecisionDeviceMonitor.DeviceStatusSnapshot snapshot = highPrecisionDeviceMonitor
+                    .getDeviceRealTimeStatus(deviceId);
 
             if (snapshot == null) {
                 log.warn("[高精度监控服务] 设备状态不存在, deviceId={}", deviceId);
@@ -109,8 +115,8 @@ public class HighPrecisionDeviceMonitorServiceImpl implements HighPrecisionDevic
             }
 
             // 调用Monitor层处理
-            List<HighPrecisionDeviceMonitor.DeviceStatusSnapshot> history =
-                    highPrecisionDeviceMonitor.getDeviceStatusHistory(deviceId, count);
+            List<HighPrecisionDeviceMonitor.DeviceStatusSnapshot> history = highPrecisionDeviceMonitor
+                    .getDeviceStatusHistory(deviceId, count);
 
             if (history == null || history.isEmpty()) {
                 log.debug("[高精度监控服务] 设备状态历史为空, deviceId={}", deviceId);
@@ -180,8 +186,8 @@ public class HighPrecisionDeviceMonitorServiceImpl implements HighPrecisionDevic
             }
 
             // 调用Monitor层处理
-            Map<String, HighPrecisionDeviceMonitor.DeviceStatusSnapshot> results =
-                    highPrecisionDeviceMonitor.batchMonitorDevices(uniqueDeviceIds);
+            Map<String, HighPrecisionDeviceMonitor.DeviceStatusSnapshot> results = highPrecisionDeviceMonitor
+                    .batchMonitorDevices(uniqueDeviceIds);
 
             log.info("[高精度监控服务] 批量监控完成, requestCount={}, resultCount={}",
                     uniqueDeviceIds.size(), results.size());
@@ -297,16 +303,15 @@ public class HighPrecisionDeviceMonitorServiceImpl implements HighPrecisionDevic
             }
 
             // 为每个设备配置高精度监控
-            HighPrecisionDeviceMonitor.DeviceMonitorConfig highPrecisionConfig =
-                    new HighPrecisionDeviceMonitor.DeviceMonitorConfig(
-                            100,    // 100ms高精度间隔
-                            500,    // 500ms超时
-                            1000,   // 1000条历史记录
-                            true,   // 启用高精度
-                            80.0,   // CPU阈值80%
-                            1024L * 1024 * 1024, // 内存阈值1GB
-                            100.0   // 延迟阈值100ms
-                    );
+            HighPrecisionDeviceMonitor.DeviceMonitorConfig highPrecisionConfig = new HighPrecisionDeviceMonitor.DeviceMonitorConfig(
+                    100, // 100ms高精度间隔
+                    500, // 500ms超时
+                    1000, // 1000条历史记录
+                    true, // 启用高精度
+                    80.0, // CPU阈值80%
+                    1024L * 1024 * 1024, // 内存阈值1GB
+                    100.0 // 延迟阈值100ms
+            );
 
             for (String deviceId : deviceIds) {
                 if (deviceId != null && !deviceId.trim().isEmpty()) {
@@ -339,16 +344,15 @@ public class HighPrecisionDeviceMonitorServiceImpl implements HighPrecisionDevic
             }
 
             // 为每个设备配置普通精度监控（停止高精度）
-            HighPrecisionDeviceMonitor.DeviceMonitorConfig normalConfig =
-                    new HighPrecisionDeviceMonitor.DeviceMonitorConfig(
-                            1000,   // 1s普通精度间隔
-                            1000,   // 1s超时
-                            200,    // 200条历史记录
-                            false,  // 禁用高精度
-                            70.0,   // CPU阈值70%
-                            512L * 1024 * 1024,   // 内存阈值512MB
-                            200.0   // 延迟阈值200ms
-                    );
+            HighPrecisionDeviceMonitor.DeviceMonitorConfig normalConfig = new HighPrecisionDeviceMonitor.DeviceMonitorConfig(
+                    1000, // 1s普通精度间隔
+                    1000, // 1s超时
+                    200, // 200条历史记录
+                    false, // 禁用高精度
+                    70.0, // CPU阈值70%
+                    512L * 1024 * 1024, // 内存阈值512MB
+                    200.0 // 延迟阈值200ms
+            );
 
             for (String deviceId : deviceIds) {
                 if (deviceId != null && !deviceId.trim().isEmpty()) {
@@ -375,8 +379,7 @@ public class HighPrecisionDeviceMonitorServiceImpl implements HighPrecisionDevic
      * 创建默认状态快照
      */
     private HighPrecisionDeviceMonitor.DeviceStatusSnapshot createDefaultSnapshot(String deviceId) {
-        HighPrecisionDeviceMonitor.DeviceStatusSnapshot snapshot =
-                new HighPrecisionDeviceMonitor.DeviceStatusSnapshot();
+        HighPrecisionDeviceMonitor.DeviceStatusSnapshot snapshot = new HighPrecisionDeviceMonitor.DeviceStatusSnapshot();
         snapshot.setDeviceId(deviceId);
         snapshot.setStatus(HighPrecisionDeviceMonitor.DeviceStatus.UNKNOWN);
         snapshot.setHealthLevel("未知");

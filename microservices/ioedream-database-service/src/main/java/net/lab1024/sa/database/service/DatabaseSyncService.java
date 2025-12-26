@@ -1,29 +1,33 @@
 package net.lab1024.sa.database.service;
 
-import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.common.entity.BaseEntity;
-import net.lab1024.sa.common.organization.dao.AreaDao;
-import net.lab1024.sa.common.organization.entity.AreaEntity;
-import net.lab1024.sa.database.entity.DatabaseVersionEntity;
-import net.lab1024.sa.database.mapper.DatabaseVersionMapper;
-import org.flywaydb.core.Flyway;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import javax.sql.DataSource;
+
+import org.flywaydb.core.Flyway;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import jakarta.annotation.Resource;
+import net.lab1024.sa.common.organization.dao.AreaDao;
+import net.lab1024.sa.common.organization.entity.AreaEntity;
+import net.lab1024.sa.database.mapper.DatabaseVersionMapper;
 
 /**
  * 数据库同步服务
@@ -39,9 +43,9 @@ import java.util.concurrent.Executors;
  * @version 1.0.0
  * @since 2025-12-08
  */
-@Slf4j
 @Service
 @Transactional(rollbackFor = Exception.class)
+@Slf4j
 public class DatabaseSyncService {
 
     @Resource
@@ -87,12 +91,29 @@ public class DatabaseSyncService {
         }
 
         // Getters and Setters
-        public String getName() { return name; }
-        public String getUrl() { return url; }
-        public String getUsername() { return username; }
-        public String getPassword() { return password; }
-        public boolean isEnabled() { return enabled; }
-        public Set<String> getRequiredTables() { return requiredTables; }
+        public String getName() {
+            return name;
+        }
+
+        public String getUrl() {
+            return url;
+        }
+
+        public String getUsername() {
+            return username;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public Set<String> getRequiredTables() {
+            return requiredTables;
+        }
 
         public void addRequiredTable(String tableName) {
             this.requiredTables.add(tableName);
@@ -144,8 +165,7 @@ public class DatabaseSyncService {
 
         // 等待所有同步完成
         CompletableFuture<Void> allFutures = CompletableFuture.allOf(
-            futures.toArray(new CompletableFuture[0])
-        );
+                futures.toArray(new CompletableFuture[0]));
 
         return allFutures.thenApply(v -> {
             for (Map.Entry<String, DatabaseConfig> entry : databaseConfigs.entrySet()) {
@@ -213,7 +233,8 @@ public class DatabaseSyncService {
      * 检查数据库连接
      */
     private boolean checkDatabaseConnection(DatabaseConfig config) {
-        try (Connection connection = DriverManager.getConnection(config.getUrl(), config.getUsername(), config.getPassword())) {
+        try (Connection connection = DriverManager.getConnection(config.getUrl(), config.getUsername(),
+                config.getPassword())) {
             if (connection != null && !connection.isClosed()) {
                 log.debug("[数据库同步服务] 数据库连接成功: {}", config.getName());
                 return true;
@@ -232,11 +253,11 @@ public class DatabaseSyncService {
         String checkSql = "SELECT COUNT(*) FROM database_version WHERE db_name = ?";
         Integer count = jdbcTemplate.queryForObject(checkSql, Integer.class, dbName);
 
-        if (count == 0) {
+        if (count == null || count == 0) {
             String insertSql = """
-                INSERT INTO database_version (db_name, db_version, status, description, create_time, update_time)
-                VALUES (?, '1.0.0', 'INIT', '数据库初始化记录', NOW(), NOW())
-                """;
+                    INSERT INTO database_version (db_name, db_version, status, description, create_time, update_time)
+                    VALUES (?, '1.0.0', 'INIT', '数据库初始化记录', NOW(), NOW())
+                    """;
             jdbcTemplate.update(insertSql, dbName);
             log.info("[数据库同步服务] 创建数据库版本记录: {}", dbName);
         }
@@ -277,11 +298,12 @@ public class DatabaseSyncService {
             return false;
         }
 
-        try (Connection connection = DriverManager.getConnection(config.getUrl(), config.getUsername(), config.getPassword())) {
+        try (Connection connection = DriverManager.getConnection(config.getUrl(), config.getUsername(),
+                config.getPassword())) {
             DatabaseMetaData metaData = connection.getMetaData();
 
             Set<String> existingTables = new HashSet<>();
-            try (ResultSet tables = metaData.getTables(null, null, "%", new String[]{"TABLE"})) {
+            try (ResultSet tables = metaData.getTables(null, null, "%", new String[] { "TABLE" })) {
                 while (tables.next()) {
                     existingTables.add(tables.getString("TABLE_NAME").toLowerCase());
                 }
@@ -350,10 +372,10 @@ public class DatabaseSyncService {
     private boolean syncAreaData(String dbName) {
         try {
             // 检查是否已有区域数据
-            String countSql = "SELECT COUNT(*) FROM t_area";
+            String countSql = "SELECT COUNT(*) FROM t_common_area";
             Integer count = jdbcTemplate.queryForObject(countSql, Integer.class);
 
-            if (count == 0) {
+            if (count == null || count == 0) {
                 // 插入基础区域数据
                 List<AreaEntity> areas = createDefaultAreas();
                 for (AreaEntity area : areas) {
@@ -379,11 +401,10 @@ public class DatabaseSyncService {
         AreaEntity rootArea = new AreaEntity();
         rootArea.setAreaName("IOE-DREAM智慧园区");
         rootArea.setAreaCode("ROOT");
-        rootArea.setParentId(0L); // 注意: microservices-common中是parentAreaId，business中是parentId
-        rootArea.setAreaType(1); // 园区类型，使用Integer类型
-        rootArea.setAreaStatus(1); // 正常状态，注意：common版本用areaStatus，business版本用status
-        rootArea.setAreaLevel(1);
-        // rootArea.setSortIndex(1); // common版本没有sortIndex字段，删除该行
+        rootArea.setParentId(0L);
+        rootArea.setAreaType("CAMPUS"); // 园区类型，使用String类型：CAMPUS-园区 BUILDING-建筑 FLOOR-楼层 ROOM-房间
+        rootArea.setStatus(1); // 正常状态，使用status字段（Integer类型）
+        rootArea.setLevel(1); // 层级，使用level字段（Integer类型）
         areas.add(rootArea);
 
         return areas;
@@ -424,10 +445,10 @@ public class DatabaseSyncService {
      */
     private void updateDatabaseVersion(String dbName, String status, String description) {
         String sql = """
-            UPDATE database_version
-            SET db_version = '1.0.0', status = ?, description = ?, update_time = NOW()
-            WHERE db_name = ?
-            """;
+                UPDATE database_version
+                SET db_version = '1.0.0', status = ?, description = ?, update_time = NOW()
+                WHERE db_name = ?
+                """;
         jdbcTemplate.update(sql, status, description, dbName);
     }
 
@@ -470,12 +491,11 @@ public class DatabaseSyncService {
 
         // 公共数据库配置
         DatabaseConfig commonConfig = new DatabaseConfig(
-            "ioedream_common_db",
-            dbUrl,
-            dbUsername,
-            dbPassword,
-            true
-        );
+                "ioedream_common_db",
+                dbUrl,
+                dbUsername,
+                dbPassword,
+                true);
         commonConfig.addRequiredTable("t_area");
         commonConfig.addRequiredTable("t_user");
         commonConfig.addRequiredTable("t_role");

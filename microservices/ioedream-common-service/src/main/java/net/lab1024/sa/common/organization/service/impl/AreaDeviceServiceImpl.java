@@ -1,17 +1,19 @@
 package net.lab1024.sa.common.organization.service.impl;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.common.organization.entity.AreaDeviceEntity;
-import net.lab1024.sa.common.organization.manager.AreaDeviceManager;
-import net.lab1024.sa.common.organization.service.AreaDeviceService;
-import net.lab1024.sa.common.organization.domain.dto.AreaDeviceHealthStatistics;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
+import jakarta.annotation.Resource;
+import net.lab1024.sa.common.organization.domain.dto.AreaDeviceHealthStatistics;
+import net.lab1024.sa.common.organization.entity.AreaDeviceEntity;
+import net.lab1024.sa.common.organization.manager.AreaDeviceManager;
+import net.lab1024.sa.common.organization.service.AreaDeviceService;
 
 /**
  * 区域设备关联管理服务实现
@@ -21,17 +23,18 @@ import java.util.HashMap;
  * @version 1.0.0
  * @since 2025-01-16
  */
-@Slf4j
 @Service
-@RequiredArgsConstructor
+@Slf4j
 public class AreaDeviceServiceImpl implements AreaDeviceService {
 
-    private final AreaDeviceManager areaDeviceManager;
+
+    @Resource
+    private AreaDeviceManager areaDeviceManager;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public String addDeviceToArea(Long areaId, String deviceId, String deviceCode, String deviceName,
-                               Integer deviceType, Integer deviceSubType, String businessModule, Integer priority) {
+            Integer deviceType, Integer deviceSubType, String businessModule, Integer priority) {
         log.info("[区域设备服务] 添加设备到区域: areaId={}, deviceId={}, deviceType={}, module={}",
                 areaId, deviceId, deviceType, businessModule);
 
@@ -231,8 +234,29 @@ public class AreaDeviceServiceImpl implements AreaDeviceService {
             serviceStats.setOfflineCount(managerStats.getOfflineCount());
             serviceStats.setPrimaryCount(managerStats.getPrimaryCount());
             serviceStats.setSecondaryCount(managerStats.getSecondaryCount());
-            serviceStats.setTypeStatistics(managerStats.getTypeStatistics());
-            serviceStats.setSubtypeStatistics(managerStats.getSubtypeStatistics());
+            // 转换Map<String, Integer>到Map<Integer, Integer>
+            if (managerStats.getTypeStatistics() != null) {
+                Map<Integer, Integer> typeStats = new HashMap<>();
+                managerStats.getTypeStatistics().forEach((key, value) -> {
+                    try {
+                        typeStats.put(Integer.parseInt(key), value);
+                    } catch (NumberFormatException e) {
+                        // 如果key不是数字，跳过
+                    }
+                });
+                serviceStats.setTypeStatistics(typeStats);
+            }
+            if (managerStats.getSubtypeStatistics() != null) {
+                Map<Integer, Integer> subtypeStats = new HashMap<>();
+                managerStats.getSubtypeStatistics().forEach((key, value) -> {
+                    try {
+                        subtypeStats.put(Integer.parseInt(key), value);
+                    } catch (NumberFormatException e) {
+                        // 如果key不是数字，跳过
+                    }
+                });
+                serviceStats.setSubtypeStatistics(subtypeStats);
+            }
             return serviceStats;
         } catch (Exception e) {
             log.error("获取设备统计信息失败, areaId={}", areaId, e);
@@ -246,7 +270,8 @@ public class AreaDeviceServiceImpl implements AreaDeviceService {
 
         try {
             // 转换Manager DTO到Service DTO
-            List<AreaDeviceManager.ModuleDeviceDistribution> managerDist = areaDeviceManager.getModuleDeviceDistribution(businessModule);
+            List<AreaDeviceManager.ModuleDeviceDistribution> managerDist = areaDeviceManager
+                    .getModuleDeviceDistribution(businessModule);
             return managerDist.stream().map(md -> {
                 AreaDeviceService.ModuleDeviceDistribution sd = new AreaDeviceService.ModuleDeviceDistribution();
                 sd.setBusinessModule(md.getBusinessModule());
@@ -305,7 +330,7 @@ public class AreaDeviceServiceImpl implements AreaDeviceService {
 
         // 收集所有业务模块的分布数据
         Map<String, List<AreaDeviceService.ModuleDeviceDistribution>> result = new HashMap<>();
-        String[] modules = {"access", "attendance", "consume", "video", "visitor"};
+        String[] modules = { "access", "attendance", "consume", "video", "visitor" };
         for (String module : modules) {
             result.put(module, getModuleDeviceDistribution(module));
         }
@@ -319,7 +344,8 @@ public class AreaDeviceServiceImpl implements AreaDeviceService {
 
         int successCount = 0;
         for (AreaDeviceService.DeviceMoveRequest request : moveRequests) {
-            if (areaDeviceManager.moveDeviceToArea(request.getDeviceId(), request.getOldAreaId(), request.getNewAreaId())) {
+            if (areaDeviceManager.moveDeviceToArea(request.getDeviceId(), request.getOldAreaId(),
+                    request.getNewAreaId())) {
                 successCount++;
             }
         }
@@ -343,8 +369,9 @@ public class AreaDeviceServiceImpl implements AreaDeviceService {
         healthStats.setTotalDevices(stats != null && stats.getTotalCount() != null ? stats.getTotalCount() : 0);
         healthStats.setNormalDevices(stats != null && stats.getOnlineCount() != null ? stats.getOnlineCount() : 0);
         healthStats.setOfflineDevices(stats != null && stats.getOfflineCount() != null ? stats.getOfflineCount() : 0);
-        healthStats.setHealthRate(healthStats.getTotalDevices() > 0 ?
-            (double) healthStats.getNormalDevices() / healthStats.getTotalDevices() : 0.0);
+        healthStats.setHealthRate(healthStats.getTotalDevices() > 0
+                ? (double) healthStats.getNormalDevices() / healthStats.getTotalDevices()
+                : 0.0);
         return healthStats;
     }
 }

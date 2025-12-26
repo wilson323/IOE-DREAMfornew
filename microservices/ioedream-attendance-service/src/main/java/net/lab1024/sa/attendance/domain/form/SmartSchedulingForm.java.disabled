@@ -1,0 +1,17 @@
+package net.lab1024.sa.attendance.domain.form;
+
+import lombok.Data;
+
+import java.time.LocalDate;
+import java.util.List;
+
+@Data
+public class SmartSchedulingForm {
+    private Long planId;
+    private List<Long> employeeIds;
+    private List<Long> shiftIds;
+    private LocalDate startDate;
+    private LocalDate endDate;
+    private Integer optimizationGoal;
+    private Integer algorithmType;
+}

@@ -101,7 +101,8 @@ import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.persistence.Entity;
+import @Data
+@TableName("table_name");
 import jakarta.persistence.Table;
 import jakarta.transaction.Transactional;
 

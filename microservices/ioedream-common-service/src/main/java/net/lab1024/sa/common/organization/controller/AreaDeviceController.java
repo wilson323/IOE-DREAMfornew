@@ -1,10 +1,11 @@
 package net.lab1024.sa.common.organization.controller;
 
+import lombok.extern.slf4j.Slf4j;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import jakarta.annotation.Resource;
 import net.lab1024.sa.common.organization.entity.AreaDeviceEntity;
 import net.lab1024.sa.common.organization.domain.dto.AreaDeviceHealthStatistics;
 // 已移除Manager层导入，Controller应只与Service层交互
@@ -28,15 +29,15 @@ import java.util.Map;
  * @version 1.0.0
  * @since 2025-01-16
  */
-@Slf4j
 @RestController
 @RequestMapping("/api/v1/organization/area-device")
-@RequiredArgsConstructor
 @Tag(name = "区域设备关联管理", description = "区域设备关联管理相关接口")
 @Validated
+@Slf4j
 public class AreaDeviceController {
 
-    private final AreaDeviceService areaDeviceService;
+    @Resource
+    private AreaDeviceService areaDeviceService;
 
     @PostMapping("/add")
     @Operation(summary = "添加设备到区域", description = "将设备添加到指定区域，建立关联关系")

@@ -1,0 +1,25 @@
+{
+  "enabled": true,
+  "name": "文档先行开发守护",
+  "description": "监控代码文件变更，确保相关文档（特别是开发规范和claude.md）已先行更新，维护文档与代码的一致性",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "*.java",
+      "*.js",
+      "*.ts",
+      "*.vue",
+      "*.py",
+      "*.md",
+      "*.yml",
+      "*.yaml",
+      "*.xml",
+      "pom.xml"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "检测到代码或配置文件变更。请执行文档先行检查：\n\n1. **开发规范检查**：\n   - 检查 `CLAUDE.md` 是否需要更新\n   - 检查 `.claude/skills/` 目录下相关技能文档\n   - 检查 `documentation/technical/UNIFIED_DEVELOPMENT_STANDARDS.md` 统一开发标准\n   - 检查 `documentation/development/standards/` 相关规范文档\n\n2. **全局文档一致性检查**：\n   - 验证 API 文档是否与代码变更同步\n   - 检查架构文档是否需要更新\n   - 确认部署文档的准确性\n   - 验证全局代码分析相关文档的一致性\n\n3. **代码与文档一致性验证**：\n   - 检查接口变更是否已更新API文档\n   - 验证配置变更是否已更新部署指南\n   - 确认新功能是否已添加用户文档\n   - 验证代码分析规范是否与实际实现一致\n\n4. **必要时更新文档**：\n   - 如发现不一致，请先更新相关文档\n   - 特别关注开发规范和CLAUDE.md的更新\n   - 确保文档变更先于或同步于代码变更\n   - 更新全局代码分析相关的技能文档和API文档\n\n请报告检查结果并提供文档更新建议。"
+  }
+}

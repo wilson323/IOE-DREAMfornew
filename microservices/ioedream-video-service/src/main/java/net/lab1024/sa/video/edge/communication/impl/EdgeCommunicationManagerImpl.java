@@ -7,9 +7,10 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import lombok.extern.slf4j.Slf4j;
+
+import net.lab1024.sa.video.edge.EdgeConfig;
 import net.lab1024.sa.video.edge.communication.EdgeCommunicationManager;
 import net.lab1024.sa.video.edge.model.EdgeDevice;
-import net.lab1024.sa.video.edge.EdgeConfig;
 
 /**
  * 边缘通信管理器实现类
@@ -31,24 +32,34 @@ public class EdgeCommunicationManagerImpl implements EdgeCommunicationManager {
 
     /**
      * 已连接的设备映射（deviceId -> EdgeDevice）
+     * <p>
+     * 使用ConcurrentHashMap确保多线程安全（心跳线程、连接线程、主线程并发访问）
+     * </p>
      */
     private final Map<String, EdgeDevice> connectedDevices = new ConcurrentHashMap<>();
 
     /**
      * 已知设备映射（deviceId -> EdgeDevice）
      * <p>
-     * 用于支持“断开后仍可重连”的最小实现。
+     * 用于支持"断开后仍可重连"的最小实现。
+     * 使用ConcurrentHashMap确保多线程安全。
      * </p>
      */
     private final Map<String, EdgeDevice> knownDevices = new ConcurrentHashMap<>();
 
     /**
      * 设备连接时间映射（deviceId -> connectTime）
+     * <p>
+     * 使用ConcurrentHashMap确保多线程安全。
+     * </p>
      */
     private final Map<String, Long> deviceConnectTime = new ConcurrentHashMap<>();
 
     /**
      * 设备最后心跳时间映射（deviceId -> lastHeartbeatTime）
+     * <p>
+     * 使用ConcurrentHashMap确保多线程安全。
+     * </p>
      */
     private final Map<String, Long> deviceLastHeartbeat = new ConcurrentHashMap<>();
 

@@ -1,5 +1,8 @@
 package net.lab1024.sa.common.config;
 
+import lombok.extern.slf4j.Slf4j;
+
+
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
@@ -11,8 +14,6 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
-
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * Redisson配置类
@@ -27,9 +28,10 @@ import lombok.extern.slf4j.Slf4j;
  * @version 1.0.0
  * @since 2025-01-30
  */
-@Slf4j
 @Configuration
+@Slf4j
 public class RedissonConfig {
+
 
     @Value("${spring.data.redis.host:localhost}")
     private String redisHost;
@@ -61,14 +63,13 @@ public class RedissonConfig {
             config.useSingleServer()
                     .setAddress(address)
                     .setDatabase(redisDatabase)
-                    .setConnectionPoolSize(10)  // 连接池大小
-                    .setConnectionMinimumIdleSize(5)  // 最小空闲连接数
-                    .setConnectTimeout(3000)  // 连接超时时间（毫秒）
-                    .setTimeout(3000)  // 响应超时时间（毫秒）
-                    .setRetryAttempts(3)  // 重试次数
-                    .setRetryInterval(1500);  // 重试间隔（毫秒）
+                    .setConnectionPoolSize(10)
+                    .setConnectionMinimumIdleSize(5)
+                    .setConnectTimeout(3000)
+                    .setTimeout(3000)
+                    .setRetryAttempts(3)
+                    .setRetryInterval(1500);
 
-            // 如果配置了密码，则设置密码
             if (redisPassword != null && !redisPassword.isEmpty()) {
                 config.useSingleServer().setPassword(redisPassword);
             }
@@ -78,7 +79,6 @@ public class RedissonConfig {
             return redissonClient;
         } catch (Exception e) {
             log.error("Redisson客户端配置失败", e);
-            // 返回null，让UnifiedCacheManager处理
             return null;
         }
     }
@@ -106,4 +106,3 @@ public class RedissonConfig {
         return template;
     }
 }
-

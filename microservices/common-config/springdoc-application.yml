@@ -1,0 +1,229 @@
+# ============================================================
+# SpringDoc OpenAPI 3.0 配置
+#
+# @Author:    IOE-DREAM Team
+# @Date:      2025-12-20
+# @Copyright  IOE-DREAM智慧园区一卡通管理平台
+#
+# 配置说明:
+# - 统一配置API文档生成规则
+# - 支持多环境配置
+# - 集成Swagger UI界面
+# ============================================================
+
+# ==================== SpringDoc 配置 ====================
+springdoc:
+  # API文档路径配置
+  api-docs:
+    # 启用API文档生成
+    enabled: true
+    # API文档路径
+    path: /v3/api-docs
+    # 是否解析group
+    resolve-schema-properties: true
+    # 是否转换或扩展参考
+    converter:
+      enabled: true
+
+  # Swagger UI配置
+  swagger-ui:
+    # 启用Swagger UI
+    enabled: true
+    # Swagger UI路径
+    path: /swagger-ui.html
+    # 自定义Swagger UI路径
+    urls:
+      - url: /v3/api-docs
+        name: Default API
+        primary-name: Default API
+    # 展开模式
+    doc-expansion: none
+    # 按字母排序
+    operations-sorter: alpha
+    # 标签排序
+    tags-sorter: alpha
+    # 请求持续时间
+    display-request-duration: true
+    # 默认模型展开深度
+    default-models-expand-depth: 1
+    # 默认模型展开
+    default-model-expand: true
+    # 禁用 swagger 默认的 petstore
+    disable-swagger-default-url: true
+    # 显示请求头
+    show-extensions: true
+    # 显示通用扩展
+    show-common-extensions: true
+    # 试试过滤器
+    try-it-out-enabled: true
+    # 支持提交方法
+    supported-submit-methods:
+      - get
+      - post
+      - put
+      - delete
+      - patch
+
+  # 分组配置
+  group-configs:
+    # 核心业务组
+    - group: 'core-business'
+      display-name: '核心业务接口'
+      packages-to-scan:
+        - net.lab1024.sa.common.auth.controller
+        - net.lab1024.sa.common.user.controller
+        - net.lab1024.sa.common.organization.controller
+      paths-to-match:
+        - /api/v1/auth/**
+        - /api/v1/user/**
+        - /api/v1/permission/**
+        - /api/v1/area/**
+        - /api/v1/department/**
+        - /api/v1/device/**
+
+    # 门禁管理组
+    - group: 'access-control'
+      display-name: '门禁管理接口'
+      packages-to-scan:
+        - net.lab1024.sa.access.controller
+      paths-to-match:
+        - /api/v1/access/**
+
+    # 考勤管理组
+    - group: 'attendance'
+      display-name: '考勤管理接口'
+      packages-to-scan:
+        - net.lab1024.sa.attendance.controller
+      paths-to-match:
+        - /api/v1/attendance/**
+
+    # 消费管理组
+    - group: 'consume'
+      display-name: '消费管理接口'
+      packages-to-scan:
+        - net.lab1024.sa.consume.controller
+      paths-to-match:
+        - /api/v1/consume/**
+
+    # 访客管理组
+    - group: 'visitor'
+      display-name: '访客管理接口'
+      packages-to-scan:
+        - net.lab1024.sa.visitor.controller
+      paths-to-match:
+        - /api/v1/visitor/**
+
+    # 视频监控组
+    - group: 'video'
+      display-name: '视频监控接口'
+      packages-to-scan:
+        - net.lab1024.sa.video.controller
+      paths-to-match:
+        - /api/v1/video/**
+
+    # OA办公组
+    - group: 'oa'
+      display-name: 'OA办公接口'
+      packages-to-scan:
+        - net.lab1024.sa.oa.controller
+      paths-to-match:
+        - /api/v1/oa/**
+
+    # 设备通讯组
+    - group: 'device-comm'
+      display-name: '设备通讯接口'
+      packages-to-scan:
+        - net.lab1024.sa.device.comm.controller
+      paths-to-match:
+        - /api/v1/device/**
+
+    # 生物识别组
+    - group: 'biometric'
+      display-name: '生物识别接口'
+      packages-to-scan:
+        - net.lab1024.sa.biometric.controller
+      paths-to-match:
+        - /api/v1/biometric/**
+
+    # 数据管理组
+    - group: 'database'
+      display-name: '数据管理接口'
+      packages-to-scan:
+        - net.lab1024.sa.database.controller
+      paths-to-match:
+        - /api/v1/database/**
+
+  # 缓存配置
+  cache:
+    # 禁用缓存
+    disabled: false
+
+  # 移除配置
+  remove-broken-references:
+    definitions: true
+    parameters: true
+    properties: true
+    schema: true
+
+  # 预加载配置
+  pre-loading-enabled: false
+
+  # 默认消费生产类型
+  default-consumes-media-type: application/json
+
+  # 默认生产生产类型
+  default-produces-media-type: application/json
+
+  # 写在结果中
+  writer-with-default-pretty-printer: true
+
+  # 模式属性
+  show-actuator: true
+
+# ==================== 环境特定配置 ====================
+---
+# 开发环境配置
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+springdoc:
+  swagger-ui:
+    # 开发环境启用试试功能
+    try-it-out-enabled: true
+    # 显示请求持续时间
+    display-request-duration: true
+    # 默认模型展开
+    default-models-expand-depth: 2
+
+---
+# 测试环境配置
+spring:
+  config:
+    activate:
+      on-profile: test
+
+springdoc:
+  swagger-ui:
+    # 测试环境禁用试试功能
+    try-it-out-enabled: false
+    # 显示请求持续时间
+    display-request-duration: true
+
+---
+# 生产环境配置
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+springdoc:
+  swagger-ui:
+    # 生产环境禁用试试功能
+    try-it-out-enabled: false
+    # 生产环境需要认证
+    operations-sorter: method
+    # 生产环境禁用一些展示
+    display-request-duration: false
+    default-models-expand-depth: 0

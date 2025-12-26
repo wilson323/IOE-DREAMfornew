@@ -29,8 +29,8 @@ import java.util.stream.Collectors;
  * @version 2.0.0
  * @since 2025-01-30
  */
-@Slf4j
 @Configuration
+@Slf4j
 public class BiometricFeatureExtractionStrategyConfiguration {
 
     /**
@@ -78,3 +78,4 @@ public class BiometricFeatureExtractionStrategyConfiguration {
         return factory;
     }
 }
+

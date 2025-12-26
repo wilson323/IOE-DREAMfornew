@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.lab1024.sa.access.dao.DeviceImportBatchDao">
+
+    <!-- 结果映射 -->
+    <resultMap id="BaseResultMap" type="net.lab1024.sa.access.domain.entity.DeviceImportBatchEntity">
+        <id column="batch_id" property="batchId"/>
+        <result column="batch_name" property="batchName"/>
+        <result column="file_name" property="fileName"/>
+        <result column="file_size" property="fileSize"/>
+        <result column="file_md5" property="fileMd5"/>
+        <result column="total_count" property="totalCount"/>
+        <result column="success_count" property="successCount"/>
+        <result column="failed_count" property="failedCount"/>
+        <result column="skipped_count" property="skippedCount"/>
+        <result column="import_status" property="importStatus"/>
+        <result column="status_message" property="statusMessage"/>
+        <result column="error_summary" property="errorSummary"/>
+        <result column="start_time" property="startTime"/>
+        <result column="end_time" property="endTime"/>
+        <result column="duration_ms" property="durationMs"/>
+        <result column="operator_type" property="operatorType"/>
+        <result column="operator_id" property="operatorId"/>
+        <result column="operator_name" property="operatorName"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="deleted_flag" property="deletedFlag"/>
+    </resultMap>
+
+    <!-- 根据操作人ID查询导入批次 -->
+    <select id="selectByOperatorId" resultMap="BaseResultMap">
+        SELECT * FROM t_device_import_batch
+        WHERE operator_id = #{operatorId}
+          AND deleted_flag = 0
+        ORDER BY create_time DESC
+    </select>
+
+    <!-- 根据导入状态查询批次 -->
+    <select id="selectByStatus" resultMap="BaseResultMap">
+        SELECT * FROM t_device_import_batch
+        WHERE import_status = #{importStatus}
+          AND deleted_flag = 0
+        ORDER BY create_time DESC
+    </select>
+
+    <!-- 查询指定时间范围内的批次 -->
+    <select id="selectByTimeRange" resultMap="BaseResultMap">
+        SELECT * FROM t_device_import_batch
+        WHERE create_time BETWEEN #{startTime} AND #{endTime}
+          AND deleted_flag = 0
+        ORDER BY create_time DESC
+    </select>
+
+    <!-- 查询最近的批次记录 -->
+    <select id="selectRecentBatches" resultMap="BaseResultMap">
+        SELECT * FROM t_device_import_batch
+        WHERE deleted_flag = 0
+        ORDER BY create_time DESC
+        LIMIT #{limit}
+    </select>
+
+    <!-- 统计指定操作人的导入次数 -->
+    <select id="countByOperatorId" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM t_device_import_batch
+        WHERE operator_id = #{operatorId}
+          AND deleted_flag = 0
+    </select>
+
+    <!-- 更新批次状态 -->
+    <update id="updateStatus">
+        UPDATE t_device_import_batch
+        SET import_status = #{importStatus},
+            status_message = #{statusMessage},
+            update_time = NOW()
+        WHERE batch_id = #{batchId}
+          AND deleted_flag = 0
+    </update>
+
+    <!-- 更新批次统计信息 -->
+    <update id="updateStatistics">
+        UPDATE t_device_import_batch
+        SET total_count = #{totalCount},
+            success_count = #{successCount},
+            failed_count = #{failedCount},
+            skipped_count = #{skippedCount},
+            update_time = NOW()
+        WHERE batch_id = #{batchId}
+          AND deleted_flag = 0
+    </update>
+
+    <!-- 完成批次 -->
+    <update id="completeBatch">
+        UPDATE t_device_import_batch
+        SET import_status = #{importStatus},
+            status_message = #{statusMessage},
+            end_time = #{endTime},
+            duration_ms = #{durationMs},
+            update_time = NOW()
+        WHERE batch_id = #{batchId}
+          AND deleted_flag = 0
+    </update>
+
+</mapper>

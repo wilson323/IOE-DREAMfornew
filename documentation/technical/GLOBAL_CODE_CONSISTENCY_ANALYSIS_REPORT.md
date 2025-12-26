@@ -74,7 +74,8 @@ public interface UserDao extends BaseMapper<UserEntity>
 - ✅ **jakarta.annotation.Resource**: 258个文件使用
 - ✅ **javax.annotation.Resource**: 0个文件使用（100%迁移完成）
 - ✅ **jakarta.validation.Valid**: 全面应用
-- ✅ **jakarta.persistence.Entity**: 全面应用
+- ✅ **@Data
+@TableName("table_name")**: 全面应用
 
 #### 📋 迁移验证
 
@@ -82,7 +83,8 @@ public interface UserDao extends BaseMapper<UserEntity>
 // ✅ Jakarta EE 3.0+ 标准使用
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
-import jakarta.persistence.Entity;
+import @Data
+@TableName("table_name");
 import jakarta.transaction.Transactional;
 
 // ❌ javax包名已完全消除

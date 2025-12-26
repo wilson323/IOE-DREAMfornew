@@ -1,0 +1,385 @@
+package net.lab1024.sa.common.monitoring;
+
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.Gauge;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
+import lombok.extern.slf4j.Slf4j;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
+
+/**
+ * IOE-DREAM 业务指标收集器
+ * <p>
+ * 企业级业务监控指标收集，提供全面的业务运营监控
+ * 纯Java类设计，通过构造函数注入依赖
+ * </p>
+ * <p>
+ * 监控指标范围：
+ * - 用户活跃度指标
+ * - 业务操作指标
+ * - 设备状态指标
+ * - 系统性能指标
+ * </p>
+ *
+ * @author IOE-DREAM架构团队
+ * @version 1.0.0
+ * @since 2025-12-20
+ */
+@Slf4j
+public class BusinessMetricsCollector {
+
+    private final MeterRegistry meterRegistry;
+
+    // 用户活跃度指标
+    private final AtomicLong activeUserCount = new AtomicLong(0);
+    private final AtomicLong dailyLoginCount = new AtomicLong(0);
+    private final AtomicLong totalUserCount = new AtomicLong(0);
+
+    // 业务操作计数器
+    private final ConcurrentHashMap<String, AtomicLong> businessCounters = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Timer> businessTimers = new ConcurrentHashMap<>();
+
+    // 设备状态统计
+    private final AtomicLong onlineDeviceCount = new AtomicLong(0);
+    private final AtomicLong offlineDeviceCount = new AtomicLong(0);
+    private final AtomicLong totalDeviceCount = new AtomicLong(0);
+
+    // Micrometer指标
+    private final Counter userLoginCounter;
+    private final Counter businessOperationCounter;
+    private final Timer businessOperationTimer;
+    private final Gauge userActivityGauge;
+    private final Gauge deviceStatusGauge;
+
+    /**
+     * 构造函数（Spring自动注入MeterRegistry）
+     */
+    public BusinessMetricsCollector(MeterRegistry meterRegistry) {
+        this.meterRegistry = meterRegistry;
+
+        // 初始化用户活跃度指标
+        this.userLoginCounter = Counter.builder("user.login.count")
+                .description("用户登录次数")
+                .tag("application", getApplicationName())
+                .register(meterRegistry);
+
+        // 初始化业务操作指标
+        this.businessOperationCounter = Counter.builder("business.operation.count")
+                .description("业务操作次数")
+                .tag("application", getApplicationName())
+                .register(meterRegistry);
+
+        this.businessOperationTimer = Timer.builder("business.operation.duration")
+                .description("业务操作耗时")
+                .tag("application", getApplicationName())
+                .register(meterRegistry);
+
+        // 初始化用户活跃度监控
+        this.userActivityGauge = Gauge.builder("user.activity.active", this, BusinessMetricsCollector::getActiveUserCount)
+                .description("当前活跃用户数")
+                .tag("application", getApplicationName())
+                .register(meterRegistry);
+
+        // 初始化设备状态监控
+        this.deviceStatusGauge = Gauge.builder("device.online.ratio", this, BusinessMetricsCollector::getDeviceOnlineRatio)
+                .description("设备在线率")
+                .tag("application", getApplicationName())
+                .register(meterRegistry);
+
+        log.info("BusinessMetricsCollector初始化完成，应用: {}", getApplicationName());
+    }
+
+    // ==================== 用户活跃度指标 ====================
+
+    /**
+     * 记录用户登录
+     *
+     * @param userId 用户ID
+     * @param loginType 登录类型
+     */
+    public void recordUserLogin(Long userId, String loginType) {
+        activeUserCount.incrementAndGet();
+        dailyLoginCount.incrementAndGet();
+
+        userLoginCounter.increment(
+            io.micrometer.core.instrument.Tags.of(
+                io.micrometer.core.instrument.Tag.of("type", loginType)
+            )
+        );
+
+        log.debug("[业务指标] 记录用户登录: userId={}, type={}", userId, loginType);
+    }
+
+    /**
+     * 记录用户登出
+     *
+     * @param userId 用户ID
+     */
+    public void recordUserLogout(Long userId) {
+        activeUserCount.decrementAndGet();
+        log.debug("[业务指标] 记录用户登出: userId={}", userId);
+    }
+
+    /**
+     * 更新总用户数
+     *
+     * @param count 总用户数
+     */
+    public void updateTotalUserCount(long count) {
+        totalUserCount.set(count);
+        log.debug("[业务指标] 更新总用户数: {}", count);
+    }
+
+    /**
+     * 获取当前活跃用户数
+     */
+    private double getActiveUserCount() {
+        return activeUserCount.get();
+    }
+
+    // ==================== 业务操作指标 ====================
+
+    /**
+     * 记录业务操作
+     *
+     * @param operation 操作名称
+     * @param result 操作结果
+     * @param duration 耗时（毫秒）
+     */
+    public void recordBusinessOperation(String operation, String result, long duration) {
+        // 更新业务计数器
+        businessCounters.computeIfAbsent(operation, k -> new AtomicLong(0)).incrementAndGet();
+
+        // 更新Micrometer指标
+        businessOperationCounter.increment(
+            io.micrometer.core.instrument.Tags.of(
+                io.micrometer.core.instrument.Tag.of("operation", operation),
+                io.micrometer.core.instrument.Tag.of("result", result)
+            )
+        );
+
+        // 记录操作耗时
+        Timer timer = businessTimers.computeIfAbsent(operation, k ->
+            Timer.builder("business.operation.specific.duration")
+                .tag("operation", operation)
+                .register(meterRegistry)
+        );
+        timer.record(duration, java.util.concurrent.TimeUnit.MILLISECONDS);
+
+        // 记录总体耗时
+        businessOperationTimer.record(duration, java.util.concurrent.TimeUnit.MILLISECONDS);
+
+        log.debug("[业务指标] 记录业务操作: operation={}, result={}, duration={}ms",
+                 operation, result, duration);
+    }
+
+    /**
+     * 获取业务操作统计
+     *
+     * @param operation 操作名称
+     * @return 操作次数
+     */
+    public long getOperationCount(String operation) {
+        AtomicLong counter = businessCounters.get(operation);
+        return counter != null ? counter.get() : 0;
+    }
+
+    // ==================== 设备状态指标 ====================
+
+    /**
+     * 记录设备上线
+     *
+     * @param deviceId 设备ID
+     * @param deviceType 设备类型
+     */
+    public void recordDeviceOnline(String deviceId, String deviceType) {
+        onlineDeviceCount.incrementAndGet();
+
+        meterRegistry.counter("device.status.change",
+            io.micrometer.core.instrument.Tag.of("type", deviceType),
+            io.micrometer.core.instrument.Tag.of("status", "online")
+        ).increment();
+
+        log.debug("[业务指标] 记录设备上线: deviceId={}, type={}", deviceId, deviceType);
+    }
+
+    /**
+     * 记录设备下线
+     *
+     * @param deviceId 设备ID
+     * @param deviceType 设备类型
+     */
+    public void recordDeviceOffline(String deviceId, String deviceType) {
+        onlineDeviceCount.decrementAndGet();
+        offlineDeviceCount.incrementAndGet();
+
+        meterRegistry.counter("device.status.change",
+            io.micrometer.core.instrument.Tag.of("type", deviceType),
+            io.micrometer.core.instrument.Tag.of("status", "offline")
+        ).increment();
+
+        log.debug("[业务指标] 记录设备下线: deviceId={}, type={}", deviceId, deviceType);
+    }
+
+    /**
+     * 更新设备总数
+     *
+     * @param count 设备总数
+     */
+    public void updateTotalDeviceCount(long count) {
+        totalDeviceCount.set(count);
+        log.debug("[业务指标] 更新设备总数: {}", count);
+    }
+
+    /**
+     * 获取设备在线率
+     */
+    private double getDeviceOnlineRatio() {
+        long total = totalDeviceCount.get();
+        if (total == 0) {
+            return 0.0;
+        }
+        return (double) onlineDeviceCount.get() / total * 100;
+    }
+
+    // ==================== 业务专项指标 ====================
+
+    /**
+     * 记录门禁通行
+     *
+     * @param areaId 区域ID
+     * @param result 通行结果
+     * @param duration 耗时
+     */
+    public void recordAccessPass(Long areaId, String result, long duration) {
+        recordBusinessOperation("access_pass", result, duration);
+
+        meterRegistry.counter("access.pass.count",
+            io.micrometer.core.instrument.Tag.of("area", areaId.toString()),
+            io.micrometer.core.instrument.Tag.of("result", result)
+        ).increment();
+
+        log.debug("[业务指标] 记录门禁通行: areaId={}, result={}, duration={}ms",
+                 areaId, result, duration);
+    }
+
+    /**
+     * 记录考勤打卡
+     *
+     * @param userId 用户ID
+     * @param checkType 打卡类型
+     * @param result 打卡结果
+     */
+    public void recordAttendanceCheck(Long userId, String checkType, String result) {
+        recordBusinessOperation("attendance_check", result, 0);
+
+        meterRegistry.counter("attendance.check.count",
+            io.micrometer.core.instrument.Tag.of("type", checkType),
+            io.micrometer.core.instrument.Tag.of("result", result)
+        ).increment();
+
+        log.debug("[业务指标] 记录考勤打卡: userId={}, type={}, result={}",
+                 userId, checkType, result);
+    }
+
+    /**
+     * 记录消费交易
+     *
+     * @param amount 消费金额
+     * @param result 交易结果
+     */
+    public void recordConsumeTransaction(BigDecimal amount, String result) {
+        recordBusinessOperation("consume_transaction", result, 0);
+
+        meterRegistry.counter("consume.transaction.count",
+            io.micrometer.core.instrument.Tag.of("result", result)
+        ).increment();
+
+        meterRegistry.gauge("consume.transaction.amount", amount.doubleValue());
+
+        log.debug("[业务指标] 记录消费交易: amount={}, result={}", amount, result);
+    }
+
+    /**
+     * 记录访客预约
+     *
+     * @param result 预约结果
+     */
+    public void recordVisitorAppointment(String result) {
+        recordBusinessOperation("visitor_appointment", result, 0);
+
+        meterRegistry.counter("visitor.appointment.count",
+            io.micrometer.core.instrument.Tag.of("result", result)
+        ).increment();
+
+        log.debug("[业务指标] 记录访客预约: result={}", result);
+    }
+
+    // ==================== 统计信息 ====================
+
+    /**
+     * 获取业务统计信息
+     */
+    public BusinessStatistics getStatistics() {
+        return BusinessStatistics.builder()
+                .activeUsers(activeUserCount.get())
+                .dailyLogins(dailyLoginCount.get())
+                .totalUsers(totalUserCount.get())
+                .onlineDevices(onlineDeviceCount.get())
+                .offlineDevices(offlineDeviceCount.get())
+                .totalDevices(totalDeviceCount.get())
+                .deviceOnlineRatio(getDeviceOnlineRatio())
+                .build();
+    }
+
+    /**
+     * 重置每日统计
+     */
+    public void resetDailyStatistics() {
+        dailyLoginCount.set(0);
+        log.info("[业务指标] 重置每日统计完成");
+    }
+
+    /**
+     * 获取应用名称
+     */
+    private volatile String applicationName = null;
+
+    private String getApplicationName() {
+        if (applicationName == null) {
+            synchronized (this) {
+                if (applicationName == null) {
+                    applicationName = System.getProperty("spring.application.name", "unknown");
+                }
+            }
+        }
+        return applicationName;
+    }
+
+    /**
+     * 业务统计信息
+     */
+    @lombok.Data
+    @lombok.Builder
+    public static class BusinessStatistics {
+        private long activeUsers;
+        private long dailyLogins;
+        private long totalUsers;
+        private long onlineDevices;
+        private long offlineDevices;
+        private long totalDevices;
+        private double deviceOnlineRatio;
+
+        public double getUserActiveRate() {
+            return totalUsers > 0 ? (double) activeUsers / totalUsers * 100 : 0;
+        }
+
+        public long getOfflineDeviceCount() {
+            return totalDevices - onlineDevices;
+        }
+    }
+}

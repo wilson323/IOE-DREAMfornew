@@ -1,0 +1,91 @@
+配置一致性检查报告
+生成时间: 2025年12月23日 20:22:25
+
+检查公共配置模板...
+
+✅ common-config 目录存在
+  公共配置模板数量: 21
+
+
+检查业务服务配置...
+
+检查 ioedream-gateway-service...
+  ✅ application.yml 存在
+  📄 配置文件数量: 8
+  ✅ spring.application.name 已配置
+  ⚠️  server.port 未配置
+  ⚠️  Nacos配置未配置
+  ℹ️  数据源配置未配置（可能使用默认配置）
+
+检查 ioedream-common-service...
+  ✅ application.yml 存在
+  📄 配置文件数量: 8
+  ⚠️  spring.application.name 未配置
+  ⚠️  server.port 未配置
+  ⚠️  Nacos配置未配置
+  ℹ️  数据源配置未配置（可能使用默认配置）
+
+检查 ioedream-access-service...
+  ✅ application.yml 存在
+  📄 配置文件数量: 0
+  ✅ spring.application.name 已配置
+  ⚠️  server.port 未配置
+  ⚠️  Nacos配置未配置
+  ℹ️  数据源配置未配置（可能使用默认配置）
+
+检查 ioedream-attendance-service...
+  ✅ application.yml 存在
+  📄 配置文件数量: 3
+  ✅ spring.application.name 已配置
+  ⚠️  server.port 未配置
+  ⚠️  Nacos配置未配置
+  ℹ️  数据源配置未配置（可能使用默认配置）
+
+检查 ioedream-consume-service...
+  ✅ application.yml 存在
+  📄 配置文件数量: 4
+  ✅ spring.application.name 已配置
+  ⚠️  server.port 未配置
+  ✅ Nacos配置已配置
+  ℹ️  数据源配置未配置（可能使用默认配置）
+
+检查 ioedream-video-service...
+  ✅ application.yml 存在
+  📄 配置文件数量: 3
+  ✅ spring.application.name 已配置
+  ⚠️  server.port 未配置
+  ⚠️  Nacos配置未配置
+  ℹ️  数据源配置未配置（可能使用默认配置）
+
+检查 ioedream-visitor-service...
+  ✅ application.yml 存在
+  📄 配置文件数量: 3
+  ✅ spring.application.name 已配置
+  ⚠️  server.port 未配置
+  ⚠️  Nacos配置未配置
+  ℹ️  数据源配置未配置（可能使用默认配置）
+
+检查 ioedream-device-comm-service...
+  ✅ application.yml 存在
+  📄 配置文件数量: 3
+  ⚠️  spring.application.name 未配置
+  ⚠️  server.port 未配置
+  ⚠️  Nacos配置未配置
+  ℹ️  数据源配置未配置（可能使用默认配置）
+
+检查 ioedream-oa-service...
+  ✅ application.yml 存在
+  📄 配置文件数量: 4
+  ✅ spring.application.name 已配置
+  ⚠️  server.port 未配置
+  ⚠️  Nacos配置未配置
+  ℹ️  数据源配置未配置（可能使用默认配置）
+
+
+检查配置模板引用情况...
+
+  ✅ ioedream-access-service: 使用配置模板
+  ✅ ioedream-attendance-service: 使用配置模板
+  ✅ ioedream-consume-service: 使用配置模板
+
+检查完成

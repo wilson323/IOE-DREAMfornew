@@ -1,5 +1,8 @@
 package net.lab1024.sa.common.config;
 
+import lombok.extern.slf4j.Slf4j;
+
+
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
@@ -15,8 +18,6 @@ import io.github.resilience4j.bulkhead.BulkheadRegistry;
 import io.github.resilience4j.timelimiter.TimeLimiter;
 import io.github.resilience4j.timelimiter.TimeLimiterConfig;
 import io.github.resilience4j.timelimiter.TimeLimiterRegistry;
-import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.cloud.gateway.filter.ratelimit.KeyResolver;
 import org.springframework.context.annotation.Bean;
@@ -34,9 +35,10 @@ import java.util.function.Predicate;
  * @date 2025-12-09
  * @description 提供统一的容错熔断、重试、限流、隔离配置
  */
-@Slf4j
 @Configuration
+@Slf4j
 public class Resilience4jConfiguration {
+
 
     // ============================================================
     // Key Resolver for Gateway Rate Limiting

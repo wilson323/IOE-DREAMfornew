@@ -28,11 +28,11 @@ public class TimeRange {
     private String timeUnit;
 
     // 添加缺失的getter方法
-    public LocalDate getStartTime() {
+    public LocalDate getWorkStartTime() {
         return this.startDate;
     }
 
-    public LocalDate getEndTime() {
+    public LocalDate getWorkEndTime() {
         return this.endDate;
     }
 }

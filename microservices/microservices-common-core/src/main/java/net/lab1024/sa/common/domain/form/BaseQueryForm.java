@@ -2,37 +2,25 @@ package net.lab1024.sa.common.domain.form;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.Max;
+import lombok.EqualsAndHashCode;
+import net.lab1024.sa.common.domain.PageParam;
 
 /**
- * 基础查询表单
+ * 通用查询表单基类。
  * <p>
- * 提供分页查询的基础功能
- * 所有查询Form类都应该继承此类
+ * 说明：
+ * - 统一承载分页参数（pageNum/pageSize），避免各业务 QueryForm 重复声明分页字段；
+ * - 作为公共契约类型，供各微服务的查询入参表单继承使用。
  * </p>
  *
  * @author IOE-DREAM Team
- * @version 1.0.0
- * @since 2025-12-09
+ * @since 2025-12-21
  */
 @Data
-@Schema(description = "基础查询表单")
-public class BaseQueryForm {
-
-    @Schema(description = "页码", example = "1", minimum = "1")
-    @Min(value = 1, message = "页码必须大于0")
-    private Integer pageNum = 1;
-
-    @Schema(description = "页大小", example = "20", minimum = "1", maximum = "100")
-    @Min(value = 1, message = "页大小必须大于0")
-    @Max(value = 100, message = "页大小不能超过100")
-    private Integer pageSize = 20;
-
-    @Schema(description = "排序字段", example = "createTime")
-    private String sortField;
-
-    @Schema(description = "排序方向：asc-升序，desc-降序", example = "desc")
-    private String sortOrder = "desc";
+@EqualsAndHashCode(callSuper = true)
+@Schema(description = "通用查询表单基类")
+public class BaseQueryForm extends PageParam {
+    private static final long serialVersionUID = 1L;
 }
+
+

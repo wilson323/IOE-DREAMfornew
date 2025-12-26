@@ -1,8 +1,7 @@
 package net.lab1024.sa.database.config;
 
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.database.service.DatabaseSyncService;
-import org.springframework.boot.ApplicationArguments;
+
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -11,6 +10,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import jakarta.annotation.Resource;
+import net.lab1024.sa.database.service.DatabaseSyncService;
 
 /**
  * 数据库同步配置类
@@ -22,10 +22,11 @@ import jakarta.annotation.Resource;
  * @version 1.0.0
  * @since 2025-12-08
  */
-@Slf4j
 @Configuration
 @EnableScheduling
+@Slf4j
 public class DatabaseSyncConfig {
+
 
     @Resource
     private DatabaseSyncService databaseSyncService;
@@ -46,17 +47,17 @@ public class DatabaseSyncConfig {
 
                 // 异步执行数据库同步
                 databaseSyncService.syncAllDatabases()
-                    .thenAccept(results -> {
-                        long successCount = results.values().stream()
-                                .mapToInt(success -> success ? 1 : 0)
-                                .sum();
-                        log.info("✅ [数据库同步配置] 启动时数据库同步完成，成功: {}/{}",
-                                successCount, results.size());
-                    })
-                    .exceptionally(throwable -> {
-                        log.error("❌ [数据库同步配置] 启动时数据库同步失败", throwable);
-                        return null;
-                    });
+                        .thenAccept(results -> {
+                            long successCount = results.values().stream()
+                                    .mapToInt(success -> success ? 1 : 0)
+                                    .sum();
+                            log.info("✅ [数据库同步配置] 启动时数据库同步完成，成功: {}/{}",
+                                    successCount, results.size());
+                        })
+                        .exceptionally(throwable -> {
+                            log.error("❌ [数据库同步配置] 启动时数据库同步失败", throwable);
+                            return null;
+                        });
 
             } catch (Exception e) {
                 log.error("❌ [数据库同步配置] 启动时数据库同步异常", e);
@@ -92,17 +93,17 @@ public class DatabaseSyncConfig {
             log.info("🌙 [数据库同步配置] 开始执行每日全量数据库同步");
 
             databaseSyncService.syncAllDatabases()
-                .thenAccept(results -> {
-                    long successCount = results.values().stream()
-                            .mapToInt(success -> success ? 1 : 0)
-                            .sum();
-                    log.info("✅ [数据库同步配置] 每日全量数据库同步完成，成功: {}/{}",
-                            successCount, results.size());
-                })
-                .exceptionally(throwable -> {
-                    log.error("❌ [数据库同步配置] 每日全量数据库同步失败", throwable);
-                    return null;
-                });
+                    .thenAccept(results -> {
+                        long successCount = results.values().stream()
+                                .mapToInt(success -> success ? 1 : 0)
+                                .sum();
+                        log.info("✅ [数据库同步配置] 每日全量数据库同步完成，成功: {}/{}",
+                                successCount, results.size());
+                    })
+                    .exceptionally(throwable -> {
+                        log.error("❌ [数据库同步配置] 每日全量数据库同步失败", throwable);
+                        return null;
+                    });
 
         } catch (Exception e) {
             log.error("❌ [数据库同步配置] 每日全量数据库同步异常", e);

@@ -1,4 +1,4 @@
-name: CI Gatekeeper - 架构合规性检查
+﻿name: CI Gatekeeper - 架构合规性检查
 
 on:
   push:
@@ -14,12 +14,12 @@ jobs:
 
     steps:
     - name: Checkout代码
-      uses: actions/checkout@v4
+      uses: ./.github/actions/checkout
       with:
         fetch-depth: 0
 
     - name: Setup JDK 17
-      uses: actions/setup-java@v4
+      uses: ./.github/actions/setup-java
       with:
         java-version: '17'
         distribution: 'temurin'
@@ -60,7 +60,7 @@ jobs:
 
     - name: 上传构建结果
       if: failure()
-      uses: actions/upload-artifact@v4
+      uses: ./.github/actions/upload-artifact
       with:
         name: p0-baseline-logs
         path: microservices/*/target/
@@ -73,7 +73,7 @@ jobs:
 
     steps:
     - name: Checkout代码
-      uses: actions/checkout@v4
+      uses: ./.github/actions/checkout
 
     - name: P1 - 包结构一致性检查
       run: |
@@ -87,7 +87,7 @@ jobs:
 
     - name: 结构违规报告
       if: failure()
-      uses: actions/upload-artifact@v4
+      uses: ./.github/actions/upload-artifact
       with:
         name: p1-structure-report
         path: structure-violations.log
@@ -100,10 +100,10 @@ jobs:
 
     steps:
     - name: Checkout代码
-      uses: actions/checkout@v4
+      uses: ./.github/actions/checkout
 
     - name: Setup JDK 17
-      uses: actions/setup-java@v4
+      uses: ./.github/actions/setup-java
       with:
         java-version: '17'
         distribution: 'temurin'
@@ -121,7 +121,7 @@ jobs:
 
     - name: API违规报告
       if: failure()
-      uses: actions/upload-artifact@v4
+      uses: ./.github/actions/upload-artifact
       with:
         name: p2-api-report
         path: api-violations.log
@@ -134,10 +134,10 @@ jobs:
 
     steps:
     - name: Checkout代码
-      uses: actions/checkout@v4
+      uses: ./.github/actions/checkout
 
     - name: Setup JDK 17
-      uses: actions/setup-java@v4
+      uses: ./.github/actions/setup-java
       with:
         java-version: '17'
         distribution: 'temurin'
@@ -188,7 +188,7 @@ jobs:
 
     - name: IDE配置报告
       if: failure()
-      uses: actions/upload-artifact@v4
+      uses: ./.github/actions/upload-artifact
       with:
         name: p3-ide-report
         path: ide-violations.log
@@ -201,7 +201,7 @@ jobs:
 
     steps:
     - name: Checkout代码
-      uses: actions/checkout@v4
+      uses: ./.github/actions/checkout
 
     - name: P4 - 工程治理规则检查
       run: |
@@ -215,7 +215,7 @@ jobs:
 
     - name: 治理违规报告
       if: failure()
-      uses: actions/upload-artifact@v4
+      uses: ./.github/actions/upload-artifact
       with:
         name: p4-governance-report
         path: governance-violations.log
@@ -293,7 +293,7 @@ jobs:
         echo "📋 质量报告已生成：quality-report.md"
 
     - name: 上传质量报告
-      uses: actions/upload-artifact@v4
+      uses: ./.github/actions/upload-artifact
       with:
         name: quality-report
         path: quality-report.md

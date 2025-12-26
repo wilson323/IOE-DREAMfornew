@@ -27,7 +27,7 @@ spring:
         namespace: ${NACOS_NAMESPACE:dev}
         group: ${NACOS_GROUP:IOE-DREAM}
         username: ${NACOS_USERNAME:nacos}
-        password: ${NACOS_PASSWORD:nacos}
+        password: ${NACOS_PASSWORD:ENC(I2//JcHFpBc7vLPrYnCJNA==)}
         enabled: true
         register-enabled: true
         # 服务注册元数据
@@ -45,7 +45,7 @@ spring:
         namespace: ${NACOS_NAMESPACE:dev}
         group: ${NACOS_GROUP:IOE-DREAM}
         username: ${NACOS_USERNAME:nacos}
-        password: ${NACOS_PASSWORD:nacos}
+        password: ${NACOS_PASSWORD:ENC(I2//JcHFpBc7vLPrYnCJNA==)}
         file-extension: yaml
         enabled: ${NACOS_CONFIG_ENABLED:true}
         refresh-enabled: ${NACOS_CONFIG_REFRESH_ENABLED:true}
@@ -168,8 +168,8 @@ attendance:
     shift:
       # 班次配置
       types: ${ATTENDANCE_SHIFT_TYPES:normal,overtime,weekend,holiday}
-      default-duration: ${ATTENDANCE_DEFAULT_DURATION:480}  # 8小时
-      break-duration: ${ATTENDANCE_BREAK_DURATION:60}     # 1小时
+      default-duration: ${ATTENDANCE_DEFAULT_DURATION:480} # 8小时
+      break-duration: ${ATTENDANCE_BREAK_DURATION:60} # 1小时
 
     # 弹性时间
     flexible:
@@ -259,15 +259,15 @@ attendance:
   cache:
     # 缓存配置
     user-schedule:
-      ttl: ${ATTENDANCE_SCHEDULE_TTL:1800}      # 30分钟
+      ttl: ${ATTENDANCE_SCHEDULE_TTL:1800} # 30分钟
       max-size: ${ATTENDANCE_SCHEDULE_MAX_SIZE:20000}
 
     clock-records:
-      ttl: ${ATTENDANCE_RECORDS_TTL:300}        # 5分钟
+      ttl: ${ATTENDANCE_RECORDS_TTL:300} # 5分钟
       max-size: ${ATTENDANCE_RECORDS_MAX_SIZE:10000}
 
     calculation-results:
-      ttl: ${ATTENDANCE_CALCULATION_TTL:900}    # 15分钟
+      ttl: ${ATTENDANCE_CALCULATION_TTL:900} # 15分钟
       max-size: ${ATTENDANCE_CALCULATION_MAX_SIZE:5000}
 
   notification:

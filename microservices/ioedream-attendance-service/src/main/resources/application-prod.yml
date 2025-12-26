@@ -1,4 +1,4 @@
-# ============================================================
+﻿# ============================================================
 # IOE-DREAM Attendance Service 生产环境配置
 #
 # @Author:    IOE-DREAM Team
@@ -16,8 +16,9 @@ server:
     mime-types: application/json,application/xml,text/html,text/xml,text/plain
   tomcat:
     uri-encoding: UTF-8
-    max-threads: 200
-    min-spare-threads: 25
+    threads:
+      max: 200
+      min-spare: 25
     accept-count: 150
 
 # ==================== Spring配置 ====================
@@ -56,28 +57,29 @@ spring:
         deny: ${DRUID_DENY:}
 
   # ==================== Redis配置 ====================
-  redis:
-    host: ${REDIS_HOST:prod-redis-cluster}
-    port: ${REDIS_PORT:6379}
-    password: ${REDIS_PASSWORD:ENC(AES256:encrypted_redis_password)}
-    database: 0
-    timeout: 3000
-    lettuce:
-      pool:
-        max-active: 25
-        max-idle: 12
-        min-idle: 6
-        max-wait: 1000
-      cluster:
-        refresh:
-          adaptive: true
-          period: 30
+  data:
+    redis:
+      host: ${REDIS_HOST:prod-redis-cluster}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:ENC(AES256:encrypted_redis_password)}
+      database: 0
+      timeout: 3000
+      lettuce:
+        pool:
+          max-active: 25
+          max-idle: 12
+          min-idle: 6
+          max-wait: 1000
+        cluster:
+          refresh:
+            adaptive: true
+            period: 30
 
   # ==================== 缓存配置 ====================
   cache:
     type: redis
     redis:
-      time-to-live: 900000  # 15分钟
+      time-to-live: 900000 # 15分钟
       cache-null-values: false
       key-prefix: attendance_cache_
 
@@ -105,8 +107,8 @@ spring:
             threadPriority: 5
             threadsInheritContextClassLoaderOfInitializingThread: true
 
-  # ==================== Zipkin分布式追踪配置 ====================
-  sleuth:
+  # ==================== 分布式追踪配置 ====================
+  tracing:
     zipkin:
       base-url: ${ZIPKIN_BASE_URL:http://zipkin-prod:9411}
       enabled: ${ZIPKIN_ENABLED:true}
@@ -147,9 +149,9 @@ management:
       probes:
         enabled: true
     metrics:
-      enabled: true
+      access: read-only
     prometheus:
-      enabled: true
+      access: read-only
   metrics:
     export:
       prometheus:
@@ -157,9 +159,9 @@ management:
         step: 30s
     distribution:
       percentiles-histogram:
-        http.server.requests: true
+        "[http.server.requests]": true
       percentiles:
-        http.server.requests: 0.5,0.9,0.95,0.99
+        "[http.server.requests]": 0.5,0.9,0.95,0.99
     tags:
       application: ${spring.application.name}
       environment: ${spring.profiles.active}
@@ -186,7 +188,7 @@ resilience4j:
 # ==================== 日志配置 ====================
 logging:
   level:
-    net.lab1024.sa.attendance: INFO
+    "net.lab1024.sa.attendance": INFO
   pattern:
     console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr([%X{traceId:-},%X{spanId:-}]){blue} %clr(%5p){magenta} %clr(${PID:- }){yellow} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}"
 
@@ -240,9 +242,9 @@ attendance:
     shift:
       # 班次配置
       types: ${ATTENDANCE_SHIFT_TYPES:normal,overtime,weekend,holiday,special}
-      default-duration: ${ATTENDANCE_DEFAULT_DURATION:480}  # 8小时
-      break-duration: ${ATTENDANCE_BREAK_DURATION:60}     # 1小时
-      max-duration: ${ATTENDANCE_MAX_DURATION:720}       # 12小时
+      default-duration: ${ATTENDANCE_DEFAULT_DURATION:480} # 8小时
+      break-duration: ${ATTENDANCE_BREAK_DURATION:60} # 1小时
+      max-duration: ${ATTENDANCE_MAX_DURATION:720} # 12小时
 
     # 弹性时间
     flexible:
@@ -395,19 +397,19 @@ attendance:
   cache:
     # 缓存配置
     user-schedule:
-      ttl: ${ATTENDANCE_SCHEDULE_TTL:1800}      # 30分钟
+      ttl: ${ATTENDANCE_SCHEDULE_TTL:1800} # 30分钟
       max-size: ${ATTENDANCE_SCHEDULE_MAX_SIZE:20000}
 
     clock-records:
-      ttl: ${ATTENDANCE_RECORDS_TTL:300}        # 5分钟
+      ttl: ${ATTENDANCE_RECORDS_TTL:300} # 5分钟
       max-size: ${ATTENDANCE_RECORDS_MAX_SIZE:10000}
 
     calculation-results:
-      ttl: ${ATTENDANCE_CALCULATION_TTL:900}    # 15分钟
+      ttl: ${ATTENDANCE_CALCULATION_TTL:900} # 15分钟
       max-size: ${ATTENDANCE_CALCULATION_MAX_SIZE:5000}
 
     user-info:
-      ttl: ${USER_INFO_TTL:3600}                # 1小时
+      ttl: ${USER_INFO_TTL:3600} # 1小时
       max-size: ${USER_INFO_MAX_SIZE:10000}
 
   performance:
@@ -427,7 +429,7 @@ attendance:
     archiving:
       enabled: ${DATA_ARCHIVING_ENABLED:true}
       archive-after-days: ${ARCHIVE_AFTER_DAYS:365}
-      archive-retention-days: ${ARCHIVE_RETENTION_DAYS:1825}  # 5年
+      archive-retention-days: ${ARCHIVE_RETENTION_DAYS:1825} # 5年
 
   compliance:
     # 合规管理
@@ -460,3 +462,4 @@ attendance:
       online-check-interval: ${DEVICE_ONLINE_CHECK:60}
       offline-threshold: ${DEVICE_OFFLINE_THRESHOLD:300}
       auto-recovery: ${DEVICE_AUTO_RECOVERY:false}
+

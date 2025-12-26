@@ -1,37 +1,26 @@
 package net.lab1024.sa.consume.domain.vo;
 
+import java.util.List;
+
 import lombok.Data;
+import net.lab1024.sa.consume.domain.form.ConsumeOfflineSyncForm;
 
 /**
- * 消费同步结果VO
+ * 离线同步结果
  *
  * @author IOE-DREAM Team
- * @version 1.0.0
- * @since 2025-01-30
+ * @since 2025-12-22
  */
 @Data
 public class ConsumeSyncResultVO {
 
-    /**
-     * 是否成功
-     */
     private Boolean success;
 
-    /**
-     * 消息
-     */
+    private Integer syncedCount;
+
+    private Integer failedCount;
+
+    private List<ConsumeOfflineSyncForm.OfflineTransaction> failedTransactions;
+
     private String message;
-
-    /**
-     * 同步数量
-     */
-    private Integer syncCount;
-
-    /**
-     * 失败数量
-     */
-    private Integer failCount;
 }
-
-
-

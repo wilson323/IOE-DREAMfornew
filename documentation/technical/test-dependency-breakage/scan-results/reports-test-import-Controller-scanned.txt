@@ -1,0 +1,4 @@
+﻿microservices\ioedream-attendance-service\src\test\java\net\lab1024\sa\attendance\integration\AttendanceMobileIntegrationTest.java
+microservices\ioedream-database-service\src\test\java\net\lab1024\sa\database\controller\DatabaseSyncControllerTest.java
+microservices\ioedream-device-comm-service\src\test\java\net\lab1024\sa\devicecomm\controller\BiometricIntegrationControllerTest.java
+microservices\ioedream-oa-service\src\test\java\net\lab1024\sa\oa\workflow\service\WorkflowEngineServiceImplTest.java

@@ -1,19 +1,26 @@
 package net.lab1024.sa.device.comm.monitor;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.common.organization.dao.DeviceDao;
-import net.lab1024.sa.common.gateway.GatewayServiceClient;
-import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.device.comm.monitor.HighPrecisionDeviceMonitor.DeviceStatusSnapshot;
-import org.springframework.http.HttpMethod;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
+
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import net.lab1024.sa.common.gateway.GatewayServiceClient;
+import net.lab1024.sa.common.organization.dao.DeviceDao;
+import net.lab1024.sa.device.comm.monitor.HighPrecisionDeviceMonitor.DeviceStatusSnapshot;
 
 /**
  * 高精度监控验证器
@@ -30,25 +37,26 @@ import java.util.concurrent.atomic.AtomicLong;
  * @version 1.0.0
  * @since 2025-12-16
  */
-@Slf4j
 @Schema(description = "高精度监控验证器")
+@Slf4j
 public class HighPrecisionMonitorValidator {
+
 
     private final DeviceDao deviceDao;
     private final GatewayServiceClient gatewayServiceClient;
     private final HighPrecisionDeviceMonitor monitor;
 
     // 验证配置
-    private static final int PRECISION_TEST_COUNT = 100;      // 精度测试次数
-    private static final int CONCURRENT_THREAD_COUNT = 50;    // 并发线程数
+    private static final int PRECISION_TEST_COUNT = 100; // 精度测试次数
+    private static final int CONCURRENT_THREAD_COUNT = 50; // 并发线程数
     private static final int CONCURRENT_REQUESTS_PER_THREAD = 20; // 每个线程的请求数
-    private static final int TARGET_PRECISION_MS = 100;        // 目标精度（100ms）
+    private static final int TARGET_PRECISION_MS = 100; // 目标精度（100ms）
     private static final int STABILITY_TEST_DURATION_MINUTES = 5; // 稳定性测试时长（分钟）
 
     // 测试结果统计
     private final List<Long> precisionTestResults = new ArrayList<>();
     private final List<Long> concurrencyTestResults = new ArrayList<>();
-    private final Map<String, AtomicInteger> errorCounts = new ConcurrentHashMap<>();
+    private final Map<String, AtomicInteger> errorCounts = new HashMap<>();
     private final AtomicLong totalRequests = new AtomicLong(0);
     private final AtomicLong successfulRequests = new AtomicLong(0);
 
@@ -56,7 +64,7 @@ public class HighPrecisionMonitorValidator {
      * 构造函数
      */
     public HighPrecisionMonitorValidator(DeviceDao deviceDao, GatewayServiceClient gatewayServiceClient,
-                                        HighPrecisionDeviceMonitor monitor) {
+            HighPrecisionDeviceMonitor monitor) {
         this.deviceDao = deviceDao;
         this.gatewayServiceClient = gatewayServiceClient;
         this.monitor = monitor;
@@ -302,7 +310,8 @@ public class HighPrecisionMonitorValidator {
             result.addMetric("总请求数", totalRequests.get());
             result.addMetric("成功请求数", successfulRequests.get());
             result.addMetric("失败请求数", totalRequests.get() - successfulRequests.get());
-            result.addMetric("成功率(%)", Math.round((successfulRequests.get() * 100.0 / totalRequests.get()) * 100.0) / 100.0);
+            result.addMetric("成功率(%)",
+                    Math.round((successfulRequests.get() * 100.0 / totalRequests.get()) * 100.0) / 100.0);
             result.addMetric("平均响应时间(ms)", Math.round(avgResponseTime * 100.0) / 100.0);
             result.addMetric("最大响应时间(ms)", maxResponseTime);
             result.addMetric("最小响应时间(ms)", minResponseTime);
@@ -463,8 +472,9 @@ public class HighPrecisionMonitorValidator {
             }
 
             int totalConsistencyChecks = testDevices.size() * consistencyTests;
-            double consistencyRate = totalConsistencyChecks > 0 ?
-                    ((totalConsistencyChecks - inconsistentCount) * 100.0 / totalConsistencyChecks) : 0.0;
+            double consistencyRate = totalConsistencyChecks > 0
+                    ? ((totalConsistencyChecks - inconsistentCount) * 100.0 / totalConsistencyChecks)
+                    : 0.0;
 
             result.setSuccess(consistencyRate >= 95.0);
             result.addMetric("测试设备数", testDevices.size());
@@ -501,7 +511,8 @@ public class HighPrecisionMonitorValidator {
         boolean stability达标 = report.getStabilityResult() != null && report.getStabilityResult().isSuccess();
         boolean consistency达标 = report.getConsistencyResult() != null && report.getConsistencyResult().isSuccess();
 
-        int passedTests = (precision达标 ? 1 : 0) + (concurrency达标 ? 1 : 0) + (stability达标 ? 1 : 0) + (consistency达标 ? 1 : 0);
+        int passedTests = (precision达标 ? 1 : 0) + (concurrency达标 ? 1 : 0) + (stability达标 ? 1 : 0)
+                + (consistency达标 ? 1 : 0);
         double overallScore = (passedTests * 100.0) / 4.0;
 
         // 确定整体等级
@@ -616,8 +627,8 @@ public class HighPrecisionMonitorValidator {
     private boolean isSnapshotConsistent(DeviceStatusSnapshot snapshot1, DeviceStatusSnapshot snapshot2) {
         // 检查关键字段是否一致
         return Objects.equals(snapshot1.getDeviceId(), snapshot2.getDeviceId()) &&
-               Objects.equals(snapshot1.getDeviceType(), snapshot2.getDeviceType()) &&
-               Objects.equals(snapshot1.getStatus(), snapshot2.getStatus());
+                Objects.equals(snapshot1.getDeviceType(), snapshot2.getDeviceType()) &&
+                Objects.equals(snapshot1.getStatus(), snapshot2.getStatus());
     }
 
     // ==================== 内部类 ====================
@@ -635,23 +646,53 @@ public class HighPrecisionMonitorValidator {
         private Map<String, Object> metrics = new HashMap<>();
 
         // getters and setters
-        public String getTestName() { return testName; }
-        public void setTestName(String testName) { this.testName = testName; }
+        public String getTestName() {
+            return testName;
+        }
 
-        public LocalDateTime getTestStartTime() { return testStartTime; }
-        public void setTestStartTime(LocalDateTime testStartTime) { this.testStartTime = testStartTime; }
+        public void setTestName(String testName) {
+            this.testName = testName;
+        }
 
-        public LocalDateTime getTestEndTime() { return testEndTime; }
-        public void setTestEndTime(LocalDateTime testEndTime) { this.testEndTime = testEndTime; }
+        public LocalDateTime getTestStartTime() {
+            return testStartTime;
+        }
 
-        public boolean isSuccess() { return success; }
-        public void setSuccess(boolean success) { this.success = success; }
+        public void setTestStartTime(LocalDateTime testStartTime) {
+            this.testStartTime = testStartTime;
+        }
 
-        public String getErrorMessage() { return errorMessage; }
-        public void setErrorMessage(String errorMessage) { this.errorMessage = errorMessage; }
+        public LocalDateTime getTestEndTime() {
+            return testEndTime;
+        }
 
-        public Map<String, Object> getMetrics() { return metrics; }
-        public void setMetrics(Map<String, Object> metrics) { this.metrics = metrics; }
+        public void setTestEndTime(LocalDateTime testEndTime) {
+            this.testEndTime = testEndTime;
+        }
+
+        public boolean isSuccess() {
+            return success;
+        }
+
+        public void setSuccess(boolean success) {
+            this.success = success;
+        }
+
+        public String getErrorMessage() {
+            return errorMessage;
+        }
+
+        public void setErrorMessage(String errorMessage) {
+            this.errorMessage = errorMessage;
+        }
+
+        public Map<String, Object> getMetrics() {
+            return metrics;
+        }
+
+        public void setMetrics(Map<String, Object> metrics) {
+            this.metrics = metrics;
+        }
 
         public void addMetric(String key, Object value) {
             this.metrics.put(key, value);
@@ -674,32 +715,77 @@ public class HighPrecisionMonitorValidator {
         private String errorMessage;
 
         // getters and setters
-        public LocalDateTime getTestStartTime() { return testStartTime; }
-        public void setTestStartTime(LocalDateTime testStartTime) { this.testStartTime = testStartTime; }
+        public LocalDateTime getTestStartTime() {
+            return testStartTime;
+        }
 
-        public LocalDateTime getTestEndTime() { return testEndTime; }
-        public void setTestEndTime(LocalDateTime testEndTime) { this.testEndTime = testEndTime; }
+        public void setTestStartTime(LocalDateTime testStartTime) {
+            this.testStartTime = testStartTime;
+        }
 
-        public long getTestDurationMillis() { return testDurationMillis; }
-        public void setTestDurationMillis(long testDurationMillis) { this.testDurationMillis = testDurationMillis; }
+        public LocalDateTime getTestEndTime() {
+            return testEndTime;
+        }
 
-        public ValidationResult getPrecisionResult() { return precisionResult; }
-        public void setPrecisionResult(ValidationResult precisionResult) { this.precisionResult = precisionResult; }
+        public void setTestEndTime(LocalDateTime testEndTime) {
+            this.testEndTime = testEndTime;
+        }
 
-        public ValidationResult getConcurrencyResult() { return concurrencyResult; }
-        public void setConcurrencyResult(ValidationResult concurrencyResult) { this.concurrencyResult = concurrencyResult; }
+        public long getTestDurationMillis() {
+            return testDurationMillis;
+        }
 
-        public ValidationResult getStabilityResult() { return stabilityResult; }
-        public void setStabilityResult(ValidationResult stabilityResult) { this.stabilityResult = stabilityResult; }
+        public void setTestDurationMillis(long testDurationMillis) {
+            this.testDurationMillis = testDurationMillis;
+        }
 
-        public ValidationResult getConsistencyResult() { return consistencyResult; }
-        public void setConsistencyResult(ValidationResult consistencyResult) { this.consistencyResult = consistencyResult; }
+        public ValidationResult getPrecisionResult() {
+            return precisionResult;
+        }
 
-        public OverallAssessment getOverallAssessment() { return overallAssessment; }
-        public void setOverallAssessment(OverallAssessment overallAssessment) { this.overallAssessment = overallAssessment; }
+        public void setPrecisionResult(ValidationResult precisionResult) {
+            this.precisionResult = precisionResult;
+        }
 
-        public String getErrorMessage() { return errorMessage; }
-        public void setErrorMessage(String errorMessage) { this.errorMessage = errorMessage; }
+        public ValidationResult getConcurrencyResult() {
+            return concurrencyResult;
+        }
+
+        public void setConcurrencyResult(ValidationResult concurrencyResult) {
+            this.concurrencyResult = concurrencyResult;
+        }
+
+        public ValidationResult getStabilityResult() {
+            return stabilityResult;
+        }
+
+        public void setStabilityResult(ValidationResult stabilityResult) {
+            this.stabilityResult = stabilityResult;
+        }
+
+        public ValidationResult getConsistencyResult() {
+            return consistencyResult;
+        }
+
+        public void setConsistencyResult(ValidationResult consistencyResult) {
+            this.consistencyResult = consistencyResult;
+        }
+
+        public OverallAssessment getOverallAssessment() {
+            return overallAssessment;
+        }
+
+        public void setOverallAssessment(OverallAssessment overallAssessment) {
+            this.overallAssessment = overallAssessment;
+        }
+
+        public String getErrorMessage() {
+            return errorMessage;
+        }
+
+        public void setErrorMessage(String errorMessage) {
+            this.errorMessage = errorMessage;
+        }
     }
 
     /**
@@ -716,25 +802,60 @@ public class HighPrecisionMonitorValidator {
         private List<String> recommendations = new ArrayList<>();
 
         // getters and setters
-        public double getOverallScore() { return overallScore; }
-        public void setOverallScore(double overallScore) { this.overallScore = overallScore; }
+        public double getOverallScore() {
+            return overallScore;
+        }
 
-        public String getGrade() { return grade; }
-        public void setGrade(String grade) { this.grade = grade; }
+        public void setOverallScore(double overallScore) {
+            this.overallScore = overallScore;
+        }
 
-        public boolean isPrecision达标() { return precision达标; }
-        public void setPrecision达标(boolean precision达标) { this.precision达标 = precision达标; }
+        public String getGrade() {
+            return grade;
+        }
 
-        public boolean isConcurrency达标() { return concurrency达标; }
-        public void setConcurrency达标(boolean concurrency达标) { this.concurrency达标 = concurrency达标; }
+        public void setGrade(String grade) {
+            this.grade = grade;
+        }
 
-        public boolean isStability达标() { return stability达标; }
-        public void setStability达标(boolean stability达标) { this.stability达标 = stability达标; }
+        public boolean isPrecision达标() {
+            return precision达标;
+        }
 
-        public boolean isConsistency达标() { return consistency达标; }
-        public void setConsistency达标(boolean consistency达标) { this.consistency达标 = consistency达标; }
+        public void setPrecision达标(boolean precision达标) {
+            this.precision达标 = precision达标;
+        }
 
-        public List<String> getRecommendations() { return recommendations; }
-        public void setRecommendations(List<String> recommendations) { this.recommendations = recommendations; }
+        public boolean isConcurrency达标() {
+            return concurrency达标;
+        }
+
+        public void setConcurrency达标(boolean concurrency达标) {
+            this.concurrency达标 = concurrency达标;
+        }
+
+        public boolean isStability达标() {
+            return stability达标;
+        }
+
+        public void setStability达标(boolean stability达标) {
+            this.stability达标 = stability达标;
+        }
+
+        public boolean isConsistency达标() {
+            return consistency达标;
+        }
+
+        public void setConsistency达标(boolean consistency达标) {
+            this.consistency达标 = consistency达标;
+        }
+
+        public List<String> getRecommendations() {
+            return recommendations;
+        }
+
+        public void setRecommendations(List<String> recommendations) {
+            this.recommendations = recommendations;
+        }
     }
 }

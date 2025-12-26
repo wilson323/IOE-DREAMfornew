@@ -1,16 +1,22 @@
 package net.lab1024.sa.attendance.engine.algorithm.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.attendance.engine.algorithm.ScheduleAlgorithm;
-import net.lab1024.sa.attendance.engine.algorithm.AlgorithmMetadata;
-import net.lab1024.sa.attendance.engine.model.ScheduleData;
-import net.lab1024.sa.attendance.engine.model.ScheduleResult;
-import net.lab1024.sa.attendance.engine.model.ScheduleRecord;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
+
+
+import net.lab1024.sa.attendance.engine.algorithm.AlgorithmMetadata;
+import net.lab1024.sa.attendance.engine.algorithm.ScheduleAlgorithm;
+import net.lab1024.sa.attendance.engine.model.ScheduleData;
+import net.lab1024.sa.attendance.engine.model.ScheduleRecord;
+import net.lab1024.sa.attendance.engine.model.ScheduleResult;
 
 /**
  * 启发式算法实现类
@@ -25,6 +31,7 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 @Slf4j
 public class HeuristicAlgorithmImpl implements ScheduleAlgorithm {
+
 
     // 算法参数
     private Map<String, Object> parameters;
@@ -76,7 +83,7 @@ public class HeuristicAlgorithmImpl implements ScheduleAlgorithm {
 
             // 4. 应用启发式策略
             boolean success = applyHeuristicStrategy(scheduleData, scheduleRecords,
-                                                   assignmentState, heuristicFunction, maxIterations, timeLimit);
+                    assignmentState, heuristicFunction, maxIterations, timeLimit);
 
             // 5. 构建结果
             if (success) {
@@ -126,8 +133,8 @@ public class HeuristicAlgorithmImpl implements ScheduleAlgorithm {
      * 应用启发式策略
      */
     private boolean applyHeuristicStrategy(ScheduleData scheduleData, List<ScheduleRecord> scheduleRecords,
-                                            Map<String, Object> assignmentState, String heuristicFunction,
-                                            int maxIterations, long timeLimit) {
+            Map<String, Object> assignmentState, String heuristicFunction,
+            int maxIterations, long timeLimit) {
         for (int iteration = 0; iteration < maxIterations && !shouldStop; iteration++) {
             while (shouldPause) {
                 try {
@@ -150,7 +157,7 @@ public class HeuristicAlgorithmImpl implements ScheduleAlgorithm {
 
             // 应用启发式函数
             HeuristicResult result = applyHeuristicFunction(scheduleData, scheduleRecords,
-                                                             assignmentState, heuristicFunction);
+                    assignmentState, heuristicFunction);
 
             heuristicApplications.incrementAndGet();
 
@@ -174,7 +181,7 @@ public class HeuristicAlgorithmImpl implements ScheduleAlgorithm {
      * 应用启发式函数
      */
     private HeuristicResult applyHeuristicFunction(ScheduleData scheduleData, List<ScheduleRecord> scheduleRecords,
-                                                   Map<String, Object> assignmentState, String heuristicFunction) {
+            Map<String, Object> assignmentState, String heuristicFunction) {
         switch (heuristicFunction) {
             case "LEAST_CONFLICTING":
                 return leastConflictingHeuristic(scheduleData, scheduleRecords, assignmentState);
@@ -193,7 +200,7 @@ public class HeuristicAlgorithmImpl implements ScheduleAlgorithm {
      * 最少冲突启发式
      */
     private HeuristicResult leastConflictingHeuristic(ScheduleData scheduleData, List<ScheduleRecord> scheduleRecords,
-                                                          Map<String, Object> assignmentState) {
+            Map<String, Object> assignmentState) {
         int conflictCount = countConflicts(scheduleRecords, scheduleData);
         int improvedCount = 0;
 
@@ -227,7 +234,7 @@ public class HeuristicAlgorithmImpl implements ScheduleAlgorithm {
      * 最约束启发式
      */
     private HeuristicResult mostConstrainedHeuristic(ScheduleData scheduleData, List<ScheduleRecord> scheduleRecords,
-                                                      Map<String, Object> assignmentState) {
+            Map<String, Object> assignmentState) {
         // 找到约束最多的变量
         Object mostConstrainedEmployee = findMostConstrainedEmployee(scheduleData, scheduleRecords);
 
@@ -255,7 +262,7 @@ public class HeuristicAlgorithmImpl implements ScheduleAlgorithm {
      * 最佳匹配启发式
      */
     private HeuristicResult bestFitHeuristic(ScheduleData scheduleData, List<ScheduleRecord> scheduleRecords,
-                                                   Map<String, Object> assignmentState) {
+            Map<String, Object> assignmentState) {
         // 为每个未分配的员工找到最佳匹配的班次
         List<Object> unassignedEmployees = findUnassignedEmployees(scheduleData, scheduleRecords);
         int improvedCount = 0;
@@ -280,7 +287,7 @@ public class HeuristicAlgorithmImpl implements ScheduleAlgorithm {
      * 最高价值启发式
      */
     private HeuristicResult highestValueHeuristic(ScheduleData scheduleData, List<ScheduleRecord> scheduleRecords,
-                                                        Map<String, Object> assignmentState) {
+            Map<String, Object> assignmentState) {
         // 根据价值函数选择最优分配
         double totalValue = calculateTotalValue(scheduleRecords, scheduleData);
         int improvedCount = 0;
@@ -352,8 +359,7 @@ public class HeuristicAlgorithmImpl implements ScheduleAlgorithm {
             if (functionObj != null) {
                 String function = functionObj.toString();
                 List<String> validFunctions = Arrays.asList(
-                        "LEAST_CONFLICTING", "MOST_CONSTRAINED", "BEST_FIT", "HIGHEST_VALUE"
-                );
+                        "LEAST_CONFLICTING", "MOST_CONSTRAINED", "BEST_FIT", "HIGHEST_VALUE");
                 if (!validFunctions.contains(function)) {
                     result.addWarning("未知的启发式函数: " + function);
                 }
@@ -430,8 +436,8 @@ public class HeuristicAlgorithmImpl implements ScheduleAlgorithm {
                 .departmentId(record.getDepartmentId())
                 .shiftId(record.getShiftId())
                 .scheduleDate(record.getScheduleDate())
-                .startTime(record.getStartTime() != null ? record.getStartTime().toString() : null)
-                .endTime(record.getEndTime() != null ? record.getEndTime().toString() : null)
+                .workStartTime(record.getWorkStartTime() != null ? record.getWorkStartTime().toString() : null)
+                .workEndTime(record.getWorkEndTime() != null ? record.getWorkEndTime().toString() : null)
                 .workLocation(record.getWorkLocation())
                 .priority(record.getPriority())
                 .autoGenerated(record.getAutoGenerated())
@@ -450,8 +456,8 @@ public class HeuristicAlgorithmImpl implements ScheduleAlgorithm {
     public boolean isApplicable(int employeeCount, int shiftCount, int timeRange) {
         // 启发式算法适用于中等规模数据
         return employeeCount >= 50 && employeeCount <= 2000 &&
-               shiftCount >= 1 && shiftCount <= 100 &&
-               timeRange >= 1 && timeRange <= 180;
+                shiftCount >= 1 && shiftCount <= 100 &&
+                timeRange >= 1 && timeRange <= 180;
     }
 
     /**
@@ -464,8 +470,7 @@ public class HeuristicAlgorithmImpl implements ScheduleAlgorithm {
                 "实时排班调整",
                 "大规模优化",
                 "复杂约束处理",
-                "质量与速度平衡"
-        );
+                "质量与速度平衡");
     }
 
     /**
@@ -620,7 +625,8 @@ public class HeuristicAlgorithmImpl implements ScheduleAlgorithm {
     /**
      * 查找可用班次
      */
-    private List<Object> findAvailableShifts(Object employee, ScheduleData scheduleData, List<ScheduleRecord> scheduleRecords) {
+    private List<Object> findAvailableShifts(Object employee, ScheduleData scheduleData,
+            List<ScheduleRecord> scheduleRecords) {
         List<Object> availableShifts = new ArrayList<>();
 
         for (Object shift : scheduleData.getAvailableShifts()) {
@@ -636,7 +642,7 @@ public class HeuristicAlgorithmImpl implements ScheduleAlgorithm {
      * 查找冲突最少的班次
      */
     private Object findLeastConflictingShift(Object employee, List<Object> availableShifts,
-                                                 ScheduleData scheduleData, List<ScheduleRecord> scheduleRecords) {
+            ScheduleData scheduleData, List<ScheduleRecord> scheduleRecords) {
         Object bestShift = null;
         int minConflicts = Integer.MAX_VALUE;
 
@@ -662,7 +668,8 @@ public class HeuristicAlgorithmImpl implements ScheduleAlgorithm {
     /**
      * 为员工选择最佳班次
      */
-    private Object selectBestShiftForEmployee(Object employee, List<Object> availableShifts, ScheduleData scheduleData) {
+    private Object selectBestShiftForEmployee(Object employee, List<Object> availableShifts,
+            ScheduleData scheduleData) {
         // TODO: 实现最佳班次选择逻辑
         return availableShifts.isEmpty() ? null : availableShifts.get(0);
     }
@@ -672,7 +679,7 @@ public class HeuristicAlgorithmImpl implements ScheduleAlgorithm {
      */
     private List<Object> findUnassignedEmployees(ScheduleData scheduleData, List<ScheduleRecord> scheduleRecords) {
         // TODO: 实现未分配员工查找逻辑
-        return new ArrayList<Object>(scheduleData.getEmployees());
+        return new ArrayList<>(scheduleData.getEmployees());
     }
 
     /**
@@ -694,7 +701,8 @@ public class HeuristicAlgorithmImpl implements ScheduleAlgorithm {
     /**
      * 查找更高价值的班次
      */
-    private Object findHigherValueShift(Object employee, Object currentShift, ScheduleData scheduleData, List<ScheduleRecord> scheduleRecords) {
+    private Object findHigherValueShift(Object employee, Object currentShift, ScheduleData scheduleData,
+            List<ScheduleRecord> scheduleRecords) {
         // TODO: 实现更高价值班次查找逻辑
         return null;
     }
@@ -710,7 +718,8 @@ public class HeuristicAlgorithmImpl implements ScheduleAlgorithm {
     /**
      * 计算班次冲突
      */
-    private int countShiftConflicts(Object employee, Object shift, List<ScheduleRecord> scheduleRecords, ScheduleData scheduleData) {
+    private int countShiftConflicts(Object employee, Object shift, List<ScheduleRecord> scheduleRecords,
+            ScheduleData scheduleData) {
         // TODO: 实现班次冲突计算
         return 0;
     }

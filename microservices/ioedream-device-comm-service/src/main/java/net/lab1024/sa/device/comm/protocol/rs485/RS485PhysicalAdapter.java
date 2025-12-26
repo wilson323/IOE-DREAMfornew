@@ -1,20 +1,34 @@
 package net.lab1024.sa.device.comm.protocol.rs485;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.device.comm.protocol.ProtocolAdapter;
-import net.lab1024.sa.device.comm.protocol.domain.*;
-import net.lab1024.sa.device.comm.protocol.exception.ProtocolParseException;
-import net.lab1024.sa.device.comm.protocol.exception.ProtocolBuildException;
-import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.ConcurrentHashMap;
+
+import org.springframework.stereotype.Component;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import net.lab1024.sa.device.comm.protocol.ProtocolAdapter;
+import net.lab1024.sa.device.comm.protocol.domain.ProtocolDeviceStatus;
+import net.lab1024.sa.device.comm.protocol.domain.ProtocolErrorInfo;
+import net.lab1024.sa.device.comm.protocol.domain.ProtocolErrorResponse;
+import net.lab1024.sa.device.comm.protocol.domain.ProtocolHeartbeatResult;
+import net.lab1024.sa.device.comm.protocol.domain.ProtocolInitResult;
+import net.lab1024.sa.device.comm.protocol.domain.ProtocolMessage;
+import net.lab1024.sa.device.comm.protocol.domain.ProtocolPermissionResult;
+import net.lab1024.sa.device.comm.protocol.domain.ProtocolProcessResult;
+import net.lab1024.sa.device.comm.protocol.domain.ProtocolRegistrationResult;
+import net.lab1024.sa.device.comm.protocol.domain.ProtocolValidationResult;
+import net.lab1024.sa.device.comm.protocol.exception.ProtocolBuildException;
+import net.lab1024.sa.device.comm.protocol.exception.ProtocolParseException;
 
 /**
  * RS485物理层协议适配器
@@ -38,9 +52,9 @@ import java.util.concurrent.ConcurrentHashMap;
  * @version 1.0.0
  * @since 2025-12-16
  */
-@Slf4j
 @Component("rs485PhysicalAdapter")
 @Schema(description = "RS485物理层协议适配器")
+@Slf4j
 public class RS485PhysicalAdapter implements ProtocolAdapter {
 
     private static final String PROTOCOL_TYPE = "RS485_PHYSICAL_V1_0";
@@ -71,13 +85,13 @@ public class RS485PhysicalAdapter implements ProtocolAdapter {
     };
 
     // RS485通讯参数配置
-    private final Map<Long, RS485Config> deviceConfigs = new ConcurrentHashMap<>();
-    private final Map<Long, RS485Connection> connections = new ConcurrentHashMap<>();
+    private final Map<Long, RS485Config> deviceConfigs = new HashMap<>();
+    private final Map<Long, RS485Connection> connections = new HashMap<>();
     private final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(20);
 
     // 通讯统计
-    private final Map<String, Long> messageCount = new ConcurrentHashMap<>();
-    private final Map<String, Long> errorCount = new ConcurrentHashMap<>();
+    private final Map<String, Long> messageCount = new HashMap<>();
+    private final Map<String, Long> errorCount = new HashMap<>();
 
     @Override
     public String getProtocolType() {
@@ -161,7 +175,7 @@ public class RS485PhysicalAdapter implements ProtocolAdapter {
             // 更新统计
             incrementMessageCount("parse");
             log.debug("[RS485协议解析] 解析成功, deviceId={}, functionCode=0x{:02X}",
-                     deviceId, functionCode & 0xFF);
+                    deviceId, functionCode & 0xFF);
 
             return message;
 
@@ -183,7 +197,8 @@ public class RS485PhysicalAdapter implements ProtocolAdapter {
     }
 
     @Override
-    public byte[] buildDeviceResponse(String messageType, Map<String, Object> businessData, Long deviceId) throws ProtocolBuildException {
+    public byte[] buildDeviceResponse(String messageType, Map<String, Object> businessData, Long deviceId)
+            throws ProtocolBuildException {
         try {
             log.debug("[RS485响应构建] 开始构建响应, deviceId={}, messageType={}", deviceId, messageType);
 
@@ -203,13 +218,14 @@ public class RS485PhysicalAdapter implements ProtocolAdapter {
         } catch (Exception e) {
             incrementErrorCount("build");
             log.error("[RS485响应构建] 构建失败, deviceId={}, messageType={}, error={}",
-                     deviceId, messageType, e.getMessage(), e);
+                    deviceId, messageType, e.getMessage(), e);
             throw new ProtocolBuildException("RS485响应构建失败: " + e.getMessage(), e);
         }
     }
 
     @Override
-    public String buildDeviceResponseHex(String messageType, Map<String, Object> businessData, Long deviceId) throws ProtocolBuildException {
+    public String buildDeviceResponseHex(String messageType, Map<String, Object> businessData, Long deviceId)
+            throws ProtocolBuildException {
         byte[] responseData = buildDeviceResponse(messageType, businessData, deviceId);
         return bytesToHexString(responseData);
     }
@@ -395,7 +411,8 @@ public class RS485PhysicalAdapter implements ProtocolAdapter {
     }
 
     @Override
-    public Future<ProtocolProcessResult> processAccessBusiness(String businessType, Map<String, Object> businessData, Long deviceId) {
+    public Future<ProtocolProcessResult> processAccessBusiness(String businessType, Map<String, Object> businessData,
+            Long deviceId) {
         return executorService.submit(() -> {
             // RS485主要用于工业控制，不处理门禁业务
             return ProtocolProcessResult.failure("ACCESS", "NOT_SUPPORTED", "RS485协议不支持门禁业务");
@@ -403,7 +420,8 @@ public class RS485PhysicalAdapter implements ProtocolAdapter {
     }
 
     @Override
-    public Future<ProtocolProcessResult> processAttendanceBusiness(String businessType, Map<String, Object> businessData, Long deviceId) {
+    public Future<ProtocolProcessResult> processAttendanceBusiness(String businessType,
+            Map<String, Object> businessData, Long deviceId) {
         return executorService.submit(() -> {
             // RS485主要用于工业控制，不处理考勤业务
             return ProtocolProcessResult.failure("ATTENDANCE", "NOT_SUPPORTED", "RS485协议不支持考勤业务");
@@ -411,7 +429,8 @@ public class RS485PhysicalAdapter implements ProtocolAdapter {
     }
 
     @Override
-    public Future<ProtocolProcessResult> processConsumeBusiness(String businessType, Map<String, Object> businessData, Long deviceId) {
+    public Future<ProtocolProcessResult> processConsumeBusiness(String businessType, Map<String, Object> businessData,
+            Long deviceId) {
         return executorService.submit(() -> {
             // RS485主要用于工业控制，不处理消费业务
             return ProtocolProcessResult.failure("CONSUME", "NOT_SUPPORTED", "RS485协议不支持消费业务");
@@ -505,7 +524,8 @@ public class RS485PhysicalAdapter implements ProtocolAdapter {
         errorMapping.put("FUNCTION_ERROR", ProtocolErrorInfo.of("FUNCTION_ERROR", "功能码不支持", "PROTOCOL", "LOW"));
 
         // 数据格式错误
-        errorMapping.put("DATA_FORMAT_ERROR", ProtocolErrorInfo.of("DATA_FORMAT_ERROR", "数据格式错误", "PROTOCOL", "MEDIUM"));
+        errorMapping.put("DATA_FORMAT_ERROR",
+                ProtocolErrorInfo.of("DATA_FORMAT_ERROR", "数据格式错误", "PROTOCOL", "MEDIUM"));
 
         return errorMapping;
     }
@@ -850,7 +870,7 @@ public class RS485PhysicalAdapter implements ProtocolAdapter {
             RS485Connection connection = entry.getValue();
 
             if (connection.isConnected() &&
-                (currentTime - connection.getLastHeartbeat()) > heartbeatTimeout) {
+                    (currentTime - connection.getLastHeartbeat()) > heartbeatTimeout) {
                 log.warn("[RS485连接监控] 设备心跳超时, deviceId={}", deviceId);
                 connection.disconnect();
             }
@@ -957,18 +977,53 @@ public class RS485PhysicalAdapter implements ProtocolAdapter {
         private Integer timeout = 3000;
 
         // getters and setters
-        public String getPortName() { return portName; }
-        public void setPortName(String portName) { this.portName = portName; }
-        public Integer getBaudRate() { return baudRate; }
-        public void setBaudRate(Integer baudRate) { this.baudRate = baudRate; }
-        public Integer getDataBits() { return dataBits; }
-        public void setDataBits(Integer dataBits) { this.dataBits = dataBits; }
-        public Integer getStopBits() { return stopBits; }
-        public void setStopBits(Integer stopBits) { this.stopBits = stopBits; }
-        public String getParity() { return parity; }
-        public void setParity(String parity) { this.parity = parity; }
-        public Integer getTimeout() { return timeout; }
-        public void setTimeout(Integer timeout) { this.timeout = timeout; }
+        public String getPortName() {
+            return portName;
+        }
+
+        public void setPortName(String portName) {
+            this.portName = portName;
+        }
+
+        public Integer getBaudRate() {
+            return baudRate;
+        }
+
+        public void setBaudRate(Integer baudRate) {
+            this.baudRate = baudRate;
+        }
+
+        public Integer getDataBits() {
+            return dataBits;
+        }
+
+        public void setDataBits(Integer dataBits) {
+            this.dataBits = dataBits;
+        }
+
+        public Integer getStopBits() {
+            return stopBits;
+        }
+
+        public void setStopBits(Integer stopBits) {
+            this.stopBits = stopBits;
+        }
+
+        public String getParity() {
+            return parity;
+        }
+
+        public void setParity(String parity) {
+            this.parity = parity;
+        }
+
+        public Integer getTimeout() {
+            return timeout;
+        }
+
+        public void setTimeout(Integer timeout) {
+            this.timeout = timeout;
+        }
     }
 
     /**
@@ -1018,15 +1073,41 @@ public class RS485PhysicalAdapter implements ProtocolAdapter {
         }
 
         // getters
-        public boolean isConnected() { return connected; }
-        public boolean isAuthenticated() { return authenticated; }
-        public boolean isWriteEnabled() { return writeEnabled; }
-        public long getConnectionTime() { return connectionTime; }
-        public long getLastHeartbeat() { return lastHeartbeat; }
-        public long getMessageCount() { return messageCount; }
-        public long getErrorCount() { return errorCount; }
-        public Map<String, Object> getStatus() { return status; }
-        public void setStatus(Map<String, Object> status) { this.status = status != null ? status : new HashMap<>(); }
+        public boolean isConnected() {
+            return connected;
+        }
+
+        public boolean isAuthenticated() {
+            return authenticated;
+        }
+
+        public boolean isWriteEnabled() {
+            return writeEnabled;
+        }
+
+        public long getConnectionTime() {
+            return connectionTime;
+        }
+
+        public long getLastHeartbeat() {
+            return lastHeartbeat;
+        }
+
+        public long getMessageCount() {
+            return messageCount;
+        }
+
+        public long getErrorCount() {
+            return errorCount;
+        }
+
+        public Map<String, Object> getStatus() {
+            return status;
+        }
+
+        public void setStatus(Map<String, Object> status) {
+            this.status = status != null ? status : new HashMap<>();
+        }
     }
 
     /**
@@ -1043,21 +1124,68 @@ public class RS485PhysicalAdapter implements ProtocolAdapter {
         private long receiveTime;
 
         // getters and setters
-        public byte getDeviceAddress() { return deviceAddress; }
-        public void setDeviceAddress(byte deviceAddress) { this.deviceAddress = deviceAddress; }
-        public byte getFunctionCode() { return functionCode; }
-        public void setFunctionCode(byte functionCode) { this.functionCode = functionCode; }
-        public byte[] getData() { return data; }
-        public void setData(byte[] data) { this.data = data; }
-        public byte[] getCrc() { return crc; }
-        public void setCrc(byte[] crc) { this.crc = crc; }
-        public String getMessageType() { return messageType; }
-        public void setMessageType(String messageType) { this.messageType = messageType; }
-        public Map<String, Object> getBusinessData() { return businessData; }
-        public void setBusinessData(Map<String, Object> businessData) { this.businessData = businessData; }
-        public byte[] getRawData() { return rawData; }
-        public void setRawData(byte[] rawData) { this.rawData = rawData; }
-        public long getReceiveTime() { return receiveTime; }
-        public void setReceiveTime(long receiveTime) { this.receiveTime = receiveTime; }
+        public byte getDeviceAddress() {
+            return deviceAddress;
+        }
+
+        public void setDeviceAddress(byte deviceAddress) {
+            this.deviceAddress = deviceAddress;
+        }
+
+        public byte getFunctionCode() {
+            return functionCode;
+        }
+
+        public void setFunctionCode(byte functionCode) {
+            this.functionCode = functionCode;
+        }
+
+        public byte[] getData() {
+            return data;
+        }
+
+        public void setData(byte[] data) {
+            this.data = data;
+        }
+
+        public byte[] getCrc() {
+            return crc;
+        }
+
+        public void setCrc(byte[] crc) {
+            this.crc = crc;
+        }
+
+        public String getMessageType() {
+            return messageType;
+        }
+
+        public void setMessageType(String messageType) {
+            this.messageType = messageType;
+        }
+
+        public Map<String, Object> getBusinessData() {
+            return businessData;
+        }
+
+        public void setBusinessData(Map<String, Object> businessData) {
+            this.businessData = businessData;
+        }
+
+        public byte[] getRawData() {
+            return rawData;
+        }
+
+        public void setRawData(byte[] rawData) {
+            this.rawData = rawData;
+        }
+
+        public long getReceiveTime() {
+            return receiveTime;
+        }
+
+        public void setReceiveTime(long receiveTime) {
+            this.receiveTime = receiveTime;
+        }
     }
 }

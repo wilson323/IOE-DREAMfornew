@@ -31,7 +31,7 @@
 
 **统一性**：所有API遵循统一的设计规范和响应格式
 
-**向后兼容**：API变更必须保证向后兼容，新增字段不影响老版本
+**版本约束**：不保证向后兼容，API变更必须同步更新调用方并及时移除旧接口
 
 **幂等性**：GET、PUT、DELETE操作必须是幂等的
 
@@ -237,6 +237,8 @@ public class DeviceInfoDTO {
 ### 4.2 响应格式规范
 
 #### 4.2.1 统一响应格式
+
+**ResponseDTO归属**：ResponseDTO 必须定义在 `microservices-common-core`，禁止在业务模块或非core模块重复定义。
 
 ```java
 // 标准响应DTO

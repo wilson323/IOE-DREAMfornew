@@ -1,0 +1,332 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ---------------< net.lab1024.sa:ioedream-access-service >---------------
+[INFO] Building IOE-DREAM Access Service 1.0.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[WARNING] Parameter 'encoding' is unknown for plugin 'jacoco-maven-plugin:0.8.12:prepare-agent (jacoco-prepare-agent)'
+[WARNING] Parameter 'encoding' is unknown for plugin 'jacoco-maven-plugin:0.8.12:report (jacoco-report)'
+[INFO] 
+[INFO] --- enforcer:3.5.0:enforce (enforce-java-maven) @ ioedream-access-service ---
+[INFO] Rule 0: org.apache.maven.enforcer.rules.version.RequireJavaVersion passed
+[INFO] Rule 1: org.apache.maven.enforcer.rules.version.RequireMavenVersion passed
+[INFO] 
+[INFO] --- exec:3.1.1:exec (check-manager-bean-registration) @ ioedream-access-service ---
+[INFO] skipping execute as per configuration
+[INFO] 
+[INFO] --- jacoco:0.8.12:prepare-agent (jacoco-prepare-agent) @ ioedream-access-service ---
+[INFO] jacocoArgLine set to -javaagent:C:\\Users\\10201\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.12\\org.jacoco.agent-0.8.12-runtime.jar=destfile=D:\\IOE-DREAM\\microservices\\ioedream-access-service\\target\\jacoco.exec,includes=**/*.class,excludes=**/*Test*.class:**/*Tests.class:**/*Application.class:**/*Config*.class:**/*Configuration.class:**/dto/**/*.class:**/vo/**/*.class:**/form/**/*.class:**/entity/**/*.class:**/constant/**/*.class:**/constants/**/*.class:**/exception/**/*.class:**/*Exception.class:**/*Enum.class:**/generated/**/*.class:**/openapi/**/*.class
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ ioedream-access-service ---
+[INFO] Copying 7 resources from src\main\resources to target\classes
+[INFO] Copying 10 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ ioedream-access-service ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ ioedream-access-service ---
+[INFO] Copying 1 resource from src\test\resources to target\test-classes
+[INFO] Copying 0 resource from src\test\resources to target\test-classes
+[INFO] 
+[INFO] --- compiler:3.13.0:testCompile (default-testCompile) @ ioedream-access-service ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- surefire:3.2.5:test (default-test) @ ioedream-access-service ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[WARNING] The system property user.timezone is configured twice! The property appears in <argLine/> and any of <systemPropertyVariables/>, <systemProperties/> or user property.
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running net.lab1024.sa.access.service.AccessLinkageServiceTest
+20:20:13.457 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 删除联动规则: ruleId=1
+20:20:13.517 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 联动规则删除成功: ruleId=1
+20:20:13.519 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 测试联动规则: ruleId=1
+20:20:13.521 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 执行联动规则: ruleId=1, targetDeviceId=1002, actionType=CAMERA_SNAPSHOT
+20:20:13.524 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 联动执行成功: ruleId=1, result=test success
+20:20:13.525 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 联动规则测试完成: ruleId=1, result=联动执行成功: test success
+20:20:13.611 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 删除联动规则: ruleId=1
+20:20:13.623 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 更新联动规则启用状态: ruleId=1, enabled=0
+20:20:13.623 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 联动规则启用状态更新成功: ruleId=1, enabled=0
+20:20:13.661 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 删除联动规则: ruleId=1
+20:20:13.689 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 删除联动规则: ruleId=1
+20:20:13.691 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 联动规则删除成功: ruleId=1
+20:20:13.691 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 查询联动规则详情: ruleId=1
+20:20:13.710 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 删除联动规则: ruleId=1
+20:20:13.720 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 删除联动规则: ruleId=1
+20:20:13.721 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 联动规则删除成功: ruleId=1
+20:20:13.722 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 更新联动规则: ruleId=1, updateForm=null
+20:20:13.730 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 删除联动规则: ruleId=1
+20:20:13.738 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 删除联动规则: ruleId=1
+20:20:13.746 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 删除联动规则: ruleId=1
+20:20:13.754 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 删除联动规则: ruleId=1
+20:20:13.761 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 删除联动规则: ruleId=1
+20:20:13.769 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 删除联动规则: ruleId=1
+20:20:13.776 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 删除联动规则: ruleId=1
+20:20:13.784 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 删除联动规则: ruleId=1
+[ERROR] Tests run: 15, Failures: 2, Errors: 12, Skipped: 0, Time elapsed: 3.667 s <<< FAILURE! -- in net.lab1024.sa.access.service.AccessLinkageServiceTest
+[ERROR] net.lab1024.sa.access.service.AccessLinkageServiceTest.testTestRule_Success -- Time elapsed: 3.411 s <<< FAILURE!
+org.opentest4j.AssertionFailedError: expected: <true> but was: <false>
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+	at org.junit.jupiter.api.AssertTrue.failNotTrue(AssertTrue.java:63)
+	at org.junit.jupiter.api.AssertTrue.assertTrue(AssertTrue.java:36)
+	at org.junit.jupiter.api.AssertTrue.assertTrue(AssertTrue.java:31)
+	at org.junit.jupiter.api.Assertions.assertTrue(Assertions.java:183)
+	at net.lab1024.sa.access.service.AccessLinkageServiceTest.testTestRule_Success(AccessLinkageServiceTest.java:326)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+[ERROR] net.lab1024.sa.access.service.AccessLinkageServiceTest.testTriggerLinkage_NoMatchingRule -- Time elapsed: 0.013 s <<< ERROR!
+net.lab1024.sa.common.exception.BusinessException: 联动规则不存在
+	at net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl.delete(AccessLinkageServiceImpl.java:150)
+	at net.lab1024.sa.access.service.AccessLinkageServiceTest.testTriggerLinkage_NoMatchingRule(AccessLinkageServiceTest.java:303)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+[ERROR] net.lab1024.sa.access.service.AccessLinkageServiceTest.testGetById_NotFound -- Time elapsed: 0.025 s <<< ERROR!
+org.mockito.exceptions.misusing.PotentialStubbingProblem: 
+
+Strict stubbing argument mismatch. Please check:
+ - this invocation of 'selectById' method:
+    linkageRuleDao.selectById(1L);
+    -> at net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl.delete(AccessLinkageServiceImpl.java:148)
+ - has following stubbing(s) with different arguments:
+    1. linkageRuleDao.selectById(999L);
+      -> at net.lab1024.sa.access.service.AccessLinkageServiceTest.testGetById_NotFound(AccessLinkageServiceTest.java:163)
+Typically, stubbing argument mismatch indicates user mistake when writing tests.
+Mockito fails early so that you can debug potential problem easily.
+However, there are legit scenarios when this exception generates false negative signal:
+  - stubbing the same method multiple times using 'given().will()' or 'when().then()' API
+    Please use 'will().given()' or 'doReturn().when()' API for stubbing.
+  - stubbed method is intentionally invoked with different arguments by code under test
+    Please use default or 'silent' JUnit Rule (equivalent of Strictness.LENIENT).
+For more information see javadoc for PotentialStubbingProblem class.
+	at net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl.delete(AccessLinkageServiceImpl.java:148)
+	at net.lab1024.sa.access.service.AccessLinkageServiceTest.testGetById_NotFound(AccessLinkageServiceTest.java:166)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+[ERROR] net.lab1024.sa.access.service.AccessLinkageServiceTest.testGetById_Success -- Time elapsed: 0.020 s <<< FAILURE!
+org.mockito.exceptions.verification.TooManyActualInvocations: 
+
+linkageRuleDao.selectById(1L);
+Wanted 1 time:
+-> at net.lab1024.sa.access.service.AccessLinkageServiceTest.testGetById_Success(AccessLinkageServiceTest.java:156)
+But was 2 times:
+-> at net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl.delete(AccessLinkageServiceImpl.java:148)
+-> at net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl.getById(AccessLinkageServiceImpl.java:88)
+
+
+	at net.lab1024.sa.access.service.AccessLinkageServiceTest.testGetById_Success(AccessLinkageServiceTest.java:156)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+[ERROR] net.lab1024.sa.access.service.AccessLinkageServiceTest.testDeleteRule_Success -- Time elapsed: 0.008 s <<< ERROR!
+net.lab1024.sa.common.exception.BusinessException: 联动规则不存在
+	at net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl.delete(AccessLinkageServiceImpl.java:150)
+	at net.lab1024.sa.access.service.AccessLinkageServiceTest.testDeleteRule_Success(AccessLinkageServiceTest.java:227)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+[ERROR] net.lab1024.sa.access.service.AccessLinkageServiceTest.testUpdateRule_Success -- Time elapsed: 0.009 s <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "net.lab1024.sa.access.domain.entity.AccessLinkageRuleEntity.getRuleName()" because "updateEntity" is null
+	at net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl.update(AccessLinkageServiceImpl.java:131)
+	at net.lab1024.sa.access.service.AccessLinkageServiceTest.testUpdateRule_Success(AccessLinkageServiceTest.java:198)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+[ERROR] net.lab1024.sa.access.service.AccessLinkageServiceTest.testUpdateRule_NotFound -- Time elapsed: 0.008 s <<< ERROR!
+org.mockito.exceptions.misusing.PotentialStubbingProblem: 
+
+Strict stubbing argument mismatch. Please check:
+ - this invocation of 'selectById' method:
+    linkageRuleDao.selectById(1L);
+    -> at net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl.delete(AccessLinkageServiceImpl.java:148)
+ - has following stubbing(s) with different arguments:
+    1. linkageRuleDao.selectById(999L);
+      -> at net.lab1024.sa.access.service.AccessLinkageServiceTest.testUpdateRule_NotFound(AccessLinkageServiceTest.java:209)
+Typically, stubbing argument mismatch indicates user mistake when writing tests.
+Mockito fails early so that you can debug potential problem easily.
+However, there are legit scenarios when this exception generates false negative signal:
+  - stubbing the same method multiple times using 'given().will()' or 'when().then()' API
+    Please use 'will().given()' or 'doReturn().when()' API for stubbing.
+  - stubbed method is intentionally invoked with different arguments by code under test
+    Please use default or 'silent' JUnit Rule (equivalent of Strictness.LENIENT).
+For more information see javadoc for PotentialStubbingProblem class.
+	at net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl.delete(AccessLinkageServiceImpl.java:148)
+	at net.lab1024.sa.access.service.AccessLinkageServiceTest.testUpdateRule_NotFound(AccessLinkageServiceTest.java:212)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+[ERROR] net.lab1024.sa.access.service.AccessLinkageServiceTest.testAddRule_Success -- Time elapsed: 0.006 s <<< ERROR!
+net.lab1024.sa.common.exception.BusinessException: 联动规则不存在
+	at net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl.delete(AccessLinkageServiceImpl.java:150)
+	at net.lab1024.sa.access.service.AccessLinkageServiceTest.testAddRule_Success(AccessLinkageServiceTest.java:181)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+[ERROR] net.lab1024.sa.access.service.AccessLinkageServiceTest.testQueryPage_Success -- Time elapsed: 0.006 s <<< ERROR!
+net.lab1024.sa.common.exception.BusinessException: 联动规则不存在
+	at net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl.delete(AccessLinkageServiceImpl.java:150)
+	at net.lab1024.sa.access.service.AccessLinkageServiceTest.testQueryPage_Success(AccessLinkageServiceTest.java:110)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+[ERROR] net.lab1024.sa.access.service.AccessLinkageServiceTest.testDeleteRule_Failed -- Time elapsed: 0.007 s <<< ERROR!
+net.lab1024.sa.common.exception.BusinessException: 联动规则不存在
+	at net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl.delete(AccessLinkageServiceImpl.java:150)
+	at net.lab1024.sa.access.service.AccessLinkageServiceTest.testDeleteRule_Failed(AccessLinkageServiceTest.java:239)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+[ERROR] net.lab1024.sa.access.service.AccessLinkageServiceTest.testTestRule_NotFound -- Time elapsed: 0.007 s <<< ERROR!
+org.mockito.exceptions.misusing.PotentialStubbingProblem: 
+
+Strict stubbing argument mismatch. Please check:
+ - this invocation of 'selectById' method:
+    linkageRuleDao.selectById(1L);
+    -> at net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl.delete(AccessLinkageServiceImpl.java:148)
+ - has following stubbing(s) with different arguments:
+    1. linkageRuleDao.selectById(999L);
+      -> at net.lab1024.sa.access.service.AccessLinkageServiceTest.testTestRule_NotFound(AccessLinkageServiceTest.java:335)
+Typically, stubbing argument mismatch indicates user mistake when writing tests.
+Mockito fails early so that you can debug potential problem easily.
+However, there are legit scenarios when this exception generates false negative signal:
+  - stubbing the same method multiple times using 'given().will()' or 'when().then()' API
+    Please use 'will().given()' or 'doReturn().when()' API for stubbing.
+  - stubbed method is intentionally invoked with different arguments by code under test
+    Please use default or 'silent' JUnit Rule (equivalent of Strictness.LENIENT).
+For more information see javadoc for PotentialStubbingProblem class.
+	at net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl.delete(AccessLinkageServiceImpl.java:148)
+	at net.lab1024.sa.access.service.AccessLinkageServiceTest.testTestRule_NotFound(AccessLinkageServiceTest.java:338)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+[ERROR] net.lab1024.sa.access.service.AccessLinkageServiceTest.testTriggerLinkage_WithDelay -- Time elapsed: 0.006 s <<< ERROR!
+net.lab1024.sa.common.exception.BusinessException: 联动规则不存在
+	at net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl.delete(AccessLinkageServiceImpl.java:150)
+	at net.lab1024.sa.access.service.AccessLinkageServiceTest.testTriggerLinkage_WithDelay(AccessLinkageServiceTest.java:286)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+[ERROR] net.lab1024.sa.access.service.AccessLinkageServiceTest.testTriggerLinkage_WithoutDelay -- Time elapsed: 0.006 s <<< ERROR!
+net.lab1024.sa.common.exception.BusinessException: 联动规则不存在
+	at net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl.delete(AccessLinkageServiceImpl.java:150)
+	at net.lab1024.sa.access.service.AccessLinkageServiceTest.testTriggerLinkage_WithoutDelay(AccessLinkageServiceTest.java:268)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+[ERROR] net.lab1024.sa.access.service.AccessLinkageServiceTest.testQueryPage_WithTriggerDeviceFilter -- Time elapsed: 0.006 s <<< ERROR!
+net.lab1024.sa.common.exception.BusinessException: 联动规则不存在
+	at net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl.delete(AccessLinkageServiceImpl.java:150)
+	at net.lab1024.sa.access.service.AccessLinkageServiceTest.testQueryPage_WithTriggerDeviceFilter(AccessLinkageServiceTest.java:133)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+
+[INFO] 
+[INFO] Results:
+[INFO] 
+[ERROR] Failures: 
+[ERROR]   AccessLinkageServiceTest.testGetById_Success:156 
+linkageRuleDao.selectById(1L);
+Wanted 1 time:
+-> at net.lab1024.sa.access.service.AccessLinkageServiceTest.testGetById_Success(AccessLinkageServiceTest.java:156)
+But was 2 times:
+-> at net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl.delete(AccessLinkageServiceImpl.java:148)
+-> at net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl.getById(AccessLinkageServiceImpl.java:88)
+
+
+[ERROR]   AccessLinkageServiceTest.testTestRule_Success:326 expected: <true> but was: <false>
+[ERROR] Errors: 
+[ERROR]   AccessLinkageServiceTest.testAddRule_Success:181 » Business 联动规则不存在
+[ERROR]   AccessLinkageServiceTest.testDeleteRule_Failed:239 » Business 联动规则不存在
+[ERROR]   AccessLinkageServiceTest.testDeleteRule_Success:227 » Business 联动规则不存在
+[ERROR]   AccessLinkageServiceTest.testGetById_NotFound:166 » PotentialStubbingProblem 
+Strict stubbing argument mismatch. Please check:
+ - this invocation of 'selectById' method:
+    linkageRuleDao.selectById(1L);
+    -> at net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl.delete(AccessLinkageServiceImpl.java:148)
+ - has following stubbing(s) with different arguments:
+    1. linkageRuleDao.selectById(999L);
+      -> at net.lab1024.sa.access.service.AccessLinkageServiceTest.testGetById_NotFound(AccessLinkageServiceTest.java:163)
+Typically, stubbing argument mismatch indicates user mistake when writing tests.
+Mockito fails early so that you can debug potential problem easily.
+However, there are legit scenarios when this exception generates false negative signal:
+  - stubbing the same method multiple times using 'given().will()' or 'when().then()' API
+    Please use 'will().given()' or 'doReturn().when()' API for stubbing.
+  - stubbed method is intentionally invoked with different arguments by code under test
+    Please use default or 'silent' JUnit Rule (equivalent of Strictness.LENIENT).
+For more information see javadoc for PotentialStubbingProblem class.
+[ERROR]   AccessLinkageServiceTest.testQueryPage_Success:110 » Business 联动规则不存在
+[ERROR]   AccessLinkageServiceTest.testQueryPage_WithTriggerDeviceFilter:133 » Business 联动规则不存在
+[ERROR]   AccessLinkageServiceTest.testTestRule_NotFound:338 » PotentialStubbingProblem 
+Strict stubbing argument mismatch. Please check:
+ - this invocation of 'selectById' method:
+    linkageRuleDao.selectById(1L);
+    -> at net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl.delete(AccessLinkageServiceImpl.java:148)
+ - has following stubbing(s) with different arguments:
+    1. linkageRuleDao.selectById(999L);
+      -> at net.lab1024.sa.access.service.AccessLinkageServiceTest.testTestRule_NotFound(AccessLinkageServiceTest.java:335)
+Typically, stubbing argument mismatch indicates user mistake when writing tests.
+Mockito fails early so that you can debug potential problem easily.
+However, there are legit scenarios when this exception generates false negative signal:
+  - stubbing the same method multiple times using 'given().will()' or 'when().then()' API
+    Please use 'will().given()' or 'doReturn().when()' API for stubbing.
+  - stubbed method is intentionally invoked with different arguments by code under test
+    Please use default or 'silent' JUnit Rule (equivalent of Strictness.LENIENT).
+For more information see javadoc for PotentialStubbingProblem class.
+[ERROR]   AccessLinkageServiceTest.testTriggerLinkage_NoMatchingRule:303 » Business 联动规则不存在
+[ERROR]   AccessLinkageServiceTest.testTriggerLinkage_WithDelay:286 » Business 联动规则不存在
+[ERROR]   AccessLinkageServiceTest.testTriggerLinkage_WithoutDelay:268 » Business 联动规则不存在
+[ERROR]   AccessLinkageServiceTest.testUpdateRule_NotFound:212 » PotentialStubbingProblem 
+Strict stubbing argument mismatch. Please check:
+ - this invocation of 'selectById' method:
+    linkageRuleDao.selectById(1L);
+    -> at net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl.delete(AccessLinkageServiceImpl.java:148)
+ - has following stubbing(s) with different arguments:
+    1. linkageRuleDao.selectById(999L);
+      -> at net.lab1024.sa.access.service.AccessLinkageServiceTest.testUpdateRule_NotFound(AccessLinkageServiceTest.java:209)
+Typically, stubbing argument mismatch indicates user mistake when writing tests.
+Mockito fails early so that you can debug potential problem easily.
+However, there are legit scenarios when this exception generates false negative signal:
+  - stubbing the same method multiple times using 'given().will()' or 'when().then()' API
+    Please use 'will().given()' or 'doReturn().when()' API for stubbing.
+  - stubbed method is intentionally invoked with different arguments by code under test
+    Please use default or 'silent' JUnit Rule (equivalent of Strictness.LENIENT).
+For more information see javadoc for PotentialStubbingProblem class.
+[ERROR]   AccessLinkageServiceTest.testUpdateRule_Success:198 » NullPointer Cannot invoke "net.lab1024.sa.access.domain.entity.AccessLinkageRuleEntity.getRuleName()" because "updateEntity" is null
+[INFO] 
+[ERROR] Tests run: 15, Failures: 2, Errors: 12, Skipped: 0
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  8.959 s
+[INFO] Finished at: 2025-12-25T20:20:13+08:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:3.2.5:test (default-test) on project ioedream-access-service: There are test failures.
+[ERROR] 
+[ERROR] Please refer to D:\IOE-DREAM\microservices\ioedream-access-service\target\surefire-reports for the individual test results.
+[ERROR] Please refer to dump files (if any exist) [date].dump, [date]-jvmRun[N].dump and [date].dumpstream.
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

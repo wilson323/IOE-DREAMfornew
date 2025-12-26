@@ -1,11 +1,12 @@
 package net.lab1024.sa.visitor.controller;
 
+import lombok.extern.slf4j.Slf4j;
+
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.visitor.service.VisitorAccessControlService;
 import net.lab1024.sa.visitor.service.VisitorFaceRecognitionService;
@@ -33,12 +34,12 @@ import java.util.concurrent.CompletableFuture;
  * @version 1.0.0
  * @since 2025-01-30
  */
-@Slf4j
 @RestController
 @RequestMapping("/api/v1/visitor/security")
 @Tag(name = "访客安全管理", description = "访客人脸识别和门禁控制相关API")
 @Validated
 @CircuitBreaker(name = "visitorSecurityController")
+@Slf4j
 public class VisitorSecurityController {
 
     @Resource

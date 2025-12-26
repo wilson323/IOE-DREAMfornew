@@ -1,0 +1,64 @@
+name: Local Docker Metadata
+description: Local replacement for docker/metadata-action
+inputs:
+  images:
+    description: Image base name
+    required: true
+  tags:
+    description: Tag rules
+    required: false
+runs:
+  using: composite
+  steps:
+    - name: Generate metadata (bash)
+      if: runner.os != 'Windows'
+      shell: bash
+      run: |
+        set -euo pipefail
+        IMAGES_RAW="${INPUT_IMAGES:-}"
+        IMAGE="$(printf "%s" "$IMAGES_RAW" | head -n 1)"
+        if [ -z "$IMAGE" ]; then
+          echo "images is required"
+          exit 1
+        fi
+        SHA="${GITHUB_SHA:-}"
+        REF_NAME="${GITHUB_REF_NAME:-}"
+        TAGS="${IMAGE}:${SHA}"
+        if [ -n "$REF_NAME" ]; then
+          TAGS="$TAGS
+${IMAGE}:${REF_NAME}"
+        fi
+        LABELS="org.opencontainers.image.revision=${SHA}
+org.opencontainers.image.source=${GITHUB_REPOSITORY}"
+        {
+          echo "tags<<EOF"
+          echo "$TAGS"
+          echo "EOF"
+          echo "labels<<EOF"
+          echo "$LABELS"
+          echo "EOF"
+        } >> "$GITHUB_OUTPUT"
+    - name: Generate metadata (pwsh)
+      if: runner.os == 'Windows'
+      shell: pwsh
+      run: |
+        $ErrorActionPreference = "Stop"
+        $imagesRaw = $env:INPUT_IMAGES
+        $image = ($imagesRaw -split "`n")[0]
+        if ([string]::IsNullOrWhiteSpace($image)) {
+          Write-Host "images is required"
+          exit 1
+        }
+        $sha = $env:GITHUB_SHA
+        $refName = $env:GITHUB_REF_NAME
+        $tags = "$image:$sha"
+        if (-not [string]::IsNullOrWhiteSpace($refName)) {
+          $tags = "$tags`n$image:$refName"
+        }
+        $labels = "org.opencontainers.image.revision=$sha`norg.opencontainers.image.source=$env:GITHUB_REPOSITORY"
+        Add-Content -Path $env:GITHUB_OUTPUT -Value "tags<<EOF"
+        Add-Content -Path $env:GITHUB_OUTPUT -Value $tags
+        Add-Content -Path $env:GITHUB_OUTPUT -Value "EOF"
+        Add-Content -Path $env:GITHUB_OUTPUT -Value "labels<<EOF"
+        Add-Content -Path $env:GITHUB_OUTPUT -Value $labels
+        Add-Content -Path $env:GITHUB_OUTPUT -Value "EOF"

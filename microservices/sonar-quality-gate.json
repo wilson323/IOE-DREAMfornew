@@ -1,0 +1,370 @@
+{
+  "name": "IOE-DREAM 质量门禁配置",
+  "description": "企业级代码质量门禁标准，确保代码质量达到生产级别",
+  "version": "1.0.0",
+  "created": "2025-12-20",
+  "projectKey": "ioedream-microservices",
+  "qualityGate": {
+    "conditions": [
+      {
+        "metric": "coverage",
+        "operator": "LT",
+        "threshold": "85",
+        "period": "DRIFT",
+        "status": "ERROR",
+        "description": "代码覆盖率低于85%时阻断构建",
+        "priority": "HIGH"
+      },
+      {
+        "metric": "duplicated_lines_density",
+        "operator": "GT",
+        "threshold": "3",
+        "period": "DRIFT",
+        "status": "ERROR",
+        "description": "重复代码密度超过3%时阻断构建",
+        "priority": "HIGH"
+      },
+      {
+        "metric": "new_coverage",
+        "operator": "LT",
+        "threshold": "80",
+        "period": "NEW",
+        "status": "ERROR",
+        "description": "新代码覆盖率低于80%时阻断构建",
+        "priority": "HIGH"
+      },
+      {
+        "metric": "new_duplicated_lines_density",
+        "operator": "GT",
+        "threshold": "5",
+        "period": "NEW",
+        "status": "WARNING",
+        "description": "新代码重复密度超过5%时发出警告",
+        "priority": "MEDIUM"
+      },
+      {
+        "metric": "maintainability_rating",
+        "operator": "GT",
+        "threshold": "B",
+        "period": "DRIFT",
+        "status": "ERROR",
+        "description": "可维护性评级低于B时阻断构建",
+        "priority": "HIGH"
+      },
+      {
+        "metric": "reliability_rating",
+        "operator": "GT",
+        "threshold": "B",
+        "period": "DRIFT",
+        "status": "ERROR",
+        "description": "可靠性评级低于B时阻断构建",
+        "priority": "HIGH"
+      },
+      {
+        "metric": "security_rating",
+        "operator": "GT",
+        "threshold": "B",
+        "period": "DRIFT",
+        "status": "ERROR",
+        "description": "安全评级低于B时阻断构建",
+        "priority": "HIGH"
+      },
+      {
+        "metric": "sqale_index",
+        "operator": "GT",
+        "threshold": "20",
+        "period": "DRIFT",
+        "status": "ERROR",
+        "description": "技术债务指数超过20时阻断构建",
+        "priority": "HIGH"
+      },
+      {
+        "metric": "sqale_debt_ratio",
+        "operator": "GT",
+        "threshold": "10",
+        "period": "DRIFT",
+        "status": "WARNING",
+        "description": "技术债务比率超过10%时发出警告",
+        "priority": "MEDIUM"
+      },
+      {
+        "metric": "bugs",
+        "operator": "GT",
+        "threshold": "10",
+        "period": "DRIFT",
+        "status": "ERROR",
+        "description": "Bug数量超过10个时阻断构建",
+        "priority": "HIGH"
+      },
+      {
+        "metric": "vulnerabilities",
+        "operator": "GT",
+        "threshold": "5",
+        "period": "DRIFT",
+        "status": "ERROR",
+        "description": "安全漏洞数量超过5个时阻断构建",
+        "priority": "HIGH"
+      },
+      {
+        "metric": "code_smells",
+        "operator": "GT",
+        "threshold": "100",
+        "period": "DRIFT",
+        "status": "WARNING",
+        "description": "代码异味数量超过100个时发出警告",
+        "priority": "MEDIUM"
+      },
+      {
+        "metric": "complexity",
+        "operator": "GT",
+        "threshold": "5000",
+        "period": "DRIFT",
+        "status": "WARNING",
+        "description": "代码复杂度超过5000时发出警告",
+        "priority": "MEDIUM"
+      },
+      {
+        "metric": "cognitive_complexity",
+        "operator": "GT",
+        "threshold": "2000",
+        "period": "DRIFT",
+        "status": "WARNING",
+        "description": "认知复杂度超过2000时发出警告",
+        "priority": "MEDIUM"
+      },
+      {
+        "metric": "ncloc",
+        "operator": "LT",
+        "threshold": "10000",
+        "period": "NEW",
+        "status": "WARNING",
+        "description": "新代码行数少于10000行时发出警告",
+        "priority": "LOW"
+      }
+    ]
+  },
+  "modules": {
+    "microservices-common": {
+      "conditions": [
+        {
+          "metric": "coverage",
+          "operator": "LT",
+          "threshold": "90",
+          "description": "公共模块代码覆盖率要求更高，不低于90%"
+        },
+        {
+          "metric": "duplicated_lines_density",
+          "operator": "GT",
+          "threshold": "2",
+          "description": "公共模块重复代码密度要求更严格，不超过2%"
+        }
+      ]
+    },
+    "ioedream-common-service": {
+      "conditions": [
+        {
+          "metric": "coverage",
+          "operator": "LT",
+          "threshold": "85",
+          "description": "核心服务代码覆盖率不低于85%"
+        }
+      ]
+    },
+    "ioedream-access-service": {
+      "conditions": [
+        {
+          "metric": "coverage",
+          "operator": "LT",
+          "threshold": "85",
+          "description": "门禁服务代码覆盖率不低于85%"
+        },
+        {
+          "metric": "vulnerabilities",
+          "operator": "GT",
+          "threshold": "3",
+          "description": "安全敏感服务漏洞数量不超过3个"
+        }
+      ]
+    },
+    "ioedream-attendance-service": {
+      "conditions": [
+        {
+          "metric": "coverage",
+          "operator": "LT",
+          "threshold": "85",
+          "description": "考勤服务代码覆盖率不低于85%"
+        }
+      ]
+    },
+    "ioedream-consume-service": {
+      "conditions": [
+        {
+          "metric": "coverage",
+          "operator": "LT",
+          "threshold": "85",
+          "description": "消费服务代码覆盖率不低于85%"
+        },
+        {
+          "metric": "reliability_rating",
+          "operator": "GT",
+          "threshold": "A",
+          "description": "涉及资金的服务可靠性要求A级"
+        }
+      ]
+    },
+    "ioedream-video-service": {
+      "conditions": [
+        {
+          "metric": "coverage",
+          "operator": "LT",
+          "threshold": "80",
+          "description": "视频服务由于设备接口复杂性，覆盖率要求不低于80%"
+        }
+      ]
+    }
+  },
+  "customRules": {
+    "ioedream_architecture_compliance": {
+      "description": "IOE-DREAM 架构合规性检查",
+      "rules": [
+        {
+          "key": "controller_should_use_resource",
+          "description": "Controller应该使用@Resource注解而不是@Autowired",
+          "priority": "BLOCKER",
+          "tag": ["architecture", "dependency-injection"]
+        },
+        {
+          "key": "dao_should_use_mapper",
+          "description": "DAO应该使用@Mapper注解而不是@Repository",
+          "priority": "BLOCKER",
+          "tag": ["architecture", "naming"]
+        },
+        {
+          "key": "entity_should_have_less_than_400_lines",
+          "description": "Entity类应该控制在400行以内",
+          "priority": "CRITICAL",
+          "tag": ["code-quality", "maintainability"]
+        },
+        {
+          "key": "no_cross_layer_access",
+          "description": "禁止跨层访问，必须遵循Controller→Service→Manager→DAO架构",
+          "priority": "BLOCKER",
+          "tag": ["architecture", "layering"]
+        },
+        {
+          "key": "method_cognitive_complexity",
+          "description": "方法认知复杂度不应超过15",
+          "priority": "MAJOR",
+          "tag": ["complexity", "maintainability"]
+        }
+      ]
+    },
+    "ioedream_security_compliance": {
+      "description": "IOE-DREAM 安全合规性检查",
+      "rules": [
+        {
+          "key": "no_hardcoded_passwords",
+          "description": "禁止硬编码密码",
+          "priority": "BLOCKER",
+          "tag": ["security", "credential"]
+        },
+        {
+          "key": "proper_error_handling",
+          "description": "必须正确处理异常",
+          "priority": "CRITICAL",
+          "tag": ["security", "error-handling"]
+        },
+        {
+          "key": "sql_injection_prevention",
+          "description": "必须防止SQL注入",
+          "priority": "BLOCKER",
+          "tag": ["security", "sql"]
+        },
+        {
+          "key": "xss_prevention",
+          "description": "必须防止XSS攻击",
+          "priority": "BLOCKER",
+          "tag": ["security", "web"]
+        },
+        {
+          "key": "proper_logging",
+          "description": "关键操作必须记录日志",
+          "priority": "MAJOR",
+          "tag": ["security", "logging"]
+        }
+      ]
+    },
+    "ioedream_performance_guidelines": {
+      "description": "IOE-DREAM 性能指导原则",
+      "rules": [
+        {
+          "key": "avoid_database_full_scan",
+          "description": "避免数据库全表扫描",
+          "priority": "CRITICAL",
+          "tag": ["performance", "database"]
+        },
+        {
+          "key": "proper_caching_strategy",
+          "description": "必须实施适当的缓存策略",
+          "priority": "MAJOR",
+          "tag": ["performance", "caching"]
+        },
+        {
+          "key": "limit_response_time",
+          "description": "接口响应时间应控制在合理范围内",
+          "priority": "MAJOR",
+          "tag": ["performance", "response-time"]
+        },
+        {
+          "key": "optimize_database_queries",
+          "description": "优化数据库查询，避免N+1问题",
+          "priority": "CRITICAL",
+          "tag": ["performance", "database"]
+        }
+      ]
+    }
+  },
+  "notifications": {
+    "channels": {
+      "email": {
+        "enabled": true,
+        "recipients": [
+          "dev-team@ioedream.com",
+          "qa-team@ioedream.com"
+        ],
+        "subject_prefix": "[IOE-DREAM质量报告]"
+      },
+      "slack": {
+        "enabled": true,
+        "webhook": "https://hooks.slack.com/services/IOE-DREAM/quality-gate",
+        "channel": "#code-quality"
+      },
+      "teams": {
+        "enabled": true,
+        "webhook": "https://outlook.office365.com/webhook/IOE-DREAM/quality"
+      }
+    },
+    "events": {
+      "on_error": true,
+      "on_warning": true,
+      "on_success": false,
+      "on_analysis_complete": true
+    }
+  },
+  "schedule": {
+    "frequency": "daily",
+    "time": "02:00",
+    "timezone": "Asia/Shanghai",
+    "auto_fix": {
+      "enabled": true,
+      "fix_level": "minor"
+    }
+  },
+  "reporting": {
+    "generate_summary": true,
+    "generate_detailed_report": true,
+    "export_formats": ["html", "pdf", "json"],
+    "retention_days": 90,
+    "archive_location": "./reports/sonar/"
+  }
+}

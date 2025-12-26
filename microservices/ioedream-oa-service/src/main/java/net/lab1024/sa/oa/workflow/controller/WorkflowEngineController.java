@@ -1,9 +1,12 @@
 package net.lab1024.sa.oa.workflow.controller;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,12 +21,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
-import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.domain.PageParam;
 import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.permission.annotation.PermissionCheck;
-import net.lab1024.sa.common.util.SmartRequestUtil;
 import net.lab1024.sa.oa.domain.entity.WorkflowDefinitionEntity;
 import net.lab1024.sa.oa.domain.entity.WorkflowInstanceEntity;
 import net.lab1024.sa.oa.domain.entity.WorkflowTaskEntity;
@@ -38,12 +39,12 @@ import net.lab1024.sa.oa.workflow.service.WorkflowEngineService;
  * @since 2025-01-30
  * @version 3.0.0
  */
-@Slf4j
 @RestController
 @RequestMapping("/api/v1/workflow/engine")
 @Tag(name = "工作流引擎", description = "工作流流程定义、实例、任务管理API")
 @PermissionCheck(value = "OA_WORKFLOW", description = "工作流引擎管理模块权限")
 @Validated
+@Slf4j
 public class WorkflowEngineController {
 
     @Resource
@@ -56,11 +57,41 @@ public class WorkflowEngineController {
     @PostMapping("/definition/deploy")
     @PermissionCheck(value = "OA_WORKFLOW_DEPLOY", description = "部署流程定义")
     public ResponseDTO<String> deployProcess(
-            @Parameter(description = "BPMN XML", required = true) @RequestParam String bpmnXml,
-            @Parameter(description = "流程名称", required = true) @RequestParam String processName,
-            @Parameter(description = "流程Key", required = true) @RequestParam String processKey,
-            @Parameter(description = "流程描述") @RequestParam(required = false) String description,
-            @Parameter(description = "流程分类") @RequestParam(required = false) String category) {
+            @Parameter(description = "BPMN XML（兼容：可从JSON Body传）", required = true) @RequestParam(required = false) String bpmnXml,
+            @Parameter(description = "流程名称（兼容：可从JSON Body传）", required = true) @RequestParam(required = false) String processName,
+            @Parameter(description = "流程Key（兼容：可从JSON Body传）", required = true) @RequestParam(required = false) String processKey,
+            @Parameter(description = "流程描述（可选，兼容：可从JSON Body传）") @RequestParam(required = false) String description,
+            @Parameter(description = "流程分类（可选，兼容：可从JSON Body传）") @RequestParam(required = false) String category,
+            @RequestBody(required = false) Map<String, Object> requestBody) {
+        // 兼容前端：POST JSON Body（smart-admin-web-javascript/workflow-api.js）
+        if (requestBody != null) {
+            if (isBlank(bpmnXml)) {
+                bpmnXml = toStringValue(requestBody.get("bpmnXml"));
+            }
+            if (isBlank(processName)) {
+                processName = toStringValue(requestBody.get("processName"));
+            }
+            if (isBlank(processKey)) {
+                processKey = toStringValue(requestBody.get("processKey"));
+            }
+            if (description == null) {
+                description = toStringValue(requestBody.get("description"));
+            }
+            if (category == null) {
+                category = toStringValue(requestBody.get("category"));
+            }
+        }
+
+        if (isBlank(bpmnXml)) {
+            return ResponseDTO.error("PARAM_ERROR", "bpmnXml不能为空");
+        }
+        if (isBlank(processName)) {
+            return ResponseDTO.error("PARAM_ERROR", "processName不能为空");
+        }
+        if (isBlank(processKey)) {
+            return ResponseDTO.error("PARAM_ERROR", "processKey不能为空");
+        }
+
         return workflowEngineService.deployProcess(bpmnXml, processName, processKey, description, category);
     }
 
@@ -107,8 +138,17 @@ public class WorkflowEngineController {
 
     @Observed(name = "workflow.deleteDefinition", contextualName = "workflow-delete-definition")
     @Operation(summary = "删除流程定义", description = "删除指定的流程定义")
-    @PostMapping("/definition/{definitionId}/delete")
+    @DeleteMapping("/definition/{definitionId}")
     public ResponseDTO<String> deleteDefinition(
+            @Parameter(description = "定义ID", required = true) @PathVariable Long definitionId,
+            @Parameter(description = "是否级联删除") @RequestParam(defaultValue = "false") Boolean cascade) {
+        return workflowEngineService.deleteDefinition(definitionId, cascade);
+    }
+
+    @Observed(name = "workflow.deleteDefinition.compat", contextualName = "workflow-delete-definition-compat")
+    @Operation(summary = "删除流程定义（兼容POST）", description = "兼容前端POST方式删除流程定义（query param: cascade）")
+    @PostMapping("/definition/{definitionId}/delete")
+    public ResponseDTO<String> deleteDefinitionCompat(
             @Parameter(description = "定义ID", required = true) @PathVariable Long definitionId,
             @Parameter(description = "是否级联删除") @RequestParam(defaultValue = "false") Boolean cascade) {
         return workflowEngineService.deleteDefinition(definitionId, cascade);
@@ -165,6 +205,10 @@ public class WorkflowEngineController {
             return (Map<String, Object>) map;
         }
         return null;
+    }
+
+    private static boolean isBlank(String value) {
+        return value == null || value.trim().isEmpty();
     }
 
     @Observed(name = "workflow.pageInstances", contextualName = "workflow-page-instances")
@@ -239,7 +283,7 @@ public class WorkflowEngineController {
             @Parameter(description = "优先级") @RequestParam(required = false) Integer priority,
             @Parameter(description = "到期状态") @RequestParam(required = false) String dueStatus) {
         // 从请求中获取当前用户ID
-        Long userId = SmartRequestUtil.getUserId();
+        Long userId = getCurrentUserId();
         PageParam pageParam = new PageParam();
         pageParam.setPageNum(pageNum != null ? pageNum.intValue() : 1);
         pageParam.setPageSize(pageSize != null ? pageSize.intValue() : 20);
@@ -257,7 +301,7 @@ public class WorkflowEngineController {
             @Parameter(description = "开始日期") @RequestParam(required = false) String startDate,
             @Parameter(description = "结束日期") @RequestParam(required = false) String endDate) {
         // 从请求中获取当前用户ID
-        Long userId = SmartRequestUtil.getUserId();
+        Long userId = getCurrentUserId();
         PageParam pageParam = new PageParam();
         pageParam.setPageNum(pageNum != null ? pageNum.intValue() : 1);
         pageParam.setPageSize(pageSize != null ? pageSize.intValue() : 20);
@@ -273,7 +317,7 @@ public class WorkflowEngineController {
             @Parameter(description = "分类") @RequestParam(required = false) String category,
             @Parameter(description = "状态") @RequestParam(required = false) String status) {
         // 从请求中获取当前用户ID
-        Long userId = SmartRequestUtil.getUserId();
+        Long userId = getCurrentUserId();
         PageParam pageParam = new PageParam();
         pageParam.setPageNum(pageNum != null ? pageNum.intValue() : 1);
         pageParam.setPageSize(pageSize != null ? pageSize.intValue() : 20);
@@ -294,8 +338,31 @@ public class WorkflowEngineController {
     public ResponseDTO<String> claimTask(
             @Parameter(description = "任务ID", required = true) @PathVariable Long taskId) {
         // 从请求中获取当前用户ID
-        Long userId = SmartRequestUtil.getUserId();
+        Long userId = getCurrentUserId();
         return workflowEngineService.claimTask(taskId, userId);
+    }
+
+    /**
+     * 获取当前用户ID（兼容实现）
+     * <p>
+     * 约定：网关会透传请求头 X-User-Id
+     * </p>
+     */
+    private Long getCurrentUserId() {
+        try {
+            var attributes = org.springframework.web.context.request.RequestContextHolder.getRequestAttributes();
+            if (!(attributes instanceof org.springframework.web.context.request.ServletRequestAttributes servletAttributes)) {
+                return null;
+            }
+            String userId = servletAttributes.getRequest().getHeader("X-User-Id");
+            if (userId == null || userId.trim().isEmpty()) {
+                return null;
+            }
+            return Long.parseLong(userId.trim());
+        } catch (Exception e) {
+            log.warn("[工作流引擎] 获取当前用户ID失败", e);
+            return null;
+        }
     }
 
     @Observed(name = "workflow.unclaimTask", contextualName = "workflow-unclaim-task")
@@ -329,11 +396,33 @@ public class WorkflowEngineController {
     @PostMapping("/task/{taskId}/complete")
     public ResponseDTO<String> completeTask(
             @Parameter(description = "任务ID", required = true) @PathVariable Long taskId,
-            @Parameter(description = "结果") @RequestParam(required = false, defaultValue = "同意") String outcome,
-            @Parameter(description = "意见") @RequestParam(required = false) String comment,
-            @Parameter(description = "流程变量") @RequestBody(required = false) Map<String, Object> variables,
-            @Parameter(description = "表单数据") @RequestBody(required = false) Map<String, Object> formData) {
-        return workflowEngineService.completeTask(taskId, outcome, comment, variables, formData);
+            @Parameter(description = "结果（兼容：可从JSON Body传）") @RequestParam(required = false, defaultValue = "同意") String outcome,
+            @Parameter(description = "意见（兼容：可从JSON Body传）") @RequestParam(required = false) String comment,
+            @RequestBody(required = false) Map<String, Object> requestBody) {
+        // 兼容前端：POST JSON Body（{ outcome, comment, variables, formData }）
+        String finalOutcome = outcome;
+        String finalComment = comment;
+        Map<String, Object> variables = null;
+        Map<String, Object> formData = null;
+
+        if (requestBody != null) {
+            String bodyOutcome = toStringValue(requestBody.get("outcome"));
+            if (!isBlank(bodyOutcome)) {
+                finalOutcome = bodyOutcome;
+            }
+            String bodyComment = toStringValue(requestBody.get("comment"));
+            if (bodyComment != null) {
+                finalComment = bodyComment;
+            }
+            variables = toMap(requestBody.get("variables"));
+            formData = toMap(requestBody.get("formData"));
+        }
+
+        if (isBlank(finalOutcome)) {
+            finalOutcome = "同意";
+        }
+
+        return workflowEngineService.completeTask(taskId, finalOutcome, finalComment, variables, formData);
     }
 
     @Observed(name = "workflow.rejectTask", contextualName = "workflow-reject-task")
@@ -341,9 +430,24 @@ public class WorkflowEngineController {
     @PostMapping("/task/{taskId}/reject")
     public ResponseDTO<String> rejectTask(
             @Parameter(description = "任务ID", required = true) @PathVariable Long taskId,
-            @Parameter(description = "意见", required = true) @RequestParam String comment,
-            @Parameter(description = "流程变量") @RequestBody(required = false) Map<String, Object> variables) {
-        return workflowEngineService.rejectTask(taskId, comment, variables);
+            @Parameter(description = "意见（兼容：可从JSON Body传）") @RequestParam(required = false) String comment,
+            @RequestBody(required = false) Map<String, Object> requestBody) {
+        // 兼容前端：POST JSON Body（{ comment, variables }）
+        String finalComment = comment;
+        Map<String, Object> variables = null;
+        if (requestBody != null) {
+            String bodyComment = toStringValue(requestBody.get("comment"));
+            if (!isBlank(bodyComment)) {
+                finalComment = bodyComment;
+            }
+            variables = toMap(requestBody.get("variables"));
+        }
+
+        if (isBlank(finalComment)) {
+            return ResponseDTO.error("PARAM_ERROR", "comment不能为空");
+        }
+
+        return workflowEngineService.rejectTask(taskId, finalComment, variables);
     }
 
     // ==================== 流程监控 ====================
@@ -383,7 +487,3 @@ public class WorkflowEngineController {
         return workflowEngineService.getUserWorkloadStatistics(userId, startDate, endDate);
     }
 }
-
-
-
-

@@ -20,9 +20,10 @@ import org.springframework.context.annotation.Configuration;
  * @version 1.0.0
  * @since 2025-12-18
  */
-@Slf4j
 @Configuration
-public class PunchExecutorConfiguration {
+@Slf4j
+ public class PunchExecutorConfiguration {
+
 
     /**
      * 配置打卡执行器（装饰器组装）
@@ -53,3 +54,5 @@ public class PunchExecutorConfiguration {
         return executor;
     }
 }
+
+

@@ -1,0 +1,52 @@
+package net.lab1024.sa.common.config;
+
+import io.micrometer.core.aop.CountedAspect;
+import io.micrometer.core.aop.TimedAspect;
+import io.micrometer.observation.ObservationRegistry;
+import io.micrometer.observation.aop.ObservedAspect;
+import org.springframework.boot.actuate.autoconfigure.metrics.MeterRegistryCustomizer;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.context.annotation.EnableScheduling;
+
+/**
+ * 可观测性配置类
+ * <p>
+ * 配置Micrometer监控指标、Spring AOP代理和任务调度
+ * 严格遵循CLAUDE.md架构规范
+ * </p>
+ *
+ * @author IOE-DREAM架构团队
+ * @version 1.0.0
+ * @since 2025-12-20
+ */
+@Configuration
+@EnableAspectJAutoProxy
+@EnableScheduling
+public class ObservabilityConfiguration {
+
+    /**
+     * 配置计数器切面
+     */
+    @Bean
+    public CountedAspect countedAspect(ObservationRegistry observationRegistry) {
+        return new CountedAspect(observationRegistry);
+    }
+
+    /**
+     * 配置计时器切面
+     */
+    @Bean
+    public TimedAspect timedAspect(MeterRegistryCustomizer meterRegistryCustomizer) {
+        return new TimedAspect(meterRegistryCustomizer);
+    }
+
+    /**
+     * 配置观察者切面
+     */
+    @Bean
+    public ObservedAspect observedAspect(ObservationRegistry observationRegistry) {
+        return new ObservedAspect(observationRegistry);
+    }
+}

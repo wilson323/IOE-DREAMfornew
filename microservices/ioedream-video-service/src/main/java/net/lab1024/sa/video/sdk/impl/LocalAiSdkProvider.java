@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lombok.extern.slf4j.Slf4j;
+
 import net.lab1024.sa.video.sdk.AiSdkConfig;
 import net.lab1024.sa.video.sdk.AiSdkProvider;
 import net.lab1024.sa.video.sdk.BehaviorDetectionResult;
@@ -70,7 +71,8 @@ public class LocalAiSdkProvider implements AiSdkProvider {
             // 示例：使用ONNX Runtime加载模型
             // OrtEnvironment env = OrtEnvironment.getEnvironment();
             // OrtSession.SessionOptions opts = new OrtSession.SessionOptions();
-            // faceDetectionModel = env.createSession(modelPath + "/face_detection.onnx", opts);
+            // faceDetectionModel = env.createSession(modelPath + "/face_detection.onnx",
+            // opts);
             log.info("[本地AI SDK] 加载人脸检测模型，path={}/face_detection.onnx", modelPath);
 
             // 2. 加载人脸特征提取模型
@@ -112,19 +114,19 @@ public class LocalAiSdkProvider implements AiSdkProvider {
             // 释放模型资源
             // 示例：关闭ONNX Runtime会话
             // if (faceDetectionModel != null) {
-            //     ((OrtSession) faceDetectionModel).close();
+            // ((OrtSession) faceDetectionModel).close();
             // }
             // if (faceFeatureModel != null) {
-            //     ((OrtSession) faceFeatureModel).close();
+            // ((OrtSession) faceFeatureModel).close();
             // }
             // if (livenessModel != null) {
-            //     ((OrtSession) livenessModel).close();
+            // ((OrtSession) livenessModel).close();
             // }
             // if (behaviorModel != null) {
-            //     ((OrtSession) behaviorModel).close();
+            // ((OrtSession) behaviorModel).close();
             // }
             // if (crowdCountModel != null) {
-            //     ((OrtSession) crowdCountModel).close();
+            // ((OrtSession) crowdCountModel).close();
             // }
 
             faceDetectionModel = null;
@@ -172,15 +174,17 @@ public class LocalAiSdkProvider implements AiSdkProvider {
 
             // 1. 预处理图像数据
             // 示例：将byte[]转换为Mat（OpenCV）或OnnxTensor（ONNX Runtime）
-            // Mat image = Imgcodecs.imdecode(new MatOfByte(imageData), Imgcodecs.IMREAD_COLOR);
-            // Mat blob = Dnn.blobFromImage(image, 1.0, new Size(640, 640), new Scalar(0, 0, 0), true, false);
+            // Mat image = Imgcodecs.imdecode(new MatOfByte(imageData),
+            // Imgcodecs.IMREAD_COLOR);
+            // Mat blob = Dnn.blobFromImage(image, 1.0, new Size(640, 640), new Scalar(0, 0,
+            // 0), true, false);
 
             // 2. 调用本地人脸检测模型
             // 示例：使用ONNX Runtime推理
             // OrtSession.SessionOptions opts = new OrtSession.SessionOptions();
             // OnnxTensor inputTensor = OnnxTensor.createTensor(env, blob);
             // OrtSession.Result output = ((OrtSession) faceDetectionModel).run(
-            //     Collections.singletonMap("input", inputTensor)
+            // Collections.singletonMap("input", inputTensor)
             // );
             // float[][] detections = (float[][]) output.get(0).getValue();
 
@@ -188,15 +192,15 @@ public class LocalAiSdkProvider implements AiSdkProvider {
             List<FaceDetectionResult.FaceInfo> faces = new ArrayList<>();
             // 示例：解析检测结果，转换为FaceInfo列表
             // for (float[] detection : detections) {
-            //     if (detection[4] > config.getFaceDetectThreshold()) {
-            //         FaceDetectionResult.FaceInfo face = new FaceDetectionResult.FaceInfo();
-            //         face.setX((int) detection[0]);
-            //         face.setY((int) detection[1]);
-            //         face.setWidth((int) (detection[2] - detection[0]));
-            //         face.setHeight((int) (detection[3] - detection[1]));
-            //         face.setConfidence(detection[4]);
-            //         faces.add(face);
-            //     }
+            // if (detection[4] > config.getFaceDetectThreshold()) {
+            // FaceDetectionResult.FaceInfo face = new FaceDetectionResult.FaceInfo();
+            // face.setX((int) detection[0]);
+            // face.setY((int) detection[1]);
+            // face.setWidth((int) (detection[2] - detection[0]));
+            // face.setHeight((int) (detection[3] - detection[1]));
+            // face.setConfidence(detection[4]);
+            // faces.add(face);
+            // }
             // }
 
             result.setSuccess(true);
@@ -236,21 +240,22 @@ public class LocalAiSdkProvider implements AiSdkProvider {
 
             // 1. 预处理人脸图像
             // 示例：将byte[]转换为模型输入格式
-            // Mat faceMat = Imgcodecs.imdecode(new MatOfByte(faceImage), Imgcodecs.IMREAD_COLOR);
+            // Mat faceMat = Imgcodecs.imdecode(new MatOfByte(faceImage),
+            // Imgcodecs.IMREAD_COLOR);
             // Mat normalized = normalizeFaceImage(faceMat);
 
             // 2. 调用本地特征提取模型
             // 示例：使用ONNX Runtime推理
             // OnnxTensor inputTensor = OnnxTensor.createTensor(env, normalized);
             // OrtSession.Result output = ((OrtSession) faceFeatureModel).run(
-            //     Collections.singletonMap("input", inputTensor)
+            // Collections.singletonMap("input", inputTensor)
             // );
             // float[] features = (float[]) output.get(0).getValue();
 
             // 3. 转换为byte数组（512维）
             // byte[] featureBytes = new byte[512];
             // for (int i = 0; i < Math.min(features.length, 512); i++) {
-            //     featureBytes[i] = (byte) (features[i] * 127);
+            // featureBytes[i] = (byte) (features[i] * 127);
             // }
 
             // 返回512维特征向量（占位符，实际需要从模型输出获取）
@@ -285,7 +290,7 @@ public class LocalAiSdkProvider implements AiSdkProvider {
 
             if (feature1.length != feature2.length) {
                 log.warn("[本地AI SDK] 特征向量维度不匹配，feature1={}, feature2={}",
-                    feature1.length, feature2.length);
+                        feature1.length, feature2.length);
                 return 0.0;
             }
 
@@ -348,14 +353,15 @@ public class LocalAiSdkProvider implements AiSdkProvider {
 
             // 1. 预处理图像数据
             // 示例：将byte[]转换为模型输入格式
-            // Mat image = Imgcodecs.imdecode(new MatOfByte(imageData), Imgcodecs.IMREAD_COLOR);
+            // Mat image = Imgcodecs.imdecode(new MatOfByte(imageData),
+            // Imgcodecs.IMREAD_COLOR);
             // Mat normalized = normalizeImage(image);
 
             // 2. 调用本地活体检测模型
             // 示例：使用ONNX Runtime推理
             // OnnxTensor inputTensor = OnnxTensor.createTensor(env, normalized);
             // OrtSession.Result output = ((OrtSession) livenessModel).run(
-            //     Collections.singletonMap("input", inputTensor)
+            // Collections.singletonMap("input", inputTensor)
             // );
             // float[] predictions = (float[]) output.get(0).getValue();
 
@@ -375,7 +381,7 @@ public class LocalAiSdkProvider implements AiSdkProvider {
             result.setAttackType(attackType);
 
             log.debug("[本地AI SDK] 活体检测完成，isLive={}, score={}, attackType={}",
-                isLive, livenessScore, attackType);
+                    isLive, livenessScore, attackType);
 
         } catch (Exception e) {
             log.error("[本地AI SDK] 活体检测失败", e);
@@ -414,14 +420,15 @@ public class LocalAiSdkProvider implements AiSdkProvider {
 
             // 1. 预处理视频帧数据
             // 示例：将byte[]转换为模型输入格式
-            // Mat frame = Imgcodecs.imdecode(new MatOfByte(frameData), Imgcodecs.IMREAD_COLOR);
+            // Mat frame = Imgcodecs.imdecode(new MatOfByte(frameData),
+            // Imgcodecs.IMREAD_COLOR);
             // Mat normalized = normalizeFrame(frame);
 
             // 2. 调用本地行为检测模型
             // 示例：使用ONNX Runtime推理
             // OnnxTensor inputTensor = OnnxTensor.createTensor(env, normalized);
             // OrtSession.Result output = ((OrtSession) behaviorModel).run(
-            //     Collections.singletonMap("input", inputTensor)
+            // Collections.singletonMap("input", inputTensor)
             // );
             // float[][] detections = (float[][]) output.get(0).getValue();
 
@@ -429,17 +436,18 @@ public class LocalAiSdkProvider implements AiSdkProvider {
             List<BehaviorDetectionResult.BehaviorInfo> behaviors = new ArrayList<>();
             // 示例：解析检测结果，转换为BehaviorInfo列表
             // for (float[] detection : detections) {
-            //     if (detection[4] > 0.5) { // 置信度阈值
-            //         BehaviorDetectionResult.BehaviorInfo behavior = new BehaviorDetectionResult.BehaviorInfo();
-            //         behavior.setType(getBehaviorType(detection[5]));
-            //         behavior.setConfidence(detection[4]);
-            //         behavior.setX((int) detection[0]);
-            //         behavior.setY((int) detection[1]);
-            //         behavior.setWidth((int) (detection[2] - detection[0]));
-            //         behavior.setHeight((int) (detection[3] - detection[1]));
-            //         behavior.setPersonCount((int) detection[6]);
-            //         behaviors.add(behavior);
-            //     }
+            // if (detection[4] > 0.5) { // 置信度阈值
+            // BehaviorDetectionResult.BehaviorInfo behavior = new
+            // BehaviorDetectionResult.BehaviorInfo();
+            // behavior.setType(getBehaviorType(detection[5]));
+            // behavior.setConfidence(detection[4]);
+            // behavior.setX((int) detection[0]);
+            // behavior.setY((int) detection[1]);
+            // behavior.setWidth((int) (detection[2] - detection[0]));
+            // behavior.setHeight((int) (detection[3] - detection[1]));
+            // behavior.setPersonCount((int) detection[6]);
+            // behaviors.add(behavior);
+            // }
             // }
 
             result.setSuccess(true);
@@ -480,14 +488,15 @@ public class LocalAiSdkProvider implements AiSdkProvider {
 
             // 1. 预处理视频帧数据
             // 示例：将byte[]转换为模型输入格式
-            // Mat frame = Imgcodecs.imdecode(new MatOfByte(frameData), Imgcodecs.IMREAD_COLOR);
+            // Mat frame = Imgcodecs.imdecode(new MatOfByte(frameData),
+            // Imgcodecs.IMREAD_COLOR);
             // Mat normalized = normalizeFrame(frame);
 
             // 2. 调用本地人群计数模型
             // 示例：使用ONNX Runtime推理
             // OnnxTensor inputTensor = OnnxTensor.createTensor(env, normalized);
             // OrtSession.Result output = ((OrtSession) crowdCountModel).run(
-            //     Collections.singletonMap("input", inputTensor)
+            // Collections.singletonMap("input", inputTensor)
             // );
             // float count = ((float[]) output.get(0).getValue())[0];
 

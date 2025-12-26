@@ -1,10 +1,12 @@
 package net.lab1024.sa.device.comm.decorator.impl;
 
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.stereotype.Component;
+
 import net.lab1024.sa.device.comm.decorator.DeviceCommandDecorator;
 import net.lab1024.sa.device.comm.decorator.IDeviceCommandExecutor;
 import net.lab1024.sa.device.comm.protocol.domain.DeviceCommandRequest;
-import org.springframework.stereotype.Component;
 
 /**
  * 日志命令装饰器
@@ -17,8 +19,8 @@ import org.springframework.stereotype.Component;
  * @version 1.0.0
  * @since 2025-12-18
  */
-@Slf4j
 @Component
+@Slf4j
 public class LoggingCommandDecorator extends DeviceCommandDecorator {
 
     /**
@@ -37,7 +39,7 @@ public class LoggingCommandDecorator extends DeviceCommandDecorator {
     }
 
     @Override
-    protected void afterExecute(DeviceCommandRequest command, DeviceCommandResult result) {
+    protected void afterExecute(DeviceCommandRequest command, DeviceCommandDecorator.DeviceCommandResult result) {
         if (result.isSuccess()) {
             log.info("[日志装饰器] 设备命令执行成功, deviceId={}, commandType={}, response={}",
                     command.getDeviceId(), command.getCommandType(), result.getData());
@@ -48,11 +50,11 @@ public class LoggingCommandDecorator extends DeviceCommandDecorator {
     }
 
     @Override
-    public DeviceCommandResult execute(DeviceCommandRequest command) {
+    public DeviceCommandDecorator.DeviceCommandResult execute(DeviceCommandRequest command) {
         long startTime = System.currentTimeMillis();
 
         // 执行命令
-        DeviceCommandResult result = super.execute(command);
+        DeviceCommandDecorator.DeviceCommandResult result = super.execute(command);
 
         // 记录执行时间
         long duration = System.currentTimeMillis() - startTime;

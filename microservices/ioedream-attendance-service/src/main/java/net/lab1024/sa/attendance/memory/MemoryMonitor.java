@@ -1,22 +1,20 @@
 package net.lab1024.sa.attendance.memory;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
-import jakarta.annotation.Resource;
-import org.springframework.scheduling.annotation.Scheduled;
-
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.lang.management.MemoryUsage;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.List;
 import java.util.ArrayList;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
+
+import org.springframework.stereotype.Component;
+
+import jakarta.annotation.Resource;
 
 /**
  * 内存监控器
@@ -28,9 +26,9 @@ import java.util.concurrent.TimeUnit;
  * @version 1.0.0
  * @since 2025-12-16
  */
-@Slf4j
 @Component
-public class MemoryMonitor {
+@Slf4j
+ public class MemoryMonitor {
 
     @Resource
     private MemoryOptimizer memoryOptimizer;
@@ -589,3 +587,6 @@ public class MemoryMonitor {
         log.info("内存监控器已销毁");
     }
 }
+
+
+

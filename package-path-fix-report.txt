@@ -1,0 +1,14 @@
+﻿包路径批量修复报告
+================
+修复时间: 2025-12-22 21:05:25
+修复目录: microservices
+总扫描文件数: 1671
+成功修复文件数: 65
+修复成功率: 3.89%
+
+修复规则:
+- net.lab1024.sa.common.dto → net.lab1024.sa.platform.core.dto
+- net.lab1024.sa.common.exception → net.lab1024.sa.platform.core.exception
+- net.lab1024.sa.common.util → net.lab1024.sa.platform.core.util
+- net.lab1024.sa.common.page → net.lab1024.sa.platform.core.page
+

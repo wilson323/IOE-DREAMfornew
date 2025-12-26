@@ -1,10 +1,10 @@
 package net.lab1024.sa.video.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import jakarta.annotation.Resource;
-import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.video.manager.BehaviorDetectionManager;
 import net.lab1024.sa.video.manager.CrowdAnalysisManager;
 import net.lab1024.sa.video.manager.FaceRecognitionManager;
@@ -27,7 +27,7 @@ import net.lab1024.sa.video.sdk.AiSdkProvider;
  */
 @Slf4j
 @Configuration
-public class VideoAiConfig {
+ public class VideoAiConfig {
 
     @Resource
     private AiSdkFactory aiSdkFactory;
@@ -93,3 +93,5 @@ public class VideoAiConfig {
         return new CrowdAnalysisManager(aiSdkProvider);
     }
 }
+
+

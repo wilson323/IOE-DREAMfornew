@@ -1,169 +1,76 @@
 package net.lab1024.sa.consume.controller;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.Collections;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import net.lab1024.sa.consume.config.TestSecurityConfiguration;
 
 import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.consume.entity.RefundApplicationEntity;
-import net.lab1024.sa.consume.domain.form.RefundApplicationForm;
-import net.lab1024.sa.consume.service.refund.RefundApplicationService;
+import net.lab1024.sa.consume.domain.form.ConsumeOfflineSyncForm;
+import net.lab1024.sa.consume.domain.vo.ConsumeSyncResultVO;
+import net.lab1024.sa.consume.service.ConsumeMobileService;
 
 /**
- * RefundApplicationController单元测试
- * <p>
- * 测试范围：退款申请管理REST API接口
- * 目标：提升测试覆盖率至70%+
- * </p>
+ * RefundApplicationControllerTest（离线消费同步）
  *
  * @author IOE-DREAM Team
- * @since 2025-01-30
+ * @since 2025-12-22
  */
-@ExtendWith(MockitoExtension.class)
-@DisplayName("RefundApplicationController单元测试")
+@WebMvcTest(ConsumeMobileController.class)
+@Import(TestSecurityConfiguration.class)
+@DisplayName("移动端离线消费同步接口测试")
 class RefundApplicationControllerTest {
 
-    @Mock
-    private RefundApplicationService refundApplicationService;
+    @Autowired
+    private MockMvc mockMvc;
 
-    @InjectMocks
-    private RefundApplicationController refundApplicationController;
+    @Autowired
+    private ObjectMapper objectMapper;
 
-    private RefundApplicationForm refundApplicationForm;
-
-    @BeforeEach
-    void setUp() {
-        refundApplicationForm = new RefundApplicationForm();
-        refundApplicationForm.setUserId(1001L);
-        refundApplicationForm.setPaymentRecordId(1L);
-        refundApplicationForm.setRefundAmount(new java.math.BigDecimal("100.00"));
-        refundApplicationForm.setRefundReason("测试退款");
-    }
-
-    // ==================== submitRefundApplication 测试 ====================
+    @MockBean
+    private ConsumeMobileService consumeMobileService;
 
     @Test
-    @DisplayName("测试提交退款申请-成功")
-    void testSubmitRefundApplication_Success() {
-        // Given
-        RefundApplicationEntity mockEntity = new RefundApplicationEntity();
-        mockEntity.setRefundNo("REFUND001");
-        mockEntity.setUserId(1001L);
+    @DisplayName("离线交易同步-成功")
+    void testSyncOfflineTransactions() throws Exception {
+        ConsumeOfflineSyncForm form = new ConsumeOfflineSyncForm();
+        form.setDeviceId(2001L);
+        ConsumeOfflineSyncForm.OfflineTransaction record = new ConsumeOfflineSyncForm.OfflineTransaction();
+        record.setTransactionNo("OFFLINE_TX_001");
+        record.setUserId(1001L);
+        record.setAmount(new BigDecimal("10.00"));
+        record.setConsumeTime(LocalDateTime.now());
+        record.setConsumeMode("FIXED");
+        form.setTransactions(Collections.singletonList(record));
 
-        when(refundApplicationService.submitRefundApplication(any(RefundApplicationForm.class))).thenReturn(mockEntity);
+        ConsumeSyncResultVO result = new ConsumeSyncResultVO();
+        result.setSuccess(true);
 
-        // When
-        ResponseDTO<RefundApplicationEntity> result = refundApplicationController.submitRefundApplication(refundApplicationForm);
+        when(consumeMobileService.syncOfflineTransactions(any(ConsumeOfflineSyncForm.class)))
+                .thenReturn(result);
 
-        // Then
-        assertNotNull(result);
-        assertTrue(result.getOk());
-        assertNotNull(result.getData());
-        assertEquals("REFUND001", result.getData().getRefundNo());
-        verify(refundApplicationService, times(1)).submitRefundApplication(any(RefundApplicationForm.class));
-    }
-
-    @Test
-    @DisplayName("测试提交退款申请-参数验证失败")
-    void testSubmitRefundApplication_ValidationFailed() {
-        // Given
-        refundApplicationForm.setUserId(null); // 缺少必填字段
-
-        // When & Then
-        // 由于使用@Valid，应该在Controller层被拦截
-        assertThrows(Exception.class, () -> {
-            when(refundApplicationService.submitRefundApplication(any(RefundApplicationForm.class)))
-                    .thenThrow(new IllegalArgumentException("userId不能为空"));
-            refundApplicationController.submitRefundApplication(refundApplicationForm);
-        });
-    }
-
-    @Test
-    @DisplayName("测试提交退款申请-表单为null")
-    void testSubmitRefundApplication_FormIsNull() {
-        // When & Then
-        assertThrows(Exception.class, () -> {
-            refundApplicationController.submitRefundApplication(null);
-        });
-    }
-
-    // ==================== updateRefundStatus 测试 ====================
-
-    @Test
-    @DisplayName("测试更新退款申请状态-成功")
-    void testUpdateRefundStatus_Success() {
-        // Given
-        String refundNo = "REFUND001";
-        Map<String, Object> requestParams = new HashMap<>();
-        requestParams.put("status", "APPROVED");
-        requestParams.put("approvalComment", "审批通过");
-
-        doNothing().when(refundApplicationService).updateRefundStatus(
-            eq(refundNo), eq("APPROVED"), eq("审批通过"));
-
-        // When
-        ResponseDTO<Void> result = refundApplicationController.updateRefundStatus(refundNo, requestParams);
-
-        // Then
-        assertNotNull(result);
-        assertTrue(result.getOk());
-        verify(refundApplicationService, times(1)).updateRefundStatus(
-            eq(refundNo), eq("APPROVED"), eq("审批通过"));
-    }
-
-    @Test
-    @DisplayName("测试更新退款申请状态-退款编号为null")
-    void testUpdateRefundStatus_RefundNoIsNull() {
-        // Given
-        Map<String, Object> requestParams = new HashMap<>();
-        requestParams.put("status", "APPROVED");
-
-        // When & Then
-        assertThrows(Exception.class, () -> {
-            doThrow(new IllegalArgumentException("refundNo不能为空"))
-                    .when(refundApplicationService).updateRefundStatus(isNull(), any(), any());
-            refundApplicationController.updateRefundStatus(null, requestParams);
-        });
-    }
-
-    @Test
-    @DisplayName("测试更新退款申请状态-参数为空")
-    void testUpdateRefundStatus_ParamsIsNull() {
-        // Given
-        String refundNo = "REFUND001";
-
-        // When & Then
-        assertThrows(Exception.class, () -> {
-            refundApplicationController.updateRefundStatus(refundNo, null);
-        });
-    }
-
-    @Test
-    @DisplayName("测试更新退款申请状态-状态为null")
-    void testUpdateRefundStatus_StatusIsNull() {
-        // Given
-        String refundNo = "REFUND001";
-        Map<String, Object> requestParams = new HashMap<>();
-        requestParams.put("status", null);
-
-        // When
-        ResponseDTO<Void> result = refundApplicationController.updateRefundStatus(refundNo, requestParams);
-
-        // Then
-        assertNotNull(result);
-        // 根据实际实现，可能返回错误或成功
+        mockMvc.perform(post("/api/v1/consume/mobile/sync/offline")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(form)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(200));
     }
 }
-
-

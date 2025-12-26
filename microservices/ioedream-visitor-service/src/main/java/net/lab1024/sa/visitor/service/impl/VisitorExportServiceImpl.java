@@ -1,5 +1,7 @@
 package net.lab1024.sa.visitor.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -7,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import io.micrometer.observation.annotation.Observed;
-import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.visitor.service.VisitorExportService;
 
@@ -25,10 +26,11 @@ import net.lab1024.sa.visitor.service.VisitorExportService;
  * @version 1.0.0
  * @since 2025-01-30
  */
-@Slf4j
 @Service
 @Transactional(rollbackFor = Exception.class)
+@Slf4j
 public class VisitorExportServiceImpl implements VisitorExportService {
+
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 

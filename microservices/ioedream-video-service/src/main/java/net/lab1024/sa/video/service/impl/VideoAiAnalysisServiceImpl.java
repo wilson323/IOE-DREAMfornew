@@ -3,13 +3,15 @@ package net.lab1024.sa.video.service.impl;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
+import jakarta.annotation.Resource;
 import net.lab1024.sa.video.manager.BehaviorDetectionManager;
 import net.lab1024.sa.video.manager.CrowdAnalysisManager;
 import net.lab1024.sa.video.manager.FaceRecognitionManager;
@@ -27,15 +29,18 @@ import net.lab1024.sa.video.service.VideoAiAnalysisService;
  * @since 2025-01-16
  */
 @Slf4j
-@RequiredArgsConstructor
+@Service
 public class VideoAiAnalysisServiceImpl implements VideoAiAnalysisService {
 
-    private final FaceRecognitionManager faceRecognitionManager;
-    private final BehaviorDetectionManager behaviorDetectionManager;
-    private final CrowdAnalysisManager crowdAnalysisManager;
+    @Resource
+    private FaceRecognitionManager faceRecognitionManager;
+    @Resource
+    private BehaviorDetectionManager behaviorDetectionManager;
+    @Resource
+    private CrowdAnalysisManager crowdAnalysisManager;
 
     // 实时分析任务管理
-    private final Map<String, RealtimeAnalysisTask> realtimeAnalysisTasks = new ConcurrentHashMap<>();
+    private final Map<String, RealtimeAnalysisTask> realtimeAnalysisTasks = new HashMap<>();
 
     // ==================== 人脸识别相关实现 ====================
 
@@ -163,29 +168,16 @@ public class VideoAiAnalysisServiceImpl implements VideoAiAnalysisService {
         }
     }
 
-    @Override
-    public BehaviorDetectionManager.FallDetectionResult detectFall(String cameraId, byte[] frameData) {
-        log.debug("[视频AI分析] 跌倒检测，cameraId={}", cameraId);
-
-        try {
-            return behaviorDetectionManager.detectFall(cameraId, frameData);
-        } catch (Exception e) {
-            log.error("[视频AI分析] 跌倒检测失败，cameraId={}, error={}", cameraId, e.getMessage(), e);
-            return new BehaviorDetectionManager.FallDetectionResult(false, 0.0, 0, 0);
-        }
-    }
-
-    @Override
-    public List<BehaviorDetectionManager.AbnormalBehavior> detectAbnormalBehaviors(String cameraId, byte[] frameData) {
-        log.debug("[视频AI分析] 异常行为检测，cameraId={}", cameraId);
-
-        try {
-            return behaviorDetectionManager.detectAbnormalBehaviors(cameraId, frameData);
-        } catch (Exception e) {
-            log.error("[视频AI分析] 异常行为检测失败，cameraId={}, error={}", cameraId, e.getMessage(), e);
-            return new ArrayList<>();
-        }
-    }
+    // ============================================================
+    // ⚠️ 方法删除（2025-01-30）
+    // ============================================================
+    // 以下方法已被删除，违反边缘计算架构：
+    // - detectFall(String cameraId, byte[] frameData)
+    // - detectAbnormalBehaviors(String cameraId, byte[] frameData)
+    //
+    // 替代方案：
+    // - 参见 DeviceAIEventReceiver（待创建）
+    // ============================================================
 
     @Override
     public void cleanExpiredTracks(int expireMinutes) {
@@ -338,10 +330,18 @@ public class VideoAiAnalysisServiceImpl implements VideoAiAnalysisService {
             // 行为分析
             BehaviorAnalysisResult behaviorResult = new BehaviorAnalysisResult();
             try {
-                // 简化实现：只进行跌倒检测
-                BehaviorDetectionManager.FallDetectionResult fallResult = detectFall(cameraId, frameData);
-                behaviorResult.setHasFall(fallResult.detected());
-                behaviorResult.setFallDetections(fallResult.detected() ? List.of(fallResult) : new ArrayList<>());
+                // ============================================================
+                // ⚠️ 行为分析重构（2025-01-30）
+                // ============================================================
+                // 服务器端不再接收原始视频帧进行AI分析。
+                // 正确架构：设备端完成AI分析，服务器接收结构化事件。
+                //
+                // 当前实现：返回空结果（占位）
+                // 未来实现：从 DeviceAIEvent 表查询设备上报的事件
+                // ============================================================
+
+                behaviorResult.setHasFall(false);
+                behaviorResult.setFallDetections(new ArrayList<>());
                 behaviorResult.setHasLoitering(false);
                 behaviorResult.setLoiteringDetections(new ArrayList<>());
                 behaviorResult.setHasGathering(false);

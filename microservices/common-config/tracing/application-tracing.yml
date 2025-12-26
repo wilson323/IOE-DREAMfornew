@@ -1,4 +1,4 @@
-# ============================================================
+﻿# ============================================================
 # IOE-DREAM 分布式追踪配置
 # Micrometer Tracing + Zipkin + Brave
 # ============================================================
@@ -11,11 +11,21 @@ management:
 
     # 采样配置
     sampling:
-      probability: ${TRACING_SAMPLING_PROBABILITY:0.1}  # 10%采样率（生产环境）
+      probability: ${TRACING_SAMPLING_PROBABILITY:0.1} # 10%采样率（生产环境）
 
-    # 追踪导出配置
-    zipkin:
+  # Zipkin追踪配置（Spring Boot 3.x 正确格式）
+  zipkin:
+    tracing:
       endpoint: ${ZIPKIN_ENDPOINT:http://localhost:9411/api/v2/spans}
+      connect-timeout: ${ZIPKIN_CONNECT_TIMEOUT:1000}
+      read-timeout: ${ZIPKIN_READ_TIMEOUT:6000}
+
+  # Prometheus 指标导出（Spring Boot 3.5.x 推荐键）
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+        step: 30s
 
   # 指标配置
   metrics:
@@ -24,30 +34,15 @@ management:
       environment: ${spring.profiles.active}
       version: ${app.version:1.0.0}
 
-    # Prometheus导出
-    export:
-      prometheus:
-        enabled: true
-        step: 30s
-
   # 健康检查端点
   health:
     tracing:
       enabled: true
 
 # ==================== Spring Boot 追踪配置 ====================
+# 注意：Spring Boot 3.x 使用 Micrometer Tracing，不再使用 Spring Cloud Sleuth
+# 如需兼容旧配置，请使用 management.tracing.* 和 management.zipkin.tracing.*
 spring:
-  sleuth:
-    # Spring Cloud Sleuth配置（兼容性）
-    enabled: true
-    zipkin:
-      base-url: ${ZIPKIN_ENDPOINT:http://localhost:9411}
-      enabled: true
-
-    # 采样配置
-    sampler:
-      probability: ${TRACING_SAMPLING_PROBABILITY:0.1}
-
   application:
     name: ${SERVICE_NAME:unknown-service}
 
@@ -59,8 +54,7 @@ logging:
 
   # 追踪相关日志级别
   level:
-    org.springframework.cloud.sleuth: DEBUG
-    io.micrometer.tracing: DEBUG
+    "io.micrometer.tracing": DEBUG
     zipkin2: DEBUG
 
 # ==================== 自定义追踪配置 ====================
@@ -103,3 +97,4 @@ performance:
     cache:
       enabled: true
       slow-operation-threshold: 100
+

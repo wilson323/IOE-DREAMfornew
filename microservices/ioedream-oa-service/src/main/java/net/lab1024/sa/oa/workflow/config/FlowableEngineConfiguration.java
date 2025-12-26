@@ -1,5 +1,7 @@
 package net.lab1024.sa.oa.workflow.config;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.concurrent.Executor;
 
 import org.flowable.cmmn.api.CmmnRepositoryService;
@@ -12,8 +14,6 @@ import org.flowable.engine.ManagementService;
 import org.flowable.engine.RepositoryService;
 import org.flowable.engine.RuntimeService;
 import org.flowable.engine.TaskService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
@@ -45,9 +45,8 @@ import net.lab1024.sa.oa.workflow.config.wrapper.FlowableTaskService;
  */
 @Configuration
 @EnableAsync
+@Slf4j
 public class FlowableEngineConfiguration {
-
-    private static final Logger log = LoggerFactory.getLogger (FlowableEngineConfiguration.class);
 
     // ==================== BPMN 流程引擎服务 ====================
 
@@ -56,9 +55,9 @@ public class FlowableEngineConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean
-    public FlowableRepositoryService flowableRepositoryService (RepositoryService repositoryService) {
-        log.info ("[Flowable 7.2配置] 初始化RepositoryService - 流程定义服务");
-        return new FlowableRepositoryService (repositoryService);
+    public FlowableRepositoryService flowableRepositoryService(RepositoryService repositoryService) {
+        log.info("[Flowable 7.2配置] 初始化RepositoryService - 流程定义服务");
+        return new FlowableRepositoryService(repositoryService);
     }
 
     /**
@@ -66,9 +65,9 @@ public class FlowableEngineConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean
-    public FlowableRuntimeService flowableRuntimeService (RuntimeService runtimeService) {
-        log.info ("[Flowable 7.2配置] 初始化RuntimeService - 流程运行时服务");
-        return new FlowableRuntimeService (runtimeService);
+    public FlowableRuntimeService flowableRuntimeService(RuntimeService runtimeService) {
+        log.info("[Flowable 7.2配置] 初始化RuntimeService - 流程运行时服务");
+        return new FlowableRuntimeService(runtimeService);
     }
 
     /**
@@ -76,9 +75,9 @@ public class FlowableEngineConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean
-    public FlowableTaskService flowableTaskService (TaskService taskService) {
-        log.info ("[Flowable 7.2配置] 初始化TaskService - 任务服务");
-        return new FlowableTaskService (taskService);
+    public FlowableTaskService flowableTaskService(TaskService taskService) {
+        log.info("[Flowable 7.2配置] 初始化TaskService - 任务服务");
+        return new FlowableTaskService(taskService);
     }
 
     /**
@@ -86,9 +85,9 @@ public class FlowableEngineConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean
-    public FlowableHistoryService flowableHistoryService (HistoryService historyService) {
-        log.info ("[Flowable 7.2配置] 初始化HistoryService - 历史服务(同步模式)");
-        return new FlowableHistoryService (historyService);
+    public FlowableHistoryService flowableHistoryService(HistoryService historyService) {
+        log.info("[Flowable 7.2配置] 初始化HistoryService - 历史服务(同步模式)");
+        return new FlowableHistoryService(historyService);
     }
 
     /**
@@ -96,9 +95,9 @@ public class FlowableEngineConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean
-    public FlowableManagementService flowableManagementService (ManagementService managementService) {
-        log.info ("[Flowable 7.2配置] 初始化ManagementService - 管理服务");
-        return new FlowableManagementService (managementService);
+    public FlowableManagementService flowableManagementService(ManagementService managementService) {
+        log.info("[Flowable 7.2配置] 初始化ManagementService - 管理服务");
+        return new FlowableManagementService(managementService);
     }
 
     /**
@@ -106,9 +105,9 @@ public class FlowableEngineConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean
-    public FlowableIdentityService flowableIdentityService (IdentityService identityService) {
-        log.info ("[Flowable 7.2配置] 初始化IdentityService - 身份服务");
-        return new FlowableIdentityService (identityService);
+    public FlowableIdentityService flowableIdentityService(IdentityService identityService) {
+        log.info("[Flowable 7.2配置] 初始化IdentityService - 身份服务");
+        return new FlowableIdentityService(identityService);
     }
 
     // ==================== CMMN 案例管理服务 ====================
@@ -118,9 +117,9 @@ public class FlowableEngineConfiguration {
      */
     @Bean
     @ConditionalOnBean(CmmnRuntimeService.class)
-    public FlowableCmmnRuntimeService flowableCmmnRuntimeService (CmmnRuntimeService cmmnRuntimeService) {
-        log.info ("[Flowable 7.2配置] 初始化CmmnRuntimeService - CMMN运行时服务");
-        return new FlowableCmmnRuntimeService (cmmnRuntimeService);
+    public FlowableCmmnRuntimeService flowableCmmnRuntimeService(CmmnRuntimeService cmmnRuntimeService) {
+        log.info("[Flowable 7.2配置] 初始化CmmnRuntimeService - CMMN运行时服务");
+        return new FlowableCmmnRuntimeService(cmmnRuntimeService);
     }
 
     /**
@@ -128,9 +127,9 @@ public class FlowableEngineConfiguration {
      */
     @Bean
     @ConditionalOnBean(CmmnRepositoryService.class)
-    public FlowableCmmnRepositoryService flowableCmmnRepositoryService (CmmnRepositoryService cmmnRepositoryService) {
-        log.info ("[Flowable 7.2配置] 初始化CmmnRepositoryService - CMMN定义服务");
-        return new FlowableCmmnRepositoryService (cmmnRepositoryService);
+    public FlowableCmmnRepositoryService flowableCmmnRepositoryService(CmmnRepositoryService cmmnRepositoryService) {
+        log.info("[Flowable 7.2配置] 初始化CmmnRepositoryService - CMMN定义服务");
+        return new FlowableCmmnRepositoryService(cmmnRepositoryService);
     }
 
     // ==================== DMN 决策表服务 ====================
@@ -140,9 +139,9 @@ public class FlowableEngineConfiguration {
      */
     @Bean
     @ConditionalOnBean(DmnRepositoryService.class)
-    public FlowableDmnRepositoryService flowableDmnRepositoryService (DmnRepositoryService dmnRepositoryService) {
-        log.info ("[Flowable 7.2配置] 初始化DmnRepositoryService - DMN定义服务");
-        return new FlowableDmnRepositoryService (dmnRepositoryService);
+    public FlowableDmnRepositoryService flowableDmnRepositoryService(DmnRepositoryService dmnRepositoryService) {
+        log.info("[Flowable 7.2配置] 初始化DmnRepositoryService - DMN定义服务");
+        return new FlowableDmnRepositoryService(dmnRepositoryService);
     }
 
     /**
@@ -150,9 +149,9 @@ public class FlowableEngineConfiguration {
      */
     @Bean
     @ConditionalOnBean(DmnDecisionService.class)
-    public FlowableDmnRuleService flowableDmnRuleService (DmnDecisionService dmnDecisionService) {
-        log.info ("[Flowable 7.2配置] 初始化DmnDecisionService - DMN决策服务");
-        return new FlowableDmnRuleService (dmnDecisionService);
+    public FlowableDmnRuleService flowableDmnRuleService(DmnDecisionService dmnDecisionService) {
+        log.info("[Flowable 7.2配置] 初始化DmnDecisionService - DMN决策服务");
+        return new FlowableDmnRuleService(dmnDecisionService);
     }
 
     // ==================== 异步执行器配置 ====================
@@ -161,30 +160,30 @@ public class FlowableEngineConfiguration {
      * 异步任务执行器 用于异步处理工作流任务，提高系统性能
      */
     @Bean(name = "flowableTaskExecutor")
-    public Executor flowableTaskExecutor () {
-        log.info ("[Flowable 7.2配置] 初始化异步任务执行器");
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor ();
+    public Executor flowableTaskExecutor() {
+        log.info("[Flowable 7.2配置] 初始化异步任务执行器");
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
 
         // 核心线程数
-        executor.setCorePoolSize (10);
+        executor.setCorePoolSize(10);
         // 最大线程数
-        executor.setMaxPoolSize (50);
+        executor.setMaxPoolSize(50);
         // 队列容量
-        executor.setQueueCapacity (200);
+        executor.setQueueCapacity(200);
         // 线程名前缀
-        executor.setThreadNamePrefix ("flowable-async-");
+        executor.setThreadNamePrefix("flowable-async-");
         // 拒绝策略：调用者运行
-        executor.setRejectedExecutionHandler (new java.util.concurrent.ThreadPoolExecutor.CallerRunsPolicy ());
+        executor.setRejectedExecutionHandler(new java.util.concurrent.ThreadPoolExecutor.CallerRunsPolicy());
         // 等待所有任务完成后再关闭线程池
-        executor.setWaitForTasksToCompleteOnShutdown (true);
+        executor.setWaitForTasksToCompleteOnShutdown(true);
         // 等待时间
-        executor.setAwaitTerminationSeconds (60);
+        executor.setAwaitTerminationSeconds(60);
         // 允许核心线程超时
-        executor.setAllowCoreThreadTimeOut (true);
+        executor.setAllowCoreThreadTimeOut(true);
         // 线程空闲时间
-        executor.setKeepAliveSeconds (300);
+        executor.setKeepAliveSeconds(300);
 
-        executor.initialize ();
+        executor.initialize();
         return executor;
     }
 
@@ -192,24 +191,24 @@ public class FlowableEngineConfiguration {
      * 流程事件监听器 监听流程执行过程中的各种事件
      */
     @Bean
-    public FlowableEventLogger flowableEventLogger () {
-        log.info ("[Flowable 7.2配置] 初始化事件监听器");
-        return new FlowableEventLogger ();
+    public FlowableEventLogger flowableEventLogger() {
+        log.info("[Flowable 7.2配置] 初始化事件监听器");
+        return new FlowableEventLogger();
     }
 
     /**
      * 异步执行器Bean 为Flowable提供异步处理能力
      */
     @Bean
-    public AsyncTaskExecutor flowableAsyncTaskExecutor () {
-        log.info ("[Flowable 7.2配置] 初始化异步执行器");
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor ();
-        executor.setCorePoolSize (8);
-        executor.setMaxPoolSize (30);
-        executor.setQueueCapacity (100);
-        executor.setThreadNamePrefix ("flowable-async-");
-        executor.setRejectedExecutionHandler (new java.util.concurrent.ThreadPoolExecutor.CallerRunsPolicy ());
-        executor.initialize ();
+    public AsyncTaskExecutor flowableAsyncTaskExecutor() {
+        log.info("[Flowable 7.2配置] 初始化异步执行器");
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(8);
+        executor.setMaxPoolSize(30);
+        executor.setQueueCapacity(100);
+        executor.setThreadNamePrefix("flowable-async-");
+        executor.setRejectedExecutionHandler(new java.util.concurrent.ThreadPoolExecutor.CallerRunsPolicy());
+        executor.initialize();
         return executor;
     }
 
@@ -217,8 +216,8 @@ public class FlowableEngineConfiguration {
      * Flowable配置完成后处理器 在引擎初始化完成后执行自定义初始化逻辑
      */
     @Bean
-    public FlowableInitializationProcessor flowableInitializationProcessor () {
-        log.info ("[Flowable 7.2配置] 初始化配置后处理器");
-        return new FlowableInitializationProcessor ();
+    public FlowableInitializationProcessor flowableInitializationProcessor() {
+        log.info("[Flowable 7.2配置] 初始化配置后处理器");
+        return new FlowableInitializationProcessor();
     }
 }

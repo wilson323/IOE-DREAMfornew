@@ -186,3 +186,4 @@ public interface NotificationConfigService {
     java.util.Map<String, String> getConfigsByType(String configType);
 }
 
+

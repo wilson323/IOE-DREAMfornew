@@ -104,6 +104,9 @@ spring:
 - **依赖注入**: 使用 `@Resource` 注解
 - **DAO层**: 使用 `@Mapper` 注解
 - **Manager层**: 在microservices-common中是纯Java类
+- **禁止兼容层**: 不保留旧包名兼容类、重复接口、同包名重复类
+- **ResponseDTO归属**: 必须定义在 `microservices-common-core`
+- **接口唯一来源**: 共享接口只允许在对应公共模块中存在一份
 
 ---
 

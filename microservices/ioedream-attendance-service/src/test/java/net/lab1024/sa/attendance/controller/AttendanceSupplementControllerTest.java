@@ -1,8 +1,13 @@
 package net.lab1024.sa.attendance.controller;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -16,10 +21,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.attendance.domain.entity.AttendanceSupplementEntity;
 import net.lab1024.sa.attendance.domain.form.AttendanceSupplementForm;
 import net.lab1024.sa.attendance.service.AttendanceSupplementService;
+import net.lab1024.sa.common.dto.ResponseDTO;
 
 /**
  * AttendanceSupplementController单元测试
@@ -56,10 +61,11 @@ class AttendanceSupplementControllerTest {
         AttendanceSupplementEntity entity = new AttendanceSupplementEntity();
         entity.setSupplementNo("SUPPLEMENT001");
         when(attendanceSupplementService.submitSupplementApplication(any(AttendanceSupplementForm.class)))
-            .thenReturn(entity);
+                .thenReturn(entity);
 
         // When
-        ResponseDTO<AttendanceSupplementEntity> response = attendanceSupplementController.submitSupplementApplication(form);
+        ResponseDTO<AttendanceSupplementEntity> response = attendanceSupplementController
+                .submitSupplementApplication(form);
 
         // Then
         assertNotNull(response);

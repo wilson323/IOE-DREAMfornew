@@ -1,18 +1,26 @@
 package net.lab1024.sa.biometric.controller;
 
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.List;
+
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.biometric.domain.vo.TemplateSyncResultVO;
-import net.lab1024.sa.biometric.service.BiometricTemplateSyncService;
-import net.lab1024.sa.common.dto.ResponseDTO;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
 import jakarta.annotation.Resource;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import java.util.List;
+import net.lab1024.sa.biometric.domain.vo.TemplateSyncResultVO;
+import net.lab1024.sa.biometric.service.BiometricTemplateSyncService;
+import net.lab1024.sa.common.dto.ResponseDTO;
 
 /**
  * 生物模板同步控制器
@@ -28,11 +36,11 @@ import java.util.List;
  * @version 1.0.0
  * @since 2025-12-18
  */
-@Slf4j
 @RestController
 @RequestMapping("/api/v1/biometric/sync")
 @Tag(name = "生物模板同步", description = "生物模板同步到设备API")
 @Validated
+@Slf4j
 public class BiometricTemplateSyncController {
 
     @Resource
@@ -94,7 +102,7 @@ public class BiometricTemplateSyncController {
     /**
      * 权限移除时删除模板
      */
-    @PostMapping("/permission/removed")
+    @DeleteMapping("/permission/removed")
     @Operation(summary = "权限移除时删除模板", description = "用户移除区域权限时，从该区域设备删除模板")
     public ResponseDTO<Void> deleteOnPermissionRemoved(
             @RequestParam @NotNull Long userId,

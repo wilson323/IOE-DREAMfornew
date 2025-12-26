@@ -1,142 +1,60 @@
 package net.lab1024.sa.common.util;
 
-import java.nio.charset.StandardCharsets;
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
 import java.util.Base64;
 
-import javax.crypto.Cipher;                    // Spring Boot 3.x Jakarta EE迁移特殊处理: javax.crypto保持不变
-                                             // 原因: javax.crypto是Java标准库包，在Jakarta EE 9+中保持javax命名空间
-                                             // 说明: 虽然是标准库，但 cryptographic API 不在 Jakarta EE 迁移范围内
-import javax.crypto.spec.SecretKeySpec;      // AES密钥规范，用于AES加密解密
-
-import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.common.exception.SystemException;
-
 /**
- * AES加密解密工具类
+ * AES加密工具类
  * <p>
- * 用于敏感数据的加密和解密
- * 严格遵循CLAUDE.md规范:
- * - 工具类使用实例方法（通过Bean注入使用）
- * - 完整的异常处理
- * - 详细的日志记录
+ * 提供AES加密解密功能，支持静态方法和实例方法调用
  * </p>
- * <p>
- * **Spring Boot标准方案说明**:
- * - 使用Java标准库`javax.crypto`（Java 17/21标准库，无需迁移）
- * - Spring Security Crypto提供更高级的加密功能（可选替代方案）
- * - 当前实现使用标准库，满足基本加密需求
- * - 如需更高级功能（如密钥轮换、加密算法升级），可考虑迁移到Spring Security Crypto
- * </p>
- * <p>
- * 企业级特性：
- * - AES-128-ECB加密算法
- * - Base64编码输出
- * - 密钥管理（从环境变量或配置中心获取）
- * - 生产环境必须配置CONFIG_ENCRYPT_KEY环境变量
- * </p>
- *
- * @author IOE-DREAM Team
- * @version 2.0.0
- * @since 2025-01-30
- * @updated 2025-01-30 更新注释，说明javax.crypto为标准库，可保留；说明与Spring Security Crypto的关系
  */
-@Slf4j
 public class AESUtil {
 
-    /**
-     * 加密算法
-     */
     private static final String ALGORITHM = "AES";
+    private static final String DEFAULT_KEY = "ioedream2025key"; // 默认密钥
 
     /**
-     * 加密模式
+     * 静态方法版本 - 使用默认密钥
      */
-    private static final String TRANSFORMATION = "AES/ECB/PKCS5Padding";
-
-    /**
-     * 默认密钥（生产环境必须从环境变量或配置中心获取）
-     */
-    private static final String DEFAULT_KEY = "IOE-DREAM-DEFAULT-KEY-32-BYTES-LONG!";
-
-    /**
-     * 获取加密密钥
-     * <p>
-     * 优先从环境变量获取，否则使用默认密钥
-     * 生产环境必须配置CONFIG_ENCRYPT_KEY环境变量
-     * </p>
-     *
-     * @return 加密密钥
-     */
-    private static String getSecretKey() {
-        String secretKey = System.getenv("CONFIG_ENCRYPT_KEY");
-        if (secretKey == null || secretKey.isEmpty()) {
-            log.warn("[AES加密] 使用默认加密密钥，生产环境请配置CONFIG_ENCRYPT_KEY环境变量");
-            return DEFAULT_KEY;
-        }
-        return secretKey;
+    public static String encrypt(String data) {
+        return encrypt(data, DEFAULT_KEY);
     }
 
     /**
-     * AES加密
-     * <p>
-     * 使用AES-128-ECB算法加密数据
-     * 输出Base64编码字符串
-     * </p>
-     *
-     * @param plaintext 明文
-     * @return 密文（Base64编码）
+     * 静态方法版本 - 使用默认密钥
      */
-    public String encrypt(String plaintext) {
-        if (plaintext == null || plaintext.isEmpty()) {
-            return plaintext;
-        }
+    public static String decrypt(String data) {
+        return decrypt(data, DEFAULT_KEY);
+    }
 
+    /**
+     * 静态方法版本 - 指定密钥
+     */
+    public static String encrypt(String data, String key) {
         try {
-            String secretKey = getSecretKey();
-            SecretKeySpec secretKeySpec = new SecretKeySpec(
-                    secretKey.getBytes(StandardCharsets.UTF_8), ALGORITHM);
-
-            Cipher cipher = Cipher.getInstance(TRANSFORMATION);
-            cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec);
-            byte[] encryptedBytes = cipher.doFinal(plaintext.getBytes(StandardCharsets.UTF_8));
-
-            return Base64.getEncoder().encodeToString(encryptedBytes);
-
+            SecretKeySpec secretKey = new SecretKeySpec(key.getBytes(), ALGORITHM);
+            Cipher cipher = Cipher.getInstance(ALGORITHM);
+            cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+            return Base64.getEncoder().encodeToString(cipher.doFinal(data.getBytes()));
         } catch (Exception e) {
-            log.error("[AES加密] 加密失败", e);
-            throw new SystemException("AES_ENCRYPT_ERROR", "AES加密失败: " + e.getMessage(), e);
+            throw new RuntimeException("Encryption failed", e);
         }
     }
 
     /**
-     * AES解密
-     * <p>
-     * 使用AES-128-ECB算法解密数据
-     * 输入Base64编码字符串
-     * </p>
-     *
-     * @param ciphertext 密文（Base64编码）
-     * @return 明文
+     * 静态方法版本 - 指定密钥
      */
-    public String decrypt(String ciphertext) {
-        if (ciphertext == null || ciphertext.isEmpty()) {
-            return ciphertext;
-        }
-
+    public static String decrypt(String data, String key) {
         try {
-            String secretKey = getSecretKey();
-            SecretKeySpec secretKeySpec = new SecretKeySpec(
-                    secretKey.getBytes(StandardCharsets.UTF_8), ALGORITHM);
-
-            Cipher cipher = Cipher.getInstance(TRANSFORMATION);
-            cipher.init(Cipher.DECRYPT_MODE, secretKeySpec);
-            byte[] decryptedBytes = cipher.doFinal(Base64.getDecoder().decode(ciphertext));
-
-            return new String(decryptedBytes, StandardCharsets.UTF_8);
-
+            SecretKeySpec secretKey = new SecretKeySpec(key.getBytes(), ALGORITHM);
+            Cipher cipher = Cipher.getInstance(ALGORITHM);
+            cipher.init(Cipher.DECRYPT_MODE, secretKey);
+            return new String(cipher.doFinal(Base64.getDecoder().decode(data)));
         } catch (Exception e) {
-            log.error("[AES解密] 解密失败", e);
-            throw new SystemException("AES_DECRYPT_ERROR", "AES解密失败: " + e.getMessage(), e);
+            throw new RuntimeException("Decryption failed", e);
         }
     }
 }
+

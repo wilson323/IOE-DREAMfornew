@@ -1,8 +1,13 @@
 package net.lab1024.sa.attendance.controller;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,10 +20,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.attendance.domain.entity.AttendanceTravelEntity;
 import net.lab1024.sa.attendance.domain.form.AttendanceTravelForm;
 import net.lab1024.sa.attendance.service.AttendanceTravelService;
+import net.lab1024.sa.common.dto.ResponseDTO;
 
 /**
  * AttendanceTravelController单元测试
@@ -55,7 +60,7 @@ class AttendanceTravelControllerTest {
         AttendanceTravelEntity entity = new AttendanceTravelEntity();
         entity.setTravelNo("TRAVEL001");
         when(attendanceTravelService.submitTravelApplication(any(AttendanceTravelForm.class)))
-            .thenReturn(entity);
+                .thenReturn(entity);
 
         // When
         ResponseDTO<AttendanceTravelEntity> response = attendanceTravelController.submitTravelApplication(form);

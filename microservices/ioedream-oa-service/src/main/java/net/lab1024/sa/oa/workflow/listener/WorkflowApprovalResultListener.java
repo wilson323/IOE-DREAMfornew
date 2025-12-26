@@ -1,19 +1,21 @@
 package net.lab1024.sa.oa.workflow.listener;
 
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.context.event.EventListener;
+import org.springframework.http.HttpMethod;
 import org.springframework.scheduling.annotation.Async;
 
-import java.util.HashMap;
-
-import org.springframework.http.HttpMethod;
-
 import jakarta.annotation.Resource;
-import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
+import com.fasterxml.jackson.core.type.TypeReference;
 import net.lab1024.sa.common.workflow.manager.WorkflowApprovalManager;
+import net.lab1024.sa.oa.workflow.domain.vo.ApprovalInstanceVO;
+import net.lab1024.sa.oa.workflow.service.ApprovalService;
 
 /**
  * 工作流审批结果监听器
@@ -35,9 +37,9 @@ import net.lab1024.sa.common.workflow.manager.WorkflowApprovalManager;
  * @version 1.0.0
  * @since 2025-01-30
  */
-@Slf4j
 // 暂时禁用此Listener，因为依赖的WorkflowApprovalManager需要类型兼容性修复
 // @Component
+@Slf4j
 public class WorkflowApprovalResultListener {
 
     @Resource
@@ -45,6 +47,9 @@ public class WorkflowApprovalResultListener {
 
     @Resource
     private GatewayServiceClient gatewayServiceClient;
+
+    @Resource
+    private ApprovalService approvalService;
 
     /**
      * 处理审批结果事件
@@ -68,19 +73,19 @@ public class WorkflowApprovalResultListener {
 
         try {
             // 获取流程实例详情（包含业务数据）
-            ResponseDTO<Map<String, Object>> instanceResult =
-                    workflowApprovalManager.getProcessInstanceStatus(instanceId);
+            ApprovalInstanceVO instanceVO = approvalService.getInstanceDetail(instanceId);
 
-            if (instanceResult == null || !instanceResult.isSuccess()) {
+            if (instanceVO == null) {
                 log.warn("获取流程实例详情失败，实例ID: {}", instanceId);
                 return;
             }
 
-            Map<String, Object> instanceData = instanceResult.getData();
-            @SuppressWarnings("unchecked")
-            Map<String, Object> formData = instanceData != null && instanceData.get("formData") instanceof Map
-                    ? (Map<String, Object>) instanceData.get("formData")
-                    : null;
+            // 构建formData（从流程实例中提取业务数据）
+            Map<String, Object> formData = new HashMap<>();
+            formData.put("businessType", instanceVO.getBusinessType());
+            formData.put("businessId", instanceVO.getBusinessId());
+            formData.put("initiatorId", instanceVO.getInitiatorId());
+            formData.put("initiatorName", instanceVO.getInitiatorName());
 
             // 根据业务类型更新对应的业务状态
             // 注意：这里通过业务模块的回调接口更新状态，而不是直接访问DAO
@@ -139,12 +144,11 @@ public class WorkflowApprovalResultListener {
                 requestParams.put("approvalComment", formData.get("approvalComment"));
             }
 
-            ResponseDTO<Void> response = gatewayServiceClient.callConsumeService(
-                    "/api/v1/consume/refund/" + businessKey + "/status",
+            ResponseDTO<Void> response = gatewayServiceClient.callCommonService(
+                    "/consume/api/v1/consume/refund/" + businessKey + "/status",
                     HttpMethod.PUT,
                     requestParams,
-                    Void.class
-            );
+                    new TypeReference<ResponseDTO<Void>>() {});
 
             if (response != null && response.isSuccess()) {
                 log.info("消费退款状态更新成功，业务Key: {}, 状态: {}", businessKey, status);
@@ -170,12 +174,11 @@ public class WorkflowApprovalResultListener {
                 requestParams.put("approvalComment", formData.get("approvalComment"));
             }
 
-            ResponseDTO<Void> response = gatewayServiceClient.callConsumeService(
-                    "/api/v1/consume/reimbursement/" + businessKey + "/status",
+            ResponseDTO<Void> response = gatewayServiceClient.callCommonService(
+                    "/consume/api/v1/consume/reimbursement/" + businessKey + "/status",
                     HttpMethod.PUT,
                     requestParams,
-                    Void.class
-            );
+                    new TypeReference<ResponseDTO<Void>>() {});
 
             if (response != null && response.isSuccess()) {
                 log.info("消费报销状态更新成功，业务Key: {}, 状态: {}", businessKey, status);
@@ -203,12 +206,11 @@ public class WorkflowApprovalResultListener {
 
             // businessKey是appointmentId（Long类型）
             Long appointmentId = Long.parseLong(businessKey);
-            ResponseDTO<Void> response = gatewayServiceClient.callVisitorService(
-                    "/api/v1/mobile/visitor/appointment/" + appointmentId + "/status",
+            ResponseDTO<Void> response = gatewayServiceClient.callCommonService(
+                    "/visitor/api/v1/mobile/visitor/appointment/" + appointmentId + "/status",
                     HttpMethod.PUT,
                     requestParams,
-                    Void.class
-            );
+                    new TypeReference<ResponseDTO<Void>>() {});
 
             if (response != null && response.isSuccess()) {
                 log.info("访客预约状态更新成功，业务Key: {}, 状态: {}", businessKey, status);
@@ -234,11 +236,10 @@ public class WorkflowApprovalResultListener {
             }
 
             ResponseDTO<Void> response = gatewayServiceClient.callAccessService(
-                    "/api/v1/access/permission/apply/" + businessKey + "/status",
+                    "/access/api/v1/access/permission/apply/" + businessKey + "/status",
                     HttpMethod.PUT,
                     requestParams,
-                    Void.class
-            );
+                    ResponseDTO.class);
 
             if (response != null && response.isSuccess()) {
                 log.info("门禁权限申请状态更新成功，业务Key: {}, 状态: {}", businessKey, status);
@@ -267,12 +268,11 @@ public class WorkflowApprovalResultListener {
                 requestParams.put("approvalComment", formData.get("approvalComment"));
             }
 
-            ResponseDTO<Void> response = gatewayServiceClient.callAccessService(
-                    "/api/v1/access/emergency-permission/" + businessKey + "/status",
+            ResponseDTO<Void> response = gatewayServiceClient.callCommonService(
+                    "/access/api/v1/access/emergency-permission/" + businessKey + "/status",
                     HttpMethod.PUT,
                     requestParams,
-                    Void.class
-            );
+                    ResponseDTO.class);
 
             if (response != null && response.isSuccess()) {
                 log.info("门禁紧急权限申请状态更新成功，业务Key: {}, 状态: {}", businessKey, status);
@@ -292,7 +292,8 @@ public class WorkflowApprovalResultListener {
      * </p>
      */
     @SuppressWarnings("null")
-    private void updateAttendanceExceptionStatus(String businessKey, String status, String businessType, Map<String, Object> formData) {
+    private void updateAttendanceExceptionStatus(String businessKey, String status, String businessType,
+            Map<String, Object> formData) {
         log.info("更新考勤异常申请状态，业务Key: {}, 业务类型: {}, 状态: {}", businessKey, businessType, status);
         try {
             Map<String, Object> requestParams = new HashMap<>();
@@ -318,12 +319,11 @@ public class WorkflowApprovalResultListener {
                 return;
             }
 
-            ResponseDTO<Void> response = gatewayServiceClient.callAttendanceService(
-                    apiPath,
+            ResponseDTO<Void> response = gatewayServiceClient.callCommonService(
+                    "/attendance" + apiPath,
                     HttpMethod.PUT,
                     requestParams,
-                    Void.class
-            );
+                    ResponseDTO.class);
 
             if (response != null && response.isSuccess()) {
                 log.info("考勤异常申请状态更新成功，业务Key: {}, 状态: {}", businessKey, status);
@@ -373,8 +373,3 @@ public class WorkflowApprovalResultListener {
         }
     }
 }
-
-
-
-
-

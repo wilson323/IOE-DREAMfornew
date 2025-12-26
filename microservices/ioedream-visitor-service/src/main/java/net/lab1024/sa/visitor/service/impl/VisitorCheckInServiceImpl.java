@@ -1,5 +1,7 @@
 package net.lab1024.sa.visitor.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.time.LocalDateTime;
 
 import jakarta.annotation.Resource;
@@ -12,7 +14,6 @@ import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import io.micrometer.core.annotation.Counted;
 import io.micrometer.core.annotation.Timed;
 import io.micrometer.observation.annotation.Observed;
-import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.exception.BusinessException;
 import net.lab1024.sa.common.exception.SystemException;
@@ -42,10 +43,11 @@ import net.lab1024.sa.visitor.dao.VisitorAppointmentDao;
  * @version 1.0.0
  * @since 2025-01-30
  */
-@Slf4j
 @Service
 @Transactional(rollbackFor = Exception.class)
+@Slf4j
 public class VisitorCheckInServiceImpl implements VisitorCheckInService {
+
 
     @Resource
     private VisitorAppointmentDao visitorAppointmentDao;

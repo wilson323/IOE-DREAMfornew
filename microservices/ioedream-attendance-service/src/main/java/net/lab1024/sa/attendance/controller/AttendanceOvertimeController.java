@@ -1,5 +1,7 @@
 package net.lab1024.sa.attendance.controller;
 
+import lombok.extern.slf4j.Slf4j;
+
 import io.micrometer.observation.annotation.Observed;
 import java.util.Map;
 
@@ -14,17 +16,15 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.attendance.domain.entity.AttendanceOvertimeEntity;
 import net.lab1024.sa.attendance.domain.form.AttendanceOvertimeForm;
 import net.lab1024.sa.attendance.service.AttendanceOvertimeService;
-
-@Slf4j
 @RestController
+@Slf4j
 @RequestMapping("/api/v1/attendance/overtime")
 @Tag(name = "考勤加班管理")
-public class AttendanceOvertimeController {
+ public class AttendanceOvertimeController {
 
     @Resource
     private AttendanceOvertimeService attendanceOvertimeService;
@@ -52,6 +52,4 @@ public class AttendanceOvertimeController {
         return ResponseDTO.ok();
     }
 }
-
-
 

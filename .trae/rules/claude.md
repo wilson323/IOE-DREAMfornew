@@ -735,7 +735,8 @@ public interface AccountDao extends BaseMapper<AccountEntity> {
 **强制使用Jakarta EE 3.0+包名**：
 - ✅ `jakarta.annotation.Resource`
 - ✅ `jakarta.validation.Valid`
-- ✅ `jakarta.persistence.Entity`
+- ✅ `@Data
+@TableName("table_name")`
 - ✅ `jakarta.servlet.http.HttpServletRequest`
 - ✅ `jakarta.transaction.Transactional`
 

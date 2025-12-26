@@ -277,6 +277,52 @@ export const exceptionApi = {
   handleException: (data) => postRequest('/api/v1/consume/mobile/exception/handle', data)
 }
 
+// 数据分析相关接口 (P2高级功能)
+export const analysisApi = {
+  /**
+   * 获取消费数据分析
+   * @param {Object} params 分析参数
+   * @param {Number} params.userId 用户ID
+   * @param {String} params.period 时间周期 (week/month/quarter)
+   * @returns {Promise}
+   */
+  getConsumptionAnalysis: (params) => getRequest('/api/v1/consume/mobile/analysis/consumption', params),
+
+  /**
+   * 获取消费趋势数据
+   * @param {Object} params 查询参数
+   * @param {Number} params.userId 用户ID
+   * @param {String} params.startDate 开始日期
+   * @param {String} params.endDate 结束日期
+   * @returns {Promise}
+   */
+  getConsumptionTrend: (params) => getRequest('/api/v1/consume/mobile/analysis/trend', params),
+
+  /**
+   * 获取消费分类统计
+   * @param {Object} params 查询参数
+   * @param {Number} params.userId 用户ID
+   * @param {String} params.period 时间周期
+   * @returns {Promise}
+   */
+  getCategoryStats: (params) => getRequest('/api/v1/consume/mobile/analysis/category', params),
+
+  /**
+   * 获取消费习惯分析
+   * @param {Number} userId 用户ID
+   * @returns {Promise}
+   */
+  getConsumptionHabits: (userId) => getRequest(`/api/v1/consume/mobile/analysis/habits/${userId}`),
+
+  /**
+   * 获取智能推荐
+   * @param {Number} userId 用户ID
+   * @param {Object} params 额外参数
+   * @returns {Promise}
+   */
+  getSmartRecommendations: (userId, params = {}) => getRequest(`/api/v1/consume/mobile/analysis/recommendations/${userId}`, params)
+}
+
 // 导出所有API
 export default {
   ...transactionApi,
@@ -287,6 +333,7 @@ export default {
   ...syncApi,
   ...deviceApi,
   ...permissionApi,
-  ...exceptionApi
+  ...exceptionApi,
+  ...analysisApi
 }
 

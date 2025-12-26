@@ -1,11 +1,13 @@
 package net.lab1024.sa.gateway.manager;
 
+import lombok.extern.slf4j.Slf4j;
+
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * 限流管理器
@@ -23,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class RateLimitManager {
+
 
     private final Map<String, RateLimitConfig> configCache = new ConcurrentHashMap<>();
     private final Map<String, AtomicLong> requestCounters = new ConcurrentHashMap<>();

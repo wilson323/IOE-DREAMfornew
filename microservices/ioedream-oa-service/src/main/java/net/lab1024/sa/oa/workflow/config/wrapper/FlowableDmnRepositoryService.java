@@ -1,13 +1,14 @@
 package net.lab1024.sa.oa.workflow.config.wrapper;
 
 import lombok.extern.slf4j.Slf4j;
-import org.flowable.dmn.api.DmnRepositoryService;
+
+import java.io.InputStream;
+
 import org.flowable.dmn.api.DmnDecision;
 import org.flowable.dmn.api.DmnDecisionQuery;
 import org.flowable.dmn.api.DmnDeployment;
 import org.flowable.dmn.api.DmnDeploymentBuilder;
-
-import java.io.InputStream;
+import org.flowable.dmn.api.DmnRepositoryService;
 
 /**
  * DMN决策表定义服务包装器
@@ -21,6 +22,7 @@ import java.io.InputStream;
  */
 @Slf4j
 public class FlowableDmnRepositoryService {
+
 
     private final DmnRepositoryService dmnRepositoryService;
 
@@ -40,15 +42,15 @@ public class FlowableDmnRepositoryService {
     /**
      * 部署决策表定义
      *
-     * @param resourceName 资源名称
-     * @param inputStream 输入流
+     * @param resourceName
+     *                     资源名称
+     * @param inputStream
+     *                     输入流
      * @return 部署结果
      */
     public DmnDeployment deploy(String resourceName, InputStream inputStream) {
         log.info("[DMN服务] 部署决策表定义: resourceName={}", resourceName);
-        return dmnRepositoryService.createDeployment()
-                .addInputStream(resourceName, inputStream)
-                .deploy();
+        return dmnRepositoryService.createDeployment().addInputStream(resourceName, inputStream).deploy();
     }
 
     /**
@@ -63,7 +65,8 @@ public class FlowableDmnRepositoryService {
     /**
      * 获取决策表定义
      *
-     * @param decisionId 决策表ID
+     * @param decisionId
+     *                   决策表ID
      * @return 决策表定义
      */
     public DmnDecision getDecision(String decisionId) {
@@ -73,7 +76,8 @@ public class FlowableDmnRepositoryService {
     /**
      * 删除部署
      *
-     * @param deploymentId 部署ID
+     * @param deploymentId
+     *                     部署ID
      */
     public void deleteDeployment(String deploymentId) {
         log.info("[DMN服务] 删除部署: deploymentId={}", deploymentId);

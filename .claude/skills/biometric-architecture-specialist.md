@@ -79,16 +79,18 @@
 - **device-biometric-sync**: 设备下发和同步
 - **biometric-security**: 生物特征安全加密
 
-### 设备集成接口 (Jakarta EE 3.0+)
+### 设备集成接口 (Spring Boot 3.5.8 + MyBatis-Plus)
 ```java
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import jakarta.transaction.Transactional;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import jakarta.persistence.Id;
-import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.baomidou.mybatisplus.annotation.Version;
+import lombok.Data;
 
 // 下发生物特征到设备接口
 public interface BiometricDeviceService {

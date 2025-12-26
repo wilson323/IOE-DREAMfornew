@@ -1,17 +1,18 @@
 package net.lab1024.sa.common.organization.service.impl;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import net.lab1024.sa.common.organization.manager.SpaceCapacityManager;
-import net.lab1024.sa.common.organization.service.SpaceCapacityService;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
+
+import org.springframework.stereotype.Service;
+
+import jakarta.annotation.Resource;
+import net.lab1024.sa.common.organization.manager.SpaceCapacityManager;
+import net.lab1024.sa.common.organization.service.SpaceCapacityService;
 
 /**
  * 空间容量分析服务实现
@@ -21,12 +22,13 @@ import java.util.stream.IntStream;
  * @version 1.0.0
  * @since 2025-01-16
  */
-@Slf4j
 @Service
-@RequiredArgsConstructor
+@Slf4j
 public class SpaceCapacityServiceImpl implements SpaceCapacityService {
 
-    private final SpaceCapacityManager spaceCapacityManager;
+
+    @Resource
+    private SpaceCapacityManager spaceCapacityManager;
 
     @Override
     public SpaceCapacityManager.SpaceCapacityAnalysis analyzeSpaceCapacity(Long areaId) {
@@ -113,11 +115,11 @@ public class SpaceCapacityServiceImpl implements SpaceCapacityService {
     }
 
     @Override
-    public CapacityForecastResult forecastCapacityDemand(Long areaId, Integer forecastMonths) {
+    public SpaceCapacityService.CapacityForecastResult forecastCapacityDemand(Long areaId, Integer forecastMonths) {
         log.info("[空间容量服务] 预测区域未来容量需求: areaId={}, forecastMonths={}", areaId, forecastMonths);
 
         try {
-            CapacityForecastResult result = new CapacityForecastResult();
+            SpaceCapacityService.CapacityForecastResult result = new SpaceCapacityService.CapacityForecastResult();
             result.setAreaId(areaId);
 
             // 获取当前容量分析
@@ -126,7 +128,7 @@ public class SpaceCapacityServiceImpl implements SpaceCapacityService {
 
             // 获取历史趋势数据
             List<SpaceCapacityManager.CapacityTrend> historicalTrends = getCapacityTrends(areaId, 6);
-            List<CapacityForecast> forecasts = new ArrayList<>();
+            List<SpaceCapacityService.CapacityForecast> forecasts = new ArrayList<>();
 
             if (historicalTrends.size() < 3) {
                 // 历史数据不足，使用简单预测
@@ -158,13 +160,13 @@ public class SpaceCapacityServiceImpl implements SpaceCapacityService {
      * 生成简单预测
      */
     private void generateSimpleForecast(SpaceCapacityManager.SpaceCapacityAnalysis currentAnalysis,
-                                         Integer forecastMonths,
-                                         List<CapacityForecast> forecasts) {
-        int currentDeviceCount = currentAnalysis.getDeviceCount();
+            Integer forecastMonths,
+            List<SpaceCapacityService.CapacityForecast> forecasts) {
+        int currentDeviceCount = currentAnalysis.getCurrentCapacity();
         double currentUtilization = currentAnalysis.getUtilizationRate();
 
         for (int i = 1; i <= forecastMonths; i++) {
-            CapacityForecast forecast = new CapacityForecast();
+            SpaceCapacityService.CapacityForecast forecast = new SpaceCapacityService.CapacityForecast();
 
             // 计算预测月份
             LocalDateTime forecastDate = LocalDateTime.now().plusMonths(i);
@@ -188,21 +190,21 @@ public class SpaceCapacityServiceImpl implements SpaceCapacityService {
      * 生成高级预测
      */
     private void generateAdvancedForecast(List<SpaceCapacityManager.CapacityTrend> historicalTrends,
-                                          SpaceCapacityManager.SpaceCapacityAnalysis currentAnalysis,
-                                          Integer forecastMonths,
-                                          List<CapacityForecast> forecasts) {
+            SpaceCapacityManager.SpaceCapacityAnalysis currentAnalysis,
+            Integer forecastMonths,
+            List<SpaceCapacityService.CapacityForecast> forecasts) {
         // 计算历史增长率
         double avgGrowthRate = calculateGrowthRate(historicalTrends);
 
         for (int i = 1; i <= forecastMonths; i++) {
-            CapacityForecast forecast = new CapacityForecast();
+            SpaceCapacityService.CapacityForecast forecast = new SpaceCapacityService.CapacityForecast();
 
             // 计算预测月份
             LocalDateTime forecastDate = LocalDateTime.now().plusMonths(i);
             forecast.setPeriod(forecastDate.format(DateTimeFormatter.ofPattern("yyyy-MM")));
 
             // 基于历史趋势预测
-            int currentDeviceCount = currentAnalysis.getDeviceCount();
+            int currentDeviceCount = currentAnalysis.getCurrentCapacity();
             double predictedDeviceCount = currentDeviceCount * Math.pow(1 + avgGrowthRate, i);
 
             // 考虑季节性因素
@@ -211,8 +213,7 @@ public class SpaceCapacityServiceImpl implements SpaceCapacityService {
 
             double predictedUtilization = Math.min(
                     currentAnalysis.getUtilizationRate() * (predictedDeviceCount / currentDeviceCount),
-                    1.0
-            );
+                    1.0);
 
             forecast.setPredictedDeviceCount((int) predictedDeviceCount);
             forecast.setPredictedUtilizationRate(predictedUtilization);
@@ -235,8 +236,8 @@ public class SpaceCapacityServiceImpl implements SpaceCapacityService {
         int count = 0;
 
         for (int i = 1; i < trends.size(); i++) {
-            double prevValue = trends.get(i - 1).getDeviceCount();
-            double currValue = trends.get(i).getDeviceCount();
+            double prevValue = trends.get(i - 1).getCapacity();
+            double currValue = trends.get(i).getCapacity();
 
             if (prevValue > 0) {
                 totalGrowthRate += (currValue - prevValue) / prevValue;
@@ -253,7 +254,7 @@ public class SpaceCapacityServiceImpl implements SpaceCapacityService {
     private double calculateSeasonalFactor(int month) {
         // 简单的季节性调整模型
         return switch (month) {
-            case 1, 2 -> 0.9;  // 春节前后，利用率较低
+            case 1, 2 -> 0.9; // 春节前后，利用率较低
             case 3, 4, 5 -> 1.0; // 春季正常
             case 6, 7, 8 -> 1.1; // 夏季较高
             case 9, 10 -> 1.05; // 秋季略高
@@ -294,7 +295,7 @@ public class SpaceCapacityServiceImpl implements SpaceCapacityService {
     /**
      * 生成预测建议
      */
-    private List<String> generateForecastRecommendations(List<CapacityForecast> forecasts) {
+    private List<String> generateForecastRecommendations(List<SpaceCapacityService.CapacityForecast> forecasts) {
         List<String> recommendations = new ArrayList<>();
 
         if (forecasts.isEmpty()) {
@@ -302,7 +303,6 @@ public class SpaceCapacityServiceImpl implements SpaceCapacityService {
         }
 
         // 分析预测趋势
-        double finalUtilization = forecasts.get(forecasts.size() - 1).getPredictedUtilizationRate();
         String finalRiskLevel = forecasts.get(forecasts.size() - 1).getRiskLevel();
 
         if ("极高风险".equals(finalRiskLevel)) {
@@ -317,12 +317,12 @@ public class SpaceCapacityServiceImpl implements SpaceCapacityService {
         }
 
         // 分析增长趋势
-        double avgGrowthRate = forecasts.stream()
+        double avgDeviceCount = forecasts.stream()
                 .mapToDouble(f -> f.getPredictedDeviceCount())
                 .average()
                 .orElse(0.0);
 
-        if (avgGrowthRate > 100) {
+        if (avgDeviceCount > 100) {
             recommendations.add("设备数量增长较快，建议评估长期空间规划");
         }
 

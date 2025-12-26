@@ -1,8 +1,13 @@
 package net.lab1024.sa.attendance.controller;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -16,10 +21,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.attendance.domain.entity.AttendanceOvertimeEntity;
 import net.lab1024.sa.attendance.domain.form.AttendanceOvertimeForm;
 import net.lab1024.sa.attendance.service.AttendanceOvertimeService;
+import net.lab1024.sa.common.dto.ResponseDTO;
 
 /**
  * AttendanceOvertimeController单元测试
@@ -56,7 +61,7 @@ class AttendanceOvertimeControllerTest {
         AttendanceOvertimeEntity entity = new AttendanceOvertimeEntity();
         entity.setOvertimeNo("OVERTIME001");
         when(attendanceOvertimeService.submitOvertimeApplication(any(AttendanceOvertimeForm.class)))
-            .thenReturn(entity);
+                .thenReturn(entity);
 
         // When
         ResponseDTO<AttendanceOvertimeEntity> response = attendanceOvertimeController.submitOvertimeApplication(form);

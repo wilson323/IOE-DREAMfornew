@@ -1,20 +1,22 @@
 package net.lab1024.sa.common.organization.dao;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import net.lab1024.sa.common.organization.entity.InterlockRecordEntity;
-import org.apache.ibatis.annotations.*;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+
+import net.lab1024.sa.common.organization.entity.InterlockRecordEntity;
+
 /**
- * 互锁记录数据访问对象
+ * 互锁记录DAO
  * <p>
  * 严格遵循CLAUDE.md规范：
- * - 使用@Mapper注解标识数据访问层
- * - 继承BaseMapper<Entity>使用MyBatis-Plus
- * - 查询方法使用@Transactional(readOnly = true)
- * - 写操作方法使用@Transactional(rollbackFor = Exception.class)
+ * - 使用@Mapper注解
+ * - 继承BaseMapper
+ * - 使用Dao后缀命名
  * </p>
  *
  * @author IOE-DREAM Team
@@ -25,58 +27,43 @@ import java.util.List;
 public interface InterlockRecordDao extends BaseMapper<InterlockRecordEntity> {
 
     /**
-     * 查询互锁组中已锁定的设备
-     * <p>
-     * 用于互锁验证，检查互锁组中是否有其他设备已锁定
-     * </p>
-     *
-     * @param interlockGroupId 互锁组ID
-     * @param excludeDeviceId 排除的设备ID（当前设备）
-     * @return 已锁定的设备记录列表
-     */
-    @Transactional(readOnly = true)
-    @Select("SELECT * FROM t_access_interlock_record " +
-            "WHERE interlock_group_id = #{interlockGroupId} " +
-            "AND device_id != #{excludeDeviceId} " +
-            "AND lock_status = 1 " +
-            "AND deleted_flag = 0 " +
-            "ORDER BY lock_time DESC")
-    List<InterlockRecordEntity> selectLockedDevicesInGroup(
-            @Param("interlockGroupId") Long interlockGroupId,
-            @Param("excludeDeviceId") Long excludeDeviceId);
-
-    /**
-     * 查询设备的互锁记录
+     * 根据设备ID查询互锁记录
      *
      * @param deviceId 设备ID
-     * @return 互锁记录，不存在返回null
+     * @return 互锁记录，如果不存在则返回null
      */
-    @Transactional(readOnly = true)
-    @Select("SELECT * FROM t_access_interlock_record " +
-            "WHERE device_id = #{deviceId} AND deleted_flag = 0 " +
-            "ORDER BY lock_time DESC " +
-            "LIMIT 1")
-    InterlockRecordEntity selectByDeviceId(@Param("deviceId") Long deviceId);
+    default InterlockRecordEntity selectByDeviceId(Long deviceId) {
+        return this.selectOne(
+                new LambdaQueryWrapper<InterlockRecordEntity>()
+                        .eq(InterlockRecordEntity::getDeviceId, deviceId)
+                        .orderByDesc(InterlockRecordEntity::getLockTime)
+                        .last("LIMIT 1"));
+    }
 
     /**
-     * 解锁互锁组中的所有设备
-     * <p>
-     * 用于互锁验证通过后，解锁互锁组中的其他设备
-     * </p>
+     * 解锁互锁组中的其他设备（排除指定设备）
      *
      * @param interlockGroupId 互锁组ID
-     * @param excludeDeviceId 排除的设备ID（当前设备，不需要解锁）
-     * @return 解锁的设备数量
+     * @param excludeDeviceId  排除的设备ID
+     * @return 解锁的记录数
      */
-    @Transactional(rollbackFor = Exception.class)
-    @Update("UPDATE t_access_interlock_record " +
-            "SET lock_status = 0, unlock_time = NOW(), " +
-            "lock_duration = TIMESTAMPDIFF(SECOND, lock_time, NOW()) " +
-            "WHERE interlock_group_id = #{interlockGroupId} " +
-            "AND device_id != #{excludeDeviceId} " +
-            "AND lock_status = 1 " +
-            "AND deleted_flag = 0")
-    int unlockDevicesInGroup(
-            @Param("interlockGroupId") Long interlockGroupId,
-            @Param("excludeDeviceId") Long excludeDeviceId);
+    default int unlockDevicesInGroup(@Param("interlockGroupId") Long interlockGroupId,
+            @Param("excludeDeviceId") Long excludeDeviceId) {
+        List<InterlockRecordEntity> records = this.selectList(
+                new LambdaQueryWrapper<InterlockRecordEntity>()
+                        .eq(InterlockRecordEntity::getInterlockGroupId, interlockGroupId)
+                        .ne(excludeDeviceId != null, InterlockRecordEntity::getDeviceId, excludeDeviceId)
+                        .eq(InterlockRecordEntity::getLockStatus, InterlockRecordEntity.LockStatus.LOCKED));
+
+        int count = 0;
+        for (InterlockRecordEntity record : records) {
+            record.setLockStatus(InterlockRecordEntity.LockStatus.UNLOCKED);
+            record.setUnlockTime(java.time.LocalDateTime.now());
+            int result = this.updateById(record);
+            if (result > 0) {
+                count++;
+            }
+        }
+        return count;
+    }
 }

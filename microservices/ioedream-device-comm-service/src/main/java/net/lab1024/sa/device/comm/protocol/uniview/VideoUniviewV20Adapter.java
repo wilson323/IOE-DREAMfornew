@@ -1,14 +1,16 @@
 package net.lab1024.sa.device.comm.protocol.uniview;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.HashMap;
+import java.util.Map;
+
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import net.lab1024.sa.device.comm.protocol.ProtocolAdapter;
 import net.lab1024.sa.device.comm.protocol.domain.DeviceMessage;
 import net.lab1024.sa.device.comm.protocol.domain.DeviceResponse;
 import net.lab1024.sa.device.comm.protocol.domain.ProtocolErrorResponse;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 宇视科技视频协议V2.0适配器
@@ -28,8 +30,8 @@ import java.util.Map;
  * @version 1.0.0
  * @since 2025-12-18
  */
-@Slf4j
 @Schema(description = "宇视科技视频协议V2.0适配器")
+@Slf4j
 public class VideoUniviewV20Adapter implements ProtocolAdapter {
 
     private static final String PROTOCOL_TYPE = "UNIVIEW_VIDEO_V2_0";
@@ -39,8 +41,8 @@ public class VideoUniviewV20Adapter implements ProtocolAdapter {
 
     // 支持的设备型号（待完善）
     private static final String[] SUPPORTED_MODELS = {
-            "IPC-B212IR", "IPC-B212IR2", "IPC-B212IR3",  // 基础系列
-            "IPC-B212IR4", "IPC-B212IR5", "IPC-B212IR6"  // 扩展系列
+            "IPC-B212IR", "IPC-B212IR2", "IPC-B212IR3", // 基础系列
+            "IPC-B212IR4", "IPC-B212IR5", "IPC-B212IR6" // 扩展系列
     };
 
     @Override
@@ -164,7 +166,7 @@ public class VideoUniviewV20Adapter implements ProtocolAdapter {
     }
 
     @Override
-    public net.lab1024.sa.device.comm.protocol.domain.ProtocolMessage parseDeviceMessage(byte[] rawData, Long deviceId) 
+    public net.lab1024.sa.device.comm.protocol.domain.ProtocolMessage parseDeviceMessage(byte[] rawData, Long deviceId)
             throws net.lab1024.sa.device.comm.protocol.exception.ProtocolParseException {
         log.debug("[宇视科技适配器] 解析设备消息, deviceId={}", deviceId);
         // TODO: 实现协议消息解析
@@ -172,7 +174,7 @@ public class VideoUniviewV20Adapter implements ProtocolAdapter {
     }
 
     @Override
-    public net.lab1024.sa.device.comm.protocol.domain.ProtocolMessage parseDeviceMessage(String hexData, Long deviceId) 
+    public net.lab1024.sa.device.comm.protocol.domain.ProtocolMessage parseDeviceMessage(String hexData, Long deviceId)
             throws net.lab1024.sa.device.comm.protocol.exception.ProtocolParseException {
         log.debug("[宇视科技适配器] 解析设备消息(十六进制), deviceId={}", deviceId);
         // TODO: 实现协议消息解析（十六进制）
@@ -180,7 +182,7 @@ public class VideoUniviewV20Adapter implements ProtocolAdapter {
     }
 
     @Override
-    public byte[] buildDeviceResponse(String messageType, Map<String, Object> businessData, Long deviceId) 
+    public byte[] buildDeviceResponse(String messageType, Map<String, Object> businessData, Long deviceId)
             throws net.lab1024.sa.device.comm.protocol.exception.ProtocolBuildException {
         log.debug("[宇视科技适配器] 构建设备响应, deviceId={}, messageType={}", deviceId, messageType);
         // TODO: 实现设备响应构建
@@ -188,7 +190,7 @@ public class VideoUniviewV20Adapter implements ProtocolAdapter {
     }
 
     @Override
-    public String buildDeviceResponseHex(String messageType, Map<String, Object> businessData, Long deviceId) 
+    public String buildDeviceResponseHex(String messageType, Map<String, Object> businessData, Long deviceId)
             throws net.lab1024.sa.device.comm.protocol.exception.ProtocolBuildException {
         log.debug("[宇视科技适配器] 构建设备响应(十六进制), deviceId={}, messageType={}", deviceId, messageType);
         // TODO: 实现设备响应构建（十六进制）
@@ -200,8 +202,7 @@ public class VideoUniviewV20Adapter implements ProtocolAdapter {
             net.lab1024.sa.device.comm.protocol.domain.ProtocolMessage message) {
         log.debug("[宇视科技适配器] 验证消息, deviceId={}", message.getDeviceId());
         // TODO: 实现消息验证
-        net.lab1024.sa.device.comm.protocol.domain.ProtocolValidationResult result = 
-            new net.lab1024.sa.device.comm.protocol.domain.ProtocolValidationResult();
+        net.lab1024.sa.device.comm.protocol.domain.ProtocolValidationResult result = new net.lab1024.sa.device.comm.protocol.domain.ProtocolValidationResult();
         result.setValid(true);
         return result;
     }
@@ -211,8 +212,7 @@ public class VideoUniviewV20Adapter implements ProtocolAdapter {
             Long deviceId, String operation) {
         log.debug("[宇视科技适配器] 验证设备权限, deviceId={}, operation={}", deviceId, operation);
         // TODO: 实现设备权限验证
-        net.lab1024.sa.device.comm.protocol.domain.ProtocolPermissionResult result = 
-            new net.lab1024.sa.device.comm.protocol.domain.ProtocolPermissionResult();
+        net.lab1024.sa.device.comm.protocol.domain.ProtocolPermissionResult result = new net.lab1024.sa.device.comm.protocol.domain.ProtocolPermissionResult();
         result.setAllowed(true);
         return result;
     }
@@ -222,8 +222,7 @@ public class VideoUniviewV20Adapter implements ProtocolAdapter {
             Map<String, Object> deviceInfo, Map<String, Object> config) {
         log.debug("[宇视科技适配器] 初始化设备");
         // TODO: 实现设备初始化
-        net.lab1024.sa.device.comm.protocol.domain.ProtocolInitResult result = 
-            new net.lab1024.sa.device.comm.protocol.domain.ProtocolInitResult();
+        net.lab1024.sa.device.comm.protocol.domain.ProtocolInitResult result = new net.lab1024.sa.device.comm.protocol.domain.ProtocolInitResult();
         result.setSuccess(true);
         return java.util.concurrent.CompletableFuture.completedFuture(result);
     }
@@ -233,8 +232,7 @@ public class VideoUniviewV20Adapter implements ProtocolAdapter {
             Map<String, Object> registrationData, Long deviceId) {
         log.debug("[宇视科技适配器] 处理设备注册, deviceId={}", deviceId);
         // TODO: 实现设备注册处理
-        net.lab1024.sa.device.comm.protocol.domain.ProtocolRegistrationResult result = 
-            new net.lab1024.sa.device.comm.protocol.domain.ProtocolRegistrationResult();
+        net.lab1024.sa.device.comm.protocol.domain.ProtocolRegistrationResult result = new net.lab1024.sa.device.comm.protocol.domain.ProtocolRegistrationResult();
         result.setSuccess(true);
         return result;
     }
@@ -244,8 +242,7 @@ public class VideoUniviewV20Adapter implements ProtocolAdapter {
             Map<String, Object> heartbeatData, Long deviceId) {
         log.debug("[宇视科技适配器] 处理设备心跳, deviceId={}", deviceId);
         // TODO: 实现设备心跳处理
-        net.lab1024.sa.device.comm.protocol.domain.ProtocolHeartbeatResult result = 
-            new net.lab1024.sa.device.comm.protocol.domain.ProtocolHeartbeatResult();
+        net.lab1024.sa.device.comm.protocol.domain.ProtocolHeartbeatResult result = new net.lab1024.sa.device.comm.protocol.domain.ProtocolHeartbeatResult();
         result.setSuccess(true);
         result.setDeviceId(deviceId);
         result.setOnline(true);
@@ -257,8 +254,7 @@ public class VideoUniviewV20Adapter implements ProtocolAdapter {
     public net.lab1024.sa.device.comm.protocol.domain.ProtocolDeviceStatus getDeviceStatus(Long deviceId) {
         log.debug("[宇视科技适配器] 获取设备状态, deviceId={}", deviceId);
         // TODO: 实现设备状态获取
-        net.lab1024.sa.device.comm.protocol.domain.ProtocolDeviceStatus status = 
-            new net.lab1024.sa.device.comm.protocol.domain.ProtocolDeviceStatus();
+        net.lab1024.sa.device.comm.protocol.domain.ProtocolDeviceStatus status = new net.lab1024.sa.device.comm.protocol.domain.ProtocolDeviceStatus();
         status.setDeviceId(deviceId);
         status.setOnline(true);
         return status;
@@ -283,8 +279,7 @@ public class VideoUniviewV20Adapter implements ProtocolAdapter {
             String businessType, Map<String, Object> businessData, Long deviceId) {
         log.debug("[宇视科技适配器] 处理门禁业务, deviceId={}, businessType={}", deviceId, businessType);
         // TODO: 实现门禁业务处理
-        net.lab1024.sa.device.comm.protocol.domain.ProtocolProcessResult result = 
-            new net.lab1024.sa.device.comm.protocol.domain.ProtocolProcessResult();
+        net.lab1024.sa.device.comm.protocol.domain.ProtocolProcessResult result = new net.lab1024.sa.device.comm.protocol.domain.ProtocolProcessResult();
         result.setSuccess(true);
         return java.util.concurrent.CompletableFuture.completedFuture(result);
     }
@@ -294,8 +289,7 @@ public class VideoUniviewV20Adapter implements ProtocolAdapter {
             String businessType, Map<String, Object> businessData, Long deviceId) {
         log.debug("[宇视科技适配器] 处理考勤业务, deviceId={}, businessType={}", deviceId, businessType);
         // TODO: 实现考勤业务处理
-        net.lab1024.sa.device.comm.protocol.domain.ProtocolProcessResult result = 
-            new net.lab1024.sa.device.comm.protocol.domain.ProtocolProcessResult();
+        net.lab1024.sa.device.comm.protocol.domain.ProtocolProcessResult result = new net.lab1024.sa.device.comm.protocol.domain.ProtocolProcessResult();
         result.setSuccess(true);
         return java.util.concurrent.CompletableFuture.completedFuture(result);
     }
@@ -305,8 +299,7 @@ public class VideoUniviewV20Adapter implements ProtocolAdapter {
             String businessType, Map<String, Object> businessData, Long deviceId) {
         log.debug("[宇视科技适配器] 处理消费业务, deviceId={}, businessType={}", deviceId, businessType);
         // TODO: 实现消费业务处理
-        net.lab1024.sa.device.comm.protocol.domain.ProtocolProcessResult result = 
-            new net.lab1024.sa.device.comm.protocol.domain.ProtocolProcessResult();
+        net.lab1024.sa.device.comm.protocol.domain.ProtocolProcessResult result = new net.lab1024.sa.device.comm.protocol.domain.ProtocolProcessResult();
         result.setSuccess(true);
         return java.util.concurrent.CompletableFuture.completedFuture(result);
     }

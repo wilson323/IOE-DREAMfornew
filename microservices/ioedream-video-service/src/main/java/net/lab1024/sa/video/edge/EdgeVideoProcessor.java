@@ -1,6 +1,7 @@
 package net.lab1024.sa.video.edge;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -9,6 +10,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import lombok.extern.slf4j.Slf4j;
+
 import net.lab1024.sa.video.edge.ai.EdgeAIEngine;
 import net.lab1024.sa.video.edge.communication.EdgeCommunicationManager;
 import net.lab1024.sa.video.edge.model.EdgeCapability;
@@ -35,7 +37,7 @@ import net.lab1024.sa.video.edge.model.InferenceResult;
 public class EdgeVideoProcessor {
 
     private final Map<String, EdgeDevice> connectedDevices = new ConcurrentHashMap<>();
-    private final Map<String, EdgeAIEngine> aiEngines = new ConcurrentHashMap<>();
+    private final Map<String, EdgeAIEngine> aiEngines = new HashMap<>();
     private final ExecutorService edgeTaskExecutor;
     private final EdgeCommunicationManager communicationManager;
 
@@ -162,7 +164,7 @@ public class EdgeVideoProcessor {
     public Map<String, Future<InferenceResult>> performBatchInference(List<InferenceRequest> batchRequests) {
         log.info("[边缘视频处理器] 执行批量边缘推理，请求数量={}", batchRequests.size());
 
-        Map<String, Future<InferenceResult>> results = new ConcurrentHashMap<>();
+        Map<String, Future<InferenceResult>> results = new HashMap<>();
 
         for (InferenceRequest request : batchRequests) {
             String taskId = request.getTaskId();

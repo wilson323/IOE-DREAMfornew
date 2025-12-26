@@ -1,5 +1,7 @@
 package net.lab1024.sa.common.auth.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -13,7 +15,6 @@ import org.springframework.util.StringUtils;
 
 import io.micrometer.observation.annotation.Observed;
 import jakarta.annotation.Resource;
-import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.auth.dao.UserDao;
 import net.lab1024.sa.common.auth.dao.UserSessionDao;
 import net.lab1024.sa.common.auth.domain.dto.LoginRequestDTO;
@@ -23,36 +24,28 @@ import net.lab1024.sa.common.auth.domain.vo.UserInfoVO;
 import net.lab1024.sa.common.auth.manager.AuthManager;
 import net.lab1024.sa.common.auth.service.AuthService;
 import net.lab1024.sa.common.auth.util.JwtTokenUtil;
-import net.lab1024.sa.common.security.entity.UserEntity;
 import net.lab1024.sa.common.exception.BusinessException;
-import net.lab1024.sa.common.exception.SystemException;
 import net.lab1024.sa.common.exception.ParamException;
+import net.lab1024.sa.common.exception.SystemException;
+import net.lab1024.sa.common.organization.entity.UserEntity;
 
 /**
- * 认证服务实现
- * 整合自ioedream-auth-service
+ * 认证服务实现 整合自ioedream-auth-service
  *
- * 职责：
- * - 用户登录认证
- * - JWT令牌管理
- * - 权限验证
- * - 会话管理
+ * 职责： - 用户登录认证 - JWT令牌管理 - 权限验证 - 会话管理
  *
- * 符合CLAUDE.md规范：
- * - Service层处理核心业务逻辑
- * - 使用@Resource依赖注入
- * - 使用@Transactional事务管理
- * - 调用Manager层处理复杂流程
- * - 实现企业级安全特性
+ * 符合CLAUDE.md规范： - Service层处理核心业务逻辑 - 使用@Resource依赖注入 - 使用@Transactional事务管理 -
+ * 调用Manager层处理复杂流程 - 实现企业级安全特性
  *
  * @author IOE-DREAM Team
  * @version 1.0.0
  * @since 2025-12-02（整合自auth-service）
  */
-@Slf4j
 @Service
 @Transactional(rollbackFor = Exception.class)
+@Slf4j
 public class AuthServiceImpl implements AuthService {
+
 
     @Resource
     private UserSessionDao userSessionDao;
@@ -72,14 +65,10 @@ public class AuthServiceImpl implements AuthService {
     /**
      * 用户登录
      *
-     * 企业级特性：
-     * - 防暴力破解（登录失败计数）
-     * - 账户锁定机制
-     * - 并发登录控制
-     * - 会话管理
-     * - 审计日志
+     * 企业级特性： - 防暴力破解（登录失败计数） - 账户锁定机制 - 并发登录控制 - 会话管理 - 审计日志
      *
-     * @param request 登录请求
+     * @param request
+     *                登录请求
      * @return 登录响应
      */
     @Override
@@ -125,14 +114,9 @@ public class AuthServiceImpl implements AuthService {
             List<String> roles = new ArrayList<>(roleSet);
 
             // 6. 生成JWT令牌
-            String accessToken = jwtTokenUtil.generateAccessToken(
-                    user.getId(),
-                    user.getUsername(),
-                    roles,
+            String accessToken = jwtTokenUtil.generateAccessToken(user.getId(), user.getUsername(), roles,
                     permissions);
-            String refreshToken = jwtTokenUtil.generateRefreshToken(
-                    user.getId(),
-                    user.getUsername());
+            String refreshToken = jwtTokenUtil.generateRefreshToken(user.getId(), user.getUsername());
 
             // 7. 管理用户会话（Manager层处理复杂流程）
             authManager.manageUserSession(user.getId(), accessToken, request.getDeviceInfo());
@@ -144,19 +128,11 @@ public class AuthServiceImpl implements AuthService {
             userDao.updateLastLogin(user.getId(), LocalDateTime.now(), request.getLoginIp());
 
             // 10. 构建响应
-            LoginResponseVO response = LoginResponseVO.builder()
-                    .accessToken(accessToken)
-                    .refreshToken(refreshToken)
-                    .tokenType("Bearer")
-                    .expiresIn(jwtTokenUtil.getRemainingExpiration(accessToken))
-                    .refreshExpiresIn(jwtTokenUtil.getRemainingExpiration(refreshToken))
-                    .userId(user.getId())
-                    .username(user.getUsername())
-                    .nickname(user.getRealName())
-                    .avatarUrl(user.getAvatar())
-                    .permissions(permissions)
-                    .roles(roles)
-                    .build();
+            LoginResponseVO response = LoginResponseVO.builder().accessToken(accessToken).refreshToken(refreshToken)
+                    .tokenType("Bearer").expiresIn(jwtTokenUtil.getRemainingExpiration(accessToken))
+                    .refreshExpiresIn(jwtTokenUtil.getRemainingExpiration(refreshToken)).userId(user.getId())
+                    .username(user.getUsername()).nickname(user.getRealName()).avatarUrl(user.getAvatar())
+                    .permissions(permissions).roles(roles).build();
 
             log.info("用户登录成功，用户名: {}, 用户ID: {}", request.getUsername(), user.getId());
             return response;
@@ -176,12 +152,10 @@ public class AuthServiceImpl implements AuthService {
     /**
      * 刷新令牌
      *
-     * 企业级特性：
-     * - 令牌轮换（Token Rotation）
-     * - 旧令牌黑名单
-     * - 安全令牌刷新
+     * 企业级特性： - 令牌轮换（Token Rotation） - 旧令牌黑名单 - 安全令牌刷新
      *
-     * @param request 刷新令牌请求
+     * @param request
+     *                刷新令牌请求
      * @return 登录响应
      */
     @Override
@@ -226,19 +200,12 @@ public class AuthServiceImpl implements AuthService {
             authManager.blacklistToken(refreshToken);
 
             // 8. 构建响应
-            LoginResponseVO response = LoginResponseVO.builder()
-                    .accessToken(newAccessToken)
-                    .refreshToken(newRefreshToken)
-                    .tokenType("Bearer")
+            LoginResponseVO response = LoginResponseVO.builder().accessToken(newAccessToken)
+                    .refreshToken(newRefreshToken).tokenType("Bearer")
                     .expiresIn(jwtTokenUtil.getRemainingExpiration(newAccessToken))
-                    .refreshExpiresIn(jwtTokenUtil.getRemainingExpiration(newRefreshToken))
-                    .userId(user.getId())
-                    .username(user.getUsername())
-                    .nickname(user.getRealName())
-                    .avatarUrl(user.getAvatar())
-                    .permissions(permissions)
-                    .roles(roles)
-                    .build();
+                    .refreshExpiresIn(jwtTokenUtil.getRemainingExpiration(newRefreshToken)).userId(user.getId())
+                    .username(user.getUsername()).nickname(user.getRealName()).avatarUrl(user.getAvatar())
+                    .permissions(permissions).roles(roles).build();
 
             log.info("刷新令牌成功，用户名: {}", username);
             return response;
@@ -258,12 +225,10 @@ public class AuthServiceImpl implements AuthService {
     /**
      * 用户登出
      *
-     * 企业级特性：
-     * - 令牌撤销
-     * - 会话清理
-     * - 审计日志
+     * 企业级特性： - 令牌撤销 - 会话清理 - 审计日志
      *
-     * @param token 访问令牌
+     * @param token
+     *              访问令牌
      */
     @Override
     @Observed(name = "auth.logout", contextualName = "auth-logout")
@@ -293,11 +258,10 @@ public class AuthServiceImpl implements AuthService {
     /**
      * 验证令牌
      *
-     * 企业级特性：
-     * - 多重验证（格式+签名+黑名单+会话）
-     * - 安全令牌验证
+     * 企业级特性： - 多重验证（格式+签名+黑名单+会话） - 安全令牌验证
      *
-     * @param token 访问令牌
+     * @param token
+     *              访问令牌
      * @return 是否有效
      */
     @Override
@@ -323,7 +287,7 @@ public class AuthServiceImpl implements AuthService {
                 }
 
                 // 更新会话最后访问时间
-                authManager.updateSessionLastAccessTime(token);
+                authManager.updateSessionLastAccessTime(userId, token);
             }
 
             return true;
@@ -339,7 +303,8 @@ public class AuthServiceImpl implements AuthService {
     /**
      * 获取用户信息
      *
-     * @param token 访问令牌
+     * @param token
+     *              访问令牌
      * @return 用户信息响应
      */
     @Override
@@ -358,17 +323,10 @@ public class AuthServiceImpl implements AuthService {
                 throw new BusinessException("AUTH_USER_NOT_FOUND", "获取用户信息失败");
             }
 
-            return UserInfoVO.builder()
-                    .userId(user.getId())
-                    .username(user.getUsername())
-                    .realName(user.getRealName())
-                    .nickname(user.getRealName())
-                    .email(user.getEmail())
-                    .phone(user.getPhone())
-                    .avatarUrl(user.getAvatar())
-                    .status(user.getStatus())
-                    .lastLoginTime(user.getLastLoginTime())
-                    .build();
+            return UserInfoVO.builder().userId(user.getId()).username(user.getUsername())
+                    .realName(user.getRealName()).nickname(user.getRealName()).email(user.getEmail())
+                    .phone(user.getPhone()).avatarUrl(user.getAvatar()).status(user.getStatus())
+                    .lastLoginTime(user.getLastLoginTime()).build();
         } catch (BusinessException e) {
             log.warn("[获取用户信息] 业务异常，error={}", e.getMessage());
             throw e;
@@ -384,8 +342,10 @@ public class AuthServiceImpl implements AuthService {
     /**
      * 检查权限
      *
-     * @param token      访问令牌
-     * @param permission 权限标识
+     * @param token
+     *                   访问令牌
+     * @param permission
+     *                   权限标识
      * @return 是否具有权限
      */
     @Override
@@ -411,8 +371,10 @@ public class AuthServiceImpl implements AuthService {
     /**
      * 检查角色
      *
-     * @param token 访问令牌
-     * @param role  角色标识
+     * @param token
+     *              访问令牌
+     * @param role
+     *              角色标识
      * @return 是否具有角色
      */
     @Override
@@ -435,3 +397,4 @@ public class AuthServiceImpl implements AuthService {
         }
     }
 }
+

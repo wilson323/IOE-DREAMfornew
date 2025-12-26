@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 import jakarta.validation.Valid;
+import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.common.openapi.domain.response.PageResult;
 import net.lab1024.sa.video.domain.form.VideoStreamQueryForm;
 import net.lab1024.sa.video.domain.form.VideoStreamStartForm;
 import net.lab1024.sa.video.domain.vo.VideoStreamSessionVO;
@@ -215,7 +215,7 @@ public interface VideoStreamService {
     default ResponseDTO<Void> resumeStream(Long streamId) {
         // 当前版本未提供真实"恢复"能力：降级为重启流
         ResponseDTO<VideoStreamSessionVO> restartResult = restartStream(streamId);
-        if (restartResult != null && restartResult.getOk()) {
+        if (restartResult != null && restartResult.isSuccess()) {
             return ResponseDTO.ok();
         }
         return ResponseDTO.<Void>error("RESUME_STREAM_FAILED", "恢复视频流失败");
@@ -252,7 +252,7 @@ public interface VideoStreamService {
         // Controller传入分钟，转换为秒
         Integer seconds = duration == null ? null : duration * 60;
         ResponseDTO<Map<String, Object>> recordResult = recordStream(streamId, seconds);
-        if (recordResult != null && recordResult.getOk()) {
+        if (recordResult != null && recordResult.isSuccess()) {
             return ResponseDTO.ok();
         }
         return ResponseDTO.<Void>error("RECORD_START_FAILED", "启动录制失败");

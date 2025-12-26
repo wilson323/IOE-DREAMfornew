@@ -1,8 +1,13 @@
 package net.lab1024.sa.video.service;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,13 +23,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
+import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.common.openapi.domain.response.PageResult;
 import net.lab1024.sa.common.organization.dao.DeviceDao;
 import net.lab1024.sa.common.organization.entity.DeviceEntity;
 import net.lab1024.sa.video.domain.form.VideoDeviceQueryForm;
 import net.lab1024.sa.video.domain.vo.VideoDeviceVO;
-import net.lab1024.sa.video.service.impl.VideoDeviceServiceImpl;
 
 /**
  * VideoDeviceServiceImpl单元测试
@@ -45,7 +49,7 @@ class VideoDeviceServiceImplTest {
     private DeviceDao deviceDao;
 
     @InjectMocks
-    private VideoDeviceServiceImpl videoDeviceService;
+    private net.lab1024.sa.video.service.impl.VideoDeviceServiceImpl videoDeviceService;
 
     private DeviceEntity mockDevice;
     private VideoDeviceQueryForm queryForm;
@@ -54,14 +58,14 @@ class VideoDeviceServiceImplTest {
     void setUp() {
         // 准备测试数据
         mockDevice = new DeviceEntity();
-        mockDevice.setId(1001L);
+        mockDevice.setDeviceId(1001L);  // Long: 设备ID
         mockDevice.setDeviceCode("CAM001");
         mockDevice.setDeviceName("摄像头001");
-        mockDevice.setDeviceType("CAMERA");
-        mockDevice.setAreaId(2001L);
+        mockDevice.setDeviceType(1);  // Integer: 设备类型
+        mockDevice.setAreaId(2001L);  // Long: 区域ID
         mockDevice.setIpAddress("192.168.1.100");
         mockDevice.setPort(554);
-        mockDevice.setDeviceStatus("ONLINE");
+        mockDevice.setDeviceStatus(1);
         mockDevice.setEnabled(1);
         mockDevice.setDeletedFlag(0);
 
@@ -131,7 +135,7 @@ class VideoDeviceServiceImplTest {
 
         // Then
         assertNotNull(response);
-        assertTrue(response.getOk());
+        assertTrue(response.isSuccess());
         assertNotNull(response.getData());
         assertEquals(1001L, response.getData().getDeviceId());
         assertEquals("摄像头001", response.getData().getDeviceName());
@@ -150,7 +154,7 @@ class VideoDeviceServiceImplTest {
 
         // Then
         assertNotNull(response);
-        assertFalse(response.getOk());
+        assertFalse(response.isSuccess());
         assertEquals("设备不存在", response.getMessage());
         verify(deviceDao, times(1)).selectById(9999L);
     }
@@ -160,8 +164,8 @@ class VideoDeviceServiceImplTest {
     void testGetDeviceDetail_WrongType() {
         // Given
         DeviceEntity nonCameraDevice = new DeviceEntity();
-        nonCameraDevice.setId(1002L);
-        nonCameraDevice.setDeviceType("ACCESS_CONTROL"); // 非摄像头设备
+        nonCameraDevice.setDeviceId(1002L);  // Long: 设备ID
+        nonCameraDevice.setDeviceType(2); // Integer: 非摄像头设备类型
 
         when(deviceDao.selectById(1002L)).thenReturn(nonCameraDevice);
 
@@ -170,7 +174,7 @@ class VideoDeviceServiceImplTest {
 
         // Then
         assertNotNull(response);
-        assertFalse(response.getOk());
+        assertFalse(response.isSuccess());
         assertEquals("设备类型不匹配", response.getMessage());
         verify(deviceDao, times(1)).selectById(1002L);
     }

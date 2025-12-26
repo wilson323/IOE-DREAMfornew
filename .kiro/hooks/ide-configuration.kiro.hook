@@ -1,0 +1,328 @@
+# IOE-DREAM IDE配置Hook
+# 为开发者提供IDE级别的实时代码质量检查和规范提示
+
+hook {
+  name: "IDE配置和实时检查器"
+  description: "为IDE提供实时代码质量检查、规范提示和最佳实践建议，确保开发过程中遵循IOE-DREAM企业级标准"
+  priority: "P0"
+
+  # 触发条件
+  triggers {
+    ide_events {
+      events: ["file_open", "file_save", "code_completion", "refactor"]
+      file_types: ["*.java", "*.xml", "*.yml", "*.yaml", "*.md"]
+    }
+
+    file_patterns {
+      # Java源码文件
+      include: ["**/src/main/java/**/*.java"]
+      include: ["**/src/test/java/**/*.java"]
+      # 配置文件
+      include: ["**/src/main/resources/**/*.yml"]
+      include: ["**/src/main/resources/**/*.yaml"]
+      include: ["**/src/main/resources/**/*.xml"]
+      # 文档文件
+      include: ["**/*.md"]
+    }
+  }
+
+  # 执行阶段
+  stages {
+    stage1: {
+      name: "Java代码实时检查"
+      commands: [
+        "echo \"💻 Stage 1: Java代码实时检查\"",
+        "",
+        "# 检查注解使用规范",
+        "echo \"检查注解使用规范...\"",
+        "AUTOWIRED_CHECK=$(grep -n \"@Autowired\" \"$1\" 2>/dev/null || echo \"\")",
+        "if [ ! -z \"$AUTOWIRED_CHECK\" ]; then",
+        "  echo \"❌ 第$(echo $AUTOWIRED_CHECK | cut -d: -f1)行：@Autowired违规使用，应使用@Resource\"",
+        "  echo \"建议修改为：@Resource\"",
+        "fi",
+        "",
+        "REPOSITORY_CHECK=$(grep -n \"@Repository\" \"$1\" 2>/dev/null || echo \"\")",
+        "if [ ! -z \"$REPOSITORY_CHECK\" ]; then",
+        "  echo \"❌ 第$(echo $REPOSITORY_CHECK | cut -d: -f1)行：@Repository违规使用，应使用@Mapper\"",
+        "  echo \"建议修改为：@Mapper\"",
+        "fi",
+        "",
+        "# 检查包导入规范",
+        "echo \"检查包导入规范...\"",
+        "JPA_IMPORTS=$(grep -n \"jakarta.persistence\" \"$1\" 2>/dev/null || echo \"\")",
+        "if [ ! -z \"$JPA_IMPORTS\" ]; then",
+        "  echo \"❌ 第$(echo $JPA_IMPORTS | cut -d: -f1)行：JPA包导入违规，应使用MyBatis-Plus\"",
+        "  echo \"建议移除jakarta.persistence导入，使用MyBatis-Plus注解\"",
+        "fi",
+        "",
+        "# 检查日志注解使用",
+        "echo \"检查日志注解使用...\"",
+        "LOMBOK_SLF4J_CHECK=$(grep -n \"@Slf4j\" \"$1\" 2>/dev/null || echo \"\")",
+        "LOGGER_FACTORY_CHECK=$(grep -n \"LoggerFactory.getLogger\" \"$1\" 2>/dev/null || echo \"\")",
+        "if [ -z \"$LOMBOK_SLF4J_CHECK\" ] && [ ! -z \"$LOGGER_FACTORY_CHECK\" ]; then",
+        "  echo \"⚠️ 建议：使用@Slf4j注解替代LoggerFactory.getLogger()\"",
+        "  echo \"添加：import lombok.extern.slf4j.Slf4j;\"",
+        "  echo \"类上添加：@Slf4j注解\"",
+        "fi",
+        "",
+        "echo \"✅ Java代码实时检查完成\""
+      ]
+    }
+
+    stage2: {
+      name: "架构模式实时检查"
+      commands: [
+        "echo \"🏗️ Stage 2: 架构模式实时检查\"",
+        "",
+        "# 检查文件类型和位置",
+        "FILE_PATH=\"$1\"",
+        "if echo \"$FILE_PATH\" | grep -q \"Controller.java\"; then",
+        "  echo \"检查Controller层架构规范...\"",
+        "  ",
+        "  # 检查Controller是否直接注入DAO",
+        "  DAO_INJECTION=$(grep -n \"Dao\\|Mapper\" \"$1\" 2>/dev/null || echo \"\")",
+        "  if [ ! -z \"$DAO_INJECTION\" ]; then",
+        "    echo \"❌ Controller层不应直接注入DAO，应通过Service层\"",
+        "    echo \"建议架构：Controller → Service → Manager → DAO\"",
+        "  fi",
+        "  ",
+        "  # 检查REST注解使用",
+        "  REST_MAPPING_CHECK=$(grep -n \"@RequestMapping\\|@GetMapping\\|@PostMapping\" \"$1\" 2>/dev/null || echo \"\")",
+        "  if [ -z \"$REST_MAPPING_CHECK\" ]; then",
+        "    echo \"⚠️ 建议：为Controller添加REST映射注解\"",
+        "  fi",
+        "fi",
+        "",
+        "if echo \"$FILE_PATH\" | grep -q \"Service.java\"; then",
+        "  echo \"检查Service层架构规范...\"",
+        "  ",
+        "  # 检查Service是否直接操作MyBatis-Plus",
+        "  MYBATIS_DIRECT_CHECK=$(grep -n \"insert\\|update\\|delete\\|selectList\" \"$1\" 2>/dev/null || echo \"\")",
+        "  if [ ! -z \"$MYBATIS_DIRECT_CHECK\" ]; then",
+        "    echo \"⚠️ 建议：Service层应通过Manager层操作数据，避免直接使用MyBatis-Plus方法\"",
+        "  fi",
+        "fi",
+        "",
+        "if echo \"$FILE_PATH\" | grep -q \"Manager.java\"; then",
+        "  echo \"检查Manager层架构规范...\"",
+        "  ",
+        "  # 检查Manager是否使用Spring注解",
+        "  SPRING_ANNOTATIONS=$(grep -n \"@Component\\|@Service\\|@Repository\" \"$1\" 2>/dev/null || echo \"\")",
+        "  if [ ! -z \"$SPRING_ANNOTATIONS\" ]; then",
+        "    echo \"⚠️ 建议：Manager层应为纯Java类，不使用Spring注解\"",
+        "  fi",
+        "fi",
+        "",
+        "echo \"✅ 架构模式实时检查完成\""
+      ]
+    }
+
+    stage3: {
+      name: "代码质量和最佳实践检查"
+      commands: [
+        "echo \"📏 Stage 3: 代码质量和最佳实践检查\"",
+        "",
+        "# 检查方法复杂度",
+        "echo \"检查方法复杂度...\"",
+        "LONG_METHODS=$(grep -n -A 20 \"public.*{$\" \"$1\" 2>/dev/null | awk '/public.*{$/{flag=1; line=NR} flag && /}$/{print line\":\"NR-1; flag=0}' | awk -F: '$2-$1>20{print $1}')",
+        "if [ ! -z \"$LONG_METHODS\" ]; then",
+        "  echo \"⚠️ 发现长方法（超过20行），建议拆分为多个方法：$LONG_METHODS\"",
+        "fi",
+        "",
+        "# 检查异常处理",
+        "echo \"检查异常处理...\"",
+        "CATCH_BLOCKS=$(grep -n -A 2 \"catch.*{\" \"$1\" 2>/dev/null || echo \"\")",
+        "if echo \"$CATCH_BLOCKS\" | grep -q \"printStackTrace\"; then",
+        "  echo \"⚠️ 建议：避免使用printStackTrace()，应使用日志框架记录异常\"",
+        "fi",
+        "",
+        "if echo \"$CATCH_BLOCKS\" | grep -q \"catch.*Exception.*Exception\"; then",
+        "  echo \"⚠️ 建议：使用具体的异常类型而非Exception\";",
+        "fi",
+        "",
+        "# 检查硬编码字符串",
+        "echo \"检查硬编码字符串...\"",
+        "HARDCODED_STRINGS=$(grep -n '\"[^\"]*[Cc]onnection\\|[Uu]sername\\|[Pp]assword' \"$1\" 2>/dev/null || echo \"\")",
+        "if [ ! -z \"$HARDCODED_STRINGS\" ]; then",
+        "  echo \"⚠️ 发现可能的硬编码配置，建议使用配置文件或环境变量：$HARDCODED_STRINGS\"",
+        "fi",
+        "",
+        "# 检查注释质量",
+        "echo \"检查注释质量...\"",
+        "CLASS_COMMENT=$(grep -A 5 \"class.*{$\" \"$1\" 2>/dev/null | grep -v \"^\\s*$\" | grep -v \"^\\s*//\" | grep -v \"^\\s*\\*\" | head -1)",
+        "if [ -z \"$CLASS_COMMENT\" ]; then",
+        "  echo \"⚠️ 建议：为类添加JavaDoc注释说明类的作用和职责\"",
+        "fi",
+        "",
+        "echo \"✅ 代码质量和最佳实践检查完成\""
+      ]
+    }
+
+    stage4: {
+      name: "配置文件实时检查"
+      commands: [
+        "echo \"⚙️ Stage 4: 配置文件实时检查\"",
+        "",
+        "if echo \"$1\" | grep -q \"\\.yml$\\|\\.yaml$\"; then",
+        "  echo \"检查YAML配置文件...\"",
+        "  ",
+        "  # 检查YAML语法",
+        "  if command -v yamllint >/dev/null 2>&1; then",
+        "    yamllint \"$1\" || echo \"YAML语法检查完成\"",
+        "  fi",
+        "  ",
+        "  # 检查配置项规范性",
+        "  if grep -q \"spring.datasource\" \"$1\" 2>/dev/null; then",
+        "    echo \"发现数据库配置，请确保：\"",
+        "    echo \"1. 使用Druid连接池而非HikariCP\"",
+        "    echo \"2. 敏感信息使用加密配置\"",
+        "  fi",
+        "  ",
+        "  if grep -q \"server.port\" \"$1\" 2>/dev/null; then",
+        "    PORT=$(grep \"server.port\" \"$1\" | awk '{print $2}')",
+        "    echo \"发现服务端口配置: $PORT\"",
+        "  fi",
+        "fi",
+        "",
+        "if echo \"$1\" | grep -q \"pom\\.xml$\"; then",
+        "  echo \"检查Maven配置文件...\"",
+        "  ",
+        "  # 检查Spring Boot版本",
+        "  SPRING_BOOT_VERSION=$(grep -A 1 \"spring-boot-starter-parent\" \"$1\" | grep -o '<version>[^<]*' | sed 's/<version>//' 2>/dev/null || echo \"\")",
+        "  if [ ! -z \"$SPRING_BOOT_VERSION\" ]; then",
+        "    echo \"Spring Boot版本: $SPRING_BOOT_VERSION\"",
+        "    if ! echo \"$SPRING_BOOT_VERSION\" | grep -q \"3.5\"; then",
+        "      echo \"⚠️ 建议使用Spring Boot 3.5.x版本\"",
+        "    fi",
+        "  fi",
+        "  ",
+        "  # 检查依赖管理",
+        "  if grep -q \"jakarta.persistence\" \"$1\" 2>/dev/null; then",
+        "    echo \"❌ 发现JPA依赖，应使用MyBatis-Plus\"",
+        "  fi",
+        "fi",
+        "",
+        "echo \"✅ 配置文件实时检查完成\""
+      ]
+    }
+
+    stage5: {
+      name: "文档实时检查"
+      commands: [
+        "echo \"📚 Stage 5: 文档实时检查\"",
+        "",
+        "if echo \"$1\" | grep -q \"\\.md$\"; then",
+        "  echo \"检查Markdown文档...\"",
+        "  ",
+        "  # 检查技术栈版本一致性",
+        "  if grep -q \"Spring Boot\" \"$1\" 2>/dev/null; then",
+        "    SPRING_VERSIONS=$(grep \"Spring Boot\" \"$1\" | grep -o '[0-9]\\+\\.[0-9]\\+\\.[0-9]\\+' || echo \"\")",
+        "    if [ ! -z \"$SPRING_VERSIONS\" ]; then",
+        "      echo \"发现Spring Boot版本信息: $SPRING_VERSIONS\"",
+        "      if ! echo \"$SPRING_VERSIONS\" | grep -q \"3.5\"; then",
+        "        echo \"⚠️ 建议更新为Spring Boot 3.5.8版本\"",
+        "      fi",
+        "    fi",
+        "  fi",
+        "  ",
+        "  # 检查代码示例规范",
+        "  if grep -q \"@Autowired\" \"$1\" 2>/dev/null; then",
+        "    echo \"❌ 文档中包含@Autowired示例，应更新为@Resource\"",
+        "  fi",
+        "  ",
+        "  if grep -q \"@Repository\" \"$1\" 2>/dev/null; then",
+        "    echo \"❌ 文档中包含@Repository示例，应更新为@Mapper\"",
+        "  fi",
+        "  ",
+        "  if grep -q \"javax.persistence.Entity\" \"$1\" 2>/dev/null; then",
+        "    echo \"❌ 文档中包含JPA示例，应更新为MyBatis-Plus注解\"",
+        "  fi",
+        "  ",
+        "  # 检查文档结构",
+        "  if ! grep -q \"^# \" \"$1\" 2>/dev/null; then",
+        "      echo \"⚠️ 建议为文档添加标题\"",
+        "  fi",
+        "fi",
+        "",
+        "echo \"✅ 文档实时检查完成\""
+      ]
+    }
+  }
+
+  # 成功消息
+  success {
+    message: "✅ IDE实时检查完成！代码符合IOE-DREAM企业级标准 💻"
+    details: [
+      "- Java代码规范: 注解使用、包导入、日志注解检查通过",
+      "- 架构模式: 四层架构、分层职责检查通过",
+      "- 代码质量: 方法复杂度、异常处理、注释质量检查通过",
+      "- 配置文件: YAML语法、Maven配置、依赖规范检查通过",
+      "- 文档规范: 技术栈版本、代码示例、文档结构检查通过"
+    ]
+  }
+
+  # 失败消息和建议
+  failure {
+    message: "❌ IDE实时检查发现问题！请按照建议修改代码"
+    suggestions: [
+      "1. 使用@Resource替代@Autowired",
+      "2. 使用@Mapper替代@Repository",
+      "3. 移除JPA导入，使用MyBatis-Plus注解",
+      "4. 遵循四层架构模式，避免跨层访问",
+      "5. 拆分长方法，提高代码可读性",
+      "6. 使用日志框架替代printStackTrace",
+      "7. 使用配置文件管理敏感信息",
+      "8. 更新文档中的技术栈版本和代码示例",
+      "9. 使用/call-skills tech-stack-unification-guardian进行技术栈统一"
+    ]
+    blocking: false
+  }
+
+  # IDE集成配置
+  ide_integration {
+    supported_ides: ["IntelliJ IDEA", "Eclipse", "VS Code", "WebStorm"]
+
+    intellij_idea: {
+      plugin_suggestions: [
+        "Lombok Plugin",
+        "MyBatis Log Plugin",
+        "SonarLint",
+        "CheckStyle-IDEA",
+        "Alibaba Java Coding Guidelines"
+      ]
+
+      live_templates: [
+        "log: 自动生成@Slf4j日志代码",
+        "res: 生成@Resource注入代码",
+        "ctrl: 生成Controller基础结构",
+        "serv: 生成Service基础结构",
+        "mgr: 生成Manager基础结构"
+      ]
+    }
+
+    vscode: {
+      extension_suggestions: [
+        "Extension Pack for Java",
+        "Lombok Annotations Support for VS Code",
+        "SonarLint",
+        "Checkstyle for Java",
+        "YAML Support"
+      ]
+
+      settings: {
+        "java.compile.nullAnalysis.mode": "automatic",
+        "java.format.settings.url": ".vscode/java-format.xml",
+        "java.checkstyle.configuration": ".vscode/checkstyle.xml"
+      }
+    }
+  }
+
+  # 输出配置
+  output {
+    verbose: true
+    color: true
+    log_file: ".kiro/logs/ide-real-time-check-$(date +%Y%m%d-%H%M%S).log"
+    real_time: true
+    notifications: true
+  }
+}

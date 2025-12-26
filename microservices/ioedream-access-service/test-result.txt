@@ -1,0 +1,51 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ---------------< net.lab1024.sa:ioedream-access-service >---------------
+[INFO] Building IOE-DREAM Access Service 1.0.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[WARNING] Parameter 'encoding' is unknown for plugin 'jacoco-maven-plugin:0.8.12:prepare-agent (jacoco-prepare-agent)'
+[WARNING] Parameter 'encoding' is unknown for plugin 'jacoco-maven-plugin:0.8.12:report (jacoco-report)'
+[INFO] 
+[INFO] --- clean:3.3.1:clean (default-clean) @ ioedream-access-service ---
+[INFO] Deleting D:\IOE-DREAM\microservices\ioedream-access-service\target
+[INFO] 
+[INFO] --- enforcer:3.5.0:enforce (enforce-java-maven) @ ioedream-access-service ---
+[INFO] Rule 0: org.apache.maven.enforcer.rules.version.RequireJavaVersion passed
+[INFO] Rule 1: org.apache.maven.enforcer.rules.version.RequireMavenVersion passed
+[INFO] 
+[INFO] --- exec:3.1.1:exec (check-manager-bean-registration) @ ioedream-access-service ---
+[INFO] skipping execute as per configuration
+[INFO] 
+[INFO] --- jacoco:0.8.12:prepare-agent (jacoco-prepare-agent) @ ioedream-access-service ---
+[INFO] jacocoArgLine set to -javaagent:C:\\Users\\10201\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.12\\org.jacoco.agent-0.8.12-runtime.jar=destfile=D:\\IOE-DREAM\\microservices\\ioedream-access-service\\target\\jacoco.exec,includes=**/*.class,excludes=**/*Test*.class:**/*Tests.class:**/*Application.class:**/*Config*.class:**/*Configuration.class:**/dto/**/*.class:**/vo/**/*.class:**/form/**/*.class:**/entity/**/*.class:**/constant/**/*.class:**/constants/**/*.class:**/exception/**/*.class:**/*Exception.class:**/*Enum.class:**/generated/**/*.class:**/openapi/**/*.class
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ ioedream-access-service ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 2 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ ioedream-access-service ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 127 source files with javac [debug release 17] to target\classes
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/service/impl/DeviceDiscoveryServiceImpl.java:[3,29] 程序包com.alibaba.fastjson2不存在
+[INFO] 1 error
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  5.567 s
+[INFO] Finished at: 2025-12-24T23:49:42+08:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.13.0:compile (default-compile) on project ioedream-access-service: Compilation failure
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-access-service/src/main/java/net/lab1024/sa/access/service/impl/DeviceDiscoveryServiceImpl.java:[3,29] 程序包com.alibaba.fastjson2不存在
+[ERROR] 
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

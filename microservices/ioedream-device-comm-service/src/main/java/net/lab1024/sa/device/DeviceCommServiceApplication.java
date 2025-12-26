@@ -90,3 +90,4 @@ public class DeviceCommServiceApplication {
         SpringApplication.run(DeviceCommServiceApplication.class, args);
     }
 }
+

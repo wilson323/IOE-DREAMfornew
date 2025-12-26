@@ -1,9 +1,10 @@
 package net.lab1024.sa.attendance.config;
 
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
 import net.lab1024.sa.attendance.engine.ScheduleEngine;
-import net.lab1024.sa.attendance.engine.algorithm.ScheduleAlgorithm;
 import net.lab1024.sa.attendance.engine.algorithm.ScheduleAlgorithmFactory;
-import net.lab1024.sa.attendance.engine.algorithm.impl.*;
 import net.lab1024.sa.attendance.engine.conflict.ConflictDetector;
 import net.lab1024.sa.attendance.engine.conflict.ConflictResolver;
 import net.lab1024.sa.attendance.engine.conflict.impl.ConflictDetectorImpl;
@@ -13,9 +14,6 @@ import net.lab1024.sa.attendance.engine.optimizer.ScheduleOptimizer;
 import net.lab1024.sa.attendance.engine.optimizer.impl.ScheduleOptimizerImpl;
 import net.lab1024.sa.attendance.engine.prediction.SchedulePredictor;
 import net.lab1024.sa.attendance.engine.prediction.impl.SchedulePredictorImpl;
-
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 /**
  * 智能排班算法配置类
@@ -49,10 +47,10 @@ public class ScheduleAlgorithmConfiguration {
      */
     @Bean
     public ScheduleEngine scheduleEngine(ScheduleAlgorithmFactory algorithmFactory,
-                                         ConflictDetector conflictDetector,
-                                         ConflictResolver conflictResolver,
-                                         ScheduleOptimizer scheduleOptimizer,
-                                         SchedulePredictor schedulePredictor) {
+            ConflictDetector conflictDetector,
+            ConflictResolver conflictResolver,
+            ScheduleOptimizer scheduleOptimizer,
+            SchedulePredictor schedulePredictor) {
 
         // 移除Spring注解，通过构造函数注入依赖
         return new ScheduleEngineImpl(
@@ -60,8 +58,7 @@ public class ScheduleAlgorithmConfiguration {
                 conflictDetector,
                 conflictResolver,
                 scheduleOptimizer,
-                schedulePredictor
-        );
+                schedulePredictor);
     }
 
     /**
@@ -104,14 +101,4 @@ public class ScheduleAlgorithmConfiguration {
         // factory.registerAlgorithm("CUSTOM", new CustomAlgorithmProvider());
     }
 
-    /**
-     * 自定义算法提供者（示例）
-     */
-    private static class CustomAlgorithmProvider implements ScheduleAlgorithmFactory.AlgorithmProvider {
-        @Override
-        public ScheduleAlgorithm createAlgorithm() {
-            // 返回自定义算法实例
-            return new HeuristicAlgorithmImpl();
-        }
-    }
 }

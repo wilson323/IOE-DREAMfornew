@@ -1,5 +1,6 @@
 package net.lab1024.sa.video.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -7,13 +8,12 @@ import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
+import net.lab1024.sa.common.util.TypeUtils;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 
 import io.micrometer.observation.annotation.Observed;
 import jakarta.annotation.Resource;
-import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.exception.BusinessException;
 import net.lab1024.sa.common.exception.ParamException;
 import net.lab1024.sa.common.exception.SystemException;
@@ -71,8 +71,8 @@ public class VideoPlayServiceImpl implements VideoPlayService {
                 throw new BusinessException("DEVICE_NOT_FOUND", "设备不存在");
             }
 
-            // 验证是否为视频设备
-            if (!"CAMERA".equals(device.getDeviceType())) {
+            // 验证是否为视频设备 (deviceType: 1-摄像头)
+            if (device.getDeviceType() == null || device.getDeviceType() != 1) {
                 log.warn("[视频播放] 设备类型不匹配，deviceId={}, deviceType={}", deviceId, device.getDeviceType());
                 throw new BusinessException("DEVICE_TYPE_MISMATCH", "设备类型不匹配");
             }
@@ -133,8 +133,8 @@ public class VideoPlayServiceImpl implements VideoPlayService {
                 throw new BusinessException("DEVICE_NOT_FOUND", "设备不存在");
             }
 
-            // 验证是否为视频设备
-            if (!"CAMERA".equals(device.getDeviceType())) {
+            // 验证是否为视频设备 (deviceType: 1-摄像头)
+            if (device.getDeviceType() == null || device.getDeviceType() != 1) {
                 log.warn("[视频播放] 设备类型不匹配，deviceId={}, deviceType={}", deviceId, device.getDeviceType());
                 throw new BusinessException("DEVICE_TYPE_MISMATCH", "设备类型不匹配");
             }
@@ -185,7 +185,7 @@ public class VideoPlayServiceImpl implements VideoPlayService {
                     .eq(DeviceEntity::getEnabled, 1); // 只查询启用的设备
 
             // 区域筛选
-            if (StringUtils.hasText(areaId)) {
+            if (TypeUtils.hasText(areaId)) {
                 try {
                     Long areaIdLong = Long.parseLong(areaId);
                     wrapper.eq(DeviceEntity::getAreaId, areaIdLong);
@@ -196,20 +196,20 @@ public class VideoPlayServiceImpl implements VideoPlayService {
             }
 
             // 设备类型筛选（如果指定）
-            if (StringUtils.hasText(deviceType)) {
+            if (TypeUtils.hasText(deviceType)) {
                 // 可以根据设备扩展属性筛选
                 // 这里暂时不处理，因为设备类型已经在上面固定为CAMERA
             }
 
             // 设备状态筛选
             if (status != null) {
-                String deviceStatus = null;
+                Integer deviceStatus = null;
                 if (status == 1) {
-                    deviceStatus = "ONLINE";
+                    deviceStatus = 1;
                 } else if (status == 2) {
-                    deviceStatus = "OFFLINE";
+                    deviceStatus = 2;
                 } else if (status == 3) {
-                    deviceStatus = "MAINTAIN";
+                    deviceStatus = 4;
                 }
                 if (deviceStatus != null) {
                     wrapper.eq(DeviceEntity::getDeviceStatus, deviceStatus);
@@ -313,10 +313,12 @@ public class VideoPlayServiceImpl implements VideoPlayService {
      */
     private VideoDeviceVO convertToVO(DeviceEntity entity) {
         VideoDeviceVO vo = new VideoDeviceVO();
-        vo.setDeviceId(entity.getId());
+        if (entity.getDeviceId() != null) {
+            vo.setDeviceId(entity.getDeviceId());
+        }
         vo.setDeviceCode(entity.getDeviceCode());
         vo.setDeviceName(entity.getDeviceName());
-        vo.setDeviceType(entity.getDeviceType());
+        vo.setDeviceType(entity.getDeviceType() != null ? entity.getDeviceType().toString() : null);
         vo.setAreaId(entity.getAreaId());
         vo.setDeviceIp(entity.getIpAddress());
         vo.setDevicePort(entity.getPort());
@@ -342,3 +344,4 @@ public class VideoPlayServiceImpl implements VideoPlayService {
         return vo;
     }
 }
+

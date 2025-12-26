@@ -8,7 +8,7 @@ import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
 import net.lab1024.sa.common.organization.dao.DeviceDao;
 import net.lab1024.sa.common.organization.entity.DeviceEntity;
-import net.lab1024.sa.common.security.entity.UserEntity;
+import net.lab1024.sa.common.organization.entity.UserEntity;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpMethod;
 
@@ -35,6 +35,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 public class BiometricTemplateManager {
+
 
     private final BiometricTemplateDao biometricTemplateDao;
     private final DeviceDao deviceDao;

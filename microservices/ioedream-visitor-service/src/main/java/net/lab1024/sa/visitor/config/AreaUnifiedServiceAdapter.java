@@ -1,5 +1,7 @@
 package net.lab1024.sa.visitor.config;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -14,7 +16,6 @@ import org.springframework.http.HttpMethod;
 import com.fasterxml.jackson.core.type.TypeReference;
 
 import jakarta.annotation.Resource;
-import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
 import net.lab1024.sa.common.organization.entity.AreaEntity;
@@ -32,8 +33,8 @@ import net.lab1024.sa.common.organization.service.AreaUnifiedService;
  * @version 1.0.0
  * @since 2025-12-14
  */
-@Slf4j
 @Configuration
+@Slf4j
 public class AreaUnifiedServiceAdapter {
 
     @Resource
@@ -78,31 +79,31 @@ public class AreaUnifiedServiceAdapter {
         }
 
         @Override
-        public List<AreaEntity> getAreaTree() {
+        public List<net.lab1024.sa.common.organization.entity.AreaEntity> getAreaTree() {
             log.debug("[区域统一服务适配器] 获取完整区域树");
-            ResponseDTO<List<AreaEntity>> response = gatewayServiceClient.callCommonService(
+            ResponseDTO<List<net.lab1024.sa.common.organization.entity.AreaEntity>> response = gatewayServiceClient.callCommonService(
                     "/api/v1/area/unified/tree",
                     HttpMethod.GET,
                     null,
-                    new TypeReference<ResponseDTO<List<AreaEntity>>>() {
+                    new TypeReference<ResponseDTO<List<net.lab1024.sa.common.organization.entity.AreaEntity>>>() {
                     });
             return response != null && response.isSuccess() ? response.getData() : new ArrayList<>();
         }
 
         @Override
-        public List<AreaEntity> getUserAccessibleAreas(Long userId) {
+        public List<net.lab1024.sa.common.organization.entity.AreaEntity> getUserAccessibleAreas(Long userId) {
             log.debug("[区域统一服务适配器] 获取用户可访问区域, userId={}", userId);
-            ResponseDTO<List<AreaEntity>> response = gatewayServiceClient.callCommonService(
+            ResponseDTO<List<net.lab1024.sa.common.organization.entity.AreaEntity>> response = gatewayServiceClient.callCommonService(
                     "/api/v1/area/unified/user/" + userId + "/accessible",
                     HttpMethod.GET,
                     null,
-                    new TypeReference<ResponseDTO<List<AreaEntity>>>() {
+                    new TypeReference<ResponseDTO<List<net.lab1024.sa.common.organization.entity.AreaEntity>>>() {
                     });
             return response != null && response.isSuccess() ? response.getData() : new ArrayList<>();
         }
 
         @Override
-        public boolean hasAreaAccess(Long userId, Long areaId) {
+        public Boolean hasAreaAccess(Long userId, Long areaId) {
             log.debug("[区域统一服务适配器] 检查用户区域权限, userId={}, areaId={}", userId, areaId);
             ResponseDTO<Boolean> response = gatewayServiceClient.callCommonService(
                     "/api/v1/area/unified/user/" + userId + "/area/" + areaId + "/has-access",
@@ -126,25 +127,25 @@ public class AreaUnifiedServiceAdapter {
         }
 
         @Override
-        public List<AreaEntity> getAreaPath(Long areaId) {
+        public List<net.lab1024.sa.common.organization.entity.AreaEntity> getAreaPath(Long areaId) {
             log.debug("[区域统一服务适配器] 获取区域路径, areaId={}", areaId);
-            ResponseDTO<List<AreaEntity>> response = gatewayServiceClient.callCommonService(
+            ResponseDTO<List<net.lab1024.sa.common.organization.entity.AreaEntity>> response = gatewayServiceClient.callCommonService(
                     "/api/v1/area/unified/" + areaId + "/path",
                     HttpMethod.GET,
                     null,
-                    new TypeReference<ResponseDTO<List<AreaEntity>>>() {
+                    new TypeReference<ResponseDTO<List<net.lab1024.sa.common.organization.entity.AreaEntity>>>() {
                     });
             return response != null && response.isSuccess() ? response.getData() : new ArrayList<>();
         }
 
         @Override
-        public List<AreaEntity> getChildAreas(Long parentAreaId) {
+        public List<net.lab1024.sa.common.organization.entity.AreaEntity> getChildAreas(Long parentAreaId) {
             log.debug("[区域统一服务适配器] 获取子区域, parentAreaId={}", parentAreaId);
-            ResponseDTO<List<AreaEntity>> response = gatewayServiceClient.callCommonService(
+            ResponseDTO<List<net.lab1024.sa.common.organization.entity.AreaEntity>> response = gatewayServiceClient.callCommonService(
                     "/api/v1/area/unified/" + parentAreaId + "/children",
                     HttpMethod.GET,
                     null,
-                    new TypeReference<ResponseDTO<List<AreaEntity>>>() {
+                    new TypeReference<ResponseDTO<List<net.lab1024.sa.common.organization.entity.AreaEntity>>>() {
                     });
             return response != null && response.isSuccess() ? response.getData() : new ArrayList<>();
         }
@@ -206,19 +207,19 @@ public class AreaUnifiedServiceAdapter {
         }
 
         @Override
-        public List<AreaEntity> getAreasByBusinessType(String businessType) {
+        public List<net.lab1024.sa.common.organization.entity.AreaEntity> getAreasByBusinessType(String businessType) {
             log.debug("[区域统一服务适配器] 根据业务类型获取区域, businessType={}", businessType);
-            ResponseDTO<List<AreaEntity>> response = gatewayServiceClient.callCommonService(
+            ResponseDTO<List<net.lab1024.sa.common.organization.entity.AreaEntity>> response = gatewayServiceClient.callCommonService(
                     "/api/v1/area/unified/business-type/" + businessType,
                     HttpMethod.GET,
                     null,
-                    new TypeReference<ResponseDTO<List<AreaEntity>>>() {
+                    new TypeReference<ResponseDTO<List<net.lab1024.sa.common.organization.entity.AreaEntity>>>() {
                     });
             return response != null && response.isSuccess() ? response.getData() : new ArrayList<>();
         }
 
         @Override
-        public boolean isAreaSupportBusiness(Long areaId, String businessModule) {
+        public Boolean isAreaSupportBusiness(Long areaId, String businessModule) {
             log.debug("[区域统一服务适配器] 检查区域业务支持, areaId={}, businessModule={}", areaId, businessModule);
             ResponseDTO<Boolean> response = gatewayServiceClient.callCommonService(
                     "/api/v1/area/unified/" + areaId + "/business/" + businessModule + "/support",
@@ -242,3 +243,4 @@ public class AreaUnifiedServiceAdapter {
         }
     }
 }
+

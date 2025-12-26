@@ -1,8 +1,17 @@
 package net.lab1024.sa.attendance.service;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -14,16 +23,16 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.common.exception.BusinessException;
-import net.lab1024.sa.attendance.manager.AttendanceManager;
-import net.lab1024.sa.common.workflow.manager.WorkflowApprovalManager;
 import net.lab1024.sa.attendance.dao.AttendanceSupplementDao;
 import net.lab1024.sa.attendance.domain.entity.AttendanceSupplementEntity;
 import net.lab1024.sa.attendance.domain.form.AttendanceSupplementForm;
-import net.lab1024.sa.attendance.service.impl.AttendanceSupplementServiceImpl;
+import net.lab1024.sa.attendance.manager.AttendanceManager;
+import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.common.workflow.manager.WorkflowApprovalManager;
 
 /**
  * AttendanceSupplementServiceImpl Unit Test
@@ -48,8 +57,9 @@ class AttendanceSupplementServiceImplTest {
     @Mock
     private AttendanceManager attendanceManager;
 
+    @Spy
     @InjectMocks
-    private AttendanceSupplementServiceImpl attendanceSupplementServiceImpl;
+    private net.lab1024.sa.attendance.service.impl.AttendanceSupplementServiceImpl attendanceSupplementServiceImpl;
 
     private AttendanceSupplementForm mockForm;
     private AttendanceSupplementEntity mockEntity;
@@ -82,7 +92,7 @@ class AttendanceSupplementServiceImplTest {
     @DisplayName("Test submitSupplementApplication - Success Scenario")
     void test_submitSupplementApplication_Success() {
         // Given
-        ResponseDTO<Long> workflowResponse = ResponseDTO.ok(1001L);
+        Long workflowInstanceId = 1001L;
 
         when(attendanceManager.getUserName(100L)).thenReturn("Test Employee");
         doAnswer(invocation -> {
@@ -91,8 +101,9 @@ class AttendanceSupplementServiceImplTest {
             entity.setSupplementNo("SUP001");
             return 1;
         }).when(attendanceSupplementDao).insert(any(AttendanceSupplementEntity.class));
-        when(workflowApprovalManager.startApprovalProcess(anyLong(), anyString(), anyString(), anyLong(), anyString(), any(), any()))
-            .thenReturn(workflowResponse);
+        when(workflowApprovalManager.startApprovalProcess(anyLong(), anyString(), anyString(), anyLong(), anyString(),
+                any(), any()))
+                .thenReturn(workflowInstanceId);
         when(attendanceSupplementDao.updateById(any(AttendanceSupplementEntity.class))).thenReturn(1);
 
         // When
@@ -105,15 +116,14 @@ class AttendanceSupplementServiceImplTest {
         assertEquals(1001L, result.getWorkflowInstanceId());
         verify(attendanceManager, times(1)).getUserName(100L);
         verify(attendanceSupplementDao, times(1)).insert(any(AttendanceSupplementEntity.class));
-        verify(workflowApprovalManager, times(1)).startApprovalProcess(anyLong(), anyString(), anyString(), anyLong(), anyString(), any(), any());
+        verify(workflowApprovalManager, times(1)).startApprovalProcess(anyLong(), anyString(), anyString(), anyLong(),
+                anyString(), any(), any());
     }
 
     @Test
     @DisplayName("Test submitSupplementApplication - Workflow Start Failed")
     void test_submitSupplementApplication_WorkflowFailed() {
         // Given
-        ResponseDTO<Long> workflowResponse = ResponseDTO.error("WORKFLOW_ERROR", "Workflow start failed");
-
         when(attendanceManager.getUserName(100L)).thenReturn("Test Employee");
         doAnswer(invocation -> {
             AttendanceSupplementEntity entity = invocation.getArgument(0);
@@ -121,14 +131,16 @@ class AttendanceSupplementServiceImplTest {
             entity.setSupplementNo("SUP001");
             return 1;
         }).when(attendanceSupplementDao).insert(any(AttendanceSupplementEntity.class));
-        when(workflowApprovalManager.startApprovalProcess(anyLong(), anyString(), anyString(), anyLong(), anyString(), any(), any()))
-            .thenReturn(workflowResponse);
+        when(workflowApprovalManager.startApprovalProcess(anyLong(), anyString(), anyString(), anyLong(), anyString(),
+                any(), any()))
+                .thenThrow(new RuntimeException("Workflow start failed"));
 
         // When & Then
-        BusinessException exception = assertThrows(BusinessException.class, () -> {
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
             attendanceSupplementServiceImpl.submitSupplementApplication(mockForm);
         });
-        assertTrue(exception.getMessage().contains("启动审批流程失败"));
+        // 注意：submitSupplementApplication没有try-catch，异常直接传播
+        assertTrue(exception.getMessage().contains("Workflow start failed"));
         verify(attendanceSupplementDao, times(1)).insert(any(AttendanceSupplementEntity.class));
     }
 
@@ -201,4 +213,3 @@ class AttendanceSupplementServiceImplTest {
         verify(attendanceSupplementDao, times(1)).updateById(any(AttendanceSupplementEntity.class));
     }
 }
-

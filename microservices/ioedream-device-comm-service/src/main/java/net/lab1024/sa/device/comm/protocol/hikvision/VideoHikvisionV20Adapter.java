@@ -1,17 +1,30 @@
 package net.lab1024.sa.device.comm.protocol.hikvision;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.device.comm.protocol.ProtocolAdapter;
-import net.lab1024.sa.device.comm.protocol.domain.*;
-import net.lab1024.sa.device.comm.protocol.exception.ProtocolBuildException;
-import net.lab1024.sa.device.comm.protocol.exception.ProtocolParseException;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Future;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
+
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import net.lab1024.sa.device.comm.protocol.ProtocolAdapter;
+import net.lab1024.sa.device.comm.protocol.domain.DeviceMessage;
+import net.lab1024.sa.device.comm.protocol.domain.DeviceResponse;
+import net.lab1024.sa.device.comm.protocol.domain.ProtocolDeviceStatus;
+import net.lab1024.sa.device.comm.protocol.domain.ProtocolErrorInfo;
+import net.lab1024.sa.device.comm.protocol.domain.ProtocolErrorResponse;
+import net.lab1024.sa.device.comm.protocol.domain.ProtocolHeartbeatResult;
+import net.lab1024.sa.device.comm.protocol.domain.ProtocolInitResult;
+import net.lab1024.sa.device.comm.protocol.domain.ProtocolMessage;
+import net.lab1024.sa.device.comm.protocol.domain.ProtocolPermissionResult;
+import net.lab1024.sa.device.comm.protocol.domain.ProtocolProcessResult;
+import net.lab1024.sa.device.comm.protocol.domain.ProtocolRegistrationResult;
+import net.lab1024.sa.device.comm.protocol.domain.ProtocolValidationResult;
+import net.lab1024.sa.device.comm.protocol.exception.ProtocolBuildException;
+import net.lab1024.sa.device.comm.protocol.exception.ProtocolParseException;
 
 /**
  * 海康威视视频协议V2.0适配器
@@ -28,8 +41,8 @@ import java.util.concurrent.CompletableFuture;
  * @version 1.0.0
  * @since 2025-12-16
  */
-@Slf4j
 @Schema(description = "海康威视视频协议V2.0适配器")
+@Slf4j
 public class VideoHikvisionV20Adapter implements ProtocolAdapter {
 
     private static final String PROTOCOL_TYPE = "HIKVISION_VIDEO_V2_0";
@@ -39,14 +52,14 @@ public class VideoHikvisionV20Adapter implements ProtocolAdapter {
 
     // 支持的设备型号
     private static final String[] SUPPORTED_MODELS = {
-            "DS-2CD2032-I", "DS-2CD2042-I", "DS-2CD2132-I", "DS-2CD2142-I",  // 球机系列
-            "DS-2DE2204-I", "DS-2DE2214-I", "DS-2DE2224-I",  // 半球系列
-            "DS-2CD6414F-I", "DS-2CD6424F-I", "DS-2CD6634F-I",  // 防爆系列
-            "DS-2CD2722F-I", "DS-2CD2732F-I",  // 防腐系列
-            "DS-2DF8224I-AEL", "DS-2DF8224I-AELS",  // 星光系列
-            "DS-2CD3T46FWD-I", "DS-2CD3T86FWD-I",  // 智能系列
-            "DS-7604N-K1", "DS-7608N-K1", "DS-7616N-K1",  // NVR系列
-            "DS-7816N-K2", "DS-7808N-K1"  // 高端NVR系列
+            "DS-2CD2032-I", "DS-2CD2042-I", "DS-2CD2132-I", "DS-2CD2142-I", // 球机系列
+            "DS-2DE2204-I", "DS-2DE2214-I", "DS-2DE2224-I", // 半球系列
+            "DS-2CD6414F-I", "DS-2CD6424F-I", "DS-2CD6634F-I", // 防爆系列
+            "DS-2CD2722F-I", "DS-2CD2732F-I", // 防腐系列
+            "DS-2DF8224I-AEL", "DS-2DF8224I-AELS", // 星光系列
+            "DS-2CD3T46FWD-I", "DS-2CD3T86FWD-I", // 智能系列
+            "DS-7604N-K1", "DS-7608N-K1", "DS-7616N-K1", // NVR系列
+            "DS-7816N-K2", "DS-7808N-K1" // 高端NVR系列
     };
 
     @Override
@@ -199,8 +212,8 @@ public class VideoHikvisionV20Adapter implements ProtocolAdapter {
         try {
             log.debug("[海康威视适配器] 获取实时视频流, deviceId={}", deviceId);
 
-            String streamType = (String) params.getOrDefault("streamType", "main");  // main/sub
-            String protocol = (String) params.getOrDefault("protocol", "rtsp");  // rtsp/http
+            String streamType = (String) params.getOrDefault("streamType", "main"); // main/sub
+            String protocol = (String) params.getOrDefault("protocol", "rtsp"); // rtsp/http
 
             // 模拟获取实时视频流
             String streamUrl = String.format("rtsp://%s:554/Streaming/Channels/%s01",
@@ -229,8 +242,8 @@ public class VideoHikvisionV20Adapter implements ProtocolAdapter {
         try {
             log.debug("[海康威视适配器] 开始录像, deviceId={}", deviceId);
 
-            String recordType = (String) params.getOrDefault("recordType", "manual");  // manual/alarm/timing
-            Integer duration = (Integer) params.getOrDefault("duration", 3600);  // 录像时长（秒）
+            String recordType = (String) params.getOrDefault("recordType", "manual"); // manual/alarm/timing
+            Integer duration = (Integer) params.getOrDefault("duration", 3600); // 录像时长（秒）
 
             // 模拟开始录像
             Map<String, Object> result = new HashMap<>();
@@ -276,9 +289,9 @@ public class VideoHikvisionV20Adapter implements ProtocolAdapter {
         try {
             log.debug("[海康威视适配器] PTZ控制, deviceId={}", deviceId);
 
-            String command = (String) params.get("command");  // up/down/left/right/zoom_in/zoom_out
-            Integer speed = (Integer) params.getOrDefault("speed", 5);  // 速度(1-7)
-            Integer preset = (Integer) params.get("preset");  // 预置位
+            String command = (String) params.get("command"); // up/down/left/right/zoom_in/zoom_out
+            Integer speed = (Integer) params.getOrDefault("speed", 5); // 速度(1-7)
+            Integer preset = (Integer) params.get("preset"); // 预置位
 
             // 模拟PTZ控制
             Map<String, Object> result = new HashMap<>();
@@ -521,13 +534,15 @@ public class VideoHikvisionV20Adapter implements ProtocolAdapter {
     }
 
     @Override
-    public byte[] buildDeviceResponse(String messageType, Map<String, Object> businessData, Long deviceId) throws ProtocolBuildException {
+    public byte[] buildDeviceResponse(String messageType, Map<String, Object> businessData, Long deviceId)
+            throws ProtocolBuildException {
         // TODO: 实现设备响应构建
         throw new ProtocolBuildException("buildDeviceResponse未实现");
     }
 
     @Override
-    public String buildDeviceResponseHex(String messageType, Map<String, Object> businessData, Long deviceId) throws ProtocolBuildException {
+    public String buildDeviceResponseHex(String messageType, Map<String, Object> businessData, Long deviceId)
+            throws ProtocolBuildException {
         // TODO: 实现设备响应构建（十六进制）
         throw new ProtocolBuildException("buildDeviceResponseHex未实现");
     }
@@ -582,7 +597,8 @@ public class VideoHikvisionV20Adapter implements ProtocolAdapter {
     }
 
     @Override
-    public Future<ProtocolProcessResult> processAccessBusiness(String businessType, Map<String, Object> businessData, Long deviceId) {
+    public Future<ProtocolProcessResult> processAccessBusiness(String businessType, Map<String, Object> businessData,
+            Long deviceId) {
         // TODO: 实现门禁业务处理
         ProtocolProcessResult result = new ProtocolProcessResult();
         result.setSuccess(true);
@@ -590,7 +606,8 @@ public class VideoHikvisionV20Adapter implements ProtocolAdapter {
     }
 
     @Override
-    public Future<ProtocolProcessResult> processAttendanceBusiness(String businessType, Map<String, Object> businessData, Long deviceId) {
+    public Future<ProtocolProcessResult> processAttendanceBusiness(String businessType,
+            Map<String, Object> businessData, Long deviceId) {
         // TODO: 实现考勤业务处理
         ProtocolProcessResult result = new ProtocolProcessResult();
         result.setSuccess(true);
@@ -598,7 +615,8 @@ public class VideoHikvisionV20Adapter implements ProtocolAdapter {
     }
 
     @Override
-    public Future<ProtocolProcessResult> processConsumeBusiness(String businessType, Map<String, Object> businessData, Long deviceId) {
+    public Future<ProtocolProcessResult> processConsumeBusiness(String businessType, Map<String, Object> businessData,
+            Long deviceId) {
         // TODO: 实现消费业务处理
         ProtocolProcessResult result = new ProtocolProcessResult();
         result.setSuccess(true);

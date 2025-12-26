@@ -1,21 +1,26 @@
 package net.lab1024.sa.device.comm.discovery.service.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import jakarta.annotation.Resource;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.exception.BusinessException;
 import net.lab1024.sa.common.organization.entity.DeviceEntity;
 import net.lab1024.sa.device.comm.discovery.ProtocolAutoDiscoveryManager;
 import net.lab1024.sa.device.comm.discovery.service.ProtocolDiscoveryService;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import jakarta.annotation.Resource;
-import java.time.LocalDateTime;
-import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 /**
  * 协议自动发现服务实现
@@ -31,10 +36,11 @@ import java.util.stream.Collectors;
  * @version 1.0.0
  * @since 2025-12-16
  */
-@Slf4j
 @Service
 @Transactional(rollbackFor = Exception.class)
+@Slf4j
 public class ProtocolDiscoveryServiceImpl implements ProtocolDiscoveryService {
+
 
     @Resource
     private ProtocolAutoDiscoveryManager discoveryManager;
@@ -43,10 +49,10 @@ public class ProtocolDiscoveryServiceImpl implements ProtocolDiscoveryService {
     private ObjectMapper objectMapper;
 
     // 任务缓存
-    private final Map<String, ProtocolAutoDiscoveryManager.DiscoveryTask> taskCache = new ConcurrentHashMap<>();
+    private final Map<String, ProtocolAutoDiscoveryManager.DiscoveryTask> taskCache = new HashMap<>();
 
     // 结果缓存
-    private final Map<String, ProtocolAutoDiscoveryManager.DiscoveryResult> resultCache = new ConcurrentHashMap<>();
+    private final Map<String, ProtocolAutoDiscoveryManager.DiscoveryResult> resultCache = new HashMap<>();
 
     @Override
     public ResponseDTO<String> startDiscovery(ProtocolAutoDiscoveryManager.DiscoveryRequest discoveryRequest) {
@@ -171,7 +177,8 @@ public class ProtocolDiscoveryServiceImpl implements ProtocolDiscoveryService {
             List<CompletableFuture<Void>> futures = ipAddresses.stream()
                     .map(ip -> CompletableFuture.runAsync(() -> {
                         try {
-                            ProtocolAutoDiscoveryManager.DiscoveryResult result = discoveryManager.scanSingleDevice(ip, timeout);
+                            ProtocolAutoDiscoveryManager.DiscoveryResult result = discoveryManager.scanSingleDevice(ip,
+                                    timeout);
                             results.put(ip, result);
                         } catch (Exception e) {
                             log.warn("[协议发现服务] 设备扫描失败: {} - {}", ip, e.getMessage());
@@ -196,12 +203,12 @@ public class ProtocolDiscoveryServiceImpl implements ProtocolDiscoveryService {
             ProtocolAutoDiscoveryManager.DiscoveryResult discoveryResult, boolean autoRegister) {
         try {
             log.info("[协议发现服务] 自动注册设备: {} 个, 自动注册: {}",
-                     discoveryResult.getDiscoveredDevices().size(), autoRegister);
+                    discoveryResult.getDiscoveredDevices().size(), autoRegister);
 
             List<DeviceEntity> registeredDevices = new ArrayList<>();
 
-            for (ProtocolAutoDiscoveryManager.DiscoveredDevice discoveredDevice :
-                 discoveryResult.getDiscoveredDevices()) {
+            for (ProtocolAutoDiscoveryManager.DiscoveredDevice discoveredDevice : discoveryResult
+                    .getDiscoveredDevices()) {
 
                 String ipAddress = discoveredDevice.getIpAddress();
 
@@ -251,7 +258,8 @@ public class ProtocolDiscoveryServiceImpl implements ProtocolDiscoveryService {
     }
 
     @Override
-    public ResponseDTO<Void> updateProtocolFingerprints(Map<String, ProtocolAutoDiscoveryManager.ProtocolFingerprint> fingerprints) {
+    public ResponseDTO<Void> updateProtocolFingerprints(
+            Map<String, ProtocolAutoDiscoveryManager.ProtocolFingerprint> fingerprints) {
         try {
             log.info("[协议发现服务] 更新协议指纹库: {} 个指纹", fingerprints.size());
 
@@ -416,9 +424,25 @@ public class ProtocolDiscoveryServiceImpl implements ProtocolDiscoveryService {
         DeviceEntity device = new DeviceEntity();
         device.setDeviceCode(discoveredDevice.getIpAddress());
         device.setDeviceName("Auto-" + discoveredDevice.getIpAddress());
-        device.setDeviceType(discoveredDevice.getDeviceType());
+        // deviceType需要转换为Integer（如果discoveredDevice.getDeviceType()返回String）
+        Object deviceTypeObj = discoveredDevice.getDeviceType();
+        if (deviceTypeObj instanceof String) {
+            try {
+                device.setDeviceType(Integer.parseInt((String) deviceTypeObj));
+            } catch (NumberFormatException e) {
+                log.warn("设备类型转换失败: {}", deviceTypeObj);
+            }
+        } else if (deviceTypeObj instanceof Integer) {
+            device.setDeviceType((Integer) deviceTypeObj);
+        } else if (deviceTypeObj != null) {
+            log.warn("设备类型格式不支持: {}, 类型: {}", deviceTypeObj, deviceTypeObj.getClass().getName());
+        }
         device.setIpAddress(discoveredDevice.getIpAddress());
-        device.setMacAddress(discoveredDevice.getMacAddress());
+        // DeviceEntity没有macAddress字段，MAC地址可以存储在extendedAttributes中
+        if (discoveredDevice.getMacAddress() != null) {
+            String extendedAttrs = device.getExtendedAttributes();
+            // TODO: 将MAC地址添加到extendedAttributes JSON中
+        }
         device.setDeviceStatus(1); // 启用状态（1-在线）
         device.setEnabled(1); // 启用
         device.setCreateTime(LocalDateTime.now());
@@ -451,14 +475,14 @@ public class ProtocolDiscoveryServiceImpl implements ProtocolDiscoveryService {
         StringBuilder csv = new StringBuilder();
         csv.append("IP Address, MAC Address, Vendor, Device Type, Protocol, Identified\n");
 
-        for (ProtocolAutoDiscoveryManager.DiscoveredDevice discoveredDevice :
-             result.getDiscoveredDevices()) {
+        for (ProtocolAutoDiscoveryManager.DiscoveredDevice discoveredDevice : result.getDiscoveredDevices()) {
 
             csv.append(discoveredDevice.getIpAddress()).append(",");
             csv.append(discoveredDevice.getMacAddress() != null ? discoveredDevice.getMacAddress() : "").append(",");
             csv.append(discoveredDevice.getVendor() != null ? discoveredDevice.getVendor() : "").append(",");
             csv.append(discoveredDevice.getDeviceType() != null ? discoveredDevice.getDeviceType() : "").append(",");
-            csv.append(discoveredDevice.getProtocolType() != null ? discoveredDevice.getProtocolType() : "").append(",");
+            csv.append(discoveredDevice.getProtocolType() != null ? discoveredDevice.getProtocolType() : "")
+                    .append(",");
             csv.append(discoveredDevice.isIdentified() ? "Yes" : "No").append("\n");
         }
 

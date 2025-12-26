@@ -1,0 +1,1518 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ---------------< net.lab1024.sa:ioedream-access-service >---------------
+[INFO] Building IOE-DREAM Access Service 1.0.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[WARNING] Parameter 'encoding' is unknown for plugin 'jacoco-maven-plugin:0.8.12:prepare-agent (jacoco-prepare-agent)'
+[WARNING] Parameter 'encoding' is unknown for plugin 'jacoco-maven-plugin:0.8.12:report (jacoco-report)'
+[INFO] 
+[INFO] --- enforcer:3.5.0:enforce (enforce-java-maven) @ ioedream-access-service ---
+[INFO] Rule 0: org.apache.maven.enforcer.rules.version.RequireJavaVersion passed
+[INFO] Rule 1: org.apache.maven.enforcer.rules.version.RequireMavenVersion passed
+[INFO] 
+[INFO] --- exec:3.1.1:exec (check-manager-bean-registration) @ ioedream-access-service ---
+[INFO] skipping execute as per configuration
+[INFO] 
+[INFO] --- jacoco:0.8.12:prepare-agent (jacoco-prepare-agent) @ ioedream-access-service ---
+[INFO] jacocoArgLine set to -javaagent:C:\\Users\\10201\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.12\\org.jacoco.agent-0.8.12-runtime.jar=destfile=D:\\IOE-DREAM\\microservices\\ioedream-access-service\\target\\jacoco.exec,includes=**/*.class,excludes=**/*Test*.class:**/*Tests.class:**/*Application.class:**/*Config*.class:**/*Configuration.class:**/dto/**/*.class:**/vo/**/*.class:**/form/**/*.class:**/entity/**/*.class:**/constant/**/*.class:**/constants/**/*.class:**/exception/**/*.class:**/*Exception.class:**/*Enum.class:**/generated/**/*.class:**/openapi/**/*.class
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ ioedream-access-service ---
+[INFO] Copying 7 resources from src\main\resources to target\classes
+[INFO] Copying 10 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ ioedream-access-service ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ ioedream-access-service ---
+[INFO] Copying 1 resource from src\test\resources to target\test-classes
+[INFO] Copying 0 resource from src\test\resources to target\test-classes
+[INFO] 
+[INFO] --- compiler:3.13.0:testCompile (default-testCompile) @ ioedream-access-service ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- surefire:3.2.5:test (default-test) @ ioedream-access-service ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[WARNING] The system property user.timezone is configured twice! The property appears in <argLine/> and any of <systemPropertyVariables/>, <systemProperties/> or user property.
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running net.lab1024.sa.access.exception.AccessBusinessExceptionTest
+OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+[INFO] Tests run: 25, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.362 s -- in net.lab1024.sa.access.exception.AccessBusinessExceptionTest
+[INFO] Running net.lab1024.sa.access.manager.AccessUserPermissionManagerTest
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.139 s -- in net.lab1024.sa.access.manager.AccessUserPermissionManagerTest
+[INFO] Running net.lab1024.sa.access.manager.AlertManagerTest
+23:54:28.655 [main] INFO net.lab1024.sa.access.manager.AlertManagerTest -- [测试准备] 初始化测试数据
+23:54:28.687 [main] INFO net.lab1024.sa.access.manager.AlertManagerTest -- [测试准备] 测试数据初始化完成
+23:54:28.688 [main] INFO net.lab1024.sa.access.manager.AlertManagerTest -- [测试用例] 测试成功清理过期告警
+23:54:28.694 [main] INFO net.lab1024.sa.access.manager.impl.AlertManagerImpl -- [告警管理] 清理过期告警记录: daysToKeep=90
+23:54:28.744 [main] INFO net.lab1024.sa.access.manager.impl.AlertManagerImpl -- [告警管理] 清理过期告警记录完成: count=100
+23:54:28.779 [main] INFO net.lab1024.sa.access.manager.AlertManagerTest -- [测试用例] 测试通过: 过期告警清理成功, deletedCount=100
+23:54:28.788 [main] INFO net.lab1024.sa.access.manager.AlertManagerTest -- [测试准备] 初始化测试数据
+23:54:28.788 [main] INFO net.lab1024.sa.access.manager.AlertManagerTest -- [测试准备] 测试数据初始化完成
+23:54:28.788 [main] INFO net.lab1024.sa.access.manager.AlertManagerTest -- [测试用例] 测试成功获取告警趋势
+23:54:28.793 [main] INFO net.lab1024.sa.access.manager.AlertManagerTest -- [测试用例] 测试通过: 告警趋势获取成功, dataPoints=7
+23:54:28.803 [main] INFO net.lab1024.sa.access.manager.AlertManagerTest -- [测试准备] 初始化测试数据
+23:54:28.803 [main] INFO net.lab1024.sa.access.manager.AlertManagerTest -- [测试准备] 测试数据初始化完成
+23:54:28.804 [main] INFO net.lab1024.sa.access.manager.AlertManagerTest -- [测试用例] 测试成功创建告警
+23:54:28.804 [main] INFO net.lab1024.sa.access.manager.impl.AlertManagerImpl -- [告警管理] 手动创建告警: deviceId=100, alertType=DEVICE_OFFLINE
+23:54:28.806 [main] INFO net.lab1024.sa.access.manager.impl.AlertManagerImpl -- [告警管理] 创建告警成功并已WebSocket推送: alertId=1
+23:54:28.807 [main] INFO net.lab1024.sa.access.manager.AlertManagerTest -- [测试用例] 测试通过: 告警创建成功, alertId=1
+23:54:28.815 [main] INFO net.lab1024.sa.access.manager.AlertManagerTest -- [测试准备] 初始化测试数据
+23:54:28.816 [main] INFO net.lab1024.sa.access.manager.AlertManagerTest -- [测试准备] 测试数据初始化完成
+23:54:28.816 [main] INFO net.lab1024.sa.access.manager.AlertManagerTest -- [测试用例] 测试成功获取告警统计
+23:54:28.854 [main] INFO net.lab1024.sa.access.manager.AlertManagerTest -- [测试用例] 测试通过: 告警统计获取成功
+23:54:28.862 [main] INFO net.lab1024.sa.access.manager.AlertManagerTest -- [测试准备] 初始化测试数据
+23:54:28.863 [main] INFO net.lab1024.sa.access.manager.AlertManagerTest -- [测试准备] 测试数据初始化完成
+23:54:28.863 [main] INFO net.lab1024.sa.access.manager.AlertManagerTest -- [测试用例] 测试检测告警-无匹配规则
+23:54:28.864 [main] INFO net.lab1024.sa.access.manager.impl.AlertManagerImpl -- [告警管理] 检测告警: deviceId=100, deviceStatus=OFFLINE
+23:54:28.868 [main] INFO net.lab1024.sa.access.manager.AlertManagerTest -- [测试用例] 测试通过: 无匹配规则，未创建告警
+23:54:28.874 [main] INFO net.lab1024.sa.access.manager.AlertManagerTest -- [测试准备] 初始化测试数据
+23:54:28.875 [main] INFO net.lab1024.sa.access.manager.AlertManagerTest -- [测试准备] 测试数据初始化完成
+23:54:28.875 [main] INFO net.lab1024.sa.access.manager.AlertManagerTest -- [测试用例] 测试成功分页查询告警
+23:54:29.197 [main] INFO net.lab1024.sa.access.manager.AlertManagerTest -- [测试用例] 测试通过: 告警分页查询成功
+23:54:29.205 [main] INFO net.lab1024.sa.access.manager.AlertManagerTest -- [测试准备] 初始化测试数据
+23:54:29.205 [main] INFO net.lab1024.sa.access.manager.AlertManagerTest -- [测试准备] 测试数据初始化完成
+23:54:29.206 [main] INFO net.lab1024.sa.access.manager.AlertManagerTest -- [测试用例] 测试确认告警
+23:54:29.207 [main] INFO net.lab1024.sa.access.manager.impl.AlertManagerImpl -- [告警管理] 处理告警: alertId=1, actionType=CONFIRM
+23:54:29.208 [main] INFO net.lab1024.sa.access.manager.impl.AlertManagerImpl -- [告警管理] 处理告警成功: alertId=1, actionType=CONFIRM
+23:54:29.209 [main] INFO net.lab1024.sa.access.manager.AlertManagerTest -- [测试用例] 测试通过: 告警确认成功
+23:54:29.216 [main] INFO net.lab1024.sa.access.manager.AlertManagerTest -- [测试准备] 初始化测试数据
+23:54:29.216 [main] INFO net.lab1024.sa.access.manager.AlertManagerTest -- [测试准备] 测试数据初始化完成
+23:54:29.217 [main] INFO net.lab1024.sa.access.manager.AlertManagerTest -- [测试用例] 测试成功查询紧急告警
+23:54:29.220 [main] INFO net.lab1024.sa.access.manager.AlertManagerTest -- [测试用例] 测试通过: 紧急告警查询成功
+23:54:29.230 [main] INFO net.lab1024.sa.access.manager.AlertManagerTest -- [测试准备] 初始化测试数据
+23:54:29.230 [main] INFO net.lab1024.sa.access.manager.AlertManagerTest -- [测试准备] 测试数据初始化完成
+23:54:29.231 [main] INFO net.lab1024.sa.access.manager.AlertManagerTest -- [测试用例] 测试成功批量确认告警
+23:54:29.233 [main] INFO net.lab1024.sa.access.manager.impl.AlertManagerImpl -- [告警管理] 批量确认告警: count=3, remark=批量确认
+23:54:29.234 [main] INFO net.lab1024.sa.access.manager.impl.AlertManagerImpl -- [告警管理] 批量确认告警完成: total=3, success=3
+23:54:29.235 [main] INFO net.lab1024.sa.access.manager.AlertManagerTest -- [测试用例] 测试通过: 批量确认成功, count=3
+23:54:29.241 [main] INFO net.lab1024.sa.access.manager.AlertManagerTest -- [测试准备] 初始化测试数据
+23:54:29.242 [main] INFO net.lab1024.sa.access.manager.AlertManagerTest -- [测试准备] 测试数据初始化完成
+23:54:29.242 [main] INFO net.lab1024.sa.access.manager.AlertManagerTest -- [测试用例] 测试成功查询告警详情
+23:54:29.243 [main] INFO net.lab1024.sa.access.manager.AlertManagerTest -- [测试用例] 测试通过: 告警详情查询成功
+[INFO] Tests run: 10, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.480 s -- in net.lab1024.sa.access.manager.AlertManagerTest
+[INFO] Running net.lab1024.sa.access.manager.DeviceDiscoveryManagerTest
+23:54:29.883 [main] INFO net.lab1024.sa.access.manager.DeviceDiscoveryManagerTest -- [测试] 测试设备去重逻辑 - 设备已存在
+23:54:29.890 [main] INFO net.lab1024.sa.access.manager.DeviceDiscoveryManager -- [设备发现管理器] 开始批量添加设备: deviceCount=3, operatorId=1
+23:54:30.330 [main] INFO net.lab1024.sa.access.manager.DeviceDiscoveryManager -- [设备发现管理器] 批量添加完成: batchId=2, total=3, success=2, failed=1, durationMs=438
+23:54:30.333 [main] INFO net.lab1024.sa.access.manager.DeviceDiscoveryManagerTest -- [测试] 设备去重测试通过: 部分成功，已存在设备被跳过
+23:54:30.339 [main] INFO net.lab1024.sa.access.manager.DeviceDiscoveryManagerTest -- [测试] 测试错误处理 - 设备添加失败
+23:54:30.342 [main] INFO net.lab1024.sa.access.manager.DeviceDiscoveryManager -- [设备发现管理器] 开始批量添加设备: deviceCount=3, operatorId=1
+23:54:30.344 [main] WARN net.lab1024.sa.access.manager.DeviceDiscoveryManager -- [设备发现管理器] 设备添加失败: ip=192.168.1.102, error=数据库插入失败
+23:54:30.345 [main] INFO net.lab1024.sa.access.manager.DeviceDiscoveryManager -- [设备发现管理器] 批量添加完成: batchId=3, total=3, success=2, failed=1, durationMs=2
+23:54:30.354 [main] INFO net.lab1024.sa.access.manager.DeviceDiscoveryManagerTest -- [测试] 错误处理测试通过: 部分成功，错误记录正确
+23:54:30.358 [main] INFO net.lab1024.sa.access.manager.DeviceDiscoveryManagerTest -- [测试] 测试导入统计信息
+23:54:30.362 [main] INFO net.lab1024.sa.access.manager.DeviceDiscoveryManager -- [设备发现管理器] 开始批量添加设备: deviceCount=3, operatorId=1
+23:54:30.364 [main] INFO net.lab1024.sa.access.manager.DeviceDiscoveryManager -- [设备发现管理器] 批量添加完成: batchId=5, total=3, success=3, failed=0, durationMs=1
+23:54:30.364 [main] INFO net.lab1024.sa.access.manager.DeviceDiscoveryManagerTest -- [测试] 导入统计测试通过: total=3, success=3, failed=0
+23:54:30.368 [main] INFO net.lab1024.sa.access.manager.DeviceDiscoveryManagerTest -- [测试] 测试批量添加设备 - 成功
+23:54:30.371 [main] INFO net.lab1024.sa.access.manager.DeviceDiscoveryManager -- [设备发现管理器] 开始批量添加设备: deviceCount=3, operatorId=1
+23:54:30.372 [main] INFO net.lab1024.sa.access.manager.DeviceDiscoveryManager -- [设备发现管理器] 批量添加完成: batchId=1, total=3, success=3, failed=0, durationMs=0
+23:54:30.374 [main] INFO net.lab1024.sa.access.manager.DeviceDiscoveryManagerTest -- [测试] 批量添加成功: total=3, success=3
+23:54:30.378 [main] INFO net.lab1024.sa.access.manager.DeviceDiscoveryManagerTest -- [测试] 测试设备发现超时
+23:54:30.389 [main] INFO net.lab1024.sa.access.manager.DeviceDiscoveryManager -- [设备发现管理器] 开始设备发现和批量添加: subnet=192.168.1.0/24, protocols=[ONVIF], operatorId=1
+23:54:30.390 [main] INFO net.lab1024.sa.access.manager.DeviceDiscoveryManager -- [设备发现管理器] 设备发现已启动: scanId=TIMEOUT-SCAN-001
+23:54:30.390 [main] INFO net.lab1024.sa.access.manager.DeviceDiscoveryManager -- [设备发现管理器] 等待设备发现完成: scanId=TIMEOUT-SCAN-001
+23:54:32.393 [main] ERROR net.lab1024.sa.access.manager.DeviceDiscoveryManager -- [设备发现管理器] 设备发现和批量添加异常: error=设备发现超时: scanId=TIMEOUT-SCAN-001
+java.lang.RuntimeException: 设备发现超时: scanId=TIMEOUT-SCAN-001
+	at net.lab1024.sa.access.manager.DeviceDiscoveryManager.waitForDiscoveryComplete(DeviceDiscoveryManager.java:331)
+	at net.lab1024.sa.access.manager.DeviceDiscoveryManager.discoverAndBatchAdd(DeviceDiscoveryManager.java:130)
+	at net.lab1024.sa.access.manager.DeviceDiscoveryManagerTest.lambda$11(DeviceDiscoveryManagerTest.java:346)
+	at org.junit.jupiter.api.AssertThrows.assertThrows(AssertThrows.java:53)
+	at org.junit.jupiter.api.AssertThrows.assertThrows(AssertThrows.java:39)
+	at org.junit.jupiter.api.Assertions.assertThrows(Assertions.java:3153)
+	at net.lab1024.sa.access.manager.DeviceDiscoveryManagerTest.testDiscoverAndBatchAdd_Timeout(DeviceDiscoveryManagerTest.java:345)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:775)
+	at org.junit.platform.commons.support.ReflectionSupport.invokeMethod(ReflectionSupport.java:479)
+	at org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:60)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:131)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.intercept(TimeoutExtension.java:161)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestableMethod(TimeoutExtension.java:152)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestMethod(TimeoutExtension.java:91)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker$ReflectiveInterceptorCall.lambda$ofVoidMethod$0(InterceptingExecutableInvoker.java:112)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.lambda$invoke$0(InterceptingExecutableInvoker.java:94)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$InterceptedInvocation.proceed(InvocationInterceptorChain.java:106)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.proceed(InvocationInterceptorChain.java:64)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.chainAndInvoke(InvocationInterceptorChain.java:45)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.invoke(InvocationInterceptorChain.java:37)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:93)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:87)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$invokeTestMethod$7(TestMethodTestDescriptor.java:216)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.invokeTestMethod(TestMethodTestDescriptor.java:212)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:137)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:69)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:156)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:146)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:143)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:100)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:160)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:146)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:143)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:100)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:160)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:146)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:143)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:100)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:35)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:57)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:54)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:201)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:170)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:94)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:59)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:142)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:58)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:103)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:85)
+	at org.junit.platform.launcher.core.DelegatingLauncher.execute(DelegatingLauncher.java:47)
+	at org.junit.platform.launcher.core.InterceptingLauncher.lambda$execute$1(InterceptingLauncher.java:39)
+	at org.junit.platform.launcher.core.ClasspathAlignmentCheckingLauncherInterceptor.intercept(ClasspathAlignmentCheckingLauncherInterceptor.java:25)
+	at org.junit.platform.launcher.core.InterceptingLauncher.execute(InterceptingLauncher.java:38)
+	at org.junit.platform.launcher.core.DelegatingLauncher.execute(DelegatingLauncher.java:47)
+	at org.apache.maven.surefire.junitplatform.LazyLauncher.execute(LazyLauncher.java:56)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.execute(JUnitPlatformProvider.java:184)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invokeAllTests(JUnitPlatformProvider.java:148)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invoke(JUnitPlatformProvider.java:122)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:385)
+	at org.apache.maven.surefire.booter.ForkedBooter.execute(ForkedBooter.java:162)
+	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
+23:54:32.399 [main] INFO net.lab1024.sa.access.manager.DeviceDiscoveryManagerTest -- [测试] 设备发现超时测试通过
+23:54:32.403 [main] INFO net.lab1024.sa.access.manager.DeviceDiscoveryManagerTest -- [测试] 测试设备发现和批量添加完整流程
+23:54:32.408 [main] INFO net.lab1024.sa.access.manager.DeviceDiscoveryManager -- [设备发现管理器] 开始设备发现和批量添加: subnet=192.168.1.0/24, protocols=[ONVIF, PRIVATE], operatorId=1
+23:54:32.409 [main] INFO net.lab1024.sa.access.manager.DeviceDiscoveryManager -- [设备发现管理器] 设备发现已启动: scanId=TEST-SCAN-001
+23:54:32.409 [main] INFO net.lab1024.sa.access.manager.DeviceDiscoveryManager -- [设备发现管理器] 等待设备发现完成: scanId=TEST-SCAN-001
+23:54:34.425 [main] INFO net.lab1024.sa.access.manager.DeviceDiscoveryManager -- [设备发现管理器] 设备发现已完成: scanId=TEST-SCAN-001, status=COMPLETED
+23:54:34.425 [main] INFO net.lab1024.sa.access.manager.DeviceDiscoveryManager -- [设备发现管理器] 设备发现完成: scanId=TEST-SCAN-001, discoveredCount=2
+23:54:34.425 [main] INFO net.lab1024.sa.access.manager.DeviceDiscoveryManager -- [设备发现管理器] 开始批量添加设备: deviceCount=2, operatorId=1
+23:54:34.426 [main] INFO net.lab1024.sa.access.manager.DeviceDiscoveryManager -- [设备发现管理器] 批量添加完成: batchId=4, total=2, success=2, failed=0, durationMs=1
+23:54:34.427 [main] INFO net.lab1024.sa.access.manager.DeviceDiscoveryManagerTest -- [测试] 完整流程测试通过: 发现并批量添加成功
+[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 5.134 s -- in net.lab1024.sa.access.manager.DeviceDiscoveryManagerTest
+[INFO] Running net.lab1024.sa.access.manager.FirmwareManagerTest
+23:54:34.655 [main] INFO net.lab1024.sa.access.manager.FirmwareManager -- [固件管理器] 开始固件升级流程: taskName=测试升级任务, firmwareId=1, deviceCount=5
+23:54:34.655 [main] INFO net.lab1024.sa.access.manager.FirmwareManager -- [固件管理器] 设备版本验证通过: deviceCount=5
+23:54:34.655 [main] INFO net.lab1024.sa.access.manager.FirmwareManager -- [固件管理器] 升级任务创建成功: taskId=1
+23:54:34.655 [main] INFO net.lab1024.sa.access.manager.FirmwareManager -- [固件管理器] 升级任务已启动: taskId=1
+23:54:34.663 [firmware-upgrade-1] INFO net.lab1024.sa.access.manager.FirmwareManager -- [固件管理器] 开始监控升级进度: taskId=1
+23:54:34.670 [main] INFO net.lab1024.sa.access.manager.FirmwareManager -- [固件管理器] 开始固件升级流程: taskName=测试升级任务, firmwareId=1, deviceCount=3
+23:54:34.671 [main] ERROR net.lab1024.sa.access.manager.FirmwareManager -- [固件管理器] 固件升级流程失败: error=固件未启用，无法升级
+java.lang.RuntimeException: 固件未启用，无法升级
+	at net.lab1024.sa.access.manager.FirmwareManager.executeUpgradeWorkflow(FirmwareManager.java:140)
+	at net.lab1024.sa.access.manager.FirmwareManagerTest.lambda$1(FirmwareManagerTest.java:206)
+	at org.junit.jupiter.api.AssertThrows.assertThrows(AssertThrows.java:53)
+	at org.junit.jupiter.api.AssertThrows.assertThrows(AssertThrows.java:35)
+	at org.junit.jupiter.api.Assertions.assertThrows(Assertions.java:3128)
+	at net.lab1024.sa.access.manager.FirmwareManagerTest.testExecuteUpgradeWorkflow_FirmwareNotEnabled_ThrowsException(FirmwareManagerTest.java:205)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:775)
+	at org.junit.platform.commons.support.ReflectionSupport.invokeMethod(ReflectionSupport.java:479)
+	at org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:60)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:131)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.intercept(TimeoutExtension.java:161)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestableMethod(TimeoutExtension.java:152)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestMethod(TimeoutExtension.java:91)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker$ReflectiveInterceptorCall.lambda$ofVoidMethod$0(InterceptingExecutableInvoker.java:112)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.lambda$invoke$0(InterceptingExecutableInvoker.java:94)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$InterceptedInvocation.proceed(InvocationInterceptorChain.java:106)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.proceed(InvocationInterceptorChain.java:64)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.chainAndInvoke(InvocationInterceptorChain.java:45)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.invoke(InvocationInterceptorChain.java:37)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:93)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:87)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$invokeTestMethod$7(TestMethodTestDescriptor.java:216)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.invokeTestMethod(TestMethodTestDescriptor.java:212)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:137)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:69)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:156)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:146)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:143)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:100)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:160)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:146)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:143)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:100)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:160)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:146)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:143)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:100)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:35)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:57)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:54)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:201)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:170)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:94)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:59)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:142)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:58)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:103)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:85)
+	at org.junit.platform.launcher.core.DelegatingLauncher.execute(DelegatingLauncher.java:47)
+	at org.junit.platform.launcher.core.InterceptingLauncher.lambda$execute$1(InterceptingLauncher.java:39)
+	at org.junit.platform.launcher.core.ClasspathAlignmentCheckingLauncherInterceptor.intercept(ClasspathAlignmentCheckingLauncherInterceptor.java:25)
+	at org.junit.platform.launcher.core.InterceptingLauncher.execute(InterceptingLauncher.java:38)
+	at org.junit.platform.launcher.core.DelegatingLauncher.execute(DelegatingLauncher.java:47)
+	at org.apache.maven.surefire.junitplatform.LazyLauncher.execute(LazyLauncher.java:56)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.execute(JUnitPlatformProvider.java:184)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invokeAllTests(JUnitPlatformProvider.java:148)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invoke(JUnitPlatformProvider.java:122)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:385)
+	at org.apache.maven.surefire.booter.ForkedBooter.execute(ForkedBooter.java:162)
+	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
+23:54:34.682 [main] INFO net.lab1024.sa.access.manager.FirmwareManager -- [固件管理器] 开始固件升级流程: taskName=测试升级任务, firmwareId=1, deviceCount=3
+23:54:34.682 [main] INFO net.lab1024.sa.access.manager.FirmwareManager -- [固件管理器] 设备版本验证通过: deviceCount=3
+23:54:34.682 [main] INFO net.lab1024.sa.access.manager.FirmwareManager -- [固件管理器] 升级任务创建成功: taskId=1
+23:54:34.682 [main] INFO net.lab1024.sa.access.manager.FirmwareManager -- [固件管理器] 升级任务已启动: taskId=1
+23:54:34.683 [firmware-upgrade-1] INFO net.lab1024.sa.access.manager.FirmwareManager -- [固件管理器] 开始监控升级进度: taskId=1
+23:54:34.689 [main] INFO net.lab1024.sa.access.manager.FirmwareManager -- [固件管理器] 开始固件升级流程: taskName=测试升级任务, firmwareId=1, deviceCount=3
+23:54:34.690 [main] ERROR net.lab1024.sa.access.manager.FirmwareManager -- [固件管理器] 固件升级流程失败: error=固件不存在
+java.lang.RuntimeException: 固件不存在
+	at net.lab1024.sa.access.manager.FirmwareManager.executeUpgradeWorkflow(FirmwareManager.java:136)
+	at net.lab1024.sa.access.manager.FirmwareManagerTest.lambda$0(FirmwareManagerTest.java:186)
+	at org.junit.jupiter.api.AssertThrows.assertThrows(AssertThrows.java:53)
+	at org.junit.jupiter.api.AssertThrows.assertThrows(AssertThrows.java:35)
+	at org.junit.jupiter.api.Assertions.assertThrows(Assertions.java:3128)
+	at net.lab1024.sa.access.manager.FirmwareManagerTest.testExecuteUpgradeWorkflow_FirmwareNotFound_ThrowsException(FirmwareManagerTest.java:185)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:775)
+	at org.junit.platform.commons.support.ReflectionSupport.invokeMethod(ReflectionSupport.java:479)
+	at org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:60)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:131)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.intercept(TimeoutExtension.java:161)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestableMethod(TimeoutExtension.java:152)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestMethod(TimeoutExtension.java:91)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker$ReflectiveInterceptorCall.lambda$ofVoidMethod$0(InterceptingExecutableInvoker.java:112)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.lambda$invoke$0(InterceptingExecutableInvoker.java:94)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$InterceptedInvocation.proceed(InvocationInterceptorChain.java:106)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.proceed(InvocationInterceptorChain.java:64)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.chainAndInvoke(InvocationInterceptorChain.java:45)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.invoke(InvocationInterceptorChain.java:37)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:93)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:87)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$invokeTestMethod$7(TestMethodTestDescriptor.java:216)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.invokeTestMethod(TestMethodTestDescriptor.java:212)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:137)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:69)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:156)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:146)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:143)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:100)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:160)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:146)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:143)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:100)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:160)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:146)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:143)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:100)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:35)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:57)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:54)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:201)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:170)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:94)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:59)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:142)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:58)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:103)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:85)
+	at org.junit.platform.launcher.core.DelegatingLauncher.execute(DelegatingLauncher.java:47)
+	at org.junit.platform.launcher.core.InterceptingLauncher.lambda$execute$1(InterceptingLauncher.java:39)
+	at org.junit.platform.launcher.core.ClasspathAlignmentCheckingLauncherInterceptor.intercept(ClasspathAlignmentCheckingLauncherInterceptor.java:25)
+	at org.junit.platform.launcher.core.InterceptingLauncher.execute(InterceptingLauncher.java:38)
+	at org.junit.platform.launcher.core.DelegatingLauncher.execute(DelegatingLauncher.java:47)
+	at org.apache.maven.surefire.junitplatform.LazyLauncher.execute(LazyLauncher.java:56)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.execute(JUnitPlatformProvider.java:184)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invokeAllTests(JUnitPlatformProvider.java:148)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invoke(JUnitPlatformProvider.java:122)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:385)
+	at org.apache.maven.surefire.booter.ForkedBooter.execute(ForkedBooter.java:162)
+	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
+23:54:34.697 [main] INFO net.lab1024.sa.access.manager.FirmwareManager -- [固件管理器] 开始回滚流程: taskId=1
+23:54:34.700 [main] WARN net.lab1024.sa.access.manager.FirmwareManager -- [固件管理器] 没有需要回滚的设备: taskId=1
+23:54:34.704 [main] INFO net.lab1024.sa.access.manager.FirmwareManager -- [固件管理器] 开始智能重试失败设备: taskId=1
+23:54:34.704 [main] INFO net.lab1024.sa.access.manager.FirmwareManager -- [固件管理器] 没有失败设备需要重试: taskId=1
+23:54:34.713 [main] INFO net.lab1024.sa.access.manager.FirmwareManager -- [固件管理器] 开始固件升级流程: taskName=测试升级任务, firmwareId=1, deviceCount=3
+23:54:34.713 [main] INFO net.lab1024.sa.access.manager.FirmwareManager -- [固件管理器] 设备版本验证通过: deviceCount=3
+23:54:34.714 [main] INFO net.lab1024.sa.access.manager.FirmwareManager -- [固件管理器] 升级任务创建成功: taskId=1
+23:54:34.714 [main] INFO net.lab1024.sa.access.manager.FirmwareManager -- [固件管理器] 升级任务已启动: taskId=1
+23:54:34.714 [firmware-upgrade-1] INFO net.lab1024.sa.access.manager.FirmwareManager -- [固件管理器] 开始监控升级进度: taskId=1
+[INFO] Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.278 s -- in net.lab1024.sa.access.manager.FirmwareManagerTest
+[INFO] Running net.lab1024.sa.access.performance.DeviceImportPerformanceTest
+[WARNING] Tests run: 5, Failures: 0, Errors: 0, Skipped: 5, Time elapsed: 0 s -- in net.lab1024.sa.access.performance.DeviceImportPerformanceTest
+[INFO] Running net.lab1024.sa.access.scheduler.DeviceStatusMonitorSchedulerTest
+23:54:34.774 [main] INFO net.lab1024.sa.access.scheduler.DeviceStatusMonitorSchedulerTest -- [测试准备] 初始化测试环境
+23:54:34.774 [main] INFO net.lab1024.sa.access.scheduler.DeviceStatusMonitorSchedulerTest -- [测试] 测试单个设备状态检查 - 设备在线不触发告警
+23:54:34.775 [main] INFO net.lab1024.sa.access.scheduler.DeviceStatusMonitorScheduler -- [设备状态监控] 检查设备状态: deviceId=1004, deviceStatus=ONLINE
+23:54:34.775 [main] INFO net.lab1024.sa.access.scheduler.DeviceStatusMonitorSchedulerTest -- [测试] 设备在线未触发告警
+23:54:34.778 [main] INFO net.lab1024.sa.access.scheduler.DeviceStatusMonitorSchedulerTest -- [测试准备] 初始化测试环境
+23:54:34.778 [main] INFO net.lab1024.sa.access.scheduler.DeviceStatusMonitorSchedulerTest -- [测试] 测试定时任务执行 - 服务调用失败
+23:54:34.787 [main] WARN net.lab1024.sa.access.scheduler.DeviceStatusMonitorScheduler -- [设备状态监控] 获取设备状态失败: response=null
+23:54:34.788 [main] INFO net.lab1024.sa.access.scheduler.DeviceStatusMonitorSchedulerTest -- [测试] 服务调用失败处理正确
+23:54:34.791 [main] INFO net.lab1024.sa.access.scheduler.DeviceStatusMonitorSchedulerTest -- [测试准备] 初始化测试环境
+23:54:34.791 [main] INFO net.lab1024.sa.access.scheduler.DeviceStatusMonitorSchedulerTest -- [测试] 测试定时任务执行 - 成功获取设备状态
+23:54:34.792 [main] INFO net.lab1024.sa.access.scheduler.DeviceStatusMonitorSchedulerTest -- [测试] 定时任务执行成功
+23:54:34.796 [main] INFO net.lab1024.sa.access.scheduler.DeviceStatusMonitorSchedulerTest -- [测试准备] 初始化测试环境
+23:54:34.796 [main] INFO net.lab1024.sa.access.scheduler.DeviceStatusMonitorSchedulerTest -- [测试] 测试定时任务执行 - 空响应
+23:54:34.798 [main] INFO net.lab1024.sa.access.scheduler.DeviceStatusMonitorSchedulerTest -- [测试] 空响应处理正确
+23:54:34.801 [main] INFO net.lab1024.sa.access.scheduler.DeviceStatusMonitorSchedulerTest -- [测试准备] 初始化测试环境
+23:54:34.801 [main] INFO net.lab1024.sa.access.scheduler.DeviceStatusMonitorSchedulerTest -- [测试] 测试单个设备状态检查 - 设备错误触发告警
+23:54:34.802 [main] INFO net.lab1024.sa.access.scheduler.DeviceStatusMonitorScheduler -- [设备状态监控] 检查设备状态: deviceId=1003, deviceStatus=ERROR
+23:54:34.802 [main] WARN net.lab1024.sa.access.scheduler.DeviceStatusMonitorScheduler -- [设备状态监控] 检测到设备异常状态: deviceId=1003, deviceStatus=ERROR
+23:54:34.802 [main] INFO net.lab1024.sa.access.scheduler.DeviceStatusMonitorScheduler -- [设备状态监控] 已创建告警: deviceId=1003, deviceStatus=ERROR
+23:54:34.802 [main] INFO net.lab1024.sa.access.scheduler.DeviceStatusMonitorSchedulerTest -- [测试] 设备错误告警触发成功
+23:54:34.804 [main] INFO net.lab1024.sa.access.scheduler.DeviceStatusMonitorSchedulerTest -- [测试准备] 初始化测试环境
+23:54:34.805 [main] INFO net.lab1024.sa.access.scheduler.DeviceStatusMonitorSchedulerTest -- [测试] 测试单个设备状态检查 - 设备故障触发告警
+23:54:34.805 [main] INFO net.lab1024.sa.access.scheduler.DeviceStatusMonitorScheduler -- [设备状态监控] 检查设备状态: deviceId=1002, deviceStatus=FAULT
+23:54:34.805 [main] WARN net.lab1024.sa.access.scheduler.DeviceStatusMonitorScheduler -- [设备状态监控] 检测到设备异常状态: deviceId=1002, deviceStatus=FAULT
+23:54:34.806 [main] INFO net.lab1024.sa.access.scheduler.DeviceStatusMonitorScheduler -- [设备状态监控] 已创建告警: deviceId=1002, deviceStatus=FAULT
+23:54:34.806 [main] INFO net.lab1024.sa.access.scheduler.DeviceStatusMonitorSchedulerTest -- [测试] 设备故障告警触发成功
+23:54:34.810 [main] INFO net.lab1024.sa.access.scheduler.DeviceStatusMonitorSchedulerTest -- [测试准备] 初始化测试环境
+23:54:34.810 [main] INFO net.lab1024.sa.access.scheduler.DeviceStatusMonitorSchedulerTest -- [测试] 测试批量设备状态检查 - 空列表
+23:54:34.810 [main] INFO net.lab1024.sa.access.scheduler.DeviceStatusMonitorScheduler -- [设备状态监控] 批量检查设备状态: count=0
+23:54:34.811 [main] INFO net.lab1024.sa.access.scheduler.DeviceStatusMonitorScheduler -- [设备状态监控] 批量检查完成: count=0
+23:54:34.812 [main] INFO net.lab1024.sa.access.scheduler.DeviceStatusMonitorSchedulerTest -- [测试] 空列表处理正确
+23:54:34.816 [main] INFO net.lab1024.sa.access.scheduler.DeviceStatusMonitorSchedulerTest -- [测试准备] 初始化测试环境
+23:54:34.816 [main] INFO net.lab1024.sa.access.scheduler.DeviceStatusMonitorSchedulerTest -- [测试] 测试单个设备状态检查 - 异常处理
+23:54:34.822 [main] INFO net.lab1024.sa.access.scheduler.DeviceStatusMonitorScheduler -- [设备状态监控] 检查设备状态: deviceId=1007, deviceStatus=OFFLINE
+23:54:34.823 [main] WARN net.lab1024.sa.access.scheduler.DeviceStatusMonitorScheduler -- [设备状态监控] 检测到设备异常状态: deviceId=1007, deviceStatus=OFFLINE
+23:54:34.824 [main] ERROR net.lab1024.sa.access.scheduler.DeviceStatusMonitorScheduler -- [设备状态监控] 检查设备状态异常: deviceId=1007, error=测试异常
+java.lang.RuntimeException: 测试异常
+	at net.lab1024.sa.access.scheduler.DeviceStatusMonitorScheduler.checkDeviceStatus(DeviceStatusMonitorScheduler.java:105)
+	at net.lab1024.sa.access.scheduler.DeviceStatusMonitorSchedulerTest.lambda$2(DeviceStatusMonitorSchedulerTest.java:375)
+	at org.junit.jupiter.api.AssertDoesNotThrow.assertDoesNotThrow(AssertDoesNotThrow.java:49)
+	at org.junit.jupiter.api.AssertDoesNotThrow.assertDoesNotThrow(AssertDoesNotThrow.java:36)
+	at org.junit.jupiter.api.Assertions.assertDoesNotThrow(Assertions.java:3199)
+	at net.lab1024.sa.access.scheduler.DeviceStatusMonitorSchedulerTest.testCheckDeviceStatus_Exception(DeviceStatusMonitorSchedulerTest.java:375)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:775)
+	at org.junit.platform.commons.support.ReflectionSupport.invokeMethod(ReflectionSupport.java:479)
+	at org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:60)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:131)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.intercept(TimeoutExtension.java:161)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestableMethod(TimeoutExtension.java:152)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestMethod(TimeoutExtension.java:91)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker$ReflectiveInterceptorCall.lambda$ofVoidMethod$0(InterceptingExecutableInvoker.java:112)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.lambda$invoke$0(InterceptingExecutableInvoker.java:94)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$InterceptedInvocation.proceed(InvocationInterceptorChain.java:106)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.proceed(InvocationInterceptorChain.java:64)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.chainAndInvoke(InvocationInterceptorChain.java:45)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.invoke(InvocationInterceptorChain.java:37)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:93)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:87)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$invokeTestMethod$7(TestMethodTestDescriptor.java:216)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.invokeTestMethod(TestMethodTestDescriptor.java:212)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:137)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:69)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:156)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:146)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:143)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:100)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:160)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:146)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:143)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:100)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:160)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:146)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:143)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:100)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:35)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:57)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:54)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:201)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:170)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:94)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:59)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:142)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:58)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:103)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:85)
+	at org.junit.platform.launcher.core.DelegatingLauncher.execute(DelegatingLauncher.java:47)
+	at org.junit.platform.launcher.core.InterceptingLauncher.lambda$execute$1(InterceptingLauncher.java:39)
+	at org.junit.platform.launcher.core.ClasspathAlignmentCheckingLauncherInterceptor.intercept(ClasspathAlignmentCheckingLauncherInterceptor.java:25)
+	at org.junit.platform.launcher.core.InterceptingLauncher.execute(InterceptingLauncher.java:38)
+	at org.junit.platform.launcher.core.DelegatingLauncher.execute(DelegatingLauncher.java:47)
+	at org.apache.maven.surefire.junitplatform.LazyLauncher.execute(LazyLauncher.java:56)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.execute(JUnitPlatformProvider.java:184)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invokeAllTests(JUnitPlatformProvider.java:148)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invoke(JUnitPlatformProvider.java:122)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:385)
+	at org.apache.maven.surefire.booter.ForkedBooter.execute(ForkedBooter.java:162)
+	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
+23:54:34.825 [main] INFO net.lab1024.sa.access.scheduler.DeviceStatusMonitorSchedulerTest -- [测试] 异常处理正确
+23:54:34.829 [main] INFO net.lab1024.sa.access.scheduler.DeviceStatusMonitorSchedulerTest -- [测试准备] 初始化测试环境
+23:54:34.829 [main] INFO net.lab1024.sa.access.scheduler.DeviceStatusMonitorSchedulerTest -- [测试] 测试单个设备状态检查 - 空设备数据
+23:54:34.830 [main] INFO net.lab1024.sa.access.scheduler.DeviceStatusMonitorScheduler -- [设备状态监控] 检查设备状态: deviceId=1005, deviceStatus=OFFLINE
+23:54:34.830 [main] WARN net.lab1024.sa.access.scheduler.DeviceStatusMonitorScheduler -- [设备状态监控] 检测到设备异常状态: deviceId=1005, deviceStatus=OFFLINE
+23:54:34.830 [main] INFO net.lab1024.sa.access.scheduler.DeviceStatusMonitorScheduler -- [设备状态监控] 已创建告警: deviceId=1005, deviceStatus=OFFLINE
+23:54:34.830 [main] INFO net.lab1024.sa.access.scheduler.DeviceStatusMonitorSchedulerTest -- [测试] 空设备数据处理正确
+23:54:34.835 [main] INFO net.lab1024.sa.access.scheduler.DeviceStatusMonitorSchedulerTest -- [测试准备] 初始化测试环境
+23:54:34.835 [main] INFO net.lab1024.sa.access.scheduler.DeviceStatusMonitorSchedulerTest -- [测试] 测试批量设备状态检查 - 成功
+23:54:34.835 [main] INFO net.lab1024.sa.access.scheduler.DeviceStatusMonitorScheduler -- [设备状态监控] 批量检查设备状态: count=3
+23:54:34.835 [main] INFO net.lab1024.sa.access.scheduler.DeviceStatusMonitorScheduler -- [设备状态监控] 检查设备状态: deviceId=1001, deviceStatus=ONLINE
+23:54:34.836 [main] INFO net.lab1024.sa.access.scheduler.DeviceStatusMonitorScheduler -- [设备状态监控] 检查设备状态: deviceId=1002, deviceStatus=OFFLINE
+23:54:34.836 [main] WARN net.lab1024.sa.access.scheduler.DeviceStatusMonitorScheduler -- [设备状态监控] 检测到设备异常状态: deviceId=1002, deviceStatus=OFFLINE
+23:54:34.836 [main] INFO net.lab1024.sa.access.scheduler.DeviceStatusMonitorScheduler -- [设备状态监控] 已创建告警: deviceId=1002, deviceStatus=OFFLINE
+23:54:34.836 [main] INFO net.lab1024.sa.access.scheduler.DeviceStatusMonitorScheduler -- [设备状态监控] 检查设备状态: deviceId=1003, deviceStatus=FAULT
+23:54:34.836 [main] WARN net.lab1024.sa.access.scheduler.DeviceStatusMonitorScheduler -- [设备状态监控] 检测到设备异常状态: deviceId=1003, deviceStatus=FAULT
+23:54:34.836 [main] INFO net.lab1024.sa.access.scheduler.DeviceStatusMonitorScheduler -- [设备状态监控] 已创建告警: deviceId=1003, deviceStatus=FAULT
+23:54:34.836 [main] INFO net.lab1024.sa.access.scheduler.DeviceStatusMonitorScheduler -- [设备状态监控] 批量检查完成: count=3
+23:54:34.836 [main] INFO net.lab1024.sa.access.scheduler.DeviceStatusMonitorSchedulerTest -- [测试] 批量设备状态检查成功
+23:54:34.840 [main] INFO net.lab1024.sa.access.scheduler.DeviceStatusMonitorSchedulerTest -- [测试准备] 初始化测试环境
+23:54:34.840 [main] INFO net.lab1024.sa.access.scheduler.DeviceStatusMonitorSchedulerTest -- [测试] 测试单个设备状态检查 - 设备离线触发告警
+23:54:34.840 [main] INFO net.lab1024.sa.access.scheduler.DeviceStatusMonitorScheduler -- [设备状态监控] 检查设备状态: deviceId=1001, deviceStatus=OFFLINE
+23:54:34.840 [main] WARN net.lab1024.sa.access.scheduler.DeviceStatusMonitorScheduler -- [设备状态监控] 检测到设备异常状态: deviceId=1001, deviceStatus=OFFLINE
+23:54:34.840 [main] INFO net.lab1024.sa.access.scheduler.DeviceStatusMonitorScheduler -- [设备状态监控] 已创建告警: deviceId=1001, deviceStatus=OFFLINE
+23:54:34.841 [main] INFO net.lab1024.sa.access.scheduler.DeviceStatusMonitorSchedulerTest -- [测试] 设备离线告警触发成功
+23:54:34.845 [main] INFO net.lab1024.sa.access.scheduler.DeviceStatusMonitorSchedulerTest -- [测试准备] 初始化测试环境
+23:54:34.845 [main] INFO net.lab1024.sa.access.scheduler.DeviceStatusMonitorSchedulerTest -- [测试] 测试单个设备状态检查 - 告警创建失败
+23:54:34.848 [main] INFO net.lab1024.sa.access.scheduler.DeviceStatusMonitorScheduler -- [设备状态监控] 检查设备状态: deviceId=1006, deviceStatus=OFFLINE
+23:54:34.848 [main] WARN net.lab1024.sa.access.scheduler.DeviceStatusMonitorScheduler -- [设备状态监控] 检测到设备异常状态: deviceId=1006, deviceStatus=OFFLINE
+23:54:34.848 [main] INFO net.lab1024.sa.access.scheduler.DeviceStatusMonitorSchedulerTest -- [测试] 告警创建失败处理正确
+[INFO] Tests run: 12, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.108 s -- in net.lab1024.sa.access.scheduler.DeviceStatusMonitorSchedulerTest
+[INFO] Running net.lab1024.sa.access.service.AccessCapacityServiceTest
+23:54:34.959 [main] INFO net.lab1024.sa.access.service.impl.AccessCapacityServiceImpl -- [容量控制] 重置区域内人数: controlId=1
+23:54:34.960 [main] INFO net.lab1024.sa.access.service.impl.AccessCapacityServiceImpl -- [容量控制] 重置人数成功: controlId=1, result=人数已重置，当前人数: 0/100
+23:54:34.981 [main] INFO net.lab1024.sa.access.service.impl.AccessCapacityServiceImpl -- [容量控制] 更新容量控制启用状态: controlId=1, enabled=0
+23:54:34.981 [main] INFO net.lab1024.sa.access.service.impl.AccessCapacityServiceImpl -- [容量控制] 更新启用状态成功: controlId=1, enabled=0, result=1
+23:54:34.986 [main] INFO net.lab1024.sa.access.service.impl.AccessCapacityServiceImpl -- [容量控制] 查询容量控制详情: controlId=999
+23:54:34.994 [main] INFO net.lab1024.sa.access.service.impl.AccessCapacityServiceImpl -- [容量控制] 查询容量控制详情: controlId=1
+23:54:34.999 [main] INFO net.lab1024.sa.access.service.impl.AccessCapacityServiceImpl -- [容量控制] 增加区域内人数: areaId=1001, count=10
+23:54:34.999 [main] WARN net.lab1024.sa.access.service.impl.AccessCapacityServiceImpl -- [容量控制] 超过最大容量，仅告警: areaId=1001, current=105, max=100
+23:54:35.004 [main] INFO net.lab1024.sa.access.service.impl.AccessCapacityServiceImpl -- [容量控制] 更新容量控制规则: controlId=999
+23:54:35.004 [main] WARN net.lab1024.sa.access.service.impl.AccessCapacityServiceImpl -- [容量控制] 容量控制规则不存在: controlId=999
+23:54:35.008 [main] INFO net.lab1024.sa.access.service.impl.AccessCapacityServiceImpl -- [容量控制] 删除容量控制规则: controlId=1
+23:54:35.008 [main] INFO net.lab1024.sa.access.service.impl.AccessCapacityServiceImpl -- [容量控制] 删除容量控制成功: controlId=1, result=1
+23:54:35.016 [main] INFO net.lab1024.sa.access.service.impl.AccessCapacityServiceImpl -- [容量控制] 减少区域内人数: areaId=1001, count=10
+23:54:35.017 [main] INFO net.lab1024.sa.access.service.impl.AccessCapacityServiceImpl -- [容量控制] 减少人数成功: areaId=1001, result=人数减少成功，当前人数: 50/100
+23:54:35.021 [main] INFO net.lab1024.sa.access.service.impl.AccessCapacityServiceImpl -- [容量控制] 分页查询容量控制规则: AccessCapacityControlQueryForm(areaId=null, controlMode=STRICT, enabled=null)
+23:54:35.032 [main] INFO net.lab1024.sa.access.service.impl.AccessCapacityServiceImpl -- [容量控制] 查询到1条容量控制记录
+23:54:35.036 [main] INFO net.lab1024.sa.access.service.impl.AccessCapacityServiceImpl -- [容量控制] 分页查询容量控制规则: AccessCapacityControlQueryForm(areaId=null, controlMode=null, enabled=null)
+23:54:35.037 [main] INFO net.lab1024.sa.access.service.impl.AccessCapacityServiceImpl -- [容量控制] 查询到1条容量控制记录
+23:54:35.044 [main] INFO net.lab1024.sa.access.service.impl.AccessCapacityServiceImpl -- [容量控制] 增加区域内人数: areaId=1001, count=10
+23:54:35.045 [main] INFO net.lab1024.sa.access.service.impl.AccessCapacityServiceImpl -- [容量控制] 增加人数成功: areaId=1001, result=人数增加成功，当前人数: 60/100
+23:54:35.059 [main] INFO net.lab1024.sa.access.service.impl.AccessCapacityServiceImpl -- [容量控制] 增加区域内人数: areaId=1001, count=10
+23:54:35.059 [main] WARN net.lab1024.sa.access.service.impl.AccessCapacityServiceImpl -- [容量控制] 超过最大容量，禁止进入: areaId=1001, current=105, max=100
+23:54:35.064 [main] INFO net.lab1024.sa.access.service.impl.AccessCapacityServiceImpl -- [容量控制] 更新容量控制规则: controlId=1
+23:54:35.066 [main] INFO net.lab1024.sa.access.service.impl.AccessCapacityServiceImpl -- [容量控制] 更新容量控制成功: controlId=1, result=1
+23:54:35.070 [main] INFO net.lab1024.sa.access.service.impl.AccessCapacityServiceImpl -- [容量控制] 新增容量控制规则: areaId=1002, maxCapacity=50
+23:54:35.071 [main] INFO net.lab1024.sa.access.service.impl.AccessCapacityServiceImpl -- [容量控制] 新增容量控制成功: controlId=1
+[INFO] Tests run: 19, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.195 s -- in net.lab1024.sa.access.service.AccessCapacityServiceTest
+[INFO] Running net.lab1024.sa.access.service.AccessEvacuationServiceTest
+23:54:35.146 [main] INFO net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 触发一键疏散: pointId=1
+23:54:35.147 [main] WARN net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 疏散点未启用: pointId=1
+23:54:35.154 [main] INFO net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 分页查询疏散点: AccessEvacuationPointQueryForm(pointName=null, areaId=null, evacuationType=FIRE, enabled=null)
+23:54:35.168 [main] INFO net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 查询到1条疏散点记录
+23:54:35.171 [main] INFO net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 取消疏散: pointId=999
+23:54:35.172 [main] WARN net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 疏散点不存在: pointId=999
+23:54:35.176 [main] INFO net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 更新疏散点启用状态: pointId=1, enabled=0
+23:54:35.176 [main] INFO net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 更新启用状态成功: pointId=1, enabled=0, result=1
+23:54:35.179 [main] INFO net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 查询疏散点详情: pointId=999
+23:54:35.183 [main] INFO net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 更新疏散点: pointId=999
+23:54:35.183 [main] WARN net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 疏散点不存在: pointId=999
+23:54:35.186 [main] INFO net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 查询疏散点详情: pointId=1
+23:54:35.190 [main] INFO net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 测试疏散点: pointId=999
+23:54:35.190 [main] WARN net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 疏散点不存在: pointId=999
+23:54:35.193 [main] INFO net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 删除疏散点: pointId=1
+23:54:35.193 [main] INFO net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 删除疏散点成功: pointId=1, result=1
+23:54:35.197 [main] INFO net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 分页查询疏散点: AccessEvacuationPointQueryForm(pointName=null, areaId=1001, evacuationType=null, enabled=null)
+23:54:35.199 [main] INFO net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 查询到1条疏散点记录
+23:54:35.203 [main] INFO net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 更新疏散点: pointId=1
+23:54:35.203 [main] INFO net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 更新疏散点成功: pointId=1, result=1
+23:54:35.207 [main] INFO net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 取消疏散: pointId=1
+23:54:35.213 [main] INFO net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 取消疏散完成: pointId=1, result=疏散已取消，成功关闭3/3个门
+23:54:35.217 [main] INFO net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 分页查询疏散点: AccessEvacuationPointQueryForm(pointName=null, areaId=null, evacuationType=null, enabled=null)
+23:54:35.217 [main] INFO net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 查询到1条疏散点记录
+23:54:35.222 [main] INFO net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 新增疏散点: pointName=B栋消防出口
+23:54:35.222 [main] INFO net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 新增疏散点成功: pointId=1
+23:54:35.226 [main] INFO net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 触发一键疏散: pointId=1
+23:54:35.227 [main] INFO net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 一键疏散完成: pointId=1, result=一键疏散已触发，成功打开3/3个门
+23:54:35.234 [main] INFO net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 测试疏散点: pointId=1
+23:54:35.234 [main] INFO net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 测试疏散点成功: pointId=1, result=测试成功 - 疏散点: A栋消防出口, 类型: 火灾疏散, 关联门: 3个
+23:54:35.239 [main] INFO net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 触发一键疏散: pointId=999
+23:54:35.239 [main] WARN net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 疏散点不存在: pointId=999
+23:54:35.242 [main] INFO net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 删除疏散点: pointId=1
+23:54:35.242 [main] INFO net.lab1024.sa.access.service.impl.AccessEvacuationServiceImpl -- [疏散管理] 删除疏散点成功: pointId=1, result=0
+[INFO] Tests run: 18, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.137 s -- in net.lab1024.sa.access.service.AccessEvacuationServiceTest
+[INFO] Running net.lab1024.sa.access.service.AccessInterlockServiceTest
+23:54:35.615 [main] INFO net.lab1024.sa.access.service.impl.AccessInterlockServiceImpl -- [互锁管理] 测试互锁规则: ruleId=1
+23:54:35.620 [main] INFO net.lab1024.sa.access.service.impl.AccessInterlockServiceImpl -- [互锁管理] 触发互锁: areaId=1001, doorId=3001, action=DOOR_OPEN
+23:54:35.627 [pool-3-thread-1] INFO net.lab1024.sa.access.service.impl.AccessInterlockServiceImpl -- [互锁管理] 执行互锁规则: ruleId=1, triggerAreaId=1001
+23:54:35.628 [pool-3-thread-1] INFO net.lab1024.sa.access.service.impl.AccessInterlockServiceImpl -- [互锁管理] 互锁执行成功: ruleId=1, targetAreaId=1002
+23:54:35.630 [main] INFO net.lab1024.sa.access.service.impl.AccessInterlockServiceImpl -- [互锁管理] 触发互锁: areaId=1001, doorId=3001, action=DOOR_OPEN
+23:54:35.631 [pool-4-thread-1] INFO net.lab1024.sa.access.service.impl.AccessInterlockServiceImpl -- [互锁管理] 执行互锁规则: ruleId=1, triggerAreaId=1001
+23:54:35.632 [pool-4-thread-1] INFO net.lab1024.sa.access.service.impl.AccessInterlockServiceImpl -- [互锁管理] 互锁执行成功: ruleId=1, targetAreaId=1002
+23:54:35.638 [main] INFO net.lab1024.sa.access.service.impl.AccessInterlockServiceImpl -- [互锁管理] 分页查询互锁规则: queryForm=AccessInterlockRuleQueryForm(pageNum=1, pageSize=10, ruleName=null, interlockMode=BIDIRECTIONAL, unlockCondition=null, enabled=null)
+23:54:35.659 [main] INFO net.lab1024.sa.access.service.impl.AccessInterlockServiceImpl -- [互锁管理] 更新启用状态: ruleId=1, enabled=0
+23:54:35.663 [main] INFO net.lab1024.sa.access.service.impl.AccessInterlockServiceImpl -- [互锁管理] 获取规则详情: ruleId=999
+23:54:35.667 [main] INFO net.lab1024.sa.access.service.impl.AccessInterlockServiceImpl -- [互锁管理] 获取规则详情: ruleId=1
+23:54:35.670 [main] INFO net.lab1024.sa.access.service.impl.AccessInterlockServiceImpl -- [互锁管理] 删除互锁规则: ruleId=1
+23:54:35.674 [main] INFO net.lab1024.sa.access.service.impl.AccessInterlockServiceImpl -- [互锁管理] 触发互锁: areaId=9999, doorId=9999, action=DOOR_OPEN
+23:54:35.679 [main] INFO net.lab1024.sa.access.service.impl.AccessInterlockServiceImpl -- [互锁管理] 更新互锁规则: ruleId=1, updateForm=AccessInterlockRuleUpdateForm(ruleName=更新后的互锁规则, ruleCode=null, areaAId=null, areaBId=null, interlockMode=UNIDIRECTIONAL, areaADoorIds=null, areaBDoorIds=null, unlockCondition=null, unlockDelaySeconds=null, priority=null, description=null)
+23:54:35.707 [main] INFO net.lab1024.sa.access.service.impl.AccessInterlockServiceImpl -- [互锁管理] 更新互锁规则: ruleId=999, updateForm=AccessInterlockRuleUpdateForm(ruleName=更新后的互锁规则, ruleCode=null, areaAId=null, areaBId=null, interlockMode=UNIDIRECTIONAL, areaADoorIds=null, areaBDoorIds=null, unlockCondition=null, unlockDelaySeconds=null, priority=null, description=null)
+23:54:35.712 [main] INFO net.lab1024.sa.access.service.impl.AccessInterlockServiceImpl -- [互锁管理] 新增互锁规则: addForm=AccessInterlockRuleAddForm(ruleName=测试互锁规则, ruleCode=null, areaAId=1001, areaBId=1002, interlockMode=BIDIRECTIONAL, areaADoorIds=[3001, 3002], areaBDoorIds=[3003, 3004], unlockCondition=MANUAL, unlockDelaySeconds=0, priority=100, description=null)
+23:54:35.713 [main] INFO net.lab1024.sa.access.service.impl.AccessInterlockServiceImpl -- [互锁管理] 新增互锁规则成功: ruleId=1
+23:54:35.717 [main] INFO net.lab1024.sa.access.service.impl.AccessInterlockServiceImpl -- [互锁管理] 分页查询互锁规则: queryForm=AccessInterlockRuleQueryForm(pageNum=1, pageSize=10, ruleName=null, interlockMode=null, unlockCondition=null, enabled=null)
+23:54:35.722 [main] INFO net.lab1024.sa.access.service.impl.AccessInterlockServiceImpl -- [互锁管理] 删除互锁规则: ruleId=1
+23:54:35.726 [main] INFO net.lab1024.sa.access.service.impl.AccessInterlockServiceImpl -- [互锁管理] 手动解锁: ruleId=1, areaId=1002
+23:54:35.737 [main] INFO net.lab1024.sa.access.service.impl.AccessInterlockServiceImpl -- [互锁管理] 测试互锁规则: ruleId=999
+23:54:35.741 [main] INFO net.lab1024.sa.access.service.impl.AccessInterlockServiceImpl -- [互锁管理] 手动解锁: ruleId=999, areaId=9998
+[INFO] Tests run: 17, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.477 s -- in net.lab1024.sa.access.service.AccessInterlockServiceTest
+[INFO] Running net.lab1024.sa.access.service.AccessLinkageServiceTest
+23:54:35.858 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 测试联动规则: ruleId=1
+23:54:35.859 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 执行联动规则: ruleId=1, targetDeviceId=1002, actionType=CAMERA_SNAPSHOT
+23:54:35.860 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 联动执行成功: ruleId=1, result=test success
+23:54:35.860 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 联动规则测试完成: ruleId=1, result=联动执行成功: test success
+23:54:35.865 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 触发联动: triggerDeviceId=9999, triggerDoorId=9999, triggerEvent=UNKNOWN_EVENT
+23:54:35.869 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 未找到匹配的联动规则: triggerDeviceId=9999
+23:54:35.875 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 更新联动规则启用状态: ruleId=1, enabled=0
+23:54:35.875 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 联动规则启用状态更新成功: ruleId=1, enabled=0
+23:54:35.880 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 查询联动规则详情: ruleId=999
+23:54:35.883 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 查询联动规则详情: ruleId=1
+23:54:35.892 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 删除联动规则: ruleId=1
+23:54:35.893 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 联动规则删除成功: ruleId=1
+23:54:35.897 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 更新联动规则: ruleId=1, updateForm=AccessLinkageRuleUpdateForm(ruleName=更新联动规则, actionType=null, delaySeconds=null, conditionExpression=null, priority=null, description=null)
+23:54:35.898 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 联动规则更新成功: ruleId=1
+23:54:35.902 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 更新联动规则: ruleId=999, updateForm=AccessLinkageRuleUpdateForm(ruleName=更新联动规则, actionType=null, delaySeconds=null, conditionExpression=null, priority=null, description=null)
+23:54:35.907 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 新增联动规则: addForm=AccessLinkageRuleAddForm(ruleName=测试联动规则, ruleCode=null, ruleType=null, triggerType=DOOR_OPEN, triggerDeviceId=1001, triggerDoorId=2001, actionType=CAMERA_SNAPSHOT, targetDeviceId=1002, targetDoorId=null, delaySeconds=0, conditionExpression=null, priority=100, description=null)
+23:54:35.931 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 联动规则新增成功: ruleId=1
+23:54:35.935 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 分页查询联动规则: queryForm=AccessLinkageRuleQueryForm(pageNum=1, pageSize=10, ruleName=null, ruleType=null, enabled=null)
+23:54:35.950 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 删除联动规则: ruleId=1
+23:54:35.950 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 联动规则删除成功: ruleId=1
+23:54:35.954 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 测试联动规则: ruleId=999
+23:54:35.957 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 触发联动: triggerDeviceId=1001, triggerDoorId=2001, triggerEvent=DOOR_OPEN
+23:54:35.960 [pool-31-thread-1] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 执行联动规则: ruleId=1, targetDeviceId=1002, actionType=CAMERA_SNAPSHOT
+23:54:35.964 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 触发联动: triggerDeviceId=1001, triggerDoorId=2001, triggerEvent=DOOR_OPEN
+23:54:35.966 [pool-32-thread-1] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 执行联动规则: ruleId=1, targetDeviceId=1002, actionType=CAMERA_SNAPSHOT
+23:54:35.966 [pool-32-thread-1] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 联动执行成功: ruleId=1, result=null
+23:54:35.969 [main] INFO net.lab1024.sa.access.service.impl.AccessLinkageServiceImpl -- [联动管理] 分页查询联动规则: queryForm=AccessLinkageRuleQueryForm(pageNum=1, pageSize=10, ruleName=测试联动规则, ruleType=null, enabled=null)
+[INFO] Tests run: 15, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.209 s -- in net.lab1024.sa.access.service.AccessLinkageServiceTest
+[INFO] Running net.lab1024.sa.access.service.AccessPersonRestrictionServiceTest
+23:54:36.064 [main] INFO net.lab1024.sa.access.service.impl.AccessPersonRestrictionServiceImpl -- [人员限制] 用户在白名单中，允许访问: userId=1001, restrictionId=2
+23:54:36.072 [main] INFO net.lab1024.sa.access.service.impl.AccessPersonRestrictionServiceImpl -- [人员限制] 更新人员限制规则: restrictionId=999
+23:54:36.072 [main] WARN net.lab1024.sa.access.service.impl.AccessPersonRestrictionServiceImpl -- [人员限制] 限制规则不存在: restrictionId=999
+23:54:36.077 [main] INFO net.lab1024.sa.access.service.impl.AccessPersonRestrictionServiceImpl -- [人员限制] 更新人员限制启用状态: restrictionId=1, enabled=0
+23:54:36.077 [main] INFO net.lab1024.sa.access.service.impl.AccessPersonRestrictionServiceImpl -- [人员限制] 更新启用状态成功: restrictionId=1, enabled=0, result=1
+23:54:36.081 [main] INFO net.lab1024.sa.access.service.impl.AccessPersonRestrictionServiceImpl -- [人员限制] 查询人员限制详情: restrictionId=999
+23:54:36.084 [main] INFO net.lab1024.sa.access.service.impl.AccessPersonRestrictionServiceImpl -- [人员限制] 查询人员限制详情: restrictionId=1
+23:54:36.093 [main] INFO net.lab1024.sa.access.service.impl.AccessPersonRestrictionServiceImpl -- [人员限制] 删除人员限制规则: restrictionId=1
+23:54:36.093 [main] INFO net.lab1024.sa.access.service.impl.AccessPersonRestrictionServiceImpl -- [人员限制] 删除人员限制成功: restrictionId=1, result=1
+23:54:36.096 [main] INFO net.lab1024.sa.access.service.impl.AccessPersonRestrictionServiceImpl -- [人员限制] 新增人员限制规则: userId=1002, type=WHITELIST
+23:54:36.097 [main] INFO net.lab1024.sa.access.service.impl.AccessPersonRestrictionServiceImpl -- [人员限制] 新增人员限制成功: restrictionId=1
+23:54:36.101 [main] INFO net.lab1024.sa.access.service.impl.AccessPersonRestrictionServiceImpl -- [人员限制] 分页查询人员限制规则: AccessPersonRestrictionQueryForm(userId=null, restrictionType=BLACKLIST, areaId=null, enabled=null)
+23:54:36.105 [main] INFO net.lab1024.sa.access.service.impl.AccessPersonRestrictionServiceImpl -- [人员限制] 查询到1条限制规则记录
+23:54:36.112 [main] INFO net.lab1024.sa.access.service.impl.AccessPersonRestrictionServiceImpl -- [人员限制] 更新人员限制规则: restrictionId=1
+23:54:36.113 [main] INFO net.lab1024.sa.access.service.impl.AccessPersonRestrictionServiceImpl -- [人员限制] 更新人员限制成功: restrictionId=1, result=1
+23:54:36.120 [main] INFO net.lab1024.sa.access.service.impl.AccessPersonRestrictionServiceImpl -- [人员限制] 分页查询人员限制规则: AccessPersonRestrictionQueryForm(userId=null, restrictionType=null, areaId=null, enabled=null)
+23:54:36.120 [main] INFO net.lab1024.sa.access.service.impl.AccessPersonRestrictionServiceImpl -- [人员限制] 查询到1条限制规则记录
+23:54:36.126 [main] INFO net.lab1024.sa.access.service.impl.AccessPersonRestrictionServiceImpl -- [人员限制] 分页查询人员限制规则: AccessPersonRestrictionQueryForm(userId=1001, restrictionType=null, areaId=null, enabled=null)
+23:54:36.127 [main] INFO net.lab1024.sa.access.service.impl.AccessPersonRestrictionServiceImpl -- [人员限制] 查询到1条限制规则记录
+23:54:36.131 [main] INFO net.lab1024.sa.access.service.impl.AccessPersonRestrictionServiceImpl -- [人员限制] 用户在黑名单中，禁止访问: userId=1001, restrictionId=1
+23:54:36.136 [main] INFO net.lab1024.sa.access.service.impl.AccessPersonRestrictionServiceImpl -- [人员限制] 获取用户的所有限制规则: userId=1001
+23:54:36.142 [main] INFO net.lab1024.sa.access.service.impl.AccessPersonRestrictionServiceImpl -- [人员限制] 获取用户的所有限制规则: userId=9999
+[INFO] Tests run: 16, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.145 s -- in net.lab1024.sa.access.service.AccessPersonRestrictionServiceTest
+[INFO] Running net.lab1024.sa.access.service.AccessVerificationServiceTest
+23:54:36.270 [main] INFO net.lab1024.sa.access.service.impl.AccessVerificationServiceImpl -- [验证服务] 开始验证: userId=1001, deviceId=2001, areaId=3001
+23:54:36.271 [main] INFO net.lab1024.sa.access.service.impl.AccessVerificationServiceImpl -- [验证服务] 区域验证模式: areaId=3001, mode=backend
+23:54:36.281 [main] WARN net.lab1024.sa.access.service.impl.AccessVerificationServiceImpl -- [验证服务] 未知策略类型: null
+23:54:36.281 [main] INFO net.lab1024.sa.access.service.impl.AccessVerificationServiceImpl -- [验证服务] 策略映射初始化完成: [backend, unknown]
+23:54:36.282 [main] INFO net.lab1024.sa.access.service.impl.AccessVerificationServiceImpl -- [验证服务] 验证完成: userId=1001, mode=backend, result=SUCCEED, duration=12ms
+23:54:36.286 [main] INFO net.lab1024.sa.access.service.impl.AccessVerificationServiceImpl -- [验证服务] 开始验证: userId=1001, deviceId=2001, areaId=3001
+23:54:36.286 [main] INFO net.lab1024.sa.access.service.impl.AccessVerificationServiceImpl -- [验证服务] 区域验证模式: areaId=3001, mode=edge
+23:54:36.286 [main] WARN net.lab1024.sa.access.service.impl.AccessVerificationServiceImpl -- [验证服务] 未知策略类型: null
+23:54:36.287 [main] INFO net.lab1024.sa.access.service.impl.AccessVerificationServiceImpl -- [验证服务] 策略映射初始化完成: [edge, unknown]
+23:54:36.287 [main] INFO net.lab1024.sa.access.service.impl.AccessVerificationServiceImpl -- [验证服务] 验证完成: userId=1001, mode=edge, result=SUCCEED, duration=1ms
+23:54:36.290 [main] INFO net.lab1024.sa.access.service.impl.AccessVerificationServiceImpl -- [验证服务] 开始验证: userId=1001, deviceId=2001, areaId=3001
+23:54:36.291 [main] INFO net.lab1024.sa.access.service.impl.AccessVerificationServiceImpl -- [验证服务] 区域验证模式: areaId=3001, mode=unknown
+23:54:36.291 [main] WARN net.lab1024.sa.access.service.impl.AccessVerificationServiceImpl -- [验证服务] 未知策略类型: null
+23:54:36.291 [main] WARN net.lab1024.sa.access.service.impl.AccessVerificationServiceImpl -- [验证服务] 未知策略类型: null
+23:54:36.291 [main] WARN net.lab1024.sa.access.service.impl.AccessVerificationServiceImpl -- [验证服务] 策略重复注册，保留现有策略: null
+23:54:36.291 [main] INFO net.lab1024.sa.access.service.impl.AccessVerificationServiceImpl -- [验证服务] 策略映射初始化完成: [unknown]
+23:54:36.292 [main] ERROR net.lab1024.sa.access.service.impl.AccessVerificationServiceImpl -- [验证服务] 验证异常: userId=1001, error=Cannot invoke "net.lab1024.sa.access.domain.dto.VerificationResult.isSuccess()" because "result" is null
+java.lang.NullPointerException: Cannot invoke "net.lab1024.sa.access.domain.dto.VerificationResult.isSuccess()" because "result" is null
+	at net.lab1024.sa.access.service.impl.AccessVerificationServiceImpl.verifyAccess(AccessVerificationServiceImpl.java:122)
+	at net.lab1024.sa.access.service.AccessVerificationServiceTest.testVerifyAccess_UnsupportedMode(AccessVerificationServiceTest.java:144)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:775)
+	at org.junit.platform.commons.support.ReflectionSupport.invokeMethod(ReflectionSupport.java:479)
+	at org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:60)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:131)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.intercept(TimeoutExtension.java:161)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestableMethod(TimeoutExtension.java:152)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestMethod(TimeoutExtension.java:91)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker$ReflectiveInterceptorCall.lambda$ofVoidMethod$0(InterceptingExecutableInvoker.java:112)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.lambda$invoke$0(InterceptingExecutableInvoker.java:94)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$InterceptedInvocation.proceed(InvocationInterceptorChain.java:106)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.proceed(InvocationInterceptorChain.java:64)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.chainAndInvoke(InvocationInterceptorChain.java:45)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.invoke(InvocationInterceptorChain.java:37)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:93)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:87)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$invokeTestMethod$7(TestMethodTestDescriptor.java:216)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.invokeTestMethod(TestMethodTestDescriptor.java:212)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:137)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:69)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:156)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:146)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:143)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:100)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:160)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:146)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:143)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:100)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:160)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:146)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:143)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:100)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:35)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:57)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:54)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:201)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:170)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:94)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:59)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:142)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:58)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:103)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:85)
+	at org.junit.platform.launcher.core.DelegatingLauncher.execute(DelegatingLauncher.java:47)
+	at org.junit.platform.launcher.core.InterceptingLauncher.lambda$execute$1(InterceptingLauncher.java:39)
+	at org.junit.platform.launcher.core.ClasspathAlignmentCheckingLauncherInterceptor.intercept(ClasspathAlignmentCheckingLauncherInterceptor.java:25)
+	at org.junit.platform.launcher.core.InterceptingLauncher.execute(InterceptingLauncher.java:38)
+	at org.junit.platform.launcher.core.DelegatingLauncher.execute(DelegatingLauncher.java:47)
+	at org.apache.maven.surefire.junitplatform.LazyLauncher.execute(LazyLauncher.java:56)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.execute(JUnitPlatformProvider.java:184)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invokeAllTests(JUnitPlatformProvider.java:148)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invoke(JUnitPlatformProvider.java:122)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:385)
+	at org.apache.maven.surefire.booter.ForkedBooter.execute(ForkedBooter.java:162)
+	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
+23:54:36.297 [main] WARN net.lab1024.sa.access.service.impl.AccessVerificationServiceImpl -- [验证服务] 验证模式未配置: areaId=3001, 使用默认模式: edge
+23:54:36.303 [main] WARN net.lab1024.sa.access.service.impl.AccessVerificationServiceImpl -- [验证服务] 区域扩展信息不存在: areaId=3001, 使用默认模式: edge
+[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.139 s -- in net.lab1024.sa.access.service.AccessVerificationServiceTest
+[INFO] Running net.lab1024.sa.access.service.AlertRuleServiceTest
+23:54:36.316 [main] INFO net.lab1024.sa.access.service.AlertRuleServiceTest -- [测试准备] 初始化测试数据
+23:54:36.317 [main] INFO net.lab1024.sa.access.service.AlertRuleServiceTest -- [测试准备] 测试数据初始化完成
+23:54:36.317 [main] INFO net.lab1024.sa.access.service.AlertRuleServiceTest -- [测试用例] 测试成功切换规则状态
+23:54:36.317 [main] INFO net.lab1024.sa.access.service.impl.AlertRuleServiceImpl -- [告警规则] 切换规则状态: ruleId=1, enabled=0
+23:54:36.318 [main] INFO net.lab1024.sa.access.service.impl.AlertRuleServiceImpl -- [告警规则] 切换规则状态成功: ruleId=1, enabled=0
+23:54:36.318 [main] INFO net.lab1024.sa.access.service.AlertRuleServiceTest -- [测试用例] 测试通过: 规则状态切换成功
+23:54:36.321 [main] INFO net.lab1024.sa.access.service.AlertRuleServiceTest -- [测试准备] 初始化测试数据
+23:54:36.321 [main] INFO net.lab1024.sa.access.service.AlertRuleServiceTest -- [测试准备] 测试数据初始化完成
+23:54:36.321 [main] INFO net.lab1024.sa.access.service.AlertRuleServiceTest -- [测试用例] 测试成功创建告警规则
+23:54:36.324 [main] INFO net.lab1024.sa.access.service.impl.AlertRuleServiceImpl -- [告警规则] 创建告警规则: ruleName=设备离线告警, ruleCode=DEVICE_OFFLINE, ruleType=DEVICE_OFFLINE
+23:54:36.334 [main] INFO net.lab1024.sa.access.service.impl.AlertRuleServiceImpl -- [告警规则] 创建规则成功: ruleId=1, ruleName=设备离线告警
+23:54:36.334 [main] INFO net.lab1024.sa.access.service.AlertRuleServiceTest -- [测试用例] 测试通过: 规则创建成功, ruleId=1
+23:54:36.337 [main] INFO net.lab1024.sa.access.service.AlertRuleServiceTest -- [测试准备] 初始化测试数据
+23:54:36.337 [main] INFO net.lab1024.sa.access.service.AlertRuleServiceTest -- [测试准备] 测试数据初始化完成
+23:54:36.337 [main] INFO net.lab1024.sa.access.service.AlertRuleServiceTest -- [测试用例] 测试成功删除告警规则
+23:54:36.340 [main] INFO net.lab1024.sa.access.service.impl.AlertRuleServiceImpl -- [告警规则] 删除告警规则: ruleId=1
+23:54:36.340 [main] INFO net.lab1024.sa.access.service.impl.AlertRuleServiceImpl -- [告警规则] 删除规则成功: ruleId=1
+23:54:36.340 [main] INFO net.lab1024.sa.access.service.AlertRuleServiceTest -- [测试用例] 测试通过: 规则删除成功
+23:54:36.342 [main] INFO net.lab1024.sa.access.service.AlertRuleServiceTest -- [测试准备] 初始化测试数据
+23:54:36.342 [main] INFO net.lab1024.sa.access.service.AlertRuleServiceTest -- [测试准备] 测试数据初始化完成
+23:54:36.342 [main] INFO net.lab1024.sa.access.service.AlertRuleServiceTest -- [测试用例] 测试成功查询告警规则
+23:54:36.350 [main] INFO net.lab1024.sa.access.service.AlertRuleServiceTest -- [测试用例] 测试通过: 规则查询成功
+23:54:36.353 [main] INFO net.lab1024.sa.access.service.AlertRuleServiceTest -- [测试准备] 初始化测试数据
+23:54:36.353 [main] INFO net.lab1024.sa.access.service.AlertRuleServiceTest -- [测试准备] 测试数据初始化完成
+23:54:36.353 [main] INFO net.lab1024.sa.access.service.AlertRuleServiceTest -- [测试用例] 测试验证简单条件表达式
+23:54:36.353 [main] INFO net.lab1024.sa.access.service.AlertRuleServiceTest -- [测试用例] 测试通过: 简单条件验证成功
+23:54:36.356 [main] INFO net.lab1024.sa.access.service.AlertRuleServiceTest -- [测试准备] 初始化测试数据
+23:54:36.356 [main] INFO net.lab1024.sa.access.service.AlertRuleServiceTest -- [测试准备] 测试数据初始化完成
+23:54:36.356 [main] INFO net.lab1024.sa.access.service.AlertRuleServiceTest -- [测试用例] 测试成功更新告警规则
+23:54:36.356 [main] INFO net.lab1024.sa.access.service.impl.AlertRuleServiceImpl -- [告警规则] 更新告警规则: ruleId=1, ruleName=设备离线告警（已更新）
+23:54:36.359 [main] INFO net.lab1024.sa.access.service.impl.AlertRuleServiceImpl -- [告警规则] 更新规则成功: ruleId=1
+23:54:36.359 [main] INFO net.lab1024.sa.access.service.AlertRuleServiceTest -- [测试用例] 测试通过: 规则更新成功
+23:54:36.361 [main] INFO net.lab1024.sa.access.service.AlertRuleServiceTest -- [测试准备] 初始化测试数据
+23:54:36.361 [main] INFO net.lab1024.sa.access.service.AlertRuleServiceTest -- [测试准备] 测试数据初始化完成
+23:54:36.361 [main] INFO net.lab1024.sa.access.service.AlertRuleServiceTest -- [测试用例] 测试验证Aviator表达式
+23:54:36.361 [main] INFO net.lab1024.sa.access.service.AlertRuleServiceTest -- [测试用例] 测试通过: Aviator表达式验证成功
+23:54:36.364 [main] INFO net.lab1024.sa.access.service.AlertRuleServiceTest -- [测试准备] 初始化测试数据
+23:54:36.364 [main] INFO net.lab1024.sa.access.service.AlertRuleServiceTest -- [测试准备] 测试数据初始化完成
+23:54:36.364 [main] INFO net.lab1024.sa.access.service.AlertRuleServiceTest -- [测试用例] 测试规则编码已存在
+23:54:36.365 [main] INFO net.lab1024.sa.access.service.impl.AlertRuleServiceImpl -- [告警规则] 创建告警规则: ruleName=设备离线告警, ruleCode=DEVICE_OFFLINE, ruleType=DEVICE_OFFLINE
+23:54:36.365 [main] WARN net.lab1024.sa.access.service.impl.AlertRuleServiceImpl -- [告警规则] 规则编码已存在: ruleCode=DEVICE_OFFLINE
+23:54:36.366 [main] INFO net.lab1024.sa.access.service.AlertRuleServiceTest -- [测试用例] 测试通过: 正确抛出规则编码已存在异常
+23:54:36.368 [main] INFO net.lab1024.sa.access.service.AlertRuleServiceTest -- [测试准备] 初始化测试数据
+23:54:36.369 [main] INFO net.lab1024.sa.access.service.AlertRuleServiceTest -- [测试准备] 测试数据初始化完成
+23:54:36.369 [main] INFO net.lab1024.sa.access.service.AlertRuleServiceTest -- [测试用例] 测试成功分页查询告警规则
+23:54:36.372 [main] INFO net.lab1024.sa.access.service.AlertRuleServiceTest -- [测试用例] 测试通过: 规则分页查询成功
+[INFO] Tests run: 9, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.062 s -- in net.lab1024.sa.access.service.AlertRuleServiceTest
+[INFO] Running net.lab1024.sa.access.service.AntiPassbackServiceTest
+23:54:36.473 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.486 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.492 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.493 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.493 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.493 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.493 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.493 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.493 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.493 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.493 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.493 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.493 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.493 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.493 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.493 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.493 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.493 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.493 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.493 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.493 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.494 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.494 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.494 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.494 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.494 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.494 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.494 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.494 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.494 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.494 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.494 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.494 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.495 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.495 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.495 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.495 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.495 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.495 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.495 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.495 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.495 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.495 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.495 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.495 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.495 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.495 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.496 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.496 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.496 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.496 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.496 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.496 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.497 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.497 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.497 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.497 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.497 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.497 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.497 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.497 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.497 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.497 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.497 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.497 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.497 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.497 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.498 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.498 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.498 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.498 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.498 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.498 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.498 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.498 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.498 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.498 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.498 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.498 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.498 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.498 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.498 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.498 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.498 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.498 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.498 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.498 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.498 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.498 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.498 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.498 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.498 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.498 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.498 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.498 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.498 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.498 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.499 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.499 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.499 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.499 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.499 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.499 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.499 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.499 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.499 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.499 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.500 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.500 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.500 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.500 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.500 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.500 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.500 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.500 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.500 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.500 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.500 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.500 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.500 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.500 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.500 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.500 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.500 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.500 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.500 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.500 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.501 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.501 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.501 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.501 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.501 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.501 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.501 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.501 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.501 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.501 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.501 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.501 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.501 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.501 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.501 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.501 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.501 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.501 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.501 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.501 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.501 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.501 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.501 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.501 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.501 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.501 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.501 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.501 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.501 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.501 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.501 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.502 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.502 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.502 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.502 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.502 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.502 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.502 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.502 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.502 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.502 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.502 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.502 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.502 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.503 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.503 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.503 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.503 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.503 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.503 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.503 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.503 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.503 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.503 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.504 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.504 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.504 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.504 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.504 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.504 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.504 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.504 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.504 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.504 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.505 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.505 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.505 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.505 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.506 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.506 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.506 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.506 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.506 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+[测试通过] 性能测试: 平均响应时间=0ms, 目标<100ms
+23:54:36.514 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.514 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+[测试通过] 无启用配置: 直接允许通行
+23:54:36.518 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回缓存] 清除用户缓存: userId=1001, count=2
+23:54:36.519 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回缓存] 清除所有缓存: count=2
+[测试通过] 缓存清理: 用户缓存和全部缓存清理成功
+23:54:36.526 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.637 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 检测完成: userId=1001, result=1, allowPass=true,耗时=10ms
+[测试通过] 软反潜回配置检测: 配置识别正确，首次通行正常
+23:54:36.642 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.642 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+23:54:36.642 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1002, deviceId=2002, areaId=101
+23:54:36.642 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1002
+23:54:36.642 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1003, deviceId=2003, areaId=101
+23:54:36.642 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1003
+[测试通过] 批量检测: 3个用户检测完成
+23:54:36.646 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.647 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 检测完成: userId=1001, result=1, allowPass=true,耗时=1ms
+[测试通过] 硬反潜回配置检测: 配置识别正确，首次通行正常
+23:54:36.650 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.650 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 无启用配置，允许通行: userId=1001
+[测试通过] 正常通行检测耗时: 0ms
+23:54:36.661 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回配置] 创建配置: configId=1, mode=4
+23:54:36.675 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回配置] 更新配置: configId=1
+23:54:36.679 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回配置] 删除配置: configId=1
+[测试通过] 配置管理CRUD: 所有操作成功
+23:54:36.683 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2002, areaId=102
+23:54:36.683 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 检测完成: userId=1001, result=1, allowPass=true,耗时=0ms
+[测试通过] 全局反潜回模式: 跨区域检测
+23:54:36.693 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.694 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 检测完成: userId=1001, result=1, allowPass=true,耗时=1ms
+[测试通过] Redis缓存: 缓存写入成功，TTL=30分钟
+23:54:36.698 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.699 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 检测完成: userId=1001, result=1, allowPass=true,耗时=1ms
+[测试通过] 区域反潜回模式: 区域内检测
+23:54:36.701 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 开始检测: userId=1001, deviceId=2001, areaId=101
+23:54:36.701 [main] INFO net.lab1024.sa.access.service.impl.AntiPassbackServiceImpl -- [反潜回检测] 跳过检测: userId=1001
+[测试通过] 跳过检测标志: 管理员特殊通行
+[INFO] Tests run: 12, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.323 s -- in net.lab1024.sa.access.service.AntiPassbackServiceTest
+[INFO] Running net.lab1024.sa.access.service.DeviceDiscoveryServiceTest
+23:54:36.754 [main] INFO net.lab1024.sa.access.service.DeviceDiscoveryServiceTest -- [测试] 测试启动设备发现 - 成功
+23:54:36.775 [main] INFO net.lab1024.sa.access.service.impl.DeviceDiscoveryServiceImpl -- [设备发现] 开始扫描: requestForm={"protocols":["ONVIF","PRIVATE"],"subnet":"192.168.1.0/24","timeout":60}
+23:54:36.775 [main] INFO net.lab1024.sa.access.service.impl.DeviceDiscoveryServiceImpl -- [设备发现] 生成扫描ID: scanId=461813fe-2cbd-41b8-b7dc-9c526972dda8
+23:54:36.775 [main] INFO net.lab1024.sa.access.service.impl.DeviceDiscoveryServiceImpl -- [设备发现] 扫描参数: subnet=192.168.1.0/24, timeout=60s, protocols=[ONVIF, PRIVATE]
+23:54:36.777 [main] INFO net.lab1024.sa.access.service.impl.DeviceDiscoveryServiceImpl -- [设备发现] 扫描任务已启动: scanId=461813fe-2cbd-41b8-b7dc-9c526972dda8
+23:54:36.777 [main] INFO net.lab1024.sa.access.service.DeviceDiscoveryServiceTest -- [测试] 设备发现启动成功: scanId=461813fe-2cbd-41b8-b7dc-9c526972dda8
+23:54:36.777 [pool-35-thread-1] INFO net.lab1024.sa.access.service.impl.DeviceDiscoveryServiceImpl -- [设备发现] 开始设备发现: subnet=192.168.1.0/24, timeout=60s, protocols=[ONVIF, PRIVATE]
+23:54:36.777 [pool-35-thread-1] INFO net.lab1024.sa.access.service.impl.DeviceDiscoveryServiceImpl -- [设备发现] 执行协议发现: protocol=ONVIF
+23:54:36.780 [main] INFO net.lab1024.sa.access.service.DeviceDiscoveryServiceTest -- [测试] 测试启动设备发现 - 参数验证失败（超时时间无效）
+23:54:36.781 [main] INFO net.lab1024.sa.access.service.impl.DeviceDiscoveryServiceImpl -- [设备发现] 开始扫描: requestForm={"protocols":["ONVIF","PRIVATE"],"subnet":"192.168.1.0/24","timeout":-1}
+23:54:36.781 [main] INFO net.lab1024.sa.access.service.impl.DeviceDiscoveryServiceImpl -- [设备发现] 生成扫描ID: scanId=7c43b86f-e497-4df1-98e7-cf5519d2eaa9
+23:54:36.781 [main] INFO net.lab1024.sa.access.service.impl.DeviceDiscoveryServiceImpl -- [设备发现] 扫描参数: subnet=192.168.1.0/24, timeout=-1s, protocols=[ONVIF, PRIVATE]
+23:54:36.781 [main] INFO net.lab1024.sa.access.service.impl.DeviceDiscoveryServiceImpl -- [设备发现] 扫描任务已启动: scanId=7c43b86f-e497-4df1-98e7-cf5519d2eaa9
+23:54:36.781 [main] INFO net.lab1024.sa.access.service.DeviceDiscoveryServiceTest -- [测试] 无效超时时间测试完成
+23:54:36.782 [pool-37-thread-1] INFO net.lab1024.sa.access.service.impl.DeviceDiscoveryServiceImpl -- [设备发现] 开始设备发现: subnet=192.168.1.0/24, timeout=-1s, protocols=[ONVIF, PRIVATE]
+23:54:36.782 [pool-37-thread-1] INFO net.lab1024.sa.access.service.impl.DeviceDiscoveryServiceImpl -- [设备发现] 执行协议发现: protocol=ONVIF
+23:54:36.786 [main] INFO net.lab1024.sa.access.service.DeviceDiscoveryServiceTest -- [测试] 测试批量添加设备
+23:54:36.788 [main] INFO net.lab1024.sa.access.service.impl.DeviceDiscoveryServiceImpl -- [设备发现] 批量添加设备: count=3
+23:54:36.799 [main] WARN net.lab1024.sa.common.util.SmartRequestUtil -- [请求工具] 获取用户ID异常
+java.lang.IllegalStateException: 当前线程不存在请求上下文
+	at net.lab1024.sa.common.util.SmartRequestUtil.getCurrentRequest(SmartRequestUtil.java:51)
+	at net.lab1024.sa.common.util.SmartRequestUtil.getUserId(SmartRequestUtil.java:246)
+	at net.lab1024.sa.common.util.SmartRequestUtil.getRequestUserId(SmartRequestUtil.java:337)
+	at net.lab1024.sa.access.service.impl.DeviceDiscoveryServiceImpl.batchAddDevices(DeviceDiscoveryServiceImpl.java:816)
+	at net.lab1024.sa.access.service.DeviceDiscoveryServiceTest.testBatchAddDevices(DeviceDiscoveryServiceTest.java:205)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:775)
+	at org.junit.platform.commons.support.ReflectionSupport.invokeMethod(ReflectionSupport.java:479)
+	at org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:60)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:131)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.intercept(TimeoutExtension.java:161)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestableMethod(TimeoutExtension.java:152)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestMethod(TimeoutExtension.java:91)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker$ReflectiveInterceptorCall.lambda$ofVoidMethod$0(InterceptingExecutableInvoker.java:112)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.lambda$invoke$0(InterceptingExecutableInvoker.java:94)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$InterceptedInvocation.proceed(InvocationInterceptorChain.java:106)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.proceed(InvocationInterceptorChain.java:64)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.chainAndInvoke(InvocationInterceptorChain.java:45)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.invoke(InvocationInterceptorChain.java:37)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:93)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:87)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$invokeTestMethod$7(TestMethodTestDescriptor.java:216)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.invokeTestMethod(TestMethodTestDescriptor.java:212)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:137)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:69)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:156)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:146)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:143)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:100)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:160)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:146)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:143)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:100)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:160)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:146)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:143)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:100)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:35)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:57)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:54)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:201)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:170)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:94)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:59)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:142)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:58)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:103)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:85)
+	at org.junit.platform.launcher.core.DelegatingLauncher.execute(DelegatingLauncher.java:47)
+	at org.junit.platform.launcher.core.InterceptingLauncher.lambda$execute$1(InterceptingLauncher.java:39)
+	at org.junit.platform.launcher.core.ClasspathAlignmentCheckingLauncherInterceptor.intercept(ClasspathAlignmentCheckingLauncherInterceptor.java:25)
+	at org.junit.platform.launcher.core.InterceptingLauncher.execute(InterceptingLauncher.java:38)
+	at org.junit.platform.launcher.core.DelegatingLauncher.execute(DelegatingLauncher.java:47)
+	at org.apache.maven.surefire.junitplatform.LazyLauncher.execute(LazyLauncher.java:56)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.execute(JUnitPlatformProvider.java:184)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invokeAllTests(JUnitPlatformProvider.java:148)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invoke(JUnitPlatformProvider.java:122)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:385)
+	at org.apache.maven.surefire.booter.ForkedBooter.execute(ForkedBooter.java:162)
+	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
+23:54:36.828 [pool-37-thread-1] INFO net.lab1024.sa.access.service.impl.DeviceDiscoveryServiceImpl -- [设备发现] ONVIF多播监听: address=239.255.255.250, port=3702
+23:54:36.828 [pool-35-thread-1] INFO net.lab1024.sa.access.service.impl.DeviceDiscoveryServiceImpl -- [设备发现] ONVIF多播监听: address=239.255.255.250, port=3702
+23:54:36.837 [pool-37-thread-1] INFO net.lab1024.sa.access.service.impl.DeviceDiscoveryServiceImpl -- [设备发现] ONVIF协议发现设备数量: 0
+23:54:36.838 [pool-37-thread-1] WARN net.lab1024.sa.access.service.impl.DeviceDiscoveryServiceImpl -- [设备发现] 更新进度失败: scanId=7c43b86f-e497-4df1-98e7-cf5519d2eaa9, error=Cannot invoke "org.springframework.data.redis.core.ValueOperations.set(Object, Object, java.time.Duration)" because the return value of "org.springframework.data.redis.core.RedisTemplate.opsForValue()" is null
+23:54:36.838 [pool-37-thread-1] INFO net.lab1024.sa.access.service.impl.DeviceDiscoveryServiceImpl -- [设备发现] 执行协议发现: protocol=PRIVATE
+23:54:36.838 [pool-37-thread-1] INFO net.lab1024.sa.access.service.impl.DeviceDiscoveryServiceImpl -- [设备发现] 私有协议发现: subnet=192.168.1.0/24
+23:54:36.839 [pool-37-thread-1] INFO net.lab1024.sa.access.service.impl.DeviceDiscoveryServiceImpl -- [设备发现] PRIVATE协议发现设备数量: 0
+23:54:36.839 [pool-37-thread-1] WARN net.lab1024.sa.access.service.impl.DeviceDiscoveryServiceImpl -- [设备发现] 更新进度失败: scanId=7c43b86f-e497-4df1-98e7-cf5519d2eaa9, error=Cannot invoke "org.springframework.data.redis.core.ValueOperations.set(Object, Object, java.time.Duration)" because the return value of "org.springframework.data.redis.core.RedisTemplate.opsForValue()" is null
+23:54:36.839 [pool-37-thread-1] INFO net.lab1024.sa.access.service.impl.DeviceDiscoveryServiceImpl -- [设备发现] 去重后设备数量: 0
+23:54:36.840 [pool-37-thread-1] WARN net.lab1024.sa.access.service.impl.DeviceDiscoveryServiceImpl -- [设备发现] 缓存结果失败: scanId=7c43b86f-e497-4df1-98e7-cf5519d2eaa9, error=Cannot invoke "org.springframework.data.redis.core.ValueOperations.set(Object, Object, java.time.Duration)" because the return value of "org.springframework.data.redis.core.RedisTemplate.opsForValue()" is null
+23:54:36.840 [pool-37-thread-1] WARN net.lab1024.sa.access.service.impl.DeviceDiscoveryServiceImpl -- [设备发现] 更新进度失败: scanId=7c43b86f-e497-4df1-98e7-cf5519d2eaa9, error=Cannot invoke "org.springframework.data.redis.core.ValueOperations.set(Object, Object, java.time.Duration)" because the return value of "org.springframework.data.redis.core.RedisTemplate.opsForValue()" is null
+23:54:36.840 [pool-37-thread-1] INFO net.lab1024.sa.access.service.impl.DeviceDiscoveryServiceImpl -- [设备发现] 扫描完成: scanId=7c43b86f-e497-4df1-98e7-cf5519d2eaa9, discovered=0, duration=58ms
+23:54:36.843 [main] WARN net.lab1024.sa.common.util.SmartRequestUtil -- [请求工具] 获取用户名异常
+java.lang.IllegalStateException: 当前线程不存在请求上下文
+	at net.lab1024.sa.common.util.SmartRequestUtil.getCurrentRequest(SmartRequestUtil.java:51)
+	at net.lab1024.sa.common.util.SmartRequestUtil.getUserName(SmartRequestUtil.java:293)
+	at net.lab1024.sa.common.util.SmartRequestUtil.getRequestUserName(SmartRequestUtil.java:358)
+	at net.lab1024.sa.access.service.impl.DeviceDiscoveryServiceImpl.batchAddDevices(DeviceDiscoveryServiceImpl.java:817)
+	at net.lab1024.sa.access.service.DeviceDiscoveryServiceTest.testBatchAddDevices(DeviceDiscoveryServiceTest.java:205)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:775)
+	at org.junit.platform.commons.support.ReflectionSupport.invokeMethod(ReflectionSupport.java:479)
+	at org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:60)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:131)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.intercept(TimeoutExtension.java:161)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestableMethod(TimeoutExtension.java:152)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestMethod(TimeoutExtension.java:91)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker$ReflectiveInterceptorCall.lambda$ofVoidMethod$0(InterceptingExecutableInvoker.java:112)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.lambda$invoke$0(InterceptingExecutableInvoker.java:94)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$InterceptedInvocation.proceed(InvocationInterceptorChain.java:106)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.proceed(InvocationInterceptorChain.java:64)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.chainAndInvoke(InvocationInterceptorChain.java:45)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.invoke(InvocationInterceptorChain.java:37)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:93)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:87)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$invokeTestMethod$7(TestMethodTestDescriptor.java:216)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.invokeTestMethod(TestMethodTestDescriptor.java:212)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:137)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:69)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:156)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:146)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:143)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:100)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:160)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:146)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:143)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:100)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:160)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:146)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:143)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:100)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:35)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:57)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:54)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:201)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:170)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:94)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:59)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:142)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:58)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:103)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:85)
+	at org.junit.platform.launcher.core.DelegatingLauncher.execute(DelegatingLauncher.java:47)
+	at org.junit.platform.launcher.core.InterceptingLauncher.lambda$execute$1(InterceptingLauncher.java:39)
+	at org.junit.platform.launcher.core.ClasspathAlignmentCheckingLauncherInterceptor.intercept(ClasspathAlignmentCheckingLauncherInterceptor.java:25)
+	at org.junit.platform.launcher.core.InterceptingLauncher.execute(InterceptingLauncher.java:38)
+	at org.junit.platform.launcher.core.DelegatingLauncher.execute(DelegatingLauncher.java:47)
+	at org.apache.maven.surefire.junitplatform.LazyLauncher.execute(LazyLauncher.java:56)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.execute(JUnitPlatformProvider.java:184)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invokeAllTests(JUnitPlatformProvider.java:148)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invoke(JUnitPlatformProvider.java:122)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:385)
+	at org.apache.maven.surefire.booter.ForkedBooter.execute(ForkedBooter.java:162)
+	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
+23:54:36.889 [main] ERROR net.lab1024.sa.access.service.impl.DeviceDiscoveryServiceImpl -- [设备发现] 批量添加设备异常: error=
+Strict stubbing argument mismatch. Please check:
+ - this invocation of 'batchAddDiscoveredDevices' method:
+    deviceDiscoveryManager.batchAddDiscoveredDevices(
+    [DiscoveredDeviceVO(ipAddress=192.168.1.100, macAddress=00:1A:2B:3C:4D:5E, deviceName=测试设备-192.168.1.100, deviceModel=TEST-MODEL, deviceBrand=TEST-BRAND, firmwareVersion=v1.0.0, port=null, verified=false, location=null, deviceType=null, deviceStatus=1, deviceInfo=null, discoveryTime=null, existsInSystem=null, protocol=null, deviceLocation=null, server=null, usn=null), DiscoveredDeviceVO(ipAddress=192.168.1.101, macAddress=00:1A:2B:3C:4D:5F, deviceName=测试设备-192.168.1.101, deviceModel=TEST-MODEL, deviceBrand=TEST-BRAND, firmwareVersion=v1.0.0, port=null, verified=false, location=null, deviceType=null, deviceStatus=1, deviceInfo=null, discoveryTime=null, existsInSystem=null, protocol=null, deviceLocation=null, server=null, usn=null), DiscoveredDeviceVO(ipAddress=192.168.1.102, macAddress=00:1A:2B:3C:4D:60, deviceName=测试设备-192.168.1.102, deviceModel=TEST-MODEL, deviceBrand=TEST-BRAND, firmwareVersion=v1.0.0, port=null, verified=false, location=null, deviceType=null, deviceStatus=1, deviceInfo=null, discoveryTime=null, existsInSystem=null, protocol=null, deviceLocation=null, server=null, usn=null)],
+    null,
+    null
+);
+    -> at net.lab1024.sa.access.service.impl.DeviceDiscoveryServiceImpl.batchAddDevices(DeviceDiscoveryServiceImpl.java:820)
+ - has following stubbing(s) with different arguments:
+    1. deviceDiscoveryManager.batchAddDiscoveredDevices(
+    [],
+    0L,
+    ""
+);
+      -> at net.lab1024.sa.access.service.DeviceDiscoveryServiceTest.testBatchAddDevices(DeviceDiscoveryServiceTest.java:201)
+Typically, stubbing argument mismatch indicates user mistake when writing tests.
+Mockito fails early so that you can debug potential problem easily.
+However, there are legit scenarios when this exception generates false negative signal:
+  - stubbing the same method multiple times using 'given().will()' or 'when().then()' API
+    Please use 'will().given()' or 'doReturn().when()' API for stubbing.
+  - stubbed method is intentionally invoked with different arguments by code under test
+    Please use default or 'silent' JUnit Rule (equivalent of Strictness.LENIENT).
+For more information see javadoc for PotentialStubbingProblem class.
+org.mockito.exceptions.misusing.PotentialStubbingProblem: 
+Strict stubbing argument mismatch. Please check:
+ - this invocation of 'batchAddDiscoveredDevices' method:
+    deviceDiscoveryManager.batchAddDiscoveredDevices(
+    [DiscoveredDeviceVO(ipAddress=192.168.1.100, macAddress=00:1A:2B:3C:4D:5E, deviceName=测试设备-192.168.1.100, deviceModel=TEST-MODEL, deviceBrand=TEST-BRAND, firmwareVersion=v1.0.0, port=null, verified=false, location=null, deviceType=null, deviceStatus=1, deviceInfo=null, discoveryTime=null, existsInSystem=null, protocol=null, deviceLocation=null, server=null, usn=null), DiscoveredDeviceVO(ipAddress=192.168.1.101, macAddress=00:1A:2B:3C:4D:5F, deviceName=测试设备-192.168.1.101, deviceModel=TEST-MODEL, deviceBrand=TEST-BRAND, firmwareVersion=v1.0.0, port=null, verified=false, location=null, deviceType=null, deviceStatus=1, deviceInfo=null, discoveryTime=null, existsInSystem=null, protocol=null, deviceLocation=null, server=null, usn=null), DiscoveredDeviceVO(ipAddress=192.168.1.102, macAddress=00:1A:2B:3C:4D:60, deviceName=测试设备-192.168.1.102, deviceModel=TEST-MODEL, deviceBrand=TEST-BRAND, firmwareVersion=v1.0.0, port=null, verified=false, location=null, deviceType=null, deviceStatus=1, deviceInfo=null, discoveryTime=null, existsInSystem=null, protocol=null, deviceLocation=null, server=null, usn=null)],
+    null,
+    null
+);
+    -> at net.lab1024.sa.access.service.impl.DeviceDiscoveryServiceImpl.batchAddDevices(DeviceDiscoveryServiceImpl.java:820)
+ - has following stubbing(s) with different arguments:
+    1. deviceDiscoveryManager.batchAddDiscoveredDevices(
+    [],
+    0L,
+    ""
+);
+      -> at net.lab1024.sa.access.service.DeviceDiscoveryServiceTest.testBatchAddDevices(DeviceDiscoveryServiceTest.java:201)
+Typically, stubbing argument mismatch indicates user mistake when writing tests.
+Mockito fails early so that you can debug potential problem easily.
+However, there are legit scenarios when this exception generates false negative signal:
+  - stubbing the same method multiple times using 'given().will()' or 'when().then()' API
+    Please use 'will().given()' or 'doReturn().when()' API for stubbing.
+  - stubbed method is intentionally invoked with different arguments by code under test
+    Please use default or 'silent' JUnit Rule (equivalent of Strictness.LENIENT).
+For more information see javadoc for PotentialStubbingProblem class.
+	at net.lab1024.sa.access.manager.DeviceDiscoveryManager.batchAddDiscoveredDevices(DeviceDiscoveryManager.java:153)
+	at net.lab1024.sa.access.service.impl.DeviceDiscoveryServiceImpl.batchAddDevices(DeviceDiscoveryServiceImpl.java:820)
+	at net.lab1024.sa.access.service.DeviceDiscoveryServiceTest.testBatchAddDevices(DeviceDiscoveryServiceTest.java:205)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:775)
+	at org.junit.platform.commons.support.ReflectionSupport.invokeMethod(ReflectionSupport.java:479)
+	at org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:60)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:131)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.intercept(TimeoutExtension.java:161)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestableMethod(TimeoutExtension.java:152)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestMethod(TimeoutExtension.java:91)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker$ReflectiveInterceptorCall.lambda$ofVoidMethod$0(InterceptingExecutableInvoker.java:112)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.lambda$invoke$0(InterceptingExecutableInvoker.java:94)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$InterceptedInvocation.proceed(InvocationInterceptorChain.java:106)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.proceed(InvocationInterceptorChain.java:64)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.chainAndInvoke(InvocationInterceptorChain.java:45)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.invoke(InvocationInterceptorChain.java:37)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:93)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:87)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$invokeTestMethod$7(TestMethodTestDescriptor.java:216)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.invokeTestMethod(TestMethodTestDescriptor.java:212)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:137)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:69)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:156)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:146)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:143)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:100)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:160)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:146)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:143)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:100)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:160)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:146)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:143)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:100)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:35)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:57)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:54)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:201)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:170)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:94)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:59)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:142)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:58)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:103)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:85)
+	at org.junit.platform.launcher.core.DelegatingLauncher.execute(DelegatingLauncher.java:47)
+	at org.junit.platform.launcher.core.InterceptingLauncher.lambda$execute$1(InterceptingLauncher.java:39)
+	at org.junit.platform.launcher.core.ClasspathAlignmentCheckingLauncherInterceptor.intercept(ClasspathAlignmentCheckingLauncherInterceptor.java:25)
+	at org.junit.platform.launcher.core.InterceptingLauncher.execute(InterceptingLauncher.java:38)
+	at org.junit.platform.launcher.core.DelegatingLauncher.execute(DelegatingLauncher.java:47)
+	at org.apache.maven.surefire.junitplatform.LazyLauncher.execute(LazyLauncher.java:56)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.execute(JUnitPlatformProvider.java:184)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invokeAllTests(JUnitPlatformProvider.java:148)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invoke(JUnitPlatformProvider.java:122)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:385)
+	at org.apache.maven.surefire.booter.ForkedBooter.execute(ForkedBooter.java:162)
+	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
+23:54:36.890 [main] INFO net.lab1024.sa.access.service.DeviceDiscoveryServiceTest -- [测试] 批量添加返回错误（SmartRequestUtil无request context）: code=500
+23:54:36.893 [main] INFO net.lab1024.sa.access.service.DeviceDiscoveryServiceTest -- [测试] 测试停止设备发现
+23:54:36.893 [main] INFO net.lab1024.sa.access.service.impl.DeviceDiscoveryServiceImpl -- [设备发现] 开始扫描: requestForm={"protocols":["ONVIF","PRIVATE"],"subnet":"192.168.1.0/24","timeout":60}
+23:54:36.893 [main] INFO net.lab1024.sa.access.service.impl.DeviceDiscoveryServiceImpl -- [设备发现] 生成扫描ID: scanId=ecb74aa5-a9d3-4afa-8d92-150372f029c1
+23:54:36.893 [main] INFO net.lab1024.sa.access.service.impl.DeviceDiscoveryServiceImpl -- [设备发现] 扫描参数: subnet=192.168.1.0/24, timeout=60s, protocols=[ONVIF, PRIVATE]
+23:54:36.893 [main] INFO net.lab1024.sa.access.service.impl.DeviceDiscoveryServiceImpl -- [设备发现] 扫描任务已启动: scanId=ecb74aa5-a9d3-4afa-8d92-150372f029c1
+23:54:36.893 [main] INFO net.lab1024.sa.access.service.impl.DeviceDiscoveryServiceImpl -- [设备发现] 停止扫描: scanId=ecb74aa5-a9d3-4afa-8d92-150372f029c1
+23:54:36.893 [main] INFO net.lab1024.sa.access.service.impl.DeviceDiscoveryServiceImpl -- [设备发现] 扫描已停止: scanId=ecb74aa5-a9d3-4afa-8d92-150372f029c1
+23:54:36.893 [main] INFO net.lab1024.sa.access.service.DeviceDiscoveryServiceTest -- [测试] 停止扫描成功: scanId=ecb74aa5-a9d3-4afa-8d92-150372f029c1
+23:54:36.897 [main] INFO net.lab1024.sa.access.service.DeviceDiscoveryServiceTest -- [测试] 测试导出发现结果
+23:54:36.898 [main] INFO net.lab1024.sa.access.service.impl.DeviceDiscoveryServiceImpl -- [设备发现] 导出结果: scanId=33196220-e9b8-4d77-88d6-396fe6e4a02e
+23:54:36.900 [main] INFO net.lab1024.sa.access.service.DeviceDiscoveryServiceTest -- [测试] 导出结果成功
+23:54:36.903 [main] INFO net.lab1024.sa.access.service.DeviceDiscoveryServiceTest -- [测试] 测试查询发现进度
+23:54:36.903 [main] INFO net.lab1024.sa.access.service.impl.DeviceDiscoveryServiceImpl -- [设备发现] 查询进度: scanId=e8168cb8-9e3c-486d-bd77-128d51515c3d
+23:54:36.904 [main] INFO net.lab1024.sa.access.service.DeviceDiscoveryServiceTest -- [测试] 查询进度成功: scanId=e8168cb8-9e3c-486d-bd77-128d51515c3d, progress=50
+23:54:36.907 [main] INFO net.lab1024.sa.access.service.DeviceDiscoveryServiceTest -- [测试] 测试导出发现结果 - 无数据
+23:54:36.908 [main] INFO net.lab1024.sa.access.service.impl.DeviceDiscoveryServiceImpl -- [设备发现] 导出结果: scanId=b6bb7fcc-50c4-442c-bf03-afa3143d8305
+23:54:36.909 [main] INFO net.lab1024.sa.access.service.DeviceDiscoveryServiceTest -- [测试] 无数据导出测试完成
+23:54:36.913 [main] INFO net.lab1024.sa.access.service.DeviceDiscoveryServiceTest -- [测试] 测试启动设备发现 - 参数验证失败（子网为空）
+23:54:36.913 [main] INFO net.lab1024.sa.access.service.impl.DeviceDiscoveryServiceImpl -- [设备发现] 开始扫描: requestForm={"protocols":["ONVIF","PRIVATE"],"subnet":"","timeout":60}
+23:54:36.914 [main] INFO net.lab1024.sa.access.service.impl.DeviceDiscoveryServiceImpl -- [设备发现] 生成扫描ID: scanId=d588c4f5-6ee5-4f6b-a8bb-08e510de1be9
+23:54:36.914 [main] INFO net.lab1024.sa.access.service.impl.DeviceDiscoveryServiceImpl -- [设备发现] 扫描参数: subnet=, timeout=60s, protocols=[ONVIF, PRIVATE]
+23:54:36.914 [main] INFO net.lab1024.sa.access.service.impl.DeviceDiscoveryServiceImpl -- [设备发现] 扫描任务已启动: scanId=d588c4f5-6ee5-4f6b-a8bb-08e510de1be9
+23:54:36.914 [main] INFO net.lab1024.sa.access.service.DeviceDiscoveryServiceTest -- [测试] 空子网测试完成
+23:54:36.914 [pool-50-thread-1] INFO net.lab1024.sa.access.service.impl.DeviceDiscoveryServiceImpl -- [设备发现] 开始设备发现: subnet=, timeout=60s, protocols=[ONVIF, PRIVATE]
+23:54:36.914 [pool-50-thread-1] INFO net.lab1024.sa.access.service.impl.DeviceDiscoveryServiceImpl -- [设备发现] 执行协议发现: protocol=ONVIF
+23:54:36.915 [pool-50-thread-1] INFO net.lab1024.sa.access.service.impl.DeviceDiscoveryServiceImpl -- [设备发现] ONVIF多播监听: address=239.255.255.250, port=3702
+[INFO] Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.207 s -- in net.lab1024.sa.access.service.DeviceDiscoveryServiceTest
+[INFO] Running net.lab1024.sa.access.service.DeviceImportServiceTest
+23:54:36.974 [main] INFO net.lab1024.sa.access.service.impl.DeviceImportServiceImpl -- [设备导入] 导出错误记录: batchId=999999
+23:54:36.974 [main] INFO net.lab1024.sa.access.service.impl.DeviceImportServiceImpl -- [设备导入] 错误记录导出成功: batchId=999999, count=1
+23:54:36.978 [main] INFO net.lab1024.sa.access.service.impl.DeviceImportServiceImpl -- [设备导入] 生成导入模板
+23:54:36.980 [main] INFO net.lab1024.sa.access.service.impl.DeviceImportServiceImpl -- [设备导入] 模板生成成功: size=427
+23:54:36.985 [main] INFO net.lab1024.sa.access.service.impl.DeviceImportServiceImpl -- [设备导入] 导出错误记录: batchId=999999
+23:54:36.985 [main] WARN net.lab1024.sa.access.service.impl.DeviceImportServiceImpl -- [设备导入] 批次无错误记录: batchId=999999
+[INFO] Tests run: 12, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.066 s -- in net.lab1024.sa.access.service.DeviceImportServiceTest
+[INFO] Running net.lab1024.sa.access.service.FirmwareServiceTest
+23:54:37.024 [main] INFO net.lab1024.sa.access.service.impl.FirmwareServiceImpl -- [固件管理] 查询可用固件: deviceType=1, deviceModel=ACS-3000, currentVersion=1.5.0
+23:54:37.034 [main] INFO net.lab1024.sa.access.service.impl.FirmwareServiceImpl -- [固件管理] 可用固件数量: count=1
+23:54:37.042 [main] INFO net.lab1024.sa.access.service.impl.FirmwareServiceImpl -- [固件管理] 分页查询固件列表: pageNum=1, pageSize=10
+23:54:37.051 [main] INFO net.lab1024.sa.access.service.impl.FirmwareServiceImpl -- [固件管理] 查询完成: total=1, records=1
+23:54:37.054 [main] INFO net.lab1024.sa.access.service.impl.FirmwareServiceImpl -- [固件管理] 删除固件: firmwareId=1
+23:54:37.054 [main] INFO net.lab1024.sa.access.service.impl.FirmwareServiceImpl -- [固件管理] 固件删除成功: firmwareId=1
+23:54:37.057 [main] INFO net.lab1024.sa.access.service.impl.FirmwareServiceImpl -- [固件管理] 查询固件详情: firmwareId=1
+23:54:37.064 [main] INFO net.lab1024.sa.access.service.impl.FirmwareServiceImpl -- [固件管理] 查询固件详情: firmwareId=999
+23:54:37.067 [main] INFO net.lab1024.sa.access.service.impl.FirmwareServiceImpl -- [固件管理] 更新固件启用状态: firmwareId=1, enabled=0
+23:54:37.067 [main] INFO net.lab1024.sa.access.service.impl.FirmwareServiceImpl -- [固件管理] 固件启用状态更新成功: firmwareId=1, enabled=0
+23:54:37.069 [main] INFO net.lab1024.sa.access.service.impl.FirmwareServiceImpl -- [固件管理] 下载固件: firmwareId=1
+23:54:37.070 [main] INFO net.lab1024.sa.access.service.impl.FirmwareServiceImpl -- [固件管理] 固件下载成功: firmwareId=1, downloadCount=1
+23:54:37.118 [main] WARN net.lab1024.sa.access.service.impl.FirmwareServiceImpl -- [固件管理] MD5校验失败: expected=invalid-md5-value, actual=d7ef856b587506e415f6c89173cee03c
+23:54:37.122 [main] INFO net.lab1024.sa.access.service.impl.FirmwareServiceImpl -- [固件管理] 删除固件: firmwareId=999
+23:54:37.128 [main] INFO net.lab1024.sa.access.service.impl.FirmwareServiceImpl -- [固件管理] 更新固件状态: firmwareId=1, status=2
+23:54:37.128 [main] INFO net.lab1024.sa.access.service.impl.FirmwareServiceImpl -- [固件管理] 固件状态更新成功: firmwareId=1, newStatus=2
+[INFO] Tests run: 15, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.128 s -- in net.lab1024.sa.access.service.FirmwareServiceTest
+[INFO] Running net.lab1024.sa.access.service.FirmwareUpgradeServiceTest
+23:54:37.174 [main] INFO net.lab1024.sa.access.service.impl.FirmwareUpgradeServiceImpl -- [固件升级服务] 暂停升级任务: taskId=1
+23:54:37.176 [main] INFO net.lab1024.sa.access.service.impl.FirmwareUpgradeServiceImpl -- [固件升级服务] 升级任务暂停成功: taskId=1
+23:54:37.194 [main] INFO net.lab1024.sa.access.service.impl.FirmwareUpgradeServiceImpl -- [固件升级服务] 停止升级任务: taskId=1
+23:54:37.199 [main] INFO net.lab1024.sa.access.service.impl.FirmwareUpgradeServiceImpl -- [固件升级服务] 升级任务停止成功: taskId=1
+23:54:37.225 [main] INFO net.lab1024.sa.access.service.impl.FirmwareUpgradeServiceImpl -- [固件升级服务] 删除升级任务: taskId=1
+23:54:37.226 [main] INFO net.lab1024.sa.access.service.impl.FirmwareUpgradeServiceImpl -- [固件升级服务] 升级任务删除成功: taskId=1
+23:54:37.231 [main] INFO net.lab1024.sa.access.service.impl.FirmwareUpgradeServiceImpl -- [固件升级服务] 启动升级任务: taskId=1
+23:54:37.231 [main] INFO net.lab1024.sa.access.service.impl.FirmwareUpgradeServiceImpl -- [固件升级服务] 执行立即升级: taskId=1
+23:54:37.232 [main] INFO net.lab1024.sa.access.service.impl.FirmwareUpgradeServiceImpl -- [固件升级服务] 升级任务启动成功: taskId=1
+23:54:37.233 [Thread-2] INFO net.lab1024.sa.access.service.impl.FirmwareUpgradeServiceImpl -- [固件升级服务] 升级任务完成: taskId=1
+23:54:37.236 [main] INFO net.lab1024.sa.access.service.impl.FirmwareUpgradeServiceImpl -- [固件升级服务] 删除升级任务: taskId=999
+23:54:37.243 [main] INFO net.lab1024.sa.access.service.impl.FirmwareUpgradeServiceImpl -- [固件升级服务] 启动升级任务: taskId=999
+23:54:37.246 [main] INFO net.lab1024.sa.access.service.impl.FirmwareUpgradeServiceImpl -- [固件升级服务] 恢复升级任务: taskId=1
+23:54:37.248 [main] INFO net.lab1024.sa.access.service.impl.FirmwareUpgradeServiceImpl -- [固件升级服务] 升级任务恢复成功: taskId=1
+[INFO] Tests run: 14, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.081 s -- in net.lab1024.sa.access.service.FirmwareUpgradeServiceTest
+[INFO] Running net.lab1024.sa.access.strategy.BackendVerificationStrategyTest
+23:54:37.328 [main] INFO net.lab1024.sa.access.strategy.impl.BackendVerificationStrategy -- [后台验证] 开始验证: userId=1001, deviceId=2001, areaId=3001, event=0, verifyType=1
+23:54:37.330 [main] WARN net.lab1024.sa.access.strategy.impl.BackendVerificationStrategy -- [后台验证] 反潜回检测服务异常，降级到旧Manager: userId=1001, error=Cannot invoke "net.lab1024.sa.access.service.AntiPassbackService.detect(net.lab1024.sa.access.domain.form.AntiPassbackDetectForm)" because "this.antiPassbackService" is null
+23:54:37.330 [main] WARN net.lab1024.sa.access.strategy.impl.BackendVerificationStrategy -- [后台验证] 黑名单验证失败: userId=1001
+23:54:37.335 [main] INFO net.lab1024.sa.access.strategy.impl.BackendVerificationStrategy -- [后台验证] 开始验证: userId=1001, deviceId=2001, areaId=3001, event=0, verifyType=1
+23:54:37.335 [main] WARN net.lab1024.sa.access.strategy.impl.BackendVerificationStrategy -- [后台验证] 反潜回检测服务异常，降级到旧Manager: userId=1001, error=Cannot invoke "net.lab1024.sa.access.service.AntiPassbackService.detect(net.lab1024.sa.access.domain.form.AntiPassbackDetectForm)" because "this.antiPassbackService" is null
+23:54:37.335 [main] WARN net.lab1024.sa.access.strategy.impl.BackendVerificationStrategy -- [后台验证] 反潜验证失败（旧Manager）: userId=1001
+23:54:37.339 [main] INFO net.lab1024.sa.access.strategy.impl.BackendVerificationStrategy -- [后台验证] 开始验证: userId=1001, deviceId=2001, areaId=3001, event=0, verifyType=1
+23:54:37.341 [main] WARN net.lab1024.sa.access.strategy.impl.BackendVerificationStrategy -- [后台验证] 反潜回检测服务异常，降级到旧Manager: userId=1001, error=Cannot invoke "net.lab1024.sa.access.service.AntiPassbackService.detect(net.lab1024.sa.access.domain.form.AntiPassbackDetectForm)" because "this.antiPassbackService" is null
+23:54:37.341 [main] WARN net.lab1024.sa.access.strategy.impl.BackendVerificationStrategy -- [后台验证] 互锁验证失败: deviceId=2001
+23:54:37.346 [main] INFO net.lab1024.sa.access.strategy.impl.BackendVerificationStrategy -- [后台验证] 开始验证: userId=1001, deviceId=2001, areaId=3001, event=0, verifyType=1
+23:54:37.346 [main] WARN net.lab1024.sa.access.strategy.impl.BackendVerificationStrategy -- [后台验证] 反潜回检测服务异常，降级到旧Manager: userId=1001, error=Cannot invoke "net.lab1024.sa.access.service.AntiPassbackService.detect(net.lab1024.sa.access.domain.form.AntiPassbackDetectForm)" because "this.antiPassbackService" is null
+23:54:37.348 [main] INFO net.lab1024.sa.access.strategy.impl.BackendVerificationStrategy -- [后台验证] 验证通过: userId=1001
+[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.089 s -- in net.lab1024.sa.access.strategy.BackendVerificationStrategyTest
+[INFO] Running net.lab1024.sa.access.strategy.EdgeVerificationStrategyTest
+23:54:37.422 [main] INFO net.lab1024.sa.access.strategy.impl.EdgeVerificationStrategy -- [设备端验证] 开始接收通行记录: userId=null, deviceId=2001, areaId=3001, event=0, verifyType=1, verifyTime=2025-12-25T23:54:37.422476800
+23:54:37.424 [main] WARN net.lab1024.sa.access.strategy.impl.EdgeVerificationStrategy -- [设备端验证] 记录验证失败: userId=null, deviceId=2001, reason=用户ID不能为空
+23:54:37.427 [main] INFO net.lab1024.sa.access.strategy.impl.EdgeVerificationStrategy -- [设备端验证] 开始接收通行记录: userId=1001, deviceId=2001, areaId=3001, event=0, verifyType=1, verifyTime=2025-12-25T23:54:37.427745500
+23:54:37.445 [main] WARN net.lab1024.sa.access.strategy.impl.EdgeVerificationStrategy -- [设备端验证] 记录反潜回信息失败: userId=1001, deviceId=2001, error=Cannot invoke "net.lab1024.sa.access.manager.AntiPassbackManager.recordAntiPassback(java.lang.Long, java.lang.Long, java.lang.Long, java.lang.Integer, java.lang.Integer)" because "this.antiPassbackManager" is null
+23:54:37.447 [main] INFO net.lab1024.sa.access.strategy.impl.EdgeVerificationStrategy -- [设备端验证] 记录接收成功: userId=1001, deviceId=2001, recordUniqueId=REC_1001_2001_20251225235437427_129780145, duration=20ms
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.092 s -- in net.lab1024.sa.access.strategy.EdgeVerificationStrategyTest
+[INFO] 
+[INFO] Results:
+[INFO] 
+[WARNING] Tests run: 239, Failures: 0, Errors: 0, Skipped: 5
+[INFO] 
+[INFO] 
+[INFO] --- jacoco:0.8.12:report (jacoco-report) @ ioedream-access-service ---
+[INFO] Loading execution data file D:\IOE-DREAM\microservices\ioedream-access-service\target\jacoco.exec
+[INFO] Analyzed bundle 'IOE-DREAM 代码覆盖率报告' with 116 classes
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  18.994 s
+[INFO] Finished at: 2025-12-25T23:54:38+08:00
+[INFO] ------------------------------------------------------------------------

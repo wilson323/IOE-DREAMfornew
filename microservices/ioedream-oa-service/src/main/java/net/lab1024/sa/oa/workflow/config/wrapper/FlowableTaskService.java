@@ -21,9 +21,9 @@ import java.util.Map;
  * @version 1.0.0
  * @since 2025-01-16
  */
-@Slf4j
 @Service
-public class FlowableTaskService {
+@Slf4j
+ public class FlowableTaskService {
 
     private final TaskService taskService;
 
@@ -493,3 +493,5 @@ public class FlowableTaskService {
         }
     }
 }
+
+

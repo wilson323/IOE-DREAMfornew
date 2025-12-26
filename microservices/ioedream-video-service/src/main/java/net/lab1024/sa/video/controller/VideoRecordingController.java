@@ -3,11 +3,13 @@ package net.lab1024.sa.video.controller;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,11 +20,10 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.common.openapi.domain.response.PageResult;
 import net.lab1024.sa.common.permission.annotation.PermissionCheck;
 import net.lab1024.sa.video.domain.form.VideoRecordingQueryForm;
 import net.lab1024.sa.video.domain.form.VideoRecordingSearchForm;
@@ -45,16 +46,16 @@ import net.lab1024.sa.video.service.VideoRecordingService;
  * @version 1.0.0
  * @since 2025-12-16
  */
+@Slf4j
 @RestController
 @PermissionCheck(value = "VIDEO_MANAGE", description = "录像回放管理权限")
 @RequestMapping("/api/v1/video/recordings")
-@RequiredArgsConstructor
-@Slf4j
 @Tag(name = "录像回放管理", description = "录像文件管理、回放控制、下载等功能")
 @ConditionalOnProperty(name = "spring.application.name", havingValue = "ioedream-video-service")
 public class VideoRecordingController {
 
-    private final VideoRecordingService videoRecordingService;
+    @Resource
+    private VideoRecordingService videoRecordingService;
 
     /**
      * 分页查询录像列表
@@ -62,10 +63,11 @@ public class VideoRecordingController {
      * @param queryForm 查询条件
      * @return 分页结果
      */
-    @PostMapping("/query")
+    @GetMapping("/query")
     @Operation(summary = "分页查询录像列表", description = "根据条件分页查询录像文件")
     @PreAuthorize("hasRole('VIDEO_VIEWER') or hasRole('VIDEO_OPERATOR') or hasRole('VIDEO_MANAGER')")
-    public ResponseDTO<PageResult<VideoRecordingVO>> queryRecordings(@Valid @RequestBody VideoRecordingQueryForm queryForm) {
+    public ResponseDTO<PageResult<VideoRecordingVO>> queryRecordings(
+            @Valid @ModelAttribute VideoRecordingQueryForm queryForm) {
         log.info("[录像回放] 收到分页查询录像请求: {}", queryForm);
         return videoRecordingService.queryRecordings(queryForm);
     }
@@ -76,10 +78,11 @@ public class VideoRecordingController {
      * @param searchForm 搜索条件
      * @return 搜索结果
      */
-    @PostMapping("/search")
+    @GetMapping("/search")
     @Operation(summary = "搜索录像文件", description = "根据关键词搜索录像文件")
     @PreAuthorize("hasRole('VIDEO_VIEWER') or hasRole('VIDEO_OPERATOR') or hasRole('VIDEO_MANAGER')")
-    public ResponseDTO<List<VideoRecordingVO>> searchRecordings(@Valid @RequestBody VideoRecordingSearchForm searchForm) {
+    public ResponseDTO<List<VideoRecordingVO>> searchRecordings(
+            @Valid @ModelAttribute VideoRecordingSearchForm searchForm) {
         log.info("[录像回放] 收到搜索录像请求: {}", searchForm);
         return videoRecordingService.searchRecordings(searchForm);
     }
@@ -131,8 +134,8 @@ public class VideoRecordingController {
             @Parameter(description = "通道ID") @RequestParam(required = false) Long channelId,
             @Parameter(description = "开始时间", required = true) @RequestParam LocalDateTime startTime,
             @Parameter(description = "结束时间", required = true) @RequestParam LocalDateTime endTime) {
-        log.info("[录像回放] 收到获取时间轴请求: deviceId={}, channelId={}, startTime={}, endTime={}",
-                deviceId, channelId, startTime, endTime);
+        log.info("[录像回放] 收到获取时间轴请求: deviceId={}, channelId={}, startTime={}, endTime={}", deviceId, channelId,
+                startTime, endTime);
         return videoRecordingService.getRecordingTimeline(deviceId, channelId, startTime, endTime);
     }
 
@@ -153,8 +156,8 @@ public class VideoRecordingController {
             @Parameter(description = "通道ID") @RequestParam(required = false) Long channelId,
             @Parameter(description = "开始时间", required = true) @RequestParam LocalDateTime startTime,
             @Parameter(description = "结束时间", required = true) @RequestParam LocalDateTime endTime) {
-        log.info("[录像回放] 收到按时间范围查询录像请求: deviceId={}, channelId={}, startTime={}, endTime={}",
-                deviceId, channelId, startTime, endTime);
+        log.info("[录像回放] 收到按时间范围查询录像请求: deviceId={}, channelId={}, startTime={}, endTime={}", deviceId, channelId,
+                startTime, endTime);
         return videoRecordingService.getRecordingsByTimeRange(deviceId, channelId, startTime, endTime);
     }
 
@@ -283,8 +286,8 @@ public class VideoRecordingController {
             @Parameter(description = "通道ID", required = true) @PathVariable Long channelId,
             @Parameter(description = "页码") @RequestParam(defaultValue = "1") Integer pageNum,
             @Parameter(description = "页大小") @RequestParam(defaultValue = "20") Integer pageSize) {
-        log.info("[录像回放] 收到获取通道录像请求: deviceId={}, channelId={}, pageNum={}, pageSize={}",
-                deviceId, channelId, pageNum, pageSize);
+        log.info("[录像回放] 收到获取通道录像请求: deviceId={}, channelId={}, pageNum={}, pageSize={}", deviceId, channelId, pageNum,
+                pageSize);
         return videoRecordingService.getChannelRecordings(deviceId, channelId, pageNum, pageSize);
     }
 
@@ -317,11 +320,11 @@ public class VideoRecordingController {
     @PostMapping("/{recordingId}/mark-important")
     @Operation(summary = "标记录像为重要", description = "将指定录像标记为重要")
     @PreAuthorize("hasRole('VIDEO_OPERATOR') or hasRole('VIDEO_MANAGER')")
-    public ResponseDTO<Void> markRecordingAsImportant(
+    public ResponseDTO<Void> markRecordingAsimportant(
             @Parameter(description = "录像ID", required = true) @PathVariable Long recordingId,
             @Parameter(description = "备注") @RequestParam(required = false) String remark) {
         log.info("[录像回放] 收到标记重要录像请求: recordingId={}, remark={}", recordingId, remark);
-        return videoRecordingService.markRecordingAsImportant(recordingId, remark);
+        return videoRecordingService.markRecordingAsimportant(recordingId, remark);
     }
 
     /**
@@ -333,10 +336,10 @@ public class VideoRecordingController {
     @PostMapping("/{recordingId}/unmark-important")
     @Operation(summary = "取消录像重要标记", description = "取消录像的重要标记")
     @PreAuthorize("hasRole('VIDEO_OPERATOR') or hasRole('VIDEO_MANAGER')")
-    public ResponseDTO<Void> unmarkRecordingAsImportant(
+    public ResponseDTO<Void> unmarkRecordingAsimportant(
             @Parameter(description = "录像ID", required = true) @PathVariable Long recordingId) {
         log.info("[录像回放] 收到取消重要标记请求: recordingId={}", recordingId);
-        return videoRecordingService.unmarkRecordingAsImportant(recordingId);
+        return videoRecordingService.unmarkRecordingAsimportant(recordingId);
     }
 
     /**
@@ -349,11 +352,11 @@ public class VideoRecordingController {
     @GetMapping("/important")
     @Operation(summary = "获取重要录像列表", description = "获取所有标记为重要的录像文件")
     @PreAuthorize("hasRole('VIDEO_VIEWER') or hasRole('VIDEO_OPERATOR') or hasRole('VIDEO_MANAGER')")
-    public ResponseDTO<PageResult<VideoRecordingVO>> getImportantRecordings(
+    public ResponseDTO<PageResult<VideoRecordingVO>> getimportantRecordings(
             @Parameter(description = "页码") @RequestParam(defaultValue = "1") Integer pageNum,
             @Parameter(description = "页大小") @RequestParam(defaultValue = "20") Integer pageSize) {
         log.info("[录像回放] 收到获取重要录像请求: pageNum={}, pageSize={}", pageNum, pageSize);
-        return videoRecordingService.getImportantRecordings(pageNum, pageSize);
+        return videoRecordingService.getimportantRecordings(pageNum, pageSize);
     }
 
     /**
@@ -371,8 +374,8 @@ public class VideoRecordingController {
             @Parameter(description = "录像ID", required = true) @PathVariable Long recordingId,
             @Parameter(description = "目标格式", required = true) @RequestParam String targetFormat,
             @Parameter(description = "目标质量", required = true) @RequestParam String targetQuality) {
-        log.info("[录像回放] 收到转码请求: recordingId={}, targetFormat={}, targetQuality={}",
-                recordingId, targetFormat, targetQuality);
+        log.info("[录像回放] 收到转码请求: recordingId={}, targetFormat={}, targetQuality={}", recordingId, targetFormat,
+                targetQuality);
         return videoRecordingService.transcodeRecording(recordingId, targetFormat, targetQuality);
     }
 

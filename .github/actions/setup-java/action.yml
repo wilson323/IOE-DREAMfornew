@@ -1,0 +1,69 @@
+name: Local Setup Java
+description: Local replacement for actions/setup-java
+inputs:
+  java-version:
+    description: Java version
+    required: true
+  distribution:
+    description: JDK distribution
+    required: false
+  cache:
+    description: Cache type
+    required: false
+runs:
+  using: composite
+  steps:
+    - name: Setup Java (bash)
+      if: runner.os != 'Windows'
+      shell: bash
+      run: |
+        set -euo pipefail
+        VERSION="${INPUT_JAVA_VERSION:-}"
+        if [ -z "$VERSION" ]; then
+          echo "java-version is required"
+          exit 1
+        fi
+        JAVA_HOME_CANDIDATE="${JAVA_HOME:-}"
+        if [ -z "$JAVA_HOME_CANDIDATE" ]; then
+          ENV_VAR="JAVA_HOME_${VERSION//./_}_X64"
+          JAVA_HOME_CANDIDATE="${!ENV_VAR:-}"
+        fi
+        if [ -z "$JAVA_HOME_CANDIDATE" ]; then
+          if command -v java >/dev/null 2>&1; then
+            JAVA_BIN="$(command -v java)"
+            JAVA_HOME_CANDIDATE="$(dirname "$(dirname "$JAVA_BIN")")"
+          else
+            echo "JDK not found. Preinstall JDK $VERSION on the runner."
+            exit 1
+          fi
+        fi
+        echo "JAVA_HOME=$JAVA_HOME_CANDIDATE" >> "$GITHUB_ENV"
+        echo "$JAVA_HOME_CANDIDATE/bin" >> "$GITHUB_PATH"
+        java -version
+    - name: Setup Java (pwsh)
+      if: runner.os == 'Windows'
+      shell: pwsh
+      run: |
+        $ErrorActionPreference = "Stop"
+        $version = $env:INPUT_JAVA_VERSION
+        if ([string]::IsNullOrWhiteSpace($version)) {
+          Write-Host "java-version is required"
+          exit 1
+        }
+        $javaHomeCandidate = $env:JAVA_HOME
+        if ([string]::IsNullOrWhiteSpace($javaHomeCandidate)) {
+          $envVar = "JAVA_HOME_$($version.Replace('.', '_'))_X64"
+          $javaHomeCandidate = [Environment]::GetEnvironmentVariable($envVar)
+        }
+        if ([string]::IsNullOrWhiteSpace($javaHomeCandidate)) {
+          $javaCmd = (Get-Command java -ErrorAction SilentlyContinue)
+          if ($null -ne $javaCmd) {
+            $javaHomeCandidate = Split-Path -Parent (Split-Path -Parent $javaCmd.Path)
+          } else {
+            Write-Host "JDK not found. Preinstall JDK $version on the runner."
+            exit 1
+          }
+        }
+        Add-Content -Path $env:GITHUB_ENV -Value "JAVA_HOME=$javaHomeCandidate"
+        Add-Content -Path $env:GITHUB_PATH -Value "$javaHomeCandidate\\bin"
+        java -version

@@ -10,6 +10,8 @@ import com.baomidou.mybatisplus.annotation.TableName;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import net.lab1024.sa.common.entity.BaseEntity;
 
 /**
@@ -27,6 +29,8 @@ import net.lab1024.sa.common.entity.BaseEntity;
  * @version 1.0.0
  * @since 2025-01-30
  */
+@Getter
+@Setter
 @Data
 @EqualsAndHashCode(callSuper = true)
 @TableName("t_attendance_record")
@@ -144,6 +148,7 @@ public class AttendanceRecordEntity extends BaseEntity {
      */
     @TableField("remark")
     private String remark;
+/**     * 工作时长（小时）- 计算字段，不在数据库中存储     */    @TableField(exist = false)    private Double workDuration;
 
     // ========== 便利方法（兼容现有代码） ==========
 

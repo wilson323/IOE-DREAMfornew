@@ -1,19 +1,23 @@
 package net.lab1024.sa.attendance.engine.rule.validator.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.attendance.engine.rule.loader.RuleLoader;
-import net.lab1024.sa.attendance.engine.rule.model.RuleValidationResult;
-import net.lab1024.sa.attendance.engine.rule.validator.RuleValidator;
-import net.lab1024.sa.attendance.dao.AttendanceRuleDao;
-import net.lab1024.sa.attendance.entity.AttendanceRuleEntity;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import jakarta.annotation.Resource;
-import java.time.LocalDateTime;
-import java.util.*;
-import java.util.regex.Pattern;
+import net.lab1024.sa.attendance.dao.AttendanceRuleDao;
+import net.lab1024.sa.attendance.engine.rule.loader.RuleLoader;
+import net.lab1024.sa.attendance.engine.rule.model.RuleValidationResult;
+import net.lab1024.sa.attendance.engine.rule.validator.RuleValidator;
+import net.lab1024.sa.attendance.entity.AttendanceRuleEntity;
 
 /**
  * 规则验证器实现类
@@ -26,8 +30,8 @@ import java.util.regex.Pattern;
  * @version 1.0.0
  * @since 2025-12-16
  */
-@Slf4j
 @Component("ruleValidator")
+@Slf4j
 public class RuleValidatorImpl implements RuleValidator {
 
     @Resource
@@ -38,14 +42,12 @@ public class RuleValidatorImpl implements RuleValidator {
 
     // 规则条件表达式正则模式
     private static final Pattern RULE_CONDITION_PATTERN = Pattern.compile(
-        "^\\s*(if\\s+)?\\s*([a-zA-Z_][a-zA-Z0-9_]*\\s*==|>=|<=|>|<|!=|in|contains)\\s*['\"]?[^'\"]*['\"]?\\s*(and|or|not)?\\s*.*\\s*$",
-        Pattern.CASE_INSENSITIVE
-    );
+            "^\\s*(if\\s+)?\\s*([a-zA-Z_][a-zA-Z0-9_]*\\s*==|>=|<=|>|<|!=|in|contains)\\s*['\"]?[^'\"]*['\"]?\\s*(and|or|not)?\\s*.*\\s*$",
+            Pattern.CASE_INSENSITIVE);
 
     // 规则动作JSON模式
     private static final Pattern RULE_ACTION_PATTERN = Pattern.compile(
-        "^\\s*\\{\\s*['\"]?(type|action)['\"]?\\s*:\\s*['\"]?[a-zA-Z_][a-zA-Z0-9_]*['\"]?\\s*,?.*}\\s*$"
-    );
+            "^\\s*\\{\\s*['\"]?(type|action)['\"]?\\s*:\\s*['\"]?[a-zA-Z_][a-zA-Z0-9_]*['\"]?\\s*,?.*}\\s*$");
 
     /**
      * 验证规则有效性
@@ -56,26 +58,26 @@ public class RuleValidatorImpl implements RuleValidator {
 
         long startTime = System.currentTimeMillis();
         RuleValidationResult result = RuleValidationResult.builder()
-            .ruleId(ruleId)
-            .validationType("FULL_VALIDATION")
-            .validationSteps(new ArrayList<>())
-            .validationTime(LocalDateTime.now())
-            .build();
+                .ruleId(ruleId)
+                .validationType("FULL_VALIDATION")
+                .validationSteps(new ArrayList<>())
+                .validationTime(LocalDateTime.now())
+                .build();
 
         try {
             // 步骤1: 检查规则是否存在
             addValidationStep(result, "existence_check", "检查规则是否存在", () -> {
                 if (!ruleLoader.ruleExists(ruleId)) {
                     return RuleValidationResult.ValidationStep.builder()
-                        .stepName("existence_check")
-                        .passed(false)
-                        .errorMessage("规则不存在或已删除")
-                        .build();
+                            .stepName("existence_check")
+                            .passed(false)
+                            .errorMessage("规则不存在或已删除")
+                            .build();
                 }
                 return RuleValidationResult.ValidationStep.builder()
-                    .stepName("existence_check")
-                    .passed(true)
-                    .build();
+                        .stepName("existence_check")
+                        .passed(true)
+                        .build();
             });
 
             // 步骤2: 检查规则基本信息
@@ -83,39 +85,38 @@ public class RuleValidatorImpl implements RuleValidator {
                 AttendanceRuleEntity rule = attendanceRuleDao.selectById(ruleId);
                 if (rule == null) {
                     return RuleValidationResult.ValidationStep.builder()
-                        .stepName("basic_info_check")
-                        .passed(false)
-                        .errorMessage("无法获取规则基本信息")
-                        .build();
+                            .stepName("basic_info_check")
+                            .passed(false)
+                            .errorMessage("无法获取规则基本信息")
+                            .build();
                 }
 
                 // 检查规则名称
                 if (!StringUtils.hasText(rule.getRuleName())) {
                     return RuleValidationResult.ValidationStep.builder()
-                        .stepName("basic_info_check")
-                        .passed(false)
-                        .errorMessage("规则名称不能为空")
-                        .build();
+                            .stepName("basic_info_check")
+                            .passed(false)
+                            .errorMessage("规则名称不能为空")
+                            .build();
                 }
 
                 // 检查规则类型
                 if (!StringUtils.hasText(rule.getRuleType())) {
                     return RuleValidationResult.ValidationStep.builder()
-                        .stepName("basic_info_check")
-                        .passed(false)
-                        .errorMessage("规则类型不能为空")
-                        .build();
+                            .stepName("basic_info_check")
+                            .passed(false)
+                            .errorMessage("规则类型不能为空")
+                            .build();
                 }
 
                 return RuleValidationResult.ValidationStep.builder()
-                    .stepName("basic_info_check")
-                    .passed(true)
-                    .stepDetails(Map.of(
-                        "ruleName", rule.getRuleName(),
-                        "ruleType", rule.getRuleType(),
-                        "ruleCategory", rule.getRuleCategory()
-                    ))
-                    .build();
+                        .stepName("basic_info_check")
+                        .passed(true)
+                        .stepDetails(Map.of(
+                                "ruleName", rule.getRuleName(),
+                                "ruleType", rule.getRuleType(),
+                                "ruleCategory", rule.getRuleCategory()))
+                        .build();
             });
 
             // 步骤3: 验证规则条件表达式
@@ -124,11 +125,11 @@ public class RuleValidatorImpl implements RuleValidator {
                 RuleValidationResult conditionResult = validateRuleCondition(condition);
 
                 return RuleValidationResult.ValidationStep.builder()
-                    .stepName("condition_validation")
-                    .passed(conditionResult.getValid())
-                    .errorMessage(conditionResult.getErrorMessage())
-                    .stepDetails(conditionResult.getValidationDetails())
-                    .build();
+                        .stepName("condition_validation")
+                        .passed(conditionResult.getValid())
+                        .errorMessage(conditionResult.getErrorMessage())
+                        .stepDetails(conditionResult.getValidationDetails())
+                        .build();
             });
 
             // 步骤4: 验证规则动作配置
@@ -137,11 +138,11 @@ public class RuleValidatorImpl implements RuleValidator {
                 RuleValidationResult actionResult = validateRuleAction(action);
 
                 return RuleValidationResult.ValidationStep.builder()
-                    .stepName("action_validation")
-                    .passed(actionResult.getValid())
-                    .errorMessage(actionResult.getErrorMessage())
-                    .stepDetails(actionResult.getValidationDetails())
-                    .build();
+                        .stepName("action_validation")
+                        .passed(actionResult.getValid())
+                        .errorMessage(actionResult.getErrorMessage())
+                        .stepDetails(actionResult.getValidationDetails())
+                        .build();
             });
 
             // 步骤5: 验证规则时间范围
@@ -149,11 +150,11 @@ public class RuleValidatorImpl implements RuleValidator {
                 RuleValidationResult timeResult = validateRuleTimeRange(ruleId, LocalDateTime.now());
 
                 return RuleValidationResult.ValidationStep.builder()
-                    .stepName("time_range_validation")
-                    .passed(timeResult.getValid())
-                    .errorMessage(timeResult.getErrorMessage())
-                    .stepDetails(timeResult.getValidationDetails())
-                    .build();
+                        .stepName("time_range_validation")
+                        .passed(timeResult.getValid())
+                        .errorMessage(timeResult.getErrorMessage())
+                        .stepDetails(timeResult.getValidationDetails())
+                        .build();
             });
 
             // 步骤6: 验证规则依赖
@@ -161,16 +162,16 @@ public class RuleValidatorImpl implements RuleValidator {
                 RuleValidationResult dependencyResult = validateRuleDependencies(ruleId);
 
                 return RuleValidationResult.ValidationStep.builder()
-                    .stepName("dependency_validation")
-                    .passed(dependencyResult.getValid())
-                    .errorMessage(dependencyResult.getErrorMessage())
-                    .stepDetails(dependencyResult.getValidationDetails())
-                    .build();
+                        .stepName("dependency_validation")
+                        .passed(dependencyResult.getValid())
+                        .errorMessage(dependencyResult.getErrorMessage())
+                        .stepDetails(dependencyResult.getValidationDetails())
+                        .build();
             });
 
             // 计算总体验证结果
             boolean allPassed = result.getValidationSteps().stream()
-                .allMatch(RuleValidationResult.ValidationStep::getPassed);
+                    .allMatch(RuleValidationResult.ValidationStep::getPassed);
 
             result.setValid(allPassed);
             if (!allPassed) {
@@ -204,7 +205,7 @@ public class RuleValidatorImpl implements RuleValidator {
         result.setValidationDuration(System.currentTimeMillis() - startTime);
 
         log.debug("[规则验证器] 规则验证完成: {}, 结果: {}, 耗时: {}ms",
-                 ruleId, result.getValid() ? "通过" : "失败", result.getValidationDuration());
+                ruleId, result.getValid() ? "通过" : "失败", result.getValidationDuration());
 
         return result;
     }
@@ -224,33 +225,35 @@ public class RuleValidatorImpl implements RuleValidator {
             // 基本语法检查
             if (!RULE_CONDITION_PATTERN.matcher(ruleCondition).matches()) {
                 return RuleValidationResult.failure("CONDITION_SYNTAX_ERROR",
-                    "规则条件表达式语法错误，格式应为: if 条件 {动作}");
+                        "规则条件表达式语法错误，格式应为: if 条件 {动作}");
             }
 
             // 检查常见的语法错误
             if (ruleCondition.contains("==") && !ruleCondition.contains(" ")) {
                 return RuleValidationResult.failure("CONDITION_FORMAT_ERROR",
-                    "条件表达式中操作符周围需要空格");
+                        "条件表达式中操作符周围需要空格");
             }
 
             // 检查括号匹配
             int openBrackets = 0;
             int closeBrackets = 0;
             for (char c : ruleCondition.toCharArray()) {
-                if (c == '(') openBrackets++;
-                if (c == ')') closeBrackets++;
+                if (c == '(')
+                    openBrackets++;
+                if (c == ')')
+                    closeBrackets++;
             }
             if (openBrackets != closeBrackets) {
                 return RuleValidationResult.failure("CONDITION_BRACKET_MISMATCH",
-                    "条件表达式括号不匹配");
+                        "条件表达式括号不匹配");
             }
 
             // 检查是否包含黑名单关键字
-            String[] blacklistKeywords = {"eval", "exec", "system", "runtime", "class"};
+            String[] blacklistKeywords = { "eval", "exec", "system", "runtime", "class" };
             for (String keyword : blacklistKeywords) {
                 if (ruleCondition.toLowerCase().contains(keyword)) {
                     return RuleValidationResult.failure("CONDITION_BLACKLIST_KEYWORD",
-                        "条件表达式包含不安全的关键字: " + keyword);
+                            "条件表达式包含不安全的关键字: " + keyword);
                 }
             }
 
@@ -265,7 +268,7 @@ public class RuleValidatorImpl implements RuleValidator {
         } catch (Exception e) {
             log.error("[规则验证器] 验证规则条件表达式失败: {}", ruleCondition, e);
             return RuleValidationResult.failure("CONDITION_VALIDATION_ERROR",
-                "验证条件表达式时发生错误: " + e.getMessage());
+                    "验证条件表达式时发生错误: " + e.getMessage());
         }
     }
 
@@ -289,17 +292,17 @@ public class RuleValidatorImpl implements RuleValidator {
             // 检查基本JSON结构
             if (!RULE_ACTION_PATTERN.matcher(ruleAction).matches()) {
                 return RuleValidationResult.failure("ACTION_FORMAT_ERROR",
-                    "规则动作格式错误，应包含type或action字段");
+                        "规则动作格式错误，应包含type或action字段");
             }
 
             // 检查是否包含必需的字段
             if (!ruleAction.contains("\"type\"") && !ruleAction.contains("'type'") &&
-                !ruleAction.contains("\"action\"") && !ruleAction.contains("'action'")) {
+                    !ruleAction.contains("\"action\"") && !ruleAction.contains("'action'")) {
                 return RuleValidationResult.failure("ACTION_MISSING_TYPE", "规则动作缺少type或action字段");
             }
 
             // 检查动作类型是否有效
-            String[] validActionTypes = {"APPROVE", "REJECT", "NOTIFY", "LOG", "EXECUTE", "CALL"};
+            String[] validActionTypes = { "APPROVE", "REJECT", "NOTIFY", "LOG", "EXECUTE", "CALL" };
             boolean hasValidType = false;
             for (String type : validActionTypes) {
                 if (ruleAction.toUpperCase().contains(type)) {
@@ -324,7 +327,7 @@ public class RuleValidatorImpl implements RuleValidator {
         } catch (Exception e) {
             log.error("[规则验证器] 验证规则动作配置失败: {}", ruleAction, e);
             return RuleValidationResult.failure("ACTION_VALIDATION_ERROR",
-                "验证动作配置时发生错误: " + e.getMessage());
+                    "验证动作配置时发生错误: " + e.getMessage());
         }
     }
 
@@ -366,7 +369,7 @@ public class RuleValidatorImpl implements RuleValidator {
         } catch (Exception e) {
             log.error("[规则验证器] 验证规则语法失败", e);
             return RuleValidationResult.failure("SYNTAX_VALIDATION_ERROR",
-                "验证规则语法时发生错误: " + e.getMessage());
+                    "验证规则语法时发生错误: " + e.getMessage());
         }
     }
 
@@ -403,7 +406,7 @@ public class RuleValidatorImpl implements RuleValidator {
         } catch (Exception e) {
             log.error("[规则验证器] 验证规则参数失败: type={}", ruleType, e);
             return RuleValidationResult.failure("PARAMETER_VALIDATION_ERROR",
-                "验证规则参数时发生错误: " + e.getMessage());
+                    "验证规则参数时发生错误: " + e.getMessage());
         }
     }
 
@@ -433,7 +436,7 @@ public class RuleValidatorImpl implements RuleValidator {
         } catch (Exception e) {
             log.error("[规则验证器] 验证规则权限失败: ruleId={}, userId={}", ruleId, userId, e);
             return RuleValidationResult.failure("PERMISSION_VALIDATION_ERROR",
-                "验证规则权限时发生错误: " + e.getMessage());
+                    "验证规则权限时发生错误: " + e.getMessage());
         }
     }
 
@@ -450,21 +453,23 @@ public class RuleValidatorImpl implements RuleValidator {
                 return RuleValidationResult.failure("RULE_NOT_FOUND", "规则不存在");
             }
 
-            LocalDateTime effectiveTime = rule.getEffectiveStartTime() != null ?
-                LocalDateTime.parse(rule.getEffectiveStartTime()) : null;
-            LocalDateTime expireTime = rule.getEffectiveEndTime() != null ?
-                LocalDateTime.parse(rule.getEffectiveEndTime()) : null;
+            LocalDateTime effectiveTime = rule.getEffectiveStartTime() != null
+                    ? LocalDateTime.parse(rule.getEffectiveStartTime())
+                    : null;
+            LocalDateTime expireTime = rule.getEffectiveEndTime() != null
+                    ? LocalDateTime.parse(rule.getEffectiveEndTime())
+                    : null;
 
             // 检查生效时间
             if (effectiveTime != null && checkTime.isBefore(effectiveTime)) {
                 return RuleValidationResult.failure("RULE_NOT_EFFECTIVE",
-                    "规则尚未生效，生效时间: " + effectiveTime);
+                        "规则尚未生效，生效时间: " + effectiveTime);
             }
 
             // 检查过期时间
             if (expireTime != null && checkTime.isAfter(expireTime)) {
                 return RuleValidationResult.failure("RULE_EXPIRED",
-                    "规则已过期，过期时间: " + expireTime);
+                        "规则已过期，过期时间: " + expireTime);
             }
 
             Map<String, Object> details = new HashMap<>();
@@ -478,7 +483,7 @@ public class RuleValidatorImpl implements RuleValidator {
         } catch (Exception e) {
             log.error("[规则验证器] 验证规则时间范围失败: ruleId={}", ruleId, e);
             return RuleValidationResult.failure("TIME_RANGE_VALIDATION_ERROR",
-                "验证规则时间范围时发生错误: " + e.getMessage());
+                    "验证规则时间范围时发生错误: " + e.getMessage());
         }
     }
 
@@ -504,7 +509,7 @@ public class RuleValidatorImpl implements RuleValidator {
         } catch (Exception e) {
             log.error("[规则验证器] 验证规则依赖失败: ruleId={}", ruleId, e);
             return RuleValidationResult.failure("DEPENDENCY_VALIDATION_ERROR",
-                "验证规则依赖时发生错误: " + e.getMessage());
+                    "验证规则依赖时发生错误: " + e.getMessage());
         }
     }
 
@@ -512,7 +517,7 @@ public class RuleValidatorImpl implements RuleValidator {
      * 添加验证步骤
      */
     private void addValidationStep(RuleValidationResult result, String stepName, String description,
-                                   java.util.function.Supplier<RuleValidationResult.ValidationStep> stepSupplier) {
+            java.util.function.Supplier<RuleValidationResult.ValidationStep> stepSupplier) {
         try {
             RuleValidationResult.ValidationStep step = stepSupplier.get();
             step.setStepName(stepName);
@@ -521,11 +526,11 @@ public class RuleValidatorImpl implements RuleValidator {
         } catch (Exception e) {
             log.error("[规则验证器] 执行验证步骤失败: {}", stepName, e);
             result.addValidationStep(RuleValidationResult.ValidationStep.builder()
-                .stepName(stepName)
-                .stepDescription(description)
-                .passed(false)
-                .errorMessage("执行验证步骤时发生异常: " + e.getMessage())
-                .build());
+                    .stepName(stepName)
+                    .stepDescription(description)
+                    .passed(false)
+                    .errorMessage("执行验证步骤时发生异常: " + e.getMessage())
+                    .build());
         }
     }
 
@@ -533,11 +538,11 @@ public class RuleValidatorImpl implements RuleValidator {
      * 验证时间基础规则参数
      */
     private RuleValidationResult validateTimeBasedRuleParameters(Map<String, Object> parameters) {
-        String[] requiredParams = {"startTime", "endTime"};
+        String[] requiredParams = { "startTime", "endTime" };
         for (String param : requiredParams) {
             if (!parameters.containsKey(param)) {
                 return RuleValidationResult.failure("MISSING_TIME_PARAMETER",
-                    "时间基础规则缺少必需参数: " + param);
+                        "时间基础规则缺少必需参数: " + param);
             }
         }
         return RuleValidationResult.success();
@@ -547,11 +552,11 @@ public class RuleValidatorImpl implements RuleValidator {
      * 验证位置基础规则参数
      */
     private RuleValidationResult validateLocationBasedRuleParameters(Map<String, Object> parameters) {
-        String[] requiredParams = {"locationId", "radius"};
+        String[] requiredParams = { "locationId", "radius" };
         for (String param : requiredParams) {
             if (!parameters.containsKey(param)) {
                 return RuleValidationResult.failure("MISSING_LOCATION_PARAMETER",
-                    "位置基础规则缺少必需参数: " + param);
+                        "位置基础规则缺少必需参数: " + param);
             }
         }
         return RuleValidationResult.success();
@@ -561,11 +566,11 @@ public class RuleValidatorImpl implements RuleValidator {
      * 验证用户基础规则参数
      */
     private RuleValidationResult validateUserBasedRuleParameters(Map<String, Object> parameters) {
-        String[] requiredParams = {"userIds"};
+        String[] requiredParams = { "userIds" };
         for (String param : requiredParams) {
             if (!parameters.containsKey(param)) {
                 return RuleValidationResult.failure("MISSING_USER_PARAMETER",
-                    "用户基础规则缺少必需参数: " + param);
+                        "用户基础规则缺少必需参数: " + param);
             }
         }
         return RuleValidationResult.success();
@@ -575,11 +580,11 @@ public class RuleValidatorImpl implements RuleValidator {
      * 验证部门基础规则参数
      */
     private RuleValidationResult validateDepartmentBasedRuleParameters(Map<String, Object> parameters) {
-        String[] requiredParams = {"departmentIds"};
+        String[] requiredParams = { "departmentIds" };
         for (String param : requiredParams) {
             if (!parameters.containsKey(param)) {
                 return RuleValidationResult.failure("MISSING_DEPARTMENT_PARAMETER",
-                    "部门基础规则缺少必需参数: " + param);
+                        "部门基础规则缺少必需参数: " + param);
             }
         }
         return RuleValidationResult.success();

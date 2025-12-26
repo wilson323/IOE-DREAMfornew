@@ -35,6 +35,11 @@ public class LocationVerificationResult {
     private LocationInfo location;
 
     /**
+     * 验证方法
+     */
+    private String verificationMethod;
+
+    /**
      * 验证时间
      */
     private LocalDateTime verificationTime;

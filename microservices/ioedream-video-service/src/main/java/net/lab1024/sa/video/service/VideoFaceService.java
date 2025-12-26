@@ -1,7 +1,7 @@
 package net.lab1024.sa.video.service;
 
 import net.lab1024.sa.common.domain.PageParam;
-import net.lab1024.sa.common.openapi.domain.response.PageResult;
+import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.video.domain.form.VideoFaceAddForm;
 import net.lab1024.sa.video.domain.form.VideoFaceSearchForm;

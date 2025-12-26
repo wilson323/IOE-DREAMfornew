@@ -1,25 +1,26 @@
 package net.lab1024.sa.video.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.video.manager.VideoBehaviorManager;
-import net.lab1024.sa.video.dao.VideoBehaviorDao;
-import net.lab1024.sa.video.dao.VideoBehaviorPatternDao;
-import net.lab1024.sa.video.entity.VideoBehaviorPatternEntity;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+
 import jakarta.annotation.Resource;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Map;
+import net.lab1024.sa.video.dao.VideoBehaviorDao;
+import net.lab1024.sa.video.dao.VideoBehaviorPatternDao;
+import net.lab1024.sa.video.entity.VideoBehaviorPatternEntity;
+import net.lab1024.sa.video.manager.VideoBehaviorManager;
 
 /**
  * 视频行为分析配置类
@@ -57,8 +58,10 @@ public class VideoBehaviorConfig {
 
         // 注册Java 8时间序列化器
         SimpleModule module = new SimpleModule();
-        module.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-        module.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        module.addSerializer(LocalDateTime.class,
+                new LocalDateTimeSerializer(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        module.addDeserializer(LocalDateTime.class,
+                new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 
         // Long类型序列化为字符串，防止前端精度丢失
         module.addSerializer(Long.class, ToStringSerializer.instance);

@@ -1,4 +1,4 @@
-# ============================================================
+﻿# ============================================================
 # IOE-DREAM Biometric Service 配置文件
 #
 # @Author:    IOE-DREAM Team
@@ -107,7 +107,7 @@ management:
 logging:
   level:
     root: INFO
-    net.lab1024.sa: DEBUG
+    "net.lab1024.sa": DEBUG
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"
 
@@ -132,3 +132,4 @@ biometric:
     # 最小图像尺寸（像素）
     min-image-width: 64
     min-image-height: 64
+

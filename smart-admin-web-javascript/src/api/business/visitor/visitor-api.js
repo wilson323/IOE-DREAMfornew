@@ -1,455 +1,762 @@
-/**
- * 访客管理API接口
+/*
+ * 访客管理 PC端 API
+ *
+ * 完整实现访客管理系统的所有前端API接口
+ * 包含7个子模块：访客信息、预约管理、登记管理、身份验证、物流管理、通行记录、统计分析
  *
  * @Author:    IOE-DREAM Team
- * @Date:      2025-12-04
+ * @Date:      2025-01-30
  * @Copyright  IOE-DREAM智慧园区一卡通管理平台
  */
+import { getRequest, postRequest } from '/@/lib/axios';
 
-import { postRequest, getRequest, putRequest, deleteRequest } from '/@/lib/axios';
-
-export const visitorApi = {
-  // ===== 访客预约管理 =====
-
-  /**
-   * 创建访客预约
-   * @param {Object} data 预约数据
-   * @param {String} data.visitorName 访客姓名
-   * @param {String} data.phone 手机号
-   * @param {String} data.idCard 身份证号
-   * @param {String} data.company 来访公司
-   * @param {String} data.purpose 来访事由
-   * @param {Number} data.visiteeId 被访人ID
-   * @param {String} data.appointmentTime 预约时间
-   * @param {String} data.appointmentType 预约类型
-   * @returns {Promise<ResponseDTO<Long>>}
-   */
-  createAppointment: (data) =>
-    postRequest('/api/v1/mobile/visitor/appointment', data),
-
-  /**
-   * 取消访客预约
-   * @param {Number} appointmentId 预约ID
-   * @param {Number} userId 用户ID
-   * @returns {Promise<ResponseDTO<Void>>}
-   */
-  cancelAppointment: (appointmentId, userId) =>
-    putRequest(`/api/v1/mobile/visitor/appointment/${appointmentId}/cancel`, { userId }),
-
-  /**
-   * 获取我的访客预约列表
-   * @param {Number} userId 用户ID
-   * @param {Number} status 预约状态（可选）
-   * @returns {Promise<ResponseDTO<List<VisitorAppointmentVO>>>}
-   */
-  getMyAppointments: (userId, status) =>
-    getRequest('/api/v1/mobile/visitor/my-appointments', { userId, status }),
-
-  /**
-   * 获取预约详情
-   * @param {Number} appointmentId 预约ID
-   * @returns {Promise<ResponseDTO<VisitorAppointmentDetailVO>>}
-   */
-  getAppointmentDetail: (appointmentId) =>
-    getRequest(`/api/v1/mobile/visitor/appointment/${appointmentId}`),
+export const visitorPcApi = {
+  // ==================== 1. 访客信息管理 ====================
 
   /**
    * 分页查询访客列表
-   * @param {Object} params 查询参数
-   * @param {Number} params.pageNum 页码
-   * @param {Number} params.pageSize 页大小
-   * @param {String} params.visitorName 访客姓名（可选）
-   * @param {String} params.phone 手机号（可选）
-   * @param {String} params.status 状态（可选）
-   * @returns {Promise<ResponseDTO<PageResult<VisitorVO>>>}
    */
-  queryVisitors: (params) =>
-    getRequest('/api/visitor/page', params),
+  queryVisitors: (params) => {
+    return postRequest('/visitor/info/query', params);
+  },
+
+  /**
+   * 获取访客详情
+   */
+  getVisitorDetail: (visitorId) => {
+    return getRequest(`/visitor/info/detail/${visitorId}`);
+  },
+
+  /**
+   * 添加访客
+   */
+  addVisitor: (params) => {
+    return postRequest('/visitor/info/add', params);
+  },
 
   /**
    * 更新访客信息
-   * @param {Object} data 访客数据
-   * @returns {Promise<ResponseDTO<Boolean>>}
    */
-  updateVisitor: (data) =>
-    putRequest('/api/visitor/', data),
+  updateVisitor: (params) => {
+    return postRequest('/visitor/info/update', params);
+  },
 
   /**
    * 删除访客
-   * @param {Number} id 访客ID
-   * @returns {Promise<ResponseDTO<Boolean>>}
    */
-  deleteVisitor: (id) =>
-    deleteRequest(`/api/visitor/${id}`),
-
-  // ===== 签到签退管理 =====
+  deleteVisitor: (visitorId) => {
+    return postRequest(`/visitor/info/delete/${visitorId}`);
+  },
 
   /**
-   * 二维码签到
-   * @param {String} qrCode 二维码内容
-   * @returns {Promise<ResponseDTO<MobileCheckInResultVO>>}
+   * 批量删除访客
    */
-  checkInByQRCode: (qrCode) =>
-    postRequest('/api/v1/mobile/visitor/checkin/qrcode', { qrCode }),
+  batchDeleteVisitors: (visitorIds) => {
+    return postRequest('/visitor/info/batch/delete', visitorIds);
+  },
 
   /**
-   * 访客签退
-   * @param {Number} appointmentId 预约ID
-   * @returns {Promise<ResponseDTO<Void>>}
+   * 导出访客数据
    */
-  checkout: (appointmentId) =>
-    postRequest(`/api/v1/mobile/visitor/checkout/${appointmentId}`),
+  exportVisitors: (params) => {
+    return postRequest('/visitor/info/export', params, {
+      responseType: 'blob'
+    });
+  },
 
   /**
-   * 获取签到状态
-   * @param {Number} appointmentId 预约ID
-   * @returns {Promise<ResponseDTO<Object>>}
+   * 查询访客等级列表
    */
-  getCheckInStatus: (appointmentId) =>
-    getRequest(`/api/v1/mobile/visitor/checkin/status/${appointmentId}`),
-
-  // ===== 位置和通行管理 =====
+  queryVisitorLevels: () => {
+    return getRequest('/visitor/info/levels');
+  },
 
   /**
-   * 获取访客位置
-   * @param {Number} appointmentId 预约ID
-   * @returns {Promise<ResponseDTO<VisitorLocationVO>>}
+   * 更新访客等级
    */
-  getVisitorLocation: (appointmentId) =>
-    getRequest(`/api/v1/mobile/visitor/location/${appointmentId}`),
+  updateVisitorLevel: (visitorId, level) => {
+    return postRequest('/visitor/info/level/update', {
+      visitorId,
+      level
+    });
+  },
 
-  /**
-   * 更新访客位置
-   * @param {Number} appointmentId 预约ID
-   * @param {Number} areaId 区域ID
-   * @param {Number} deviceId 设备ID
-   * @returns {Promise<ResponseDTO<Void>>}
-   */
-  updateVisitorLocation: (appointmentId, areaId, deviceId) =>
-    putRequest(`/api/v1/mobile/visitor/location/${appointmentId}`, { areaId, deviceId }),
-
-  /**
-   * 获取车证信息
-   * @param {Number} appointmentId 预约ID
-   * @returns {Promise<ResponseDTO<VisitorVehiclePermitVO>>}
-   */
-  getVehiclePermit: (appointmentId) =>
-    getRequest(`/api/v1/mobile/visitor/vehicle-permit/${appointmentId}`),
-
-  /**
-   * 生成车证
-   * @param {Number} appointmentId 预约ID
-   * @param {String} vehicleNumber 车牌号
-   * @returns {Promise<ResponseDTO<Boolean>>}
-   */
-  generateVehiclePermit: (appointmentId, vehicleNumber) =>
-    postRequest(`/api/v1/mobile/visitor/vehicle-permit/${appointmentId}`, { vehicleNumber }),
-
-  // ===== 记录查询管理 =====
-
-  /**
-   * 获取通行记录
-   * @param {Number} appointmentId 预约ID
-   * @returns {Promise<ResponseDTO<List<VisitRecordVO>>>}
-   */
-  getAccessRecords: (appointmentId) =>
-    getRequest(`/api/v1/mobile/visitor/access-records/${appointmentId}`),
-
-  /**
-   * 获取访客历史记录
-   * @param {Number} visitorId 访客ID
-   * @param {Number} limit 记录数量限制
-   * @returns {Promise<ResponseDTO<List<VisitHistoryVO>>>}
-   */
-  getVisitorHistory: (visitorId, limit = 10) =>
-    getRequest(`/api/v1/mobile/visitor/history/${visitorId}`, { limit }),
-
-  // ===== 通知管理 =====
-
-  /**
-   * 发送访客通知
-   * @param {Number} appointmentId 预约ID
-   * @param {String} notificationType 通知类型
-   * @returns {Promise<ResponseDTO<Boolean>>}
-   */
-  sendNotification: (appointmentId, notificationType) =>
-    postRequest(`/api/v1/mobile/visitor/notification/${appointmentId}`, { notificationType }),
-
-  // ===== 异常处理 =====
-
-  /**
-   * 报告异常情况
-   * @param {Number} recordId 记录ID
-   * @param {String} exceptionType 异常类型
-   * @param {String} description 异常描述
-   * @returns {Promise<ResponseDTO<Void>>}
-   */
-  reportException: (recordId, exceptionType, description) =>
-    postRequest('/api/v1/mobile/visitor/exception', { recordId, exceptionType, description }),
-
-  // ===== 统计和报告 =====
-
-  /**
-   * 获取个人访问统计
-   * @param {Number} userId 用户ID
-   * @returns {Promise<ResponseDTO<Object>>}
-   */
-  getPersonalStatistics: (userId) =>
-    getRequest(`/api/v1/mobile/visitor/statistics/${userId}`),
-
-  /**
-   * 导出访问记录
-   * @param {String} startDate 开始日期
-   * @param {String} endDate 结束日期
-   * @returns {Promise<ResponseDTO<String>>}
-   */
-  exportRecords: (startDate, endDate) =>
-    getRequest('/api/v1/mobile/visitor/export', { startDate, endDate }),
-
-  // ===== 实用工具接口 =====
-
-  /**
-   * 验证访客信息
-   * @param {String} idCardNumber 身份证号
-   * @param {String} phoneNumber 手机号
-   * @returns {Promise<ResponseDTO<Object>>}
-   */
-  validateVisitorInfo: (idCardNumber, phoneNumber) =>
-    postRequest('/api/v1/mobile/visitor/validate', { idCardNumber, phoneNumber }),
-
-  /**
-   * 获取被访人信息
-   * @param {Number} userId 被访人ID
-   * @returns {Promise<ResponseDTO<Object>>}
-   */
-  getVisiteeInfo: (userId) =>
-    getRequest(`/api/v1/mobile/visitor/visitee/${userId}`),
-
-  /**
-   * 获取访问区域列表
-   * @returns {Promise<ResponseDTO<List<Object>>>}
-   */
-  getVisitAreas: () =>
-    getRequest('/api/v1/mobile/visitor/areas'),
-
-  /**
-   * 获取预约类型列表
-   * @returns {Promise<ResponseDTO<List<Object>>>}
-   */
-  getAppointmentTypes: () =>
-    getRequest('/api/v1/mobile/visitor/appointment-types'),
-
-  /**
-   * 获取帮助信息
-   * @param {String} helpType 帮助类型（可选）
-   * @returns {Promise<ResponseDTO<Object>>}
-   */
-  getHelpInfo: (helpType) =>
-    getRequest('/api/v1/mobile/visitor/help', { helpType }),
-
-  // ===== PC端访客管理接口 =====
-
-  /**
-   * 分页查询访客预约（PC端）
-   * @param {Object} params 查询参数
-   * @param {Number} params.pageNum 页码
-   * @param {Number} params.pageSize 页大小
-   * @param {String} params.visitorName 访客姓名（可选）
-   * @param {Number} params.hostUserId 接待人ID（可选）
-   * @param {String} params.startDate 开始日期（可选，格式：yyyy-MM-dd）
-   * @param {String} params.endDate 结束日期（可选，格式：yyyy-MM-dd）
-   * @param {String} params.status 预约状态（可选）
-   * @returns {Promise<ResponseDTO<PageResult<VisitorAppointmentVO>>>}
-   */
-  queryAppointments: (params) =>
-    postRequest('/api/v1/visitor/appointment/query', params),
-
-  /**
-   * 获取访客统计（PC端）
-   * @param {String} startDate 开始日期（格式：yyyy-MM-dd）
-   * @param {String} endDate 结束日期（格式：yyyy-MM-dd）
-   * @returns {Promise<ResponseDTO<Object>>}
-   */
-  getVisitorStatistics: (startDate, endDate) =>
-    getRequest('/api/v1/visitor/statistics', { startDate, endDate }),
-
-  // ===== 黑名单管理接口 =====
+  // ==================== 2. 黑名单管理 ====================
 
   /**
    * 分页查询黑名单
-   * @param {Object} params 查询参数
-   * @param {Number} params.pageNum 页码
-   * @param {Number} params.pageSize 页大小
-   * @param {String} params.visitorName 访客姓名（可选）
-   * @param {String} params.phone 手机号（可选）
-   * @param {String} params.idCard 身份证号（可选）
-   * @param {String} params.reason 加入原因（可选）
-   * @returns {Promise<ResponseDTO<PageResult<BlacklistVO>>>}
    */
-  queryBlacklist: (params) =>
-    postRequest('/api/v1/visitor/blacklist/query', params),
+  queryBlacklist: (params) => {
+    return postRequest('/visitor/blacklist/query', params);
+  },
 
   /**
-   * 加入黑名单
-   * @param {Object} data 黑名单数据
-   * @param {String} data.visitorName 访客姓名
-   * @param {String} data.phone 手机号
-   * @param {String} data.idCard 身份证号（可选）
-   * @param {String} data.reason 加入原因（SECURITY/VIOLATION/OTHER）
-   * @param {String} data.description 详细说明（可选）
-   * @returns {Promise<ResponseDTO<Boolean>>}
+   * 获取黑名单详情
    */
-  addToBlacklist: (data) =>
-    postRequest('/api/v1/visitor/blacklist/add', data),
+  getBlacklistDetail: (blacklistId) => {
+    return getRequest(`/visitor/blacklist/detail/${blacklistId}`);
+  },
 
   /**
-   * 移出黑名单
-   * @param {Array<Number>} visitorIds 访客ID列表
-   * @returns {Promise<ResponseDTO<Boolean>>}
+   * 添加到黑名单
    */
-  removeFromBlacklist: (visitorIds) =>
-    postRequest('/api/v1/visitor/blacklist/remove', { visitorIds }),
+  addToBlacklist: (params) => {
+    return postRequest('/visitor/blacklist/add', params);
+  },
+
+  /**
+   * 从黑名单移除
+   */
+  removeFromBlacklist: (blacklistId) => {
+    return postRequest(`/visitor/blacklist/remove/${blacklistId}`);
+  },
+
+  /**
+   * 更新黑名单信息
+   */
+  updateBlacklist: (params) => {
+    return postRequest('/visitor/blacklist/update', params);
+  },
+
+  /**
+   * 批量移除黑名单
+   */
+  batchRemoveBlacklist: (blacklistIds) => {
+    return postRequest('/visitor/blacklist/batch/remove', blacklistIds);
+  },
 
   /**
    * 导出黑名单
-   * @param {Object} params 查询参数
-   * @returns {Promise<ResponseDTO<Blob>>}
    */
-  exportBlacklist: (params) =>
-    getRequest('/api/v1/visitor/blacklist/export', params, {
-      responseType: 'blob',
-    }),
+  exportBlacklist: (params) => {
+    return postRequest('/visitor/blacklist/export', params, {
+      responseType: 'blob'
+    });
+  },
 
-  // ===== 车辆管理接口 =====
+  // ==================== 3. 预约管理 ====================
 
   /**
-   * 分页查询车辆
-   * @param {Object} params 查询参数
-   * @param {Number} params.pageNum 页码
-   * @param {Number} params.pageSize 页大小
-   * @param {String} params.vehicleNumber 车牌号（可选）
-   * @param {String} params.vehicleType 车辆类型（可选）
-   * @returns {Promise<ResponseDTO<PageResult<VehicleVO>>>}
+   * 分页查询预约列表
    */
-  queryVehicles: (params) =>
-    postRequest('/api/v1/visitor/vehicle/query', params),
+  queryAppointments: (params) => {
+    return postRequest('/visitor/appointment/query', params);
+  },
 
   /**
-   * 添加车辆
-   * @param {Object} data 车辆数据
-   * @param {String} data.vehicleNumber 车牌号
-   * @param {String} data.vehicleType 车辆类型
-   * @param {String} data.brand 车辆品牌（可选）
-   * @param {String} data.model 车辆型号（可选）
-   * @param {String} data.color 车辆颜色（可选）
-   * @param {String} data.remark 备注（可选）
-   * @returns {Promise<ResponseDTO<Boolean>>}
+   * 获取预约详情
    */
-  addVehicle: (data) => postRequest('/api/v1/visitor/vehicle/add', data),
+  getAppointmentDetail: (appointmentId) => {
+    return getRequest(`/visitor/appointment/detail/${appointmentId}`);
+  },
 
   /**
-   * 更新车辆
-   * @param {Object} data 车辆数据
-   * @returns {Promise<ResponseDTO<Boolean>>}
+   * 创建访客预约
    */
-  updateVehicle: (data) => putRequest('/api/v1/visitor/vehicle/update', data),
+  applyAppointment: (params) => {
+    return postRequest('/visitor/appointment/apply', params);
+  },
 
   /**
-   * 删除车辆
-   * @param {Number} vehicleId 车辆ID
-   * @returns {Promise<ResponseDTO<Boolean>>}
+   * 更新预约信息
    */
-  deleteVehicle: (vehicleId) =>
-    deleteRequest(`/api/v1/visitor/vehicle/${vehicleId}`),
-
-  // ===== 司机管理接口 =====
+  updateAppointment: (params) => {
+    return postRequest('/visitor/appointment/update', params);
+  },
 
   /**
-   * 分页查询司机
-   * @param {Object} params 查询参数
-   * @param {Number} params.pageNum 页码
-   * @param {Number} params.pageSize 页大小
-   * @param {String} params.driverName 司机姓名（可选）
-   * @param {String} params.phone 手机号（可选）
-   * @param {String} params.licenseNumber 驾照号（可选）
-   * @returns {Promise<ResponseDTO<PageResult<DriverVO>>>}
+   * 取消预约
    */
-  queryDrivers: (params) =>
-    postRequest('/api/v1/visitor/driver/query', params),
+  cancelAppointment: (appointmentId, reason) => {
+    return postRequest(`/visitor/appointment/cancel/${appointmentId}`, {
+      reason
+    });
+  },
 
   /**
-   * 添加司机
-   * @param {Object} data 司机数据
-   * @param {String} data.driverName 司机姓名
-   * @param {String} data.phone 手机号
-   * @param {String} data.idCard 身份证号（可选）
-   * @param {String} data.licenseNumber 驾照号
-   * @param {String} data.licenseType 驾照类型（可选）
-   * @param {String} data.remark 备注（可选）
-   * @returns {Promise<ResponseDTO<Boolean>>}
+   * 删除预约
    */
-  addDriver: (data) => postRequest('/api/v1/visitor/driver/add', data),
+  deleteAppointment: (appointmentId) => {
+    return postRequest(`/visitor/appointment/delete/${appointmentId}`);
+  },
 
   /**
-   * 更新司机
-   * @param {Object} data 司机数据
-   * @returns {Promise<ResponseDTO<Boolean>>}
+   * 审批预约
    */
-  updateDriver: (data) => putRequest('/api/v1/visitor/driver/update', data),
+  approveAppointment: (appointmentId, approvalComment) => {
+    return postRequest(`/visitor/appointment/approve/${appointmentId}`, {
+      approvalComment
+    });
+  },
 
   /**
-   * 删除司机
-   * @param {Number} driverId 司机ID
-   * @returns {Promise<ResponseDTO<Boolean>>}
+   * 拒绝预约
    */
-  deleteDriver: (driverId) =>
-    deleteRequest(`/api/v1/visitor/driver/${driverId}`),
-
-  // ===== 电子出门单管理接口 =====
-
-  /**
-   * 分页查询电子出门单
-   * @param {Object} params 查询参数
-   * @param {Number} params.pageNum 页码
-   * @param {Number} params.pageSize 页大小
-   * @param {String} params.passNo 出门单号（可选）
-   * @param {String} params.vehicleNumber 车牌号（可选）
-   * @param {String} params.status 状态（可选）
-   * @returns {Promise<ResponseDTO<PageResult<ElectronicPassVO>>>}
-   */
-  queryElectronicPasses: (params) =>
-    postRequest('/api/v1/visitor/pass/query', params),
+  rejectAppointment: (appointmentId, rejectReason) => {
+    return postRequest(`/visitor/appointment/reject/${appointmentId}`, {
+      rejectReason
+    });
+  },
 
   /**
-   * 创建电子出门单
-   * @param {Object} data 出门单数据
-   * @param {String} data.vehicleNumber 车牌号
-   * @param {String} data.driverName 司机姓名
-   * @param {String} data.itemList 物品清单
-   * @param {String} data.remark 备注（可选）
-   * @returns {Promise<ResponseDTO<Long>>}
+   * 批量审批预约
    */
-  createElectronicPass: (data) =>
-    postRequest('/api/v1/visitor/pass/create', data),
+  batchApproveAppointments: (appointmentIds, approvalComment) => {
+    return postRequest('/visitor/appointment/batch/approve', {
+      appointmentIds,
+      approvalComment
+    });
+  },
 
   /**
-   * 更新电子出门单
-   * @param {Object} data 出门单数据
-   * @returns {Promise<ResponseDTO<Boolean>>}
+   * 批量拒绝预约
    */
-  updateElectronicPass: (data) =>
-    putRequest('/api/v1/visitor/pass/update', data),
+  batchRejectAppointments: (appointmentIds, rejectReason) => {
+    return postRequest('/visitor/appointment/batch/reject', {
+      appointmentIds,
+      rejectReason
+    });
+  },
 
   /**
-   * 打印电子出门单
-   * @param {Number} passId 出门单ID
-   * @returns {Promise<ResponseDTO<Blob>>}
+   * 生成访客码（二维码）
    */
-  printElectronicPass: (passId) =>
-    getRequest(`/api/v1/visitor/pass/${passId}/print`, null, {
-      responseType: 'blob',
-    }),
+  generateQRCode: (appointmentId) => {
+    return getRequest(`/visitor/appointment/qrcode/generate/${appointmentId}`);
+  },
+
+  /**
+   * 获取访客码
+   */
+  getQRCode: (appointmentId) => {
+    return getRequest(`/visitor/appointment/qrcode/${appointmentId}`, {}, {
+      responseType: 'blob'
+    });
+  },
+
+  /**
+   * 验证访客码
+   */
+  validateQRCode: (qrcode) => {
+    return postRequest('/visitor/appointment/qrcode/validate', {
+      qrcode
+    });
+  },
+
+  /**
+   * 导出预约数据
+   */
+  exportAppointments: (params) => {
+    return postRequest('/visitor/appointment/export', params, {
+      responseType: 'blob'
+    });
+  },
+
+  /**
+   * 获取被访人列表
+   */
+  getHostList: (params) => {
+    return getRequest('/visitor/appointment/host/list', params);
+  },
+
+  /**
+   * 获取可预约时间段
+   */
+  getAvailableTimeSlots: (hostId, date) => {
+    return getRequest('/visitor/appointment/timeslots', {
+      hostId,
+      date
+    });
+  },
+
+  /**
+   * 检查预约冲突
+   */
+  checkAppointmentConflict: (params) => {
+    return postRequest('/visitor/appointment/check/conflict', params);
+  },
+
+  // ==================== 4. 登记管理 ====================
+
+  /**
+   * 访客签到
+   */
+  checkInVisitor: (params) => {
+    return postRequest('/visitor/register/checkin', params);
+  },
+
+  /**
+   * 访客签退
+   */
+  checkOutVisitor: (registerId, satisfactionSurvey) => {
+    return postRequest(`/visitor/register/checkout/${registerId}`, {
+      satisfactionSurvey
+    });
+  },
+
+  /**
+   * 查询当前在访列表
+   */
+  queryCurrentVisitors: (params) => {
+    return postRequest('/visitor/register/current/query', params);
+  },
+
+  /**
+   * 查询登记记录
+   */
+  queryRegisterRecords: (params) => {
+    return postRequest('/visitor/register/records/query', params);
+  },
+
+  /**
+   * 获取登记详情
+   */
+  getRegisterDetail: (registerId) => {
+    return getRequest(`/visitor/register/detail/${registerId}`);
+  },
+
+  /**
+   * 补充登记信息
+   */
+  supplementRegisterInfo: (registerId, params) => {
+    return postRequest(`/visitor/register/supplement/${registerId}`, params);
+  },
+
+  /**
+   * 打印访客证
+   */
+  printVisitorPass: (registerId) => {
+    return getRequest(`/visitor/register/pass/print/${registerId}`, {}, {
+      responseType: 'blob'
+    });
+  },
+
+  /**
+   * 获取在访实时统计
+   */
+  getCurrentVisitorStats: () => {
+    return getRequest('/visitor/register/current/stats');
+  },
+
+  /**
+   * 滞留预警列表
+   */
+  getOvertimeAlertList: (params) => {
+    return postRequest('/visitor/register/overtime/alerts', params);
+  },
+
+  /**
+   * 导出登记记录
+   */
+  exportRegisterRecords: (params) => {
+    return postRequest('/visitor/register/records/export', params, {
+      responseType: 'blob'
+    });
+  },
+
+  // ==================== 5. 身份验证 ====================
+
+  /**
+   * 人脸识别验证
+   */
+  faceRecognition: (params) => {
+    return postRequest('/visitor/auth/face', params);
+  },
+
+  /**
+   * 证件识别验证
+   */
+  idCardRecognition: (params) => {
+    return postRequest('/visitor/auth/idcard', params);
+  },
+
+  /**
+   * 二维码验证
+   */
+  qrcodeRecognition: (qrcode) => {
+    return postRequest('/visitor/auth/qrcode', {
+      qrcode
+    });
+  },
+
+  /**
+   * 手机号验证
+   */
+  phoneVerification: (phone, verifyCode) => {
+    return postRequest('/visitor/auth/phone', {
+      phone,
+      verifyCode
+    });
+  },
+
+  /**
+   * 发送验证码
+   */
+  sendVerifyCode: (phone) => {
+    return postRequest('/visitor/auth/verifycode/send', {
+      phone
+    });
+  },
+
+  /**
+   * 上传人脸照片
+   */
+  uploadFacePhoto: (file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return postRequest('/visitor/auth/face/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+  },
+
+  /**
+   * 采集生物特征
+   */
+  captureBiometric: (registerId, biometricType) => {
+    return postRequest('/visitor/auth/biometric/capture', {
+      registerId,
+      biometricType
+    });
+  },
+
+  /**
+   * 验证结果记录
+   */
+  getAuthRecords: (visitorId) => {
+    return getRequest(`/visitor/auth/records/${visitorId}`);
+  },
+
+  // ==================== 6. 物流管理 ====================
+
+  /**
+   * 创建物流预约
+   */
+  createLogisticsReservation: (params) => {
+    return postRequest('/visitor/logistics/reservation/create', params);
+  },
+
+  /**
+   * 查询物流预约列表
+   */
+  queryLogisticsReservations: (params) => {
+    return postRequest('/visitor/logistics/reservation/query', params);
+  },
+
+  /**
+   * 获取物流预约详情
+   */
+  getLogisticsDetail: (reservationId) => {
+    return getRequest(`/visitor/logistics/reservation/detail/${reservationId}`);
+  },
+
+  /**
+   * 更新物流预约
+   */
+  updateLogisticsReservation: (params) => {
+    return postRequest('/visitor/logistics/reservation/update', params);
+  },
+
+  /**
+   * 取消物流预约
+   */
+  cancelLogisticsReservation: (reservationId, reason) => {
+    return postRequest(`/visitor/logistics/reservation/cancel/${reservationId}`, {
+      reason
+    });
+  },
+
+  /**
+   * 物流签到
+   */
+  logisticsCheckIn: (reservationId, params) => {
+    return postRequest(`/visitor/logistics/checkin/${reservationId}`, params);
+  },
+
+  /**
+   * 物流签退
+   */
+  logisticsCheckOut: (checkinId) => {
+    return postRequest(`/visitor/logistics/checkout/${checkinId}`);
+  },
+
+  /**
+   * 申请放行条
+   */
+  applyExitPass: (checkinId, params) => {
+    return postRequest(`/visitor/logistics/exitpass/apply/${checkinId}`, params);
+  },
+
+  /**
+   * 审批放行条
+   */
+  approveExitPass: (passId, approvalResult, approvalComment) => {
+    return postRequest(`/visitor/logistics/exitpass/approve/${passId}`, {
+      approvalResult,
+      approvalComment
+    });
+  },
+
+  /**
+   * 获取放行条
+   */
+  getExitPass: (passId) => {
+    return getRequest(`/visitor/logistics/exitpass/${passId}`, {}, {
+      responseType: 'blob'
+    });
+  },
+
+  /**
+   * 查询物流记录
+   */
+  queryLogisticsRecords: (params) => {
+    return postRequest('/visitor/logistics/records/query', params);
+  },
+
+  /**
+   * 获取物流记录详情
+   */
+  getLogisticsRecordDetail: (recordId) => {
+    return getRequest(`/visitor/logistics/records/detail/${recordId}`);
+  },
+
+  /**
+   * 导出物流记录
+   */
+  exportLogisticsRecords: (params) => {
+    return postRequest('/visitor/logistics/records/export', params, {
+      responseType: 'blob'
+    });
+  },
+
+  /**
+   * 获取车辆信息
+   */
+  getVehicleInfo: (plateNumber) => {
+    return getRequest('/visitor/logistics/vehicle/info', {
+      plateNumber
+    });
+  },
+
+  /**
+   * 保存车辆信息
+   */
+  saveVehicleInfo: (params) => {
+    return postRequest('/visitor/logistics/vehicle/save', params);
+  },
+
+  /**
+   * 获取司机信息
+   */
+  getDriverInfo: (phone) => {
+    return getRequest('/visitor/logistics/driver/info', {
+      phone
+    });
+  },
+
+  /**
+   * 保存司机信息
+   */
+  saveDriverInfo: (params) => {
+    return postRequest('/visitor/logistics/driver/save', params);
+  },
+
+  /**
+   * 拍照上传货物照片
+   */
+  uploadGoodsPhoto: (checkinId, file) => {
+    const formData = new FormData();
+    formData.append('checkinId', checkinId);
+    formData.append('file', file);
+    return postRequest('/visitor/logistics/goods/photo/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+  },
+
+  // ==================== 7. 通行记录 ====================
+
+  /**
+   * 查询访客通行记录
+   */
+  queryAccessRecords: (params) => {
+    return postRequest('/visitor/access/records/query', params);
+  },
+
+  /**
+   * 获取通行记录详情
+   */
+  getAccessRecordDetail: (recordId) => {
+    return getRequest(`/visitor/access/records/detail/${recordId}`);
+  },
+
+  /**
+   * 获取访客轨迹
+   */
+  getVisitorTrajectory: (visitorId, params) => {
+    return postRequest('/visitor/access/trajectory', {
+      visitorId,
+      ...params
+    });
+  },
+
+  /**
+   * 查询异常记录
+   */
+  queryExceptionRecords: (params) => {
+    return postRequest('/visitor/access/exceptions/query', params);
+  },
+
+  /**
+   * 处理异常记录
+   */
+  handleExceptionRecord: (exceptionId, handleResult, handleComment) => {
+    return postRequest(`/visitor/access/exceptions/handle/${exceptionId}`, {
+      handleResult,
+      handleComment
+    });
+  },
+
+  /**
+   * 导出通行记录
+   */
+  exportAccessRecords: (params) => {
+    return postRequest('/visitor/access/records/export', params, {
+      responseType: 'blob'
+    });
+  },
+
+  /**
+   * 实时通行监控数据
+   */
+  getRealtimeAccessData: () => {
+    return getRequest('/visitor/access/realtime/data');
+  },
+
+  /**
+   * 区域通行统计
+   */
+  getAreaAccessStats: (params) => {
+    return getRequest('/visitor/access/area/stats', params);
+  },
+
+  // ==================== 8. 统计分析 ====================
+
+  /**
+   * 获取访客统计概览
+   */
+  getVisitorStatistics: (params) => {
+    return getRequest('/visitor/statistics/overview', params);
+  },
+
+  /**
+   * 预约统计分析
+   */
+  getAppointmentStatistics: (params) => {
+    return getRequest('/visitor/statistics/appointment', params);
+  },
+
+  /**
+   * 登记统计分析
+   */
+  getRegisterStatistics: (params) => {
+    return getRequest('/visitor/statistics/register', params);
+  },
+
+  /**
+   * 物流统计分析
+   */
+  getLogisticsStatistics: (params) => {
+    return getRequest('/visitor/statistics/logistics', params);
+  },
+
+  /**
+   * 访客流量趋势
+   */
+  getVisitorTrend: (params) => {
+    return getRequest('/visitor/statistics/trend', params);
+  },
+
+  /**
+   * 访客时段分布
+   */
+  getTimeDistribution: (params) => {
+    return getRequest('/visitor/statistics/timedistribution', params);
+  },
+
+  /**
+   * 访客区域分布
+   */
+  getAreaDistribution: (params) => {
+    return getRequest('/visitor/statistics/areadistribution', params);
+  },
+
+  /**
+   * 访客类型统计
+   */
+  getVisitorTypeStats: (params) => {
+    return getRequest('/visitor/statistics/visitortype', params);
+  },
+
+  /**
+   * 访问目的统计
+   */
+  getVisitPurposeStats: (params) => {
+    return getRequest('/visitor/statistics/visitpurpose', params);
+  },
+
+  /**
+   * 滞留时长统计
+   */
+  getStayDurationStats: (params) => {
+    return getRequest('/visitor/statistics/stayduration', params);
+  },
+
+  /**
+   * 预约完成率统计
+   */
+  getAppointmentCompletionRate: (params) => {
+    return getRequest('/visitor/statistics/completionrate', params);
+  },
+
+  /**
+   * 黑名单统计
+   */
+  getBlacklistStats: (params) => {
+    return getRequest('/visitor/statistics/blacklist', params);
+  },
+
+  /**
+   * 访客满意度统计
+   */
+  getSatisfactionStats: (params) => {
+    return getRequest('/visitor/statistics/satisfaction', params);
+  },
+
+  /**
+   * 生成统计报表
+   */
+  generateStatisticsReport: (params) => {
+    return postRequest('/visitor/statistics/report/generate', params, {
+      responseType: 'blob'
+    });
+  },
+
+  /**
+   * 获取报表列表
+   */
+  getReportList: (params) => {
+    return getRequest('/visitor/statistics/report/list', params);
+  },
+
+  /**
+   * 下载报表
+   */
+  downloadReport: (reportId) => {
+    return getRequest(`/visitor/statistics/report/download/${reportId}`, {}, {
+      responseType: 'blob'
+    });
+  },
 };
-
-export default visitorApi;
-

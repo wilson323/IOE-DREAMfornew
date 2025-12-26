@@ -1,4 +1,4 @@
-server:
+﻿server:
   port: ${DATABASE_SERVICE_PORT:8093}
   servlet:
     context-path: /
@@ -14,7 +14,7 @@ spring:
         namespace: ${NACOS_NAMESPACE:dev}
         group: ${NACOS_GROUP:IOE-DREAM}
         username: ${NACOS_USERNAME:nacos}
-        password: ${NACOS_PASSWORD:nacos}
+        password: ${NACOS_PASSWORD:ENC(I2//JcHFpBc7vLPrYnCJNA==)}
         enabled: true
         register-enabled: true
         ip: ${SPRING_CLOUD_NACOS_DISCOVERY_IP:}
@@ -28,7 +28,7 @@ spring:
             group: ${NACOS_GROUP:IOE-DATABASE}
             refresh: true
 
-# 数据库配置
+  # 数据库配置
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -74,7 +74,7 @@ spring:
           config:
             multi-statement-allow: true
 
-# Flyway 配置
+  # Flyway 配置
   flyway:
     enabled: true
     locations: classpath:db/migration
@@ -100,7 +100,7 @@ mybatis-plus:
       update-strategy: not_null
   mapper-locations: classpath*:mapper/*.xml
 
-# JPA 配置
+  # JPA 配置
   jpa:
     hibernate:
       ddl-auto: validate
@@ -114,9 +114,9 @@ mybatis-plus:
 # 日志配置
 logging:
   level:
-    net.lab1024.sa.database: DEBUG
+    "net.lab1024.sa.database": DEBUG
     org.flywaydb: INFO
-    com.alibaba.druid: INFO
+    "com.alibaba.druid": INFO
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
     file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
@@ -140,14 +140,14 @@ management:
         enabled: true
     distribution:
       percentiles-histogram:
-        http.server.requests: true
+        "[http.server.requests]": true
 
 # 数据库同步配置
 database:
   sync:
     enabled: true
     auto-startup: true
-    check-interval: 30000  # 30秒检查一次
+    check-interval: 30000 # 30秒检查一次
     sync-databases:
       - ioedream_common_db
       - ioedream_access_db
@@ -161,3 +161,4 @@ database:
       enabled: true
       batch-size: 1000
       retry-times: 3
+

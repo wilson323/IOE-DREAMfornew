@@ -1,5 +1,4 @@
 package net.lab1024.sa.video.adapter.factory;
-
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.video.adapter.IVideoStreamAdapter;
 import org.springframework.context.ApplicationContext;
@@ -27,13 +26,13 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Component
-public class VideoStreamAdapterFactory {
+ public class VideoStreamAdapterFactory {
 
     /**
      * 适配器注册表
      * Key: 厂商名称, Value: 适配器实例
      */
-    private final Map<String, IVideoStreamAdapter> adapterRegistry = new ConcurrentHashMap<>();
+    private final Map<String, IVideoStreamAdapter> adapterRegistry = new HashMap<>();
 
     /**
      * 适配器列表（按优先级排序）
@@ -46,9 +45,9 @@ public class VideoStreamAdapterFactory {
      * 构造函数注入ApplicationContext
      * <p>
      * 严格遵循CLAUDE.md规范：
-     * - 使用构造函数注入（Spring 4.3+自动识别，无需@Autowired注解）
+     * - 使用构造函数注入（Spring 4.3+自动识别，无需@Resource注解）
      * - 构造函数注入是符合规范的依赖注入方式
-     * - 无需使用@Resource或@Autowired注解
+     * - 无需使用@Resource或@Resource注解
      * </p>
      */
     public VideoStreamAdapterFactory(ApplicationContext applicationContext) {
@@ -131,3 +130,6 @@ public class VideoStreamAdapterFactory {
         return new ArrayList<>(adapterRegistry.keySet());
     }
 }
+
+
+

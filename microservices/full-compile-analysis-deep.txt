@@ -1,0 +1,519 @@
+﻿[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] ioedream-microservices-parent                                      [pom]
+[INFO] IOE-DREAM Common Core                                              [jar]
+[INFO] Microservices Common Entity                                        [jar]
+[INFO] IOE-DREAM Common Storage Module                                    [jar]
+[INFO] Microservices Common Data                                          [jar]
+[INFO] Microservices Common Business                                      [jar]
+[INFO] Microservices Common Security                                      [jar]
+[INFO] Microservices Common Cache                                         [jar]
+[INFO] Microservices Common Monitor                                       [jar]
+[INFO] Microservices Common Export                                        [jar]
+[INFO] Microservices Common Workflow                                      [jar]
+[INFO] Microservices Common Permission                                    [jar]
+[INFO] IOE-DREAM Common Module                                            [jar]
+[INFO] ioedream-db-init                                                   [jar]
+[INFO] IOE-DREAM Gateway Service                                          [jar]
+[INFO] IOE-DREAM Common Service                                           [jar]
+[INFO] IOE-DREAM Device Communication Service                             [jar]
+[INFO] IOE-DREAM OA Service                                               [jar]
+[INFO] IOE-DREAM Access Service                                           [jar]
+[INFO] IOE-DREAM Attendance Service                                       [jar]
+[INFO] IOE-DREAM Video Service                                            [jar]
+[INFO] IOE-DREAM Consume Service                                          [jar]
+[INFO] IOE-DREAM Visitor Service                                          [jar]
+[INFO] ioedream-database-service                                          [jar]
+[INFO] IOE-DREAM Biometric Service                                        [jar]
+[INFO] 
+[INFO] Using the MultiThreadedBuilder implementation with a thread count of 20
+[INFO] 
+[INFO] ------------< net.lab1024.sa:ioedream-microservices-parent >------------
+[INFO] Building ioedream-microservices-parent 1.0.0                      [1/25]
+[INFO]   from pom.xml
+[INFO] --------------------------------[ pom ]---------------------------------
+[WARNING] Parameter 'encoding' is unknown for plugin 'jacoco-maven-plugin:0.8.12:prepare-agent (jacoco-prepare-agent)'
+[INFO] 
+[INFO] --- clean:3.3.1:clean (default-clean) @ ioedream-microservices-parent ---
+[INFO] 
+[INFO] --- enforcer:3.5.0:enforce (enforce-java-maven) @ ioedream-microservices-parent ---
+[INFO] Rule 0: org.apache.maven.enforcer.rules.version.RequireJavaVersion passed
+[INFO] Rule 1: org.apache.maven.enforcer.rules.version.RequireMavenVersion passed
+[INFO] 
+[INFO] --- exec:3.1.1:exec (check-manager-bean-registration) @ ioedream-microservices-parent ---
+[INFO] skipping execute as per configuration
+[INFO] 
+[INFO] --- jacoco:0.8.12:prepare-agent (jacoco-prepare-agent) @ ioedream-microservices-parent ---
+[INFO] jacocoArgLine set to -javaagent:C:\\Users\\10201\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.12\\org.jacoco.agent-0.8.12-runtime.jar=destfile=D:\\IOE-DREAM\\microservices\\target\\jacoco.exec,includes=**/*.class,excludes=**/*Test*.class:**/*Tests.class:**/*Application.class:**/*Config*.class:**/*Configuration.class:**/dto/**/*.class:**/vo/**/*.class:**/form/**/*.class:**/entity/**/*.class:**/constant/**/*.class:**/constants/**/*.class:**/exception/**/*.class:**/*Exception.class:**/*Enum.class:**/generated/**/*.class:**/openapi/**/*.class
+[INFO] 
+[INFO] --------------< net.lab1024.sa:microservices-common-core >--------------
+[INFO] 
+[INFO] -------------< net.lab1024.sa:microservices-common-entity >-------------
+[INFO] Building IOE-DREAM Common Core 1.0.0                              [2/25]
+[INFO] 
+[INFO] Building Microservices Common Entity 1.0.0                        [3/25]
+[INFO] ------------------< net.lab1024.sa:ioedream-db-init >-------------------
+[INFO]   from microservices-common-core\pom.xml
+[INFO] Building ioedream-db-init 1.0.0                                   [4/25]
+[INFO]   from microservices-common-entity\pom.xml
+[INFO]   from ioedream-db-init\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] --------------------------------[ jar ]---------------------------------
+[WARNING] Parameter 'encoding' is unknown for plugin 'jacoco-maven-plugin:0.8.12:prepare-agent (jacoco-prepare-agent)'
+[WARNING] Parameter 'encoding' is unknown for plugin 'jacoco-maven-plugin:0.8.12:prepare-agent (jacoco-prepare-agent)'
+[WARNING] Parameter 'encoding' is unknown for plugin 'jacoco-maven-plugin:0.8.12:prepare-agent (jacoco-prepare-agent)'
+[INFO] 
+[INFO] --- clean:3.3.1:clean (default-clean) @ microservices-common-entity ---
+[INFO] Deleting D:\IOE-DREAM\microservices\microservices-common-entity\target
+[INFO] 
+[INFO] --- enforcer:3.5.0:enforce (enforce-java-maven) @ microservices-common-entity ---
+[INFO] 
+[INFO] --- exec:3.1.1:exec (check-manager-bean-registration) @ microservices-common-entity ---
+[INFO] skipping execute as per configuration
+[INFO] 
+[INFO] --- jacoco:0.8.12:prepare-agent (jacoco-prepare-agent) @ microservices-common-entity ---
+[INFO] jacocoArgLine set to -javaagent:C:\\Users\\10201\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.12\\org.jacoco.agent-0.8.12-runtime.jar=destfile=D:\\IOE-DREAM\\microservices\\microservices-common-entity\\target\\jacoco.exec,includes=**/*.class,excludes=**/*Test*.class:**/*Tests.class:**/*Application.class:**/*Config*.class:**/*Configuration.class:**/dto/**/*.class:**/vo/**/*.class:**/form/**/*.class:**/entity/**/*.class:**/constant/**/*.class:**/constants/**/*.class:**/exception/**/*.class:**/*Exception.class:**/*Enum.class:**/generated/**/*.class:**/openapi/**/*.class
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ microservices-common-entity ---
+[INFO] 
+[INFO] --- clean:3.3.1:clean (default-clean) @ ioedream-db-init ---
+[INFO] Deleting D:\IOE-DREAM\microservices\ioedream-db-init\target
+[INFO] 
+[INFO] --- enforcer:3.5.0:enforce (enforce-java-maven) @ ioedream-db-init ---
+[INFO] 
+[INFO] --- exec:3.1.1:exec (check-manager-bean-registration) @ ioedream-db-init ---
+[INFO] skipping execute as per configuration
+[INFO] 
+[INFO] --- jacoco:0.8.12:prepare-agent (jacoco-prepare-agent) @ ioedream-db-init ---
+[INFO] jacocoArgLine set to -javaagent:C:\\Users\\10201\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.12\\org.jacoco.agent-0.8.12-runtime.jar=destfile=D:\\IOE-DREAM\\microservices\\ioedream-db-init\\target\\jacoco.exec,includes=**/*.class,excludes=**/*Test*.class:**/*Tests.class:**/*Application.class:**/*Config*.class:**/*Configuration.class:**/dto/**/*.class:**/vo/**/*.class:**/form/**/*.class:**/entity/**/*.class:**/constant/**/*.class:**/constants/**/*.class:**/exception/**/*.class:**/*Exception.class:**/*Enum.class:**/generated/**/*.class:**/openapi/**/*.class
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ ioedream-db-init ---
+[INFO] 
+[INFO] --- clean:3.3.1:clean (default-clean) @ microservices-common-core ---
+[INFO] Deleting D:\IOE-DREAM\microservices\microservices-common-core\target
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\microservices\microservices-common-entity\src\main\resources
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\microservices\microservices-common-entity\src\main\resources
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ microservices-common-entity ---
+[INFO] 
+[INFO] --- enforcer:3.5.0:enforce (enforce-java-maven) @ microservices-common-core ---
+[INFO] 
+[INFO] --- exec:3.1.1:exec (check-manager-bean-registration) @ microservices-common-core ---
+[INFO] skipping execute as per configuration
+[INFO] 
+[INFO] --- jacoco:0.8.12:prepare-agent (jacoco-prepare-agent) @ microservices-common-core ---
+[INFO] jacocoArgLine set to -javaagent:C:\\Users\\10201\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.12\\org.jacoco.agent-0.8.12-runtime.jar=destfile=D:\\IOE-DREAM\\microservices\\microservices-common-core\\target\\jacoco.exec,includes=**/*.class,excludes=**/*Test*.class:**/*Tests.class:**/*Application.class:**/*Config*.class:**/*Configuration.class:**/dto/**/*.class:**/vo/**/*.class:**/form/**/*.class:**/entity/**/*.class:**/constant/**/*.class:**/constants/**/*.class:**/exception/**/*.class:**/*Exception.class:**/*Enum.class:**/generated/**/*.class:**/openapi/**/*.class
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ microservices-common-core ---
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\microservices\microservices-common-core\src\main\resources
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\microservices\microservices-common-core\src\main\resources
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ microservices-common-core ---
+[INFO] Copying 20 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ ioedream-db-init ---
+[INFO] No sources to compile
+[INFO] Recompiling the module because of changed source code.
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 17 source files with javac [debug release 17] to target\classes
+[INFO] Compiling 3 source files with javac [debug release 17] to target\classes
+[WARNING] 未知的枚举常量 org.apache.ibatis.type.JdbcType.UNDEFINED
+  原因: 找不到org.apache.ibatis.type.JdbcType的类文件
+[WARNING] 未知的枚举常量 org.apache.ibatis.type.JdbcType.UNDEFINED
+  原因: 找不到org.apache.ibatis.type.JdbcType的类文件
+[WARNING] 未知的枚举常量 org.apache.ibatis.type.JdbcType.UNDEFINED
+  原因: 找不到org.apache.ibatis.type.JdbcType的类文件
+[WARNING] 未知的枚举常量 org.apache.ibatis.type.JdbcType.UNDEFINED
+  原因: 找不到org.apache.ibatis.type.JdbcType的类文件
+[WARNING] 未知的枚举常量 org.apache.ibatis.type.JdbcType.UNDEFINED
+  原因: 找不到org.apache.ibatis.type.JdbcType的类文件
+[INFO] 
+[INFO] ------------< net.lab1024.sa:microservices-common-storage >-------------
+[INFO] Building IOE-DREAM Common Storage Module 1.0.0                    [5/25]
+[INFO]   from microservices-common-storage\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --------------< net.lab1024.sa:microservices-common-data >--------------
+[INFO] Building Microservices Common Data 1.0.0                          [6/25]
+[INFO]   from microservices-common-data\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] ------------< net.lab1024.sa:microservices-common-business >------------
+[INFO] Building Microservices Common Business 1.0.0                      [7/25]
+[INFO]   from microservices-common-business\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] -------------< net.lab1024.sa:microservices-common-cache >--------------
+[WARNING] Parameter 'encoding' is unknown for plugin 'jacoco-maven-plugin:0.8.12:prepare-agent (jacoco-prepare-agent)'
+[INFO] Building Microservices Common Cache 1.0.0                         [8/25]
+[INFO] 
+[INFO]   from microservices-common-cache\pom.xml
+[WARNING] Parameter 'encoding' is unknown for plugin 'jacoco-maven-plugin:0.8.12:prepare-agent (jacoco-prepare-agent)'
+[INFO] ------------< net.lab1024.sa:microservices-common-monitor >-------------
+[WARNING] Parameter 'encoding' is unknown for plugin 'jacoco-maven-plugin:0.8.12:prepare-agent (jacoco-prepare-agent)'
+[INFO] Building Microservices Common Monitor 1.0.0                       [9/25]
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO]   from microservices-common-monitor\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] -------------< net.lab1024.sa:microservices-common-export >-------------
+[INFO] Building Microservices Common Export 1.0.0                       [10/25]
+[INFO]   from microservices-common-export\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] ------------< net.lab1024.sa:microservices-common-workflow >------------
+[INFO] Building Microservices Common Workflow 1.0.0                     [11/25]
+[WARNING] Parameter 'encoding' is unknown for plugin 'jacoco-maven-plugin:0.8.12:prepare-agent (jacoco-prepare-agent)'
+[INFO]   from microservices-common-workflow\pom.xml
+[WARNING] Parameter 'encoding' is unknown for plugin 'jacoco-maven-plugin:0.8.12:prepare-agent (jacoco-prepare-agent)'
+[WARNING] Parameter 'encoding' is unknown for plugin 'jacoco-maven-plugin:0.8.12:prepare-agent (jacoco-prepare-agent)'
+[INFO] --------------------------------[ jar ]---------------------------------
+[WARNING] Parameter 'encoding' is unknown for plugin 'jacoco-maven-plugin:0.8.12:prepare-agent (jacoco-prepare-agent)'
+[INFO] 
+[INFO] --- clean:3.3.1:clean (default-clean) @ microservices-common-workflow ---
+[INFO] Deleting D:\IOE-DREAM\microservices\microservices-common-workflow\target
+[INFO] 
+[INFO] --- enforcer:3.5.0:enforce (enforce-java-maven) @ microservices-common-workflow ---
+[INFO] 
+[INFO] --- exec:3.1.1:exec (check-manager-bean-registration) @ microservices-common-workflow ---
+[INFO] 
+[INFO] --- clean:3.3.1:clean (default-clean) @ microservices-common-business ---
+[INFO] skipping execute as per configuration
+[INFO] 
+[INFO] --- jacoco:0.8.12:prepare-agent (jacoco-prepare-agent) @ microservices-common-workflow ---
+[INFO] Deleting D:\IOE-DREAM\microservices\microservices-common-business\target
+[INFO] jacocoArgLine set to -javaagent:C:\\Users\\10201\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.12\\org.jacoco.agent-0.8.12-runtime.jar=destfile=D:\\IOE-DREAM\\microservices\\microservices-common-workflow\\target\\jacoco.exec,includes=**/*.class,excludes=**/*Test*.class:**/*Tests.class:**/*Application.class:**/*Config*.class:**/*Configuration.class:**/dto/**/*.class:**/vo/**/*.class:**/form/**/*.class:**/entity/**/*.class:**/constant/**/*.class:**/constants/**/*.class:**/exception/**/*.class:**/*Exception.class:**/*Enum.class:**/generated/**/*.class:**/openapi/**/*.class
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ microservices-common-workflow ---
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\microservices\microservices-common-workflow\src\main\resources
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\microservices\microservices-common-workflow\src\main\resources
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ microservices-common-workflow ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] 
+[INFO] --- clean:3.3.1:clean (default-clean) @ microservices-common-monitor ---
+[INFO] Deleting D:\IOE-DREAM\microservices\microservices-common-monitor\target
+[INFO] 
+[INFO] --- enforcer:3.5.0:enforce (enforce-java-maven) @ microservices-common-business ---
+[INFO] 
+[INFO] --- exec:3.1.1:exec (check-manager-bean-registration) @ microservices-common-business ---
+[INFO] skipping execute as per configuration
+[INFO] 
+[INFO] --- jacoco:0.8.12:prepare-agent (jacoco-prepare-agent) @ microservices-common-business ---
+[INFO] jacocoArgLine set to -javaagent:C:\\Users\\10201\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.12\\org.jacoco.agent-0.8.12-runtime.jar=destfile=D:\\IOE-DREAM\\microservices\\microservices-common-business\\target\\jacoco.exec,includes=**/*.class,excludes=**/*Test*.class:**/*Tests.class:**/*Application.class:**/*Config*.class:**/*Configuration.class:**/dto/**/*.class:**/vo/**/*.class:**/form/**/*.class:**/entity/**/*.class:**/constant/**/*.class:**/constants/**/*.class:**/exception/**/*.class:**/*Exception.class:**/*Enum.class:**/generated/**/*.class:**/openapi/**/*.class
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ microservices-common-business ---
+[INFO] 
+[INFO] --- enforcer:3.5.0:enforce (enforce-java-maven) @ microservices-common-monitor ---
+[INFO] 
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\microservices\microservices-common-business\src\main\resources
+[INFO] --- exec:3.1.1:exec (check-manager-bean-registration) @ microservices-common-monitor ---
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\microservices\microservices-common-business\src\main\resources
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ microservices-common-business ---
+[INFO] skipping execute as per configuration
+[INFO] 
+[INFO] --- jacoco:0.8.12:prepare-agent (jacoco-prepare-agent) @ microservices-common-monitor ---
+[INFO] jacocoArgLine set to -javaagent:C:\\Users\\10201\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.12\\org.jacoco.agent-0.8.12-runtime.jar=destfile=D:\\IOE-DREAM\\microservices\\microservices-common-monitor\\target\\jacoco.exec,includes=**/*.class,excludes=**/*Test*.class:**/*Tests.class:**/*Application.class:**/*Config*.class:**/*Configuration.class:**/dto/**/*.class:**/vo/**/*.class:**/form/**/*.class:**/entity/**/*.class:**/constant/**/*.class:**/constants/**/*.class:**/exception/**/*.class:**/*Exception.class:**/*Enum.class:**/generated/**/*.class:**/openapi/**/*.class
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ microservices-common-monitor ---
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\microservices\microservices-common-monitor\src\main\resources
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\microservices\microservices-common-monitor\src\main\resources
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ microservices-common-monitor ---
+[INFO] 
+[INFO] --- clean:3.3.1:clean (default-clean) @ microservices-common-export ---
+[INFO] Deleting D:\IOE-DREAM\microservices\microservices-common-export\target
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 5 source files with javac [debug release 17] to target\classes
+[INFO] Compiling 42 source files with javac [debug release 17] to target\classes
+[INFO] 
+[INFO] --- enforcer:3.5.0:enforce (enforce-java-maven) @ microservices-common-export ---
+[INFO] 
+[INFO] --- exec:3.1.1:exec (check-manager-bean-registration) @ microservices-common-export ---
+[INFO] skipping execute as per configuration
+[INFO] 
+[INFO] --- jacoco:0.8.12:prepare-agent (jacoco-prepare-agent) @ microservices-common-export ---
+[INFO] jacocoArgLine set to -javaagent:C:\\Users\\10201\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.12\\org.jacoco.agent-0.8.12-runtime.jar=destfile=D:\\IOE-DREAM\\microservices\\microservices-common-export\\target\\jacoco.exec,includes=**/*.class,excludes=**/*Test*.class:**/*Tests.class:**/*Application.class:**/*Config*.class:**/*Configuration.class:**/dto/**/*.class:**/vo/**/*.class:**/form/**/*.class:**/entity/**/*.class:**/constant/**/*.class:**/constants/**/*.class:**/exception/**/*.class:**/*Exception.class:**/*Enum.class:**/generated/**/*.class:**/openapi/**/*.class
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ microservices-common-export ---
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\microservices\microservices-common-export\src\main\resources
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\microservices\microservices-common-export\src\main\resources
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ microservices-common-export ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] 
+[INFO] --- clean:3.3.1:clean (default-clean) @ microservices-common-data ---
+[INFO] Deleting D:\IOE-DREAM\microservices\microservices-common-data\target
+[INFO] 
+[INFO] --- clean:3.3.1:clean (default-clean) @ microservices-common-storage ---
+[INFO] 
+[INFO] --- enforcer:3.5.0:enforce (enforce-java-maven) @ microservices-common-data ---
+[INFO] Deleting D:\IOE-DREAM\microservices\microservices-common-storage\target
+[INFO] 
+[INFO] --- exec:3.1.1:exec (check-manager-bean-registration) @ microservices-common-data ---
+[INFO] skipping execute as per configuration
+[INFO] 
+[INFO] --- jacoco:0.8.12:prepare-agent (jacoco-prepare-agent) @ microservices-common-data ---
+[INFO] jacocoArgLine set to -javaagent:C:\\Users\\10201\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.12\\org.jacoco.agent-0.8.12-runtime.jar=destfile=D:\\IOE-DREAM\\microservices\\microservices-common-data\\target\\jacoco.exec,includes=**/*.class,excludes=**/*Test*.class:**/*Tests.class:**/*Application.class:**/*Config*.class:**/*Configuration.class:**/dto/**/*.class:**/vo/**/*.class:**/form/**/*.class:**/entity/**/*.class:**/constant/**/*.class:**/constants/**/*.class:**/exception/**/*.class:**/*Exception.class:**/*Enum.class:**/generated/**/*.class:**/openapi/**/*.class
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ microservices-common-data ---
+[INFO] 
+[INFO] --- clean:3.3.1:clean (default-clean) @ microservices-common-cache ---
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\microservices\microservices-common-data\src\main\resources
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\microservices\microservices-common-data\src\main\resources
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ microservices-common-data ---
+[INFO] Deleting D:\IOE-DREAM\microservices\microservices-common-cache\target
+[INFO] Recompiling the module because of changed dependency.
+[INFO] 
+[INFO] --- enforcer:3.5.0:enforce (enforce-java-maven) @ microservices-common-storage ---
+[INFO] 
+[INFO] --- exec:3.1.1:exec (check-manager-bean-registration) @ microservices-common-storage ---
+[INFO] skipping execute as per configuration
+[INFO] 
+[INFO] --- jacoco:0.8.12:prepare-agent (jacoco-prepare-agent) @ microservices-common-storage ---
+[INFO] 
+[INFO] --- enforcer:3.5.0:enforce (enforce-java-maven) @ microservices-common-cache ---
+[INFO] 
+[INFO] --- exec:3.1.1:exec (check-manager-bean-registration) @ microservices-common-cache ---
+[INFO] jacocoArgLine set to -javaagent:C:\\Users\\10201\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.12\\org.jacoco.agent-0.8.12-runtime.jar=destfile=D:\\IOE-DREAM\\microservices\\microservices-common-storage\\target\\jacoco.exec,includes=**/*.class,excludes=**/*Test*.class:**/*Tests.class:**/*Application.class:**/*Config*.class:**/*Configuration.class:**/dto/**/*.class:**/vo/**/*.class:**/form/**/*.class:**/entity/**/*.class:**/constant/**/*.class:**/constants/**/*.class:**/exception/**/*.class:**/*Exception.class:**/*Enum.class:**/generated/**/*.class:**/openapi/**/*.class
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ microservices-common-storage ---
+[INFO] skipping execute as per configuration
+[INFO] 
+[INFO] --- jacoco:0.8.12:prepare-agent (jacoco-prepare-agent) @ microservices-common-cache ---
+[INFO] jacocoArgLine set to -javaagent:C:\\Users\\10201\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.12\\org.jacoco.agent-0.8.12-runtime.jar=destfile=D:\\IOE-DREAM\\microservices\\microservices-common-cache\\target\\jacoco.exec,includes=**/*.class,excludes=**/*Test*.class:**/*Tests.class:**/*Application.class:**/*Config*.class:**/*Configuration.class:**/dto/**/*.class:**/vo/**/*.class:**/form/**/*.class:**/entity/**/*.class:**/constant/**/*.class:**/constants/**/*.class:**/exception/**/*.class:**/*Exception.class:**/*Enum.class:**/generated/**/*.class:**/openapi/**/*.class
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ microservices-common-cache ---
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\microservices\microservices-common-storage\src\main\resources
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\microservices\microservices-common-storage\src\main\resources
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ microservices-common-storage ---
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\microservices\microservices-common-cache\src\main\resources
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\microservices\microservices-common-cache\src\main\resources
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ microservices-common-cache ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 4 source files with javac [debug release 17] to target\classes
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 9 source files with javac [debug release 17] to target\classes
+[INFO] 
+[INFO] ----------------< net.lab1024.sa:microservices-common >-----------------
+[INFO] Building IOE-DREAM Common Module 1.0.0                           [12/25]
+[INFO]   from microservices-common\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[WARNING] Parameter 'encoding' is unknown for plugin 'jacoco-maven-plugin:0.8.12:prepare-agent (jacoco-prepare-agent)'
+[INFO] 
+[INFO] --- clean:3.3.1:clean (default-clean) @ microservices-common ---
+[INFO] Deleting D:\IOE-DREAM\microservices\microservices-common\target
+[INFO] 
+[INFO] --- enforcer:3.5.0:enforce (enforce-java-maven) @ microservices-common ---
+[INFO] 
+[INFO] --- exec:3.1.1:exec (check-manager-bean-registration) @ microservices-common ---
+[INFO] skipping execute as per configuration
+[INFO] 
+[INFO] --- jacoco:0.8.12:prepare-agent (jacoco-prepare-agent) @ microservices-common ---
+[INFO] jacocoArgLine set to -javaagent:C:\\Users\\10201\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.12\\org.jacoco.agent-0.8.12-runtime.jar=destfile=D:\\IOE-DREAM\\microservices\\microservices-common\\target\\jacoco.exec,includes=**/*.class,excludes=**/*Test*.class:**/*Tests.class:**/*Application.class:**/*Config*.class:**/*Configuration.class:**/dto/**/*.class:**/vo/**/*.class:**/form/**/*.class:**/entity/**/*.class:**/constant/**/*.class:**/constants/**/*.class:**/exception/**/*.class:**/*Exception.class:**/*Enum.class:**/generated/**/*.class:**/openapi/**/*.class
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ microservices-common ---
+[INFO] Copying 2 resources from src\main\resources to target\classes
+[INFO] Copying 6 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ microservices-common ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 28 source files with javac [debug release 17] to target\classes
+[WARNING] /D:/IOE-DREAM/microservices/microservices-common-cache/src/main/java/net/lab1024/sa/common/cache/UnifiedCacheManager.java:[90,46] 未经检查的转换
+  需要: T
+  找到:    java.lang.Object
+[WARNING] /D:/IOE-DREAM/microservices/microservices-common-cache/src/main/java/net/lab1024/sa/common/cache/UnifiedCacheManager.java:[98,56] 未经检查的转换
+  需要: T
+  找到:    java.lang.Object
+[INFO] /D:/IOE-DREAM/microservices/microservices-common-cache/src/main/java/net/lab1024/sa/common/cache/CacheServiceImpl.java: D:\IOE-DREAM\microservices\microservices-common-cache\src\main\java\net\lab1024\sa\common\cache\CacheServiceImpl.java使用或覆盖了已过时的 API。
+[INFO] /D:/IOE-DREAM/microservices/microservices-common-cache/src/main/java/net/lab1024/sa/common/cache/CacheServiceImpl.java: 有关详细信息, 请使用 -Xlint:deprecation 重新编译。
+[INFO] 
+[INFO] ------------< net.lab1024.sa:microservices-common-security >------------
+[INFO] Building Microservices Common Security 1.0.0                     [13/25]
+[INFO]   from microservices-common-security\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --------------< net.lab1024.sa:ioedream-database-service >--------------
+[INFO] Building ioedream-database-service 1.0.0                         [14/25]
+[INFO]   from ioedream-database-service\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[WARNING] Parameter 'encoding' is unknown for plugin 'jacoco-maven-plugin:0.8.12:prepare-agent (jacoco-prepare-agent)'
+[WARNING] Parameter 'encoding' is unknown for plugin 'jacoco-maven-plugin:0.8.12:prepare-agent (jacoco-prepare-agent)'
+[INFO] 
+[INFO] --- clean:3.3.1:clean (default-clean) @ microservices-common-security ---
+[INFO] Deleting D:\IOE-DREAM\microservices\microservices-common-security\target
+[INFO] 
+[INFO] --- enforcer:3.5.0:enforce (enforce-java-maven) @ microservices-common-security ---
+[INFO] 
+[INFO] --- exec:3.1.1:exec (check-manager-bean-registration) @ microservices-common-security ---
+[INFO] skipping execute as per configuration
+[INFO] 
+[INFO] --- jacoco:0.8.12:prepare-agent (jacoco-prepare-agent) @ microservices-common-security ---
+[INFO] jacocoArgLine set to -javaagent:C:\\Users\\10201\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.12\\org.jacoco.agent-0.8.12-runtime.jar=destfile=D:\\IOE-DREAM\\microservices\\microservices-common-security\\target\\jacoco.exec,includes=**/*.class,excludes=**/*Test*.class:**/*Tests.class:**/*Application.class:**/*Config*.class:**/*Configuration.class:**/dto/**/*.class:**/vo/**/*.class:**/form/**/*.class:**/entity/**/*.class:**/constant/**/*.class:**/constants/**/*.class:**/exception/**/*.class:**/*Exception.class:**/*Enum.class:**/generated/**/*.class:**/openapi/**/*.class
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ microservices-common-security ---
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\microservices\microservices-common-security\src\main\resources
+[INFO] skip non existing resourceDirectory D:\IOE-DREAM\microservices\microservices-common-security\src\main\resources
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ microservices-common-security ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 10 source files with javac [debug release 17] to target\classes
+[INFO] 
+[INFO] --- clean:3.3.1:clean (default-clean) @ ioedream-database-service ---
+[INFO] Deleting D:\IOE-DREAM\microservices\ioedream-database-service\target
+[INFO] 
+[INFO] --- enforcer:3.5.0:enforce (enforce-java-maven) @ ioedream-database-service ---
+[INFO] 
+[INFO] --- exec:3.1.1:exec (check-manager-bean-registration) @ ioedream-database-service ---
+[INFO] skipping execute as per configuration
+[INFO] 
+[INFO] --- jacoco:0.8.12:prepare-agent (jacoco-prepare-agent) @ ioedream-database-service ---
+[INFO] jacocoArgLine set to -javaagent:C:\\Users\\10201\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.12\\org.jacoco.agent-0.8.12-runtime.jar=destfile=D:\\IOE-DREAM\\microservices\\ioedream-database-service\\target\\jacoco.exec,includes=**/*.class,excludes=**/*Test*.class:**/*Tests.class:**/*Application.class:**/*Config*.class:**/*Configuration.class:**/dto/**/*.class:**/vo/**/*.class:**/form/**/*.class:**/entity/**/*.class:**/constant/**/*.class:**/constants/**/*.class:**/exception/**/*.class:**/*Exception.class:**/*Enum.class:**/generated/**/*.class:**/openapi/**/*.class
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ ioedream-database-service ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 0 resource from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ ioedream-database-service ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 6 source files with javac [debug release 17] to target\classes
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/DatabaseServiceApplication.java:[43,2] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/DatabaseServiceApplication.java:[45,26] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/DatabaseServiceApplication.java:[45,85] 需要<标识符>
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/DatabaseServiceApplication.java:[47,19] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/DatabaseServiceApplication.java:[49,9] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/DatabaseServiceApplication.java:[51,9] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/DatabaseServiceApplication.java:[51,63] 需要<标识符>
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/DatabaseServiceApplication.java:[53,9] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/DatabaseServiceApplication.java:[54,9] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/DatabaseServiceApplication.java:[55,5] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/config/DatabaseSyncConfig.java:[28,2] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/config/DatabaseSyncConfig.java:[30,26] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/config/DatabaseSyncConfig.java:[30,85] 需要<标识符>
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/config/DatabaseSyncConfig.java:[33,13] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/config/DatabaseSyncConfig.java:[40,12] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/config/DatabaseSyncConfig.java:[44,13] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/config/DatabaseSyncConfig.java:[47,17] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/config/DatabaseSyncConfig.java:[50,17] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/config/DatabaseSyncConfig.java:[55,25] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/config/DatabaseSyncConfig.java:[57,21] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/config/DatabaseSyncConfig.java:[60,25] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/config/DatabaseSyncConfig.java:[61,21] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/config/DatabaseSyncConfig.java:[63,13] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/config/DatabaseSyncConfig.java:[65,13] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/config/DatabaseSyncConfig.java:[67,5] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/config/DatabaseSyncConfig.java:[75,12] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/config/DatabaseSyncConfig.java:[80,13] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/config/DatabaseSyncConfig.java:[82,9] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/config/DatabaseSyncConfig.java:[84,9] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/config/DatabaseSyncConfig.java:[92,12] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/config/DatabaseSyncConfig.java:[96,13] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/config/DatabaseSyncConfig.java:[101,21] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/config/DatabaseSyncConfig.java:[103,17] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/config/DatabaseSyncConfig.java:[106,21] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/config/DatabaseSyncConfig.java:[107,17] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/config/DatabaseSyncConfig.java:[109,9] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/config/DatabaseSyncConfig.java:[111,9] 需要 class、interface、enum 或 record
+[INFO] 37 errors 
+[INFO] -------------------------------------------------------------
+[WARNING] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/gateway/GatewayServiceClient.java:[56,39] 未经检查的转换
+  需要: T
+  找到:    java.lang.Object
+[WARNING] /D:/IOE-DREAM/microservices/microservices-common/src/main/java/net/lab1024/sa/common/gateway/GatewayServiceClient.java:[74,39] 未经检查的转换
+  需要: T
+  找到:    java.lang.Object
+[INFO] /D:/IOE-DREAM/microservices/microservices-common-security/src/main/java/net/lab1024/sa/common/auth/util/JwtTokenUtil.java: D:\IOE-DREAM\microservices\microservices-common-security\src\main\java\net\lab1024\sa\common\auth\util\JwtTokenUtil.java使用或覆盖了已过时的 API。
+[INFO] /D:/IOE-DREAM/microservices/microservices-common-security/src/main/java/net/lab1024/sa/common/auth/util/JwtTokenUtil.java: 有关详细信息, 请使用 -Xlint:deprecation 重新编译。
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary for ioedream-microservices-parent 1.0.0:
+[INFO] 
+[INFO] ioedream-microservices-parent ...................... SUCCESS [  0.749 s]
+[INFO] IOE-DREAM Common Core .............................. SUCCESS [  2.625 s]
+[INFO] Microservices Common Entity ........................ SUCCESS [  2.321 s]
+[INFO] IOE-DREAM Common Storage Module .................... SUCCESS [  3.034 s]
+[INFO] Microservices Common Data .......................... SUCCESS [  0.371 s]
+[INFO] Microservices Common Business ...................... SUCCESS [  3.772 s]
+[INFO] Microservices Common Security ...................... SUCCESS [  2.495 s]
+[INFO] Microservices Common Cache ......................... SUCCESS [  2.340 s]
+[INFO] Microservices Common Monitor ....................... SUCCESS [  1.856 s]
+[INFO] Microservices Common Export ........................ SUCCESS [  0.259 s]
+[INFO] Microservices Common Workflow ...................... SUCCESS [  0.138 s]
+[INFO] Microservices Common Permission .................... SKIPPED
+[INFO] IOE-DREAM Common Module ............................ SUCCESS [  3.953 s]
+[INFO] ioedream-db-init ................................... SUCCESS [  0.383 s]
+[INFO] IOE-DREAM Gateway Service .......................... SKIPPED
+[INFO] IOE-DREAM Common Service ........................... SKIPPED
+[INFO] IOE-DREAM Device Communication Service ............. SKIPPED
+[INFO] IOE-DREAM OA Service ............................... SKIPPED
+[INFO] IOE-DREAM Access Service ........................... SKIPPED
+[INFO] IOE-DREAM Attendance Service ....................... SKIPPED
+[INFO] IOE-DREAM Video Service ............................ SKIPPED
+[INFO] IOE-DREAM Consume Service .......................... SKIPPED
+[INFO] IOE-DREAM Visitor Service .......................... SKIPPED
+[INFO] ioedream-database-service .......................... FAILURE [  0.735 s]
+[INFO] IOE-DREAM Biometric Service ........................ SKIPPED
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  10.255 s (Wall Clock)
+[INFO] Finished at: 2025-12-21T05:22:12+08:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.13.0:compile (default-compile) on project ioedream-database-service: Compilation failure: Compilation failure: 
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/DatabaseServiceApplication.java:[43,2] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/DatabaseServiceApplication.java:[45,26] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/DatabaseServiceApplication.java:[45,85] 需要<标识符>
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/DatabaseServiceApplication.java:[47,19] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/DatabaseServiceApplication.java:[49,9] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/DatabaseServiceApplication.java:[51,9] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/DatabaseServiceApplication.java:[51,63] 需要<标识符>
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/DatabaseServiceApplication.java:[53,9] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/DatabaseServiceApplication.java:[54,9] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/DatabaseServiceApplication.java:[55,5] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/config/DatabaseSyncConfig.java:[28,2] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/config/DatabaseSyncConfig.java:[30,26] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/config/DatabaseSyncConfig.java:[30,85] 需要<标识符>
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/config/DatabaseSyncConfig.java:[33,13] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/config/DatabaseSyncConfig.java:[40,12] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/config/DatabaseSyncConfig.java:[44,13] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/config/DatabaseSyncConfig.java:[47,17] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/config/DatabaseSyncConfig.java:[50,17] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/config/DatabaseSyncConfig.java:[55,25] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/config/DatabaseSyncConfig.java:[57,21] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/config/DatabaseSyncConfig.java:[60,25] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/config/DatabaseSyncConfig.java:[61,21] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/config/DatabaseSyncConfig.java:[63,13] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/config/DatabaseSyncConfig.java:[65,13] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/config/DatabaseSyncConfig.java:[67,5] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/config/DatabaseSyncConfig.java:[75,12] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/config/DatabaseSyncConfig.java:[80,13] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/config/DatabaseSyncConfig.java:[82,9] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/config/DatabaseSyncConfig.java:[84,9] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/config/DatabaseSyncConfig.java:[92,12] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/config/DatabaseSyncConfig.java:[96,13] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/config/DatabaseSyncConfig.java:[101,21] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/config/DatabaseSyncConfig.java:[103,17] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/config/DatabaseSyncConfig.java:[106,21] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/config/DatabaseSyncConfig.java:[107,17] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/config/DatabaseSyncConfig.java:[109,9] 需要 class、interface、enum 或 record
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-database-service/src/main/java/net/lab1024/sa/database/config/DatabaseSyncConfig.java:[111,9] 需要 class、interface、enum 或 record
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
+[ERROR] 
+[ERROR] After correcting the problems, you can resume the build with the command
+[ERROR]   mvn <args> -rf :ioedream-database-service

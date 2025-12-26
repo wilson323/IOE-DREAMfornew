@@ -1,0 +1,226 @@
+package net.lab1024.sa.common.export.util;
+
+import com.alibaba.excel.EasyExcel;
+import lombok.extern.slf4j.Slf4j;
+import net.lab1024.sa.common.export.annotation.Masked;
+import net.lab1024.sa.common.util.DataMaskingUtil;
+import org.springframework.util.ReflectionUtils;
+
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Excel导出脱敏工具类
+ * <p>
+ * 功能：自动扫描带@Masked注解的字段并脱敏
+ * </p>
+ * <p>
+ * 使用方式：
+ * </p>
+ * <pre>
+ * // 导出用户数据（自动脱敏敏感字段）
+ * List<UserEntity> users = userDao.selectList(null);
+ * ExcelExportMaskingUtil.exportWithMasking(response, users, UserEntity.class, "用户列表");
+ * </pre>
+ *
+ * @author IOE-DREAM Team
+ * @version 1.0.0
+ * @since 2025-12-26
+ */
+@Slf4j
+public class ExcelExportMaskingUtil {
+
+    /**
+     * 导出带脱敏的Excel数据
+     *
+     * @param response    HTTP响应
+     * @param dataList    原始数据列表
+     * @param modelClass  Excel模型类
+     * @param sheetName   工作表名称
+     * @param fileName    文件名（不含扩展名）
+     * @param <T>         数据类型
+     * @throws IOException IO异常
+     */
+    public static <T> void exportWithMasking(HttpServletResponse response,
+                                                  List<T> dataList,
+                                                  Class<T> modelClass,
+                                                  String sheetName,
+                                                  String fileName) throws IOException {
+        log.info("[导出脱敏] 开始导出: model={}, size={}", modelClass.getSimpleName(), dataList.size());
+
+        try {
+            // 自动脱敏处理
+            List<T> maskedList = maskDataList(dataList, modelClass);
+
+            // 设置响应头
+            String fullFileName = String.format("%s_%s.xlsx",
+                    fileName,
+                    LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")));
+            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            response.setHeader("Content-Disposition",
+                    "attachment; filename=" + URLEncoder.encode(fullFileName, StandardCharsets.UTF_8));
+
+            // 写入Excel
+            EasyExcel.write(response.getOutputStream(), modelClass)
+                    .sheet(sheetName)
+                    .doWrite(maskedList);
+
+            log.info("[导出脱敏] 导出成功: model={}, size={}", modelClass.getSimpleName(), maskedList.size());
+
+        } catch (Exception e) {
+            log.error("[导出脱敏] 导出失败: model={}, error={}", modelClass.getSimpleName(), e.getMessage(), e);
+            throw new IOException("Excel导出失败: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 脱敏数据列表
+     *
+     * @param dataList   原始数据列表
+     * @param modelClass 模型类
+     * @param <T>        数据类型
+     * @return 脱敏后的数据列表
+     */
+    private static <T> List<T> maskDataList(List<T> dataList, Class<T> modelClass) {
+        List<T> maskedList = new ArrayList<>(dataList.size());
+
+        for (T data : dataList) {
+            try {
+                // 深度复制对象
+                T maskedData = copyAndMaskObject(data, modelClass);
+                maskedList.add(maskedData);
+            } catch (Exception e) {
+                log.warn("[导出脱敏] 脱敏失败，使用原始数据: model={}, error={}",
+                        modelClass.getSimpleName(), e.getMessage());
+                maskedList.add(data); // 脱敏失败时保留原数据
+            }
+        }
+
+        return maskedList;
+    }
+
+    /**
+     * 复制对象并脱敏敏感字段
+     *
+     * @param source     源对象
+     * @param modelClass 模型类
+     * @param <T>         对象类型
+     * @return 脱敏后的对象副本
+     */
+    private static <T> T copyAndMaskObject(T source, Class<T> modelClass)
+            throws Exception {
+        // 创建新对象
+        T target = modelClass.getDeclaredConstructor().newInstance();
+
+        // 遍历所有字段
+        Field[] fields = modelClass.getDeclaredFields();
+        for (Field field : fields) {
+            field.setAccessible(true);
+
+            // 获取源字段值
+            Object value = field.get(source);
+            if (value == null) {
+                continue;
+            }
+
+            // 检查是否有@Masked注解
+            Masked masked = field.getAnnotation(Masked.class);
+            if (masked != null && value instanceof String) {
+                // 脱敏处理
+                String maskedValue = maskFieldValue((String) value, masked.value());
+                field.set(target, maskedValue);
+
+                log.debug("[导出脱敏] 字段脱敏: field={}, original={}, masked={}",
+                        field.getName(), value, maskedValue);
+            } else {
+                // 直接复制
+                field.set(target, value);
+            }
+        }
+
+        return target;
+    }
+
+    /**
+     * 脱敏字段值
+     *
+     * @param value    原始值
+     * @param maskType 脱敏类型
+     * @return 脱敏后的值
+     */
+    private static String maskFieldValue(String value, Masked.MaskType maskType) {
+        if (value == null || value.isEmpty()) {
+            return value;
+        }
+
+        try {
+            switch (maskType) {
+                case PHONE:
+                    return DataMaskingUtil.maskPhone(value);
+                case FIXED_PHONE:
+                    return DataMaskingUtil.maskFixedPhone(value);
+                case ID_CARD:
+                    return DataMaskingUtil.maskIdCard(value);
+                case BANK_CARD:
+                    return DataMaskingUtil.maskBankCard(value);
+                case EMAIL:
+                    return DataMaskingUtil.maskEmail(value);
+                case CHINESE_NAME:
+                    return DataMaskingUtil.maskChineseName(value);
+                case LICENSE_PLATE:
+                    return DataMaskingUtil.maskLicensePlate(value);
+                case IP_ADDRESS:
+                    return DataMaskingUtil.maskIpAddress(value);
+                case ADDRESS:
+                    return DataMaskingUtil.maskAddress(value);
+                case PASSWORD:
+                    return DataMaskingUtil.maskPassword(value);
+                default:
+                    return DataMaskingUtil.maskDefault(value);
+            }
+        } catch (Exception e) {
+            log.warn("[导出脱敏] 脱敏异常: type={}, value={}, error={}", maskType, value, e.getMessage());
+            return value; // 脱敏失败时返回原值
+        }
+    }
+
+    /**
+     * 便捷方法：导出用户数据
+     *
+     * @param response HTTP响应
+     * @param users    用户列表
+     * @throws IOException IO异常
+     */
+    public static void exportUsers(HttpServletResponse response, List<?> users) throws IOException {
+        exportWithMasking(response, users, users.get(0).getClass(), "用户列表", "用户数据");
+    }
+
+    /**
+     * 便捷方法：导出消费记录
+     *
+     * @param response HTTP响应
+     * @param records  消费记录列表
+     * @throws IOException IO异常
+     */
+    public static void exportConsumeRecords(HttpServletResponse response, List<?> records) throws IOException {
+        exportWithMasking(response, records, records.get(0).getClass(), "消费记录", "消费记录");
+    }
+
+    /**
+     * 便捷方法：导出门禁记录
+     *
+     * @param response HTTP响应
+     * @param records  门禁记录列表
+     * @throws IOException IO异常
+     */
+    public static void exportAccessRecords(HttpServletResponse response, List<?> records) throws IOException {
+        exportWithMasking(response, records, records.get(0).getClass(), "门禁记录", "门禁通行记录");
+    }
+}

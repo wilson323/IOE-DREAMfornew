@@ -1,446 +1,602 @@
 package net.lab1024.sa.common.auth.util;
 
+import lombok.extern.slf4j.Slf4j;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import jakarta.annotation.Resource;
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.crypto.SecretKey;
-
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
-import lombok.extern.slf4j.Slf4j;
-
 /**
  * JWT令牌工具类
  * <p>
- * 企业级JWT令牌管理工具
- * 严格遵循CLAUDE.md规范：
- * - 纯Java类，不使用Spring注解
- * - 通过构造函数注入配置参数
- * - 在微服务中通过配置类注册为Spring Bean
- * </p>
- * <p>
- * 功能：
- * - 生成访问令牌和刷新令牌
- * - 验证令牌有效性
- * - 解析令牌信息
- * - 管理令牌生命周期
- * </p>
- * <p>
- * 企业级特性：
- * - 使用JWT 0.13.0最新API
- * - HS256算法签名
- * - 支持自定义过期时间
- * - 完整的异常处理
+ * 提供JWT令牌的生成、验证、解析等功能
+ * 支持访问令牌和刷新令牌的区分管理
  * </p>
  *
  * @author IOE-DREAM架构团队
- * @version 2.0.0
- * @since 2025-01-30（重构为纯Java类）
+ * @version 1.0.0
+ * @since 2025-12-20
  */
+@Component
 @Slf4j
 public class JwtTokenUtil {
 
-    /**
-     * JWT密钥
-     * <p>
-     * 必须至少256位（32字节）以确保安全性
-     * </p>
-     */
-    private final String secret;
+    @Value("${jwt.secret:ioedream-jwt-secret-key-2025}")
+    private String secret;
 
-    /**
-     * 访问令牌过期时间（秒）
-     * <p>
-     * 默认86400秒（24小时）
-     * </p>
-     */
-    private final Long accessTokenExpiration;
+    @Value("${jwt.expiration:7200}")
+    private Long expiration;
 
-    /**
-     * 刷新令牌过期时间（秒）
-     * <p>
-     * 默认604800秒（7天）
-     * </p>
-     */
-    private final Long refreshTokenExpiration;
+    @Value("${jwt.refresh-expiration:604800}")
+    private Long refreshExpiration;
 
-    /**
-     * 构造函数
-     * <p>
-     * 通过构造函数注入配置参数，符合CLAUDE.md规范
-     * </p>
-     *
-     * @param secret JWT密钥（必须至少256位）
-     * @param accessTokenExpiration 访问令牌过期时间（秒）
-     * @param refreshTokenExpiration 刷新令牌过期时间（秒）
-     *
-     * @example
-     * <pre>
-     * JwtTokenUtil jwtUtil = new JwtTokenUtil(
-     *     "my-secret-key-at-least-256-bits-long",
-     *     86400L,  // 24小时
-     *     604800L  // 7天
-     * );
-     * </pre>
-     */
-    public JwtTokenUtil(String secret, Long accessTokenExpiration, Long refreshTokenExpiration) {
-        if (secret == null || secret.trim().isEmpty()) {
-            throw new IllegalArgumentException("JWT密钥不能为空");
-        }
+    @Resource
+    private net.lab1024.sa.common.auth.service.JwtTokenBlacklistService blacklistService;
 
-        if (secret.getBytes().length < 32) {
-            log.warn("[JWT工具] JWT密钥长度不足256位，建议使用更长的密钥");
-        }
+    private SecretKey secretKey;
 
+    public JwtTokenUtil() {
+    }
+
+    public JwtTokenUtil(String secret, Long expiration, Long refreshExpiration) {
         this.secret = secret;
-        this.accessTokenExpiration = accessTokenExpiration != null ? accessTokenExpiration : 86400L;
-        this.refreshTokenExpiration = refreshTokenExpiration != null ? refreshTokenExpiration : 604800L;
+        this.expiration = expiration;
+        this.refreshExpiration = refreshExpiration;
+    }
 
-        log.info("[JWT工具] 初始化完成，访问令牌过期时间: {}秒，刷新令牌过期时间: {}秒",
-                this.accessTokenExpiration, this.refreshTokenExpiration);
+    private SecretKey getSecretKey() {
+        if (secretKey == null) {
+            String keyString = secret;
+            if (keyString.length() < 32) {
+                keyString = String.format("%-32s", keyString).replace(' ', '0');
+            }
+            byte[] keyBytes = keyString.getBytes(StandardCharsets.UTF_8);
+            secretKey = Keys.hmacShaKeyFor(keyBytes);
+        }
+        return secretKey;
+    }
+
+    public String generateToken(Long userId, String username, Integer expireMinutes) {
+        try {
+            Map<String, Object> claims = new HashMap<>();
+            claims.put("userId", userId);
+            claims.put("username", username);
+            claims.put("tokenType", "access");
+
+            long expireTime = System.currentTimeMillis()
+                    + (expireMinutes != null ? expireMinutes * 60 * 1000L : expiration * 1000L);
+
+            return Jwts.builder()
+                    .setClaims(claims)
+                    .setSubject(userId.toString())
+                    .setIssuedAt(new Date())
+                    .setExpiration(new Date(expireTime))
+                    .signWith(getSecretKey(), SignatureAlgorithm.HS256)
+                    .compact();
+
+        } catch (Exception e) {
+            log.error("[JWT令牌] 生成令牌失败: userId={}, username={}", userId, username, e);
+            return null;
+        }
+    }
+
+    public String generateAccessToken(Long userId, String username) {
+        return generateToken(userId, username, (int) (expiration / 60));
     }
 
     /**
-     * 构造函数（使用默认过期时间）
-     * <p>
-     * 访问令牌：24小时，刷新令牌：7天
-     * </p>
+     * 生成访问令牌（带角色和权限）
      *
-     * @param secret JWT密钥
-     */
-    public JwtTokenUtil(String secret) {
-        this(secret, 86400L, 604800L);
-    }
-
-    private static final String CLAIM_KEY_USER_ID = "userId";
-    private static final String CLAIM_KEY_USERNAME = "username";
-    private static final String CLAIM_KEY_ROLES = "roles";
-    private static final String CLAIM_KEY_PERMISSIONS = "permissions";
-    private static final String CLAIM_KEY_TOKEN_TYPE = "tokenType";
-    private static final String TOKEN_TYPE_ACCESS = "ACCESS";
-    private static final String TOKEN_TYPE_REFRESH = "REFRESH";
-
-    /**
-     * 生成访问令牌
+     * @param userId 用户ID
+     * @param username 用户名
+     * @param roles 角色列表
+     * @param permissions 权限列表
+     * @return 访问令牌
      */
     public String generateAccessToken(Long userId, String username, List<String> roles, List<String> permissions) {
-        Map<String, Object> claims = new HashMap<>();
-        claims.put(CLAIM_KEY_USER_ID, userId);
-        claims.put(CLAIM_KEY_USERNAME, username);
-        claims.put(CLAIM_KEY_ROLES, roles);
-        claims.put(CLAIM_KEY_PERMISSIONS, permissions);
-        claims.put(CLAIM_KEY_TOKEN_TYPE, TOKEN_TYPE_ACCESS);
+        try {
+            Map<String, Object> claims = new HashMap<>();
+            claims.put("userId", userId);
+            claims.put("username", username);
+            claims.put("tokenType", "access");
+            if (roles != null && !roles.isEmpty()) {
+                claims.put("roles", roles);
+            }
+            if (permissions != null && !permissions.isEmpty()) {
+                claims.put("permissions", permissions);
+            }
 
-        return generateToken(claims, accessTokenExpiration);
+            long expireTime = System.currentTimeMillis() + expiration * 1000L;
+
+            return Jwts.builder()
+                    .setClaims(claims)
+                    .setSubject(userId.toString())
+                    .setIssuedAt(new Date())
+                    .setExpiration(new Date(expireTime))
+                    .signWith(getSecretKey(), SignatureAlgorithm.HS256)
+                    .compact();
+
+        } catch (Exception e) {
+            log.error("[JWT令牌] 生成访问令牌失败: userId={}, username={}", userId, username, e);
+            return null;
+        }
+    }
+
+    public String generateRefreshToken(Long userId) {
+        try {
+            Map<String, Object> claims = new HashMap<>();
+            claims.put("userId", userId);
+            claims.put("tokenType", "refresh");
+
+            long expireTime = System.currentTimeMillis() + refreshExpiration * 1000L;
+
+            return Jwts.builder()
+                    .setClaims(claims)
+                    .setSubject(userId.toString())
+                    .setIssuedAt(new Date())
+                    .setExpiration(new Date(expireTime))
+                    .signWith(getSecretKey(), SignatureAlgorithm.HS256)
+                    .compact();
+
+        } catch (Exception e) {
+            log.error("[JWT令牌] 生成刷新令牌失败: userId={}", userId, e);
+            return null;
+        }
     }
 
     /**
-     * 生成刷新令牌
+     * 生成刷新令牌（带用户名）
+     *
+     * @param userId 用户ID
+     * @param username 用户名
+     * @return 刷新令牌
      */
     public String generateRefreshToken(Long userId, String username) {
-        Map<String, Object> claims = new HashMap<>();
-        claims.put(CLAIM_KEY_USER_ID, userId);
-        claims.put(CLAIM_KEY_USERNAME, username);
-        claims.put(CLAIM_KEY_TOKEN_TYPE, TOKEN_TYPE_REFRESH);
+        try {
+            Map<String, Object> claims = new HashMap<>();
+            claims.put("userId", userId);
+            claims.put("username", username);
+            claims.put("tokenType", "refresh");
 
-        return generateToken(claims, refreshTokenExpiration);
+            long expireTime = System.currentTimeMillis() + refreshExpiration * 1000L;
+
+            return Jwts.builder()
+                    .setClaims(claims)
+                    .setSubject(userId.toString())
+                    .setIssuedAt(new Date())
+                    .setExpiration(new Date(expireTime))
+                    .signWith(getSecretKey(), SignatureAlgorithm.HS256)
+                    .compact();
+
+        } catch (Exception e) {
+            log.error("[JWT令牌] 生成刷新令牌失败: userId={}, username={}", userId, username, e);
+            return null;
+        }
     }
 
-    /**
-     * 生成令牌
-     * <p>
-     * 使用JWT 0.13.0最新API：
-     * - 使用SecretKey替代Key和SignatureAlgorithm
-     * - 使用Keys.hmacShaKeyFor()生成SecretKey
-     * - 使用.signWith(SecretKey)方法
-     * </p>
-     *
-     * @param claims     令牌声明
-     * @param expiration 过期时间（秒）
-     * @return JWT令牌字符串
-     */
-    private String generateToken(Map<String, Object> claims, Long expiration) {
-        Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + expiration * 1000);
-
-        // 使用JWT 0.13.0 API：生成SecretKey
-        SecretKey secretKey = Keys.hmacShaKeyFor(secret.getBytes());
-
-        // 使用JWT 0.13.0 API：构建令牌
-        return Jwts.builder()
-                .claims(claims) // 0.13.0使用claims()而不是setClaims()
-                .issuedAt(now) // 0.13.0使用issuedAt()而不是setIssuedAt()
-                .expiration(expiryDate) // 0.13.0使用expiration()而不是setExpiration()
-                .signWith(secretKey) // 0.13.0直接传入SecretKey，无需指定算法
-                .compact();
-    }
-
-    /**
-     * 验证令牌
-     */
     public boolean validateToken(String token) {
         try {
-            Claims claims = getClaimsFromToken(token);
-            return claims != null && !isTokenExpired(token);
+            // 1. 先检查黑名单
+            if (blacklistService != null && blacklistService.isTokenBlacklisted(token)) {
+                log.warn("[JWT令牌] 令牌已在黑名单中: token={}", maskToken(token));
+                return false;
+            }
+
+            // 2. 验证令牌签名和有效期
+            Jwts.parser()
+                    .setSigningKey(getSecretKey())
+                    .build()
+                    .parseClaimsJws(token);
+            return true;
         } catch (Exception e) {
-            log.error("令牌验证失败", e);
+            log.debug("[JWT令牌] 令牌验证失败: token={}, error={}", token, e.getMessage());
             return false;
         }
     }
 
-    /**
-     * 检查令牌是否过期
-     */
-    private boolean isTokenExpired(String token) {
+    public Claims parseToken(String token) {
         try {
-            Date expiration = getExpirationDateFromToken(token);
-            return expiration.before(new Date());
+            return Jwts.parser()
+                    .setSigningKey(getSecretKey())
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
         } catch (Exception e) {
-            log.debug("[JWT工具] 检查令牌过期状态失败，默认返回已过期: error={}", e.getMessage());
+            log.debug("[JWT令牌] 令牌解析失败: token={}, error={}", token, e.getMessage());
+            return null;
+        }
+    }
+
+    public Long getUserIdFromToken(String token) {
+        try {
+            Claims claims = parseToken(token);
+            if (claims != null) {
+                Object userIdObj = claims.get("userId");
+                if (userIdObj instanceof Integer) {
+                    return ((Integer) userIdObj).longValue();
+                } else if (userIdObj instanceof Long) {
+                    return (Long) userIdObj;
+                } else if (userIdObj instanceof String) {
+                    return Long.parseLong((String) userIdObj);
+                }
+            }
+            return null;
+        } catch (Exception e) {
+            log.debug("[JWT令牌] 获取用户ID失败: token={}", token, e);
+            return null;
+        }
+    }
+
+    public String getUsernameFromToken(String token) {
+        try {
+            Claims claims = parseToken(token);
+            return claims != null ? (String) claims.get("username") : null;
+        } catch (Exception e) {
+            log.debug("[JWT令牌] 获取用户名失败: token={}", token, e);
+            return null;
+        }
+    }
+
+    public String getTokenTypeFromToken(String token) {
+        try {
+            Claims claims = parseToken(token);
+            return claims != null ? (String) claims.get("tokenType") : "unknown";
+        } catch (Exception e) {
+            log.debug("[JWT令牌] 获取令牌类型失败: token={}", token, e);
+            return "unknown";
+        }
+    }
+
+    public boolean isTokenExpired(String token) {
+        try {
+            Claims claims = parseToken(token);
+            return claims != null && claims.getExpiration().before(new Date());
+        } catch (Exception e) {
+            log.debug("[JWT令牌] 检查令牌过期失败: token={}", token, e);
             return true;
         }
     }
 
-    /**
-     * 从令牌中获取Claims
-     * <p>
-     * 使用JWT 0.13.0最新API：
-     * - 使用SecretKey替代Key
-     * - 使用parser()和verifyWith()方法
-     * </p>
-     *
-     * @param token JWT令牌字符串
-     * @return Claims对象，解析失败返回null
-     */
-    private Claims getClaimsFromToken(String token) {
+    public long getRemainingTime(String token) {
         try {
-            // 使用JWT 0.13.0 API：生成SecretKey
-            SecretKey secretKey = Keys.hmacShaKeyFor(secret.getBytes());
-
-            // 使用JWT 0.13.0 API：解析令牌
-            return Jwts.parser()
-                    .verifyWith(secretKey)
-                    .build()
-                    .parseSignedClaims(token)
-                    .getPayload();
-        } catch (Exception e) {
-            log.error("[JWT工具] 解析令牌失败: {}", e.getMessage());
-            return null;
-        }
-    }
-
-    /**
-     * 解析JWT令牌为Map
-     * <p>
-     * 将JWT令牌解析为Map格式，供外部调用使用
-     * 包含所有Claims信息，包括用户ID、用户名、角色、权限等
-     * </p>
-     *
-     * @param token JWT令牌字符串
-     * @return Claims Map，解析失败返回null
-     *
-     * @example
-     * <pre>
-     * Map&lt;String, Object&gt; claims = jwtUtil.parseJwtTokenToMap(token);
-     * Long userId = Long.valueOf(claims.get("userId").toString());
-     * </pre>
-     */
-    public Map<String, Object> parseJwtTokenToMap(String token) {
-        try {
-            Claims claims = getClaimsFromToken(token);
-            if (claims == null) {
-                return null;
+            Claims claims = parseToken(token);
+            if (claims != null) {
+                Date expirationDate = claims.getExpiration();
+                long remaining = (expirationDate.getTime() - System.currentTimeMillis()) / 1000;
+                return Math.max(0, remaining);
             }
-
-            // 将Claims转换为Map
-            Map<String, Object> claimsMap = new HashMap<>();
-            claimsMap.put("userId", claims.get(CLAIM_KEY_USER_ID));
-            claimsMap.put("username", claims.get(CLAIM_KEY_USERNAME));
-            claimsMap.put("roles", claims.get(CLAIM_KEY_ROLES));
-            claimsMap.put("permissions", claims.get(CLAIM_KEY_PERMISSIONS));
-            claimsMap.put("tokenType", claims.get(CLAIM_KEY_TOKEN_TYPE));
-            claimsMap.put("iat", claims.getIssuedAt() != null ? claims.getIssuedAt().getTime() / 1000 : null);
-            claimsMap.put("exp", claims.getExpiration() != null ? claims.getExpiration().getTime() / 1000 : null);
-
-            return claimsMap;
+            return 0;
         } catch (Exception e) {
-            log.error("[JWT工具] 解析令牌为Map失败: {}", e.getMessage(), e);
-            return null;
+            log.debug("[JWT令牌] 获取剩余时间失败: token={}", token, e);
+            return 0;
         }
     }
 
     /**
-     * 获取令牌过期时间
+     * 获取令牌剩余过期时间（秒）
+     * 别名方法，与getRemainingTime功能相同
+     *
+     * @param token 令牌
+     * @return 剩余过期时间（秒）
      */
-    public Date getExpirationDateFromToken(String token) {
-        Claims claims = getClaimsFromToken(token);
-        return claims != null ? claims.getExpiration() : null;
+    public long getRemainingExpiration(String token) {
+        return getRemainingTime(token);
     }
 
-    /**
-     * 获取剩余有效时间（秒）
-     */
-    public Long getRemainingExpiration(String token) {
+    public String refreshToken(String token) {
         try {
-            Date expiration = getExpirationDateFromToken(token);
-            if (expiration == null) {
-                return 0L;
+            Claims claims = parseToken(token);
+            if (claims != null) {
+                Long userId = getUserIdFromToken(token);
+                String username = (String) claims.get("username");
+                return generateAccessToken(userId, username);
             }
-            long remaining = (expiration.getTime() - System.currentTimeMillis()) / 1000;
-            return Math.max(remaining, 0L);
+            return null;
         } catch (Exception e) {
-            log.debug("[JWT工具] 获取令牌剩余过期时间失败，返回0: token={}, error={}", token, e.getMessage());
-            return 0L;
+            log.error("[JWT令牌] 刷新令牌失败: token={}", token, e);
+            return null;
         }
     }
 
-    /**
-     * 从令牌中获取用户ID
-     */
-    public Long getUserIdFromToken(String token) {
-        Claims claims = getClaimsFromToken(token);
-        if (claims == null) {
-            return null;
-        }
-        Object userIdObj = claims.get(CLAIM_KEY_USER_ID);
-        if (userIdObj instanceof Integer) {
-            return ((Integer) userIdObj).longValue();
-        } else if (userIdObj instanceof Long) {
-            return (Long) userIdObj;
+    public String extractTokenFromHeader(String authHeader) {
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            return authHeader.substring(7);
         }
         return null;
     }
 
-    /**
-     * 从令牌中获取用户名
-     */
-    public String getUsernameFromToken(String token) {
-        Claims claims = getClaimsFromToken(token);
-        return claims != null ? (String) claims.get(CLAIM_KEY_USERNAME) : null;
+    public String generateBearerToken(String token) {
+        return "Bearer " + token;
+    }
+
+    public boolean isAccessToken(String token) {
+        try {
+            Claims claims = parseToken(token);
+            if (claims != null) {
+                String tokenType = (String) claims.get("tokenType");
+                return "access".equals(tokenType);
+            }
+            return false;
+        } catch (Exception e) {
+            log.debug("[JWT令牌] 检查令牌类型失败: token={}", token, e);
+            return false;
+        }
     }
 
     /**
-     * 从令牌中获取角色列表
+     * 检查是否为刷新令牌
+     *
+     * @param token 令牌
+     * @return 是否为刷新令牌
      */
-    @SuppressWarnings("unchecked")
-    public List<String> getRolesFromToken(String token) {
-        Claims claims = getClaimsFromToken(token);
-        return claims != null ? (List<String>) claims.get(CLAIM_KEY_ROLES) : null;
+    public boolean isRefreshToken(String token) {
+        try {
+            Claims claims = parseToken(token);
+            if (claims != null) {
+                String tokenType = (String) claims.get("tokenType");
+                return "refresh".equals(tokenType);
+            }
+            return false;
+        } catch (Exception e) {
+            log.debug("[JWT令牌] 检查令牌类型失败: token={}", token, e);
+            return false;
+        }
+    }
+
+    public Map<String, Object> parseJwtTokenToMap(String token) {
+        try {
+            Claims claims = parseToken(token);
+            if (claims != null) {
+                Map<String, Object> result = new HashMap<>();
+                claims.forEach((key, value) -> {
+                    if (value instanceof Date) {
+                        result.put(key, ((Date) value).getTime());
+                    } else {
+                        result.put(key, value);
+                    }
+                });
+                return result;
+            }
+            return null;
+        } catch (Exception e) {
+            log.debug("[JWT令牌] 解析令牌为Map失败: token={}", token, e);
+            return null;
+        }
+    }
+
+    public String getSecretBase64() {
+        return Base64.getEncoder().encodeToString(secret.getBytes(StandardCharsets.UTF_8));
     }
 
     /**
      * 从令牌中获取权限列表
+     *
+     * @param token 令牌
+     * @return 权限列表
      */
     @SuppressWarnings("unchecked")
     public List<String> getPermissionsFromToken(String token) {
-        Claims claims = getClaimsFromToken(token);
-        return claims != null ? (List<String>) claims.get(CLAIM_KEY_PERMISSIONS) : null;
-    }
-
-    /**
-     * 判断是否为访问令牌
-     */
-    public boolean isAccessToken(String token) {
-        Claims claims = getClaimsFromToken(token);
-        if (claims == null) {
-            return false;
+        try {
+            Claims claims = parseToken(token);
+            if (claims != null) {
+                Object permissionsObj = claims.get("permissions");
+                if (permissionsObj instanceof List) {
+                    return (List<String>) permissionsObj;
+                }
+            }
+            return new java.util.ArrayList<>();
+        } catch (Exception e) {
+            log.debug("[JWT令牌] 获取权限列表失败: token={}", token, e);
+            return new java.util.ArrayList<>();
         }
-        String tokenType = (String) claims.get(CLAIM_KEY_TOKEN_TYPE);
-        return TOKEN_TYPE_ACCESS.equals(tokenType);
     }
 
     /**
-     * 判断是否为刷新令牌
+     * 从令牌中获取角色列表
+     *
+     * @param token 令牌
+     * @return 角色列表
      */
-    public boolean isRefreshToken(String token) {
-        Claims claims = getClaimsFromToken(token);
-        if (claims == null) {
-            return false;
+    @SuppressWarnings("unchecked")
+    public List<String> getRolesFromToken(String token) {
+        try {
+            Claims claims = parseToken(token);
+            if (claims != null) {
+                Object rolesObj = claims.get("roles");
+                if (rolesObj instanceof List) {
+                    return (List<String>) rolesObj;
+                }
+            }
+            return new java.util.ArrayList<>();
+        } catch (Exception e) {
+            log.debug("[JWT令牌] 获取角色列表失败: token={}", token, e);
+            return new java.util.ArrayList<>();
         }
-        String tokenType = (String) claims.get(CLAIM_KEY_TOKEN_TYPE);
-        return TOKEN_TYPE_REFRESH.equals(tokenType);
-    }
-
-    // ================= 兼容方法 =================
-
-    /**
-     * 验证访问令牌（兼容方法）
-     */
-    public boolean validateAccessToken(String token) {
-        return validateToken(token) && isAccessToken(token);
     }
 
     /**
-     * 验证刷新令牌（兼容方法）
+     * 验证刷新令牌
+     *
+     * @param token 刷新令牌
+     * @return 是否有效
      */
     public boolean validateRefreshToken(String token) {
         return validateToken(token) && isRefreshToken(token);
     }
 
     /**
-     * 从访问令牌获取用户ID（兼容方法）
-     */
-    public Long getUserIdFromAccessToken(String token) {
-        return getUserIdFromToken(token);
-    }
-
-    /**
-     * 从刷新令牌获取用户ID（兼容方法）
+     * 从刷新令牌中获取用户ID
+     *
+     * @param token 刷新令牌
+     * @return 用户ID
      */
     public Long getUserIdFromRefreshToken(String token) {
-        return getUserIdFromToken(token);
+        if (validateRefreshToken(token)) {
+            return getUserIdFromToken(token);
+        }
+        return null;
     }
 
     /**
-     * 从访问令牌获取用户名（兼容方法）
+     * 验证访问令牌
+     *
+     * @param token 访问令牌
+     * @return 是否有效
      */
-    public String getUsernameFromAccessToken(String token) {
-        return getUsernameFromToken(token);
+    public boolean validateAccessToken(String token) {
+        return validateToken(token) && isAccessToken(token);
     }
 
     /**
-     * 从访问令牌获取过期时间（兼容方法）
+     * 从访问令牌中获取用户ID
+     *
+     * @param token 访问令牌
+     * @return 用户ID
      */
-    public Date getExpirationFromAccessToken(String token) {
-        return getExpirationDateFromToken(token);
+    public Long getUserIdFromAccessToken(String token) {
+        if (validateAccessToken(token)) {
+            return getUserIdFromToken(token);
+        }
+        return null;
     }
 
     /**
-     * 从访问令牌获取签发时间（兼容方法）
-     */
-    public Date getIssuedAtFromAccessToken(String token) {
-        Claims claims = getClaimsFromToken(token);
-        return claims != null ? claims.getIssuedAt() : null;
-    }
-
-    /**
-     * 从访问令牌获取剩余时间（兼容方法）
-     */
-    public Long getRemainingTimeFromAccessToken(String token) {
-        return getRemainingExpiration(token);
-    }
-
-    /**
-     * 撤销令牌（兼容方法 - 无状态JWT无法真正撤销）
+     * 撤销令牌（加入黑名单）
+     * <p>
+     * 将令牌加入黑名单，使其失效
+     * 支持分布式环境，使用Redis存储黑名单
+     * </p>
+     *
+     * @param token 令牌
      */
     public void revokeToken(String token) {
-        log.info("[JWT工具] 令牌撤销请求（注：无状态JWT需配合黑名单机制）");
+        if (blacklistService == null) {
+            log.error("[JWT令牌] 黑名单服务未注入，无法撤销令牌: token={}", maskToken(token));
+            return;
+        }
+
+        try {
+            // 获取令牌过期时间（秒）
+            Long expirationSeconds = getRemainingTime(token);
+
+            // 加入黑名单
+            blacklistService.blacklistToken(token, expirationSeconds);
+
+            log.info("[JWT令牌] 令牌已撤销: token={}", maskToken(token));
+        } catch (Exception e) {
+            log.error("[JWT令牌] 撤销令牌失败: token={}, error={}", maskToken(token), e.getMessage(), e);
+        }
     }
 
     /**
-     * 生成访问令牌（简化版 - 兼容方法）
+     * 撤销用户的所有令牌
+     *
+     * @param userId 用户ID
+     * @return 撤销的令牌数量
      */
-    public String generateAccessToken(Long userId, String username) {
-        return generateAccessToken(userId, username, null, null);
+    public int revokeAllUserTokens(Long userId) {
+        if (blacklistService == null) {
+            log.error("[JWT令牌] 黑名单服务未注入，无法撤销用户令牌: userId={}", userId);
+            return 0;
+        }
+
+        try {
+            int count = blacklistService.revokeAllUserTokens(userId);
+            log.info("[JWT令牌] 已撤销用户所有令牌: userId={}, count={}", userId, count);
+            return count;
+        } catch (Exception e) {
+            log.error("[JWT令牌] 撤销用户令牌失败: userId={}, error={}", userId, e.getMessage(), e);
+            return 0;
+        }
     }
 
     /**
-     * 生成刷新令牌（简化版 - 兼容方法）
+     * 从访问令牌中获取用户名
+     *
+     * @param token 访问令牌
+     * @return 用户名
      */
-    public String generateRefreshToken(Long userId) {
-        return generateRefreshToken(userId, null);
+    public String getUsernameFromAccessToken(String token) {
+        if (validateAccessToken(token)) {
+            return getUsernameFromToken(token);
+        }
+        return null;
+    }
+
+    /**
+     * 从访问令牌中获取过期时间
+     *
+     * @param token 访问令牌
+     * @return 过期时间（时间戳，毫秒）
+     */
+    public Long getExpirationFromAccessToken(String token) {
+        try {
+            Claims claims = parseToken(token);
+            if (claims != null && isAccessToken(token)) {
+                return claims.getExpiration().getTime();
+            }
+            return null;
+        } catch (Exception e) {
+            log.debug("[JWT令牌] 获取过期时间失败: token={}", token, e);
+            return null;
+        }
+    }
+
+    /**
+     * 从访问令牌中获取签发时间
+     *
+     * @param token 访问令牌
+     * @return 签发时间（时间戳，毫秒）
+     */
+    public Long getIssuedAtFromAccessToken(String token) {
+        try {
+            Claims claims = parseToken(token);
+            if (claims != null && isAccessToken(token)) {
+                return claims.getIssuedAt().getTime();
+            }
+            return null;
+        } catch (Exception e) {
+            log.debug("[JWT令牌] 获取签发时间失败: token={}", token, e);
+            return null;
+        }
+    }
+
+    /**
+     * 从访问令牌中获取剩余时间
+     *
+     * @param token 访问令牌
+     * @return 剩余时间（秒）
+     */
+    public long getRemainingTimeFromAccessToken(String token) {
+        if (validateAccessToken(token)) {
+            return getRemainingTime(token);
+        }
+        return 0;
+    }
+
+    /**
+     * 遮盖令牌，只显示前20个字符，用于日志记录
+     *
+     * @param token JWT令牌
+     * @return 遮盖后的令牌
+     */
+    private String maskToken(String token) {
+        if (token == null) {
+            return "null";
+        }
+        int length = Math.min(token.length(), 20);
+        return token.substring(0, length) + "...";
     }
 }

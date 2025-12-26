@@ -9,6 +9,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import net.lab1024.sa.attendance.mobile.AttendanceMobileService;
+import net.lab1024.sa.attendance.mobile.controller.AttendanceMobileController;
+import net.lab1024.sa.attendance.mobile.model.GpsPunchRequest;
+import net.lab1024.sa.attendance.mobile.model.LocationValidationRequest;
+import net.lab1024.sa.attendance.mobile.model.OfflinePunchData;
+import net.lab1024.sa.attendance.mobile.model.OfflinePunchRequest;
 import net.lab1024.sa.attendance.service.AttendanceLocationService;
 import net.lab1024.sa.common.dto.ResponseDTO;
 
@@ -39,7 +44,7 @@ class AttendanceMobileControllerTest {
     @Test
     @DisplayName("测试GPS定位打卡")
     void testGpsPunch() throws Exception {
-        AttendanceMobileController.GpsPunchRequest request = new AttendanceMobileController.GpsPunchRequest();
+        GpsPunchRequest request = new GpsPunchRequest();
         request.setEmployeeId(1001L);
         request.setLatitude(39.9042);
         request.setLongitude(116.4074);
@@ -54,7 +59,7 @@ class AttendanceMobileControllerTest {
     @Test
     @DisplayName("测试位置验证")
     void testValidateLocation() throws Exception {
-        AttendanceMobileController.LocationValidationRequest request = new AttendanceMobileController.LocationValidationRequest();
+        LocationValidationRequest request = new LocationValidationRequest();
         request.setEmployeeId(1001L);
         request.setLatitude(39.9042);
         request.setLongitude(116.4074);
@@ -67,10 +72,10 @@ class AttendanceMobileControllerTest {
     @Test
     @DisplayName("测试离线打卡数据缓存")
     void testCacheOfflinePunch() throws Exception {
-        AttendanceMobileController.OfflinePunchRequest request = new AttendanceMobileController.OfflinePunchRequest();
+        OfflinePunchRequest request = new OfflinePunchRequest();
         request.setEmployeeId(1001L);
 
-        AttendanceMobileController.OfflinePunchData data = new AttendanceMobileController.OfflinePunchData();
+        OfflinePunchData data = new OfflinePunchData();
         data.setPunchType("上班");
         data.setPunchTime(java.time.LocalDateTime.parse("2025-12-04T09:00:00"));
         data.setLatitude(39.9042);

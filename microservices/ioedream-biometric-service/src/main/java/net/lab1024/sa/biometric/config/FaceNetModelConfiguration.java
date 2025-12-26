@@ -26,8 +26,8 @@ import org.springframework.context.annotation.Configuration;
  * @version 1.0.0
  * @since 2025-01-30
  */
-@Slf4j
 @Configuration
+@Slf4j
 public class FaceNetModelConfiguration {
 
     /**

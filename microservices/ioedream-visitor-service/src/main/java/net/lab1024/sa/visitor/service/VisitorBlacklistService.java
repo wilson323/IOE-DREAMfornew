@@ -3,7 +3,7 @@ package net.lab1024.sa.visitor.service;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.common.openapi.domain.response.PageResult;
+import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.visitor.domain.form.BlacklistAddForm;
 import net.lab1024.sa.visitor.domain.form.BlacklistQueryForm;
 import net.lab1024.sa.visitor.domain.vo.BlacklistVO;

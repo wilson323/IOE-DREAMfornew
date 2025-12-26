@@ -1,21 +1,44 @@
 package net.lab1024.sa.attendance.openapi.controller;
 
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.List;
+
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.common.openapi.domain.response.PageResult;
-import net.lab1024.sa.attendance.openapi.domain.request.*;
-import net.lab1024.sa.attendance.openapi.domain.response.*;
-import net.lab1024.sa.attendance.openapi.service.AttendanceOpenApiService;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
+import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import java.util.List;
+import net.lab1024.sa.attendance.openapi.domain.request.AbnormalAttendanceQueryRequest;
+import net.lab1024.sa.attendance.openapi.domain.request.ApproveSupplementRequest;
+import net.lab1024.sa.attendance.openapi.domain.request.AttendanceRecordQueryRequest;
+import net.lab1024.sa.attendance.openapi.domain.request.ClockInRequest;
+import net.lab1024.sa.attendance.openapi.domain.request.SupplementApplicationQueryRequest;
+import net.lab1024.sa.attendance.openapi.domain.request.SupplementApplicationRequest;
+import net.lab1024.sa.attendance.openapi.domain.response.AbnormalAttendanceResponse;
+import net.lab1024.sa.attendance.openapi.domain.response.AttendanceRecordDetailResponse;
+import net.lab1024.sa.attendance.openapi.domain.response.AttendanceRecordResponse;
+import net.lab1024.sa.attendance.openapi.domain.response.ClockInResponse;
+import net.lab1024.sa.attendance.openapi.domain.response.DepartmentAttendanceStatisticsResponse;
+import net.lab1024.sa.attendance.openapi.domain.response.MonthlyAttendanceStatisticsResponse;
+import net.lab1024.sa.attendance.openapi.domain.response.ScheduleResponse;
+import net.lab1024.sa.attendance.openapi.domain.response.ShiftResponse;
+import net.lab1024.sa.attendance.openapi.domain.response.SupplementApplicationResponse;
+import net.lab1024.sa.attendance.openapi.domain.response.UserAttendanceProfileResponse;
+import net.lab1024.sa.attendance.openapi.service.AttendanceOpenApiService;
+import net.lab1024.sa.common.domain.PageResult;
+import net.lab1024.sa.common.dto.ResponseDTO;
 
 /**
  * 开放平台考勤管理API控制器
@@ -25,15 +48,15 @@ import java.util.List;
  * @version 1.0.0
  * @since 2025-12-16
  */
-@Slf4j
 @RestController
 @RequestMapping("/open/api/v1/attendance")
-@RequiredArgsConstructor
 @Tag(name = "开放平台考勤管理API", description = "提供考勤打卡、排班管理、考勤统计等功能")
 @Validated
+@Slf4j
 public class AttendanceOpenApiController {
 
-    private final AttendanceOpenApiService attendanceOpenApiService;
+    @Resource
+    private AttendanceOpenApiService attendanceOpenApiService;
 
     /**
      * 考勤打卡
@@ -85,7 +108,8 @@ public class AttendanceOpenApiController {
         log.info("[开放API] 查询打卡记录: pageNum={}, pageSize={}, userId={}, startDate={}",
                 pageNum, pageSize, userId, startDate);
 
-        PageResult<AttendanceRecordResponse> result = attendanceOpenApiService.getAttendanceRecords(queryRequest, token);
+        PageResult<AttendanceRecordResponse> result = attendanceOpenApiService.getAttendanceRecords(queryRequest,
+                token);
         return ResponseDTO.ok(result);
     }
 
@@ -153,7 +177,8 @@ public class AttendanceOpenApiController {
         String token = extractTokenFromAuthorization(authorization);
         log.info("[开放API] 查询月度考勤统计: userId={}, yearMonth={}", userId, yearMonth);
 
-        MonthlyAttendanceStatisticsResponse statistics = attendanceOpenApiService.getMonthlyStatistics(userId, yearMonth, token);
+        MonthlyAttendanceStatisticsResponse statistics = attendanceOpenApiService.getMonthlyStatistics(userId,
+                yearMonth, token);
         return ResponseDTO.ok(statistics);
     }
 
@@ -208,7 +233,8 @@ public class AttendanceOpenApiController {
         log.info("[开放API] 查询考勤异常记录: pageNum={}, pageSize={}, abnormalType={}",
                 pageNum, pageSize, abnormalType);
 
-        PageResult<AbnormalAttendanceResponse> result = attendanceOpenApiService.getAbnormalAttendance(queryRequest, token);
+        PageResult<AbnormalAttendanceResponse> result = attendanceOpenApiService.getAbnormalAttendance(queryRequest,
+                token);
         return ResponseDTO.ok(result);
     }
 
@@ -260,7 +286,8 @@ public class AttendanceOpenApiController {
         log.info("[开放API] 查询补卡申请列表: pageNum={}, pageSize={}, applicationStatus={}",
                 pageNum, pageSize, applicationStatus);
 
-        PageResult<SupplementApplicationResponse> result = attendanceOpenApiService.getSupplementApplications(queryRequest, token);
+        PageResult<SupplementApplicationResponse> result = attendanceOpenApiService
+                .getSupplementApplications(queryRequest, token);
         return ResponseDTO.ok(result);
     }
 

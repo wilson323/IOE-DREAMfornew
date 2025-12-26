@@ -16,21 +16,21 @@ import request from '@/utils/request'
  * 初始化移动端认证
  */
 export const initializeAuth = (params) => {
-  return request.post('/api/access/mobile/auth/initialize', params)
+  return request.post('/api/mobile/v1/access/auth/initialize', params)
 }
 
 /**
  * 刷新移动端认证令牌
  */
 export const refreshToken = (params) => {
-  return request.post('/api/access/mobile/auth/refresh', params)
+  return request.post('/api/mobile/v1/access/auth/refresh', params)
 }
 
 /**
  * 注销移动端认证
  */
 export const logout = (params) => {
-  return request.post('/api/access/mobile/auth/logout', params)
+  return request.post('/api/mobile/v1/access/auth/logout', params)
 }
 
 // ==================== 访问控制接口 ====================
@@ -39,28 +39,28 @@ export const logout = (params) => {
  * 生成临时访问二维码
  */
 export const generateQRCode = (params) => {
-  return request.post('/api/access/mobile/qrcode/generate', params)
+  return request.post('/api/mobile/v1/access/qrcode/generate', params)
 }
 
 /**
  * 验证二维码访问
  */
 export const verifyQRCode = (params) => {
-  return request.post('/api/access/mobile/qrcode/verify', params)
+  return request.post('/api/mobile/v1/access/qrcode/verify', params)
 }
 
 /**
  * 请求门禁访问
  */
 export const requestAccess = (params) => {
-  return request.post('/api/access/mobile/access/request', params)
+  return request.post('/api/mobile/v1/access/access/request', params)
 }
 
 /**
  * 生物识别验证
  */
 export const verifyBiometric = (params) => {
-  return request.post('/api/access/mobile/biometric/verify', params)
+  return request.post('/api/mobile/v1/access/biometric/verify', params)
 }
 
 // ==================== 位置服务接口 ====================
@@ -111,7 +111,7 @@ export const getCurrentLocation = () => {
  * 更新设备位置
  */
 export const updateDeviceLocation = (params) => {
-  return request.post('/api/access/mobile/location/update', params)
+  return request.post('/api/mobile/v1/access/location/update', params)
 }
 
 // ==================== 事件管理接口 ====================
@@ -120,21 +120,21 @@ export const updateDeviceLocation = (params) => {
  * 发送移动端事件
  */
 export const sendEvent = (params) => {
-  return request.post('/api/access/mobile/events/send', params)
+  return request.post('/api/mobile/v1/access/events/send', params)
 }
 
 /**
  * 获取最近的事件记录
  */
 export const getRecentEvents = (params) => {
-  return request.get('/api/access/mobile/events/recent', params)
+  return request.get('/api/mobile/v1/access/events/recent', params)
 }
 
 /**
  * 获取设备日志
  */
 export const getDeviceLogs = (params) => {
-  return request.get('/api/access/mobile/logs', params)
+  return request.get('/api/mobile/v1/access/logs', params)
 }
 
 // ==================== 通行记录接口 ====================
@@ -143,14 +143,14 @@ export const getDeviceLogs = (params) => {
  * 获取最近的通行记录
  */
 export const getRecentRecords = (params) => {
-  return request.get('/api/access/mobile/records/recent', params)
+  return request.get('/api/mobile/v1/access/records/recent', params)
 }
 
 /**
  * 获取通行统计
  */
 export const getAccessStatistics = (params) => {
-  return request.get('/api/access/mobile/statistics', params)
+  return request.get('/api/mobile/v1/access/statistics', params)
 }
 
 // ==================== 紧急告警接口 ====================
@@ -159,21 +159,21 @@ export const getAccessStatistics = (params) => {
  * 获取紧急告警
  */
 export const getEmergencyAlerts = (params) => {
-  return request.get('/api/access/mobile/alerts/emergency', params)
+  return request.get('/api/mobile/v1/access/alerts/emergency', params)
 }
 
 /**
  * 发送紧急求助
  */
 export const sendEmergencyRequest = (params) => {
-  return request.post('/api/access/mobile/emergency/request', params)
+  return request.post('/api/mobile/v1/access/emergency/request', params)
 }
 
 /**
  * 确认收到告警
  */
 export const acknowledgeAlert = (params) => {
-  return request.post('/api/access/mobile/alerts/acknowledge', params)
+  return request.post('/api/mobile/v1/access/alerts/acknowledge', params)
 }
 
 // ==================== 设备管理接口 ====================
@@ -182,21 +182,21 @@ export const acknowledgeAlert = (params) => {
  * 发送设备心跳
  */
 export const sendHeartbeat = (params) => {
-  return request.post('/api/access/mobile/heartbeat', params)
+  return request.post('/api/mobile/v1/access/heartbeat', params)
 }
 
 /**
  * 获取设备信息
  */
 export const getDeviceInfo = (deviceId) => {
-  return request.get(`/api/access/mobile/device/${deviceId}`)
+  return request.get(`/api/mobile/v1/access/device/${deviceId}`)
 }
 
 /**
  * 更新设备配置
  */
 export const updateDeviceConfig = (params) => {
-  return request.put('/api/access/mobile/device/config', params)
+  return request.put('/api/mobile/v1/access/device/config', params)
 }
 
 // ==================== 用户配置接口 ====================
@@ -205,14 +205,14 @@ export const updateDeviceConfig = (params) => {
  * 获取用户配置
  */
 export const getUserSettings = (userId) => {
-  return request.get(`/api/access/mobile/user/${userId}/settings`)
+  return request.get(`/api/mobile/v1/access/user/${userId}/settings`)
 }
 
 /**
  * 更新用户配置
  */
 export const updateUserSettings = (params) => {
-  return request.put('/api/access/mobile/user/settings', params)
+  return request.put('/api/mobile/v1/access/user/settings', params)
 }
 
 // ==================== 缓存和同步接口 ====================
@@ -221,14 +221,14 @@ export const updateUserSettings = (params) => {
  * 同步离线数据
  */
 export const syncOfflineData = (params) => {
-  return request.post('/api/access/mobile/sync/offline', params)
+  return request.post('/api/mobile/v1/access/sync/offline', params)
 }
 
 /**
  * 获取离线配置
  */
 export const getOfflineConfig = (deviceId) => {
-  return request.get(`/api/access/mobile/offline/config/${deviceId}`)
+  return request.get(`/api/mobile/v1/access/offline/config/${deviceId}`)
 }
 
 // ==================== 安全接口 ====================
@@ -237,14 +237,14 @@ export const getOfflineConfig = (deviceId) => {
  * 检查设备安全状态
  */
 export const checkSecurityStatus = (deviceId) => {
-  return request.get(`/api/access/mobile/security/check/${deviceId}`)
+  return request.get(`/api/mobile/v1/access/security/check/${deviceId}`)
 }
 
 /**
  * 报告设备丢失
  */
 export const reportDeviceLost = (params) => {
-  return request.post('/api/access/mobile/security/report-lost', params)
+  return request.post('/api/mobile/v1/access/security/report-lost', params)
 }
 
 // ==================== 移动端特色功能 ====================
@@ -400,21 +400,21 @@ export const playBeep = () => {
  * 获取全局联动状态
  */
 export const getGlobalLinkageStatus = (params) => {
-  return request.get('/api/access/mobile/global-linkage/status', params)
+  return request.get('/api/mobile/v1/access/global-linkage/status', params)
 }
 
 /**
  * 触发移动端联动
  */
 export const triggerMobileLinkage = (params) => {
-  return request.post('/api/access/mobile/global-linkage/trigger', params)
+  return request.post('/api/mobile/v1/access/global-linkage/trigger', params)
 }
 
 /**
  * 获取移动端联动规则
  */
 export const getMobileLinkageRules = (params) => {
-  return request.get('/api/access/mobile/global-linkage/rules', params)
+  return request.get('/api/mobile/v1/access/global-linkage/rules', params)
 }
 
 // ==================== 导出默认对象 ====================

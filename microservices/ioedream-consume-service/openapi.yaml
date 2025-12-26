@@ -1,0 +1,2312 @@
+openapi: 3.0.3
+info:
+  title: IOE-DREAM 消费服务 API
+  description: |
+    IOE-DREAM 智能管理系统中消费服务的完整 API 接口规范。
+
+    本服务提供以下核心功能：
+    - 产品管理：产品信息、价格、库存管理
+    - 消费记录：消费记录创建、查询、统计分析
+    - 补贴管理：补贴发放、使用、统计
+    - 餐次分类：分类管理、树结构构建
+    - 设备管理：设备监控、状态管理、配置
+    - 充值记录：充值记录、统计分析、对账
+
+    **服务信息**:
+    - 服务名称: ioedream-consume-service
+    - 服务端口: 8094
+    - API版本: v1
+    - 基础路径: /api/v1/consume
+
+    **认证方式**:
+    - Bearer Token: 在请求头中添加 `Authorization: Bearer {token}`
+    - API Key: 在请求头中添加 `X-API-Key: {api_key}`
+
+  version: 1.0.0
+  contact:
+    name: IOE-DREAM 开发团队
+    email: support@ioe-dream.com
+    url: https://ioe-dream.com
+  license:
+    name: MIT License
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:8094
+    description: 本地开发环境
+  - url: https://api.ioe-dream.com/consume
+    description: 生产环境
+
+paths:
+  # ==================== 产品管理 API ====================
+
+  /api/v1/consume/products:
+    get:
+      tags:
+        - 产品管理
+      summary: 获取产品列表
+      description: 分页获取产品列表，支持按条件筛选
+      parameters:
+        - name: pageNum
+          in: query
+          description: 页码，从1开始
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+        - name: pageSize
+          in: query
+          description: 每页记录数
+          schema:
+            type: integer
+            default: 20
+            minimum: 1
+            maximum: 100
+        - name: productCode
+          in: query
+          description: 产品编码
+          schema:
+            type: string
+        - name: productName
+          in: query
+          description: 产品名称（模糊搜索）
+          schema:
+            type: string
+        - name: productCategory
+          in: query
+          description: 产品分类
+          schema:
+            type: integer
+        - name: productStatus
+          in: query
+          description: 产品状态（0-下架 1-上架）
+          schema:
+            type: integer
+            enum: [0, 1]
+        - name: minPrice
+          in: query
+          description: 最低价格
+          schema:
+            type: number
+            format: double
+        - name: maxPrice
+          in: query
+          description: 最高价格
+          schema:
+            type: number
+            format: double
+      responses:
+        '200':
+          description: 查询成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageResult-ProductVO'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+    post:
+      tags:
+        - 产品管理
+      summary: 创建产品
+      description: 创建新的产品
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductAddForm'
+      responses:
+        '200':
+          description: 创建成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseData-ProductVO'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /api/v1/consume/products/{id}:
+    get:
+      tags:
+        - 产品管理
+      summary: 获取产品详情
+      description: 根据产品ID获取产品详细信息
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: 产品ID
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: 查询成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseData-ProductDetailVO'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+    put:
+      tags:
+        - 产品管理
+      summary: 更新产品
+      description: 更新产品信息
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: 产品ID
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductUpdateForm'
+      responses:
+        '200':
+          description: 更新成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseSuccess'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+    delete:
+      tags:
+        - 产品管理
+      summary: 删除产品
+      description: 删除指定产品（仅限自定义产品，系统产品不能删除）
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: 产品ID
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: 删除成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseSuccess'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /api/v1/consume/products/{id}/stock:
+    put:
+      tags:
+        - 产品管理
+      summary: 更新产品库存
+      description: 更新指定产品的库存数量
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: 产品ID
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - quantity
+              properties:
+                quantity:
+                  type: integer
+                  description: 库存变更数量（正数增加，负数减少）
+                  example: 10
+                reason:
+                  type: string
+                  description: 变更原因
+                  example: "采购入库"
+      responses:
+        '200':
+          description: 更新成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseSuccess'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /api/v1/consume/products/search:
+    get:
+      tags:
+        - 产品管理
+      summary: 产品搜索
+      description: 根据关键词搜索产品
+      parameters:
+        - name: keyword
+          in: query
+          required: true
+          description: 搜索关键词
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: 返回结果数量限制
+          schema:
+            type: integer
+            default: 20
+            maximum: 100
+      responses:
+        '200':
+          description: 搜索成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                  type: integer
+                  message:
+                  type: string
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ProductVO'
+                  timestamp:
+                    type: string
+                    format: date-time
+
+  # ==================== 消费记录 API ====================
+
+  /api/v1/consume/records:
+    get:
+      tags:
+        - 消费记录
+      summary: 获取消费记录列表
+      description: 分页获取消费记录列表
+      parameters:
+        - name: pageNum
+          in: query
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+        - name: pageSize
+          in: query
+          schema:
+            type: integer
+            default: 20
+            minimum: 1
+            maximum: 100
+        - name: userId
+          in: query
+          description: 用户ID
+          schema:
+            type: integer
+            format: int64
+        - name: productId
+          in: query
+          description: 产品ID
+          schema:
+            type: integer
+            format: int64
+        - name: startDate
+          in: query
+          description: 开始日期（yyyy-MM-dd）
+          schema:
+            type: string
+            format: date
+        - name: endDate
+          in: query
+          description: 结束日期（yyyy-MM-dd）
+          schema:
+            type: string
+            format: date
+        - name: minAmount
+          in: query
+          description: 最小消费金额
+          schema:
+            type: number
+            format: double
+        - name: maxAmount
+          in: query
+          description: 最大消费金额
+          schema:
+            type: number
+            format: double
+      responses:
+        '200':
+          description: 查询成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageResult-ConsumeRecordVO'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+    post:
+      tags:
+        - 消费记录
+      summary: 创建消费记录
+      description: 创建新的消费记录
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsumeRecordAddForm'
+      responses:
+        '200':
+          description: 创建成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseData-ConsumeRecordVO'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /api/v1/consume/records/statistics:
+    get:
+      tags:
+        - 消费记录
+      summary: 消费统计
+      description: 获取消费统计数据
+      parameters:
+        - name: startDate
+          in: query
+          description: 开始日期（yyyy-MM-dd）
+          schema:
+            type: string
+            format: date
+        - name: endDate
+          in: query
+          description: 结束日期（yyyy-MM-dd）
+          schema:
+            type: string
+            format: date
+        - name: type
+          in: query
+          description: 统计类型（daily/monthly/product/user）
+          schema:
+            type: string
+            enum: [daily, monthly, product, user]
+      responses:
+        '200':
+          description: 统计成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                  type: integer
+                  message:
+                  type: string
+                  data:
+                    type: object
+                    description: 统计数据对象
+                  timestamp:
+                    type: string
+                    format: date-time
+
+  # ==================== 补贴管理 API ====================
+
+  /api/v1/consume/subsidies:
+    get:
+      tags:
+        - 补贴管理
+      summary: 获取补贴列表
+      description: 分页获取补贴列表
+      parameters:
+        - name: pageNum
+          in: query
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+        - name: pageSize
+          in: query
+          schema:
+            type: integer
+            default: 20
+            minimum: 1
+            maximum: 100
+        - name: userId
+          in: query
+          description: 用户ID
+          schema:
+            type: integer
+            format: int64
+        - name: subsidyType
+          in: query
+          description: 补贴类型
+          schema:
+            type: integer
+        - name: subsidyStatus
+          in: query
+          description: 补贴状态
+          schema:
+            type: integer
+        - name: subsidyPeriod
+          in: query
+          description: 补贴周期
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: 查询成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageResult-ConsumeSubsidyVO'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+    post:
+      tags:
+        - 补贴管理
+      summary: 创建补贴
+      description: 创建新的补贴
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsumeSubsidyAddForm'
+      responses:
+        '200':
+          description: 创建成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseData-ConsumeSubsidyVO'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /api/v1/consume/subsidies/{id}/issue:
+    post:
+      tags:
+        - 补贴管理
+      summary: 发放补贴
+      description: 发放指定补贴
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: 补贴ID
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                issueDate:
+                  type: string
+                  format: date-time
+                  description: 发放时间
+                  example: "2025-12-22T10:00:00"
+                remark:
+                  type: string
+                  description: 发放备注
+                  example: "月度餐饮补贴"
+      responses:
+        '200':
+          description: 发放成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseSuccess'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /api/v1/consume/subsidies/{id}/use:
+    post:
+      tags:
+        - 补贴管理
+      summary: 使用补贴
+      description: 使用指定补贴进行消费
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: 补贴ID
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - amount
+                - consumeRecordId
+              properties:
+                amount:
+                  type: number
+                  format: double
+                  description: 使用金额
+                  example: 15.50
+                consumeRecordId:
+                  type: integer
+                  format: int64
+                  description: 关联的消费记录ID
+                  example: 1001
+                merchantCode:
+                  type: string
+                  description: 商户编码
+                  example: "MERCHANT_001"
+      responses:
+        '200':
+          description: 使用成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                  type: integer
+                  message:
+                  type: string
+                  data:
+                    type: object
+                    properties:
+                      usedAmount:
+                        type: number
+                        format: double
+                        example: 15.50
+                      remainingAmount:
+                        type: number
+                        format: double
+                        example: 84.50
+                  timestamp:
+                    type: string
+                    format: date-time
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  # ==================== 餐次分类 API ====================
+
+  /api/v1/consume/meal-categories:
+    get:
+      tags:
+        - 餐次分类
+      summary: 获取餐次分类列表
+      description: 获取所有餐次分类列表
+      responses:
+        '200':
+          description: 查询成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseData-List-ConsumeMealCategoryVO'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+    post:
+      tags:
+        - 餐次分类
+      summary: 创建餐次分类
+      description: 创建新的餐次分类
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsumeMealCategoryAddForm'
+      responses:
+        '200':
+          description: 创建成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseData-ConsumeMealCategoryVO'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /api/v1/consume/meal-categories/tree:
+    get:
+      tags:
+        - 餐次分类
+      summary: 获取分类树结构
+      description: 获取餐次分类的树形结构
+      responses:
+        '200':
+          description: 查询成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseData-List-ConsumeMealCategoryTreeVO'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  # ==================== 设备管理 API ====================
+
+  /api/v1/consume/devices:
+    get:
+      tags:
+        - 设备管理
+      summary: 获取设备列表
+      description: 分页获取设备列表
+      parameters:
+        - name: pageNum
+          in: query
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+        - name: pageSize
+          in: query
+          schema:
+            type: integer
+            default: 20
+            minimum: 1
+            maximum: 100
+        - name: deviceCode
+          in: query
+          description: 设备编码
+          schema:
+            type: string
+        - name: deviceName
+          in: query
+          description: 设备名称（模糊搜索）
+          schema:
+            type: string
+        - name: deviceType
+          in: query
+          description: 设备类型
+          schema:
+            type: integer
+        - name: deviceStatus
+          in: query
+          description: 设备状态
+          schema:
+            type: integer
+            enum: [0, 1, 2, 3]
+      responses:
+        '200':
+          description: 查询成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageResult-ConsumeDeviceVO'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+    post:
+      tags:
+        - 设备管理
+      summary: 创建设备
+      description: 创建新的设备
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsumeDeviceAddForm'
+      responses:
+        '200':
+          description: 创建成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseData-ConsumeDeviceVO'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /api/v1/consume/devices/{id}/heartbeat:
+    post:
+      tags:
+        - 设备管理
+      summary: 设备心跳
+      description: 设备上报心跳信息
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: 设备ID
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - timestamp
+                - status
+              properties:
+                timestamp:
+                  type: string
+                  format: date-time
+                  description: 心跳时间戳
+                  example: "2025-12-22T10:00:00"
+                status:
+                  type: integer
+                  description: 设备状态
+                  example: 1
+                cpuUsage:
+                  type: number
+                  description: CPU使用率
+                  example: 45.5
+                memoryUsage:
+                  type: number
+                  description: 内存使用率
+                  example: 62.3
+                diskUsage:
+                  type: number
+                  description: 磁盘使用率
+                  example: 30.0
+      responses:
+        '200':
+          description: 心跳成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseSuccess'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  # ==================== 充值记录 API ====================
+
+  /api/v1/consume/recharges:
+    get:
+      tags:
+        - 充值记录
+      summary: 获取充值记录列表
+      description: 分页获取充值记录列表
+      parameters:
+        - name: pageNum
+          in: query
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+        - name: pageSize
+          in: query
+          schema:
+            type: integer
+            default: 20
+            minimum: 1
+            maximum: 100
+        - name: userId
+          in: query
+          description: 用户ID
+          schema:
+            type: integer
+            format: int64
+        - name: rechargeStatus
+          in: query
+          description: 充值状态
+          schema:
+            type: integer
+        - name: rechargeWay
+          in: query
+          description: 充值方式
+          schema:
+            type: integer
+        - name: startDate
+          in: query
+          description: 开始日期（yyyy-MM-dd）
+          schema:
+            type: string
+            format: date
+        - name: endDate
+          in: query
+          description: 结束日期（yyyy-MM-dd）
+          schema:
+            type: string
+            format: date
+        - name: minAmount
+          in: query
+          description: 最小充值金额
+          schema:
+            type: number
+            format: double
+        - name: maxAmount
+          in: query
+          description: 最大充值金额
+          schema:
+            type: number
+            format: double
+      responses:
+        '200':
+          description: 查询成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageResult-ConsumeRechargeVO'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+    post:
+      tags:
+        - 充值记录
+      summary: 创建充值记录
+      description: 创建新的充值记录
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsumeRechargeAddForm'
+      responses:
+        '200':
+          description: 创建成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseData-ConsumeRechargeVO'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /api/v1/consume/recharges/{id}/approve:
+    post:
+      tags:
+        - 充值记录
+      summary: 审核通过充值
+      description: 审核通过指定的充值记录
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: 充值记录ID
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                auditRemark:
+                  type: string
+                  description: 审核备注
+                  example: "审核通过"
+      responses:
+        '200':
+          description: 审核成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseSuccess'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  # ==================== 统计分析 API ====================
+
+  /api/v1/consume/statistics/overview:
+    get:
+      tags:
+        - 统计分析
+      summary: 系统概览统计
+      description: 获取消费服务系统概览统计数据
+      parameters:
+        - name: startDate
+          in: query
+          description: 开始日期（yyyy-MM-dd）
+          schema:
+            type: string
+            format: date
+        - name: endDate
+          in: query
+          description: 结束日期（yyyy-MM-dd）
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: 统计成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseData-OverviewStatistics'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+# ==================== 组件定义 ====================
+components:
+  schemas:
+    # 通用响应结构
+    ResponseSuccess:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: "操作成功"
+        data:
+          type: object
+          nullable: true
+        timestamp:
+          type: string
+          format: date-time
+
+    # 分页响应结构
+    PageResult:
+      type: object
+      properties:
+        list:
+          type: array
+          items: {}
+        total:
+          type: integer
+          format: int64
+        pageNum:
+          type: integer
+        pageSize:
+          type: integer
+        pages:
+          type: integer
+
+    # 产品相关Schema
+    ProductVO:
+      type: object
+      properties:
+        productId:
+          type: integer
+          format: int64
+          description: 产品ID
+        productCode:
+          type: string
+          description: 产品编码
+        productName:
+          type: string
+          description: 产品名称
+        productCategory:
+          type: integer
+          description: 产品分类
+        categoryName:
+          type: string
+          description: 分类名称
+        basePrice:
+          type: number
+          format: double
+          description: 基础价格
+        salePrice:
+          type: number
+          format: double
+          description: 销售价格
+        costPrice:
+          type: number
+          format: double
+          description: 成本价格
+        productStatus:
+          type: integer
+          description: 产品状态（0-下架 1-上架）
+        productStatusName:
+          type: string
+          description: 产品状态名称
+        stockQuantity:
+          type: integer
+          description: 库存数量
+        allowDiscount:
+          type: integer
+          description: 是否允许折扣
+        maxDiscountRate:
+          type: number
+          format: double
+          description: 最大折扣率
+        productImage:
+          type: string
+          description: 产品图片
+        productDescription:
+          type: string
+          description: 产品描述
+        productTags:
+          type: string
+          description: 产品标签
+        ratingAverage:
+          type: number
+          format: double
+          description: 平均评分
+        ratingCount:
+          type: integer
+          description: 评分数量
+        createTime:
+          type: string
+          format: date-time
+          description: 创建时间
+
+    ProductDetailVO:
+      allOf:
+        - $ref: '#/components/schemas/ProductVO'
+        - type: object
+          properties:
+            salesCount:
+              type: integer
+              description: 销售数量
+            totalRevenue:
+              type: number
+              format: double
+              description: 总收入
+            lastSaleTime:
+              type: string
+              format: date-time
+              description: 最后销售时间
+
+    ProductAddForm:
+      type: object
+      required:
+        - productCode
+        - productName
+        - productCategory
+        - basePrice
+        - salePrice
+        - costPrice
+        - productStatus
+        - stockQuantity
+        - allowDiscount
+      properties:
+        productCode:
+          type: string
+          description: 产品编码
+          maxLength: 50
+        productName:
+          type: string
+          description: 产品名称
+          maxLength: 100
+        productCategory:
+          type: integer
+          description: 产品分类
+        basePrice:
+          type: number
+          format: double
+          minimum: 0.01
+          description: 基础价格
+        salePrice:
+          type: number
+          format: double
+          minimum: 0.01
+          description: 销售价格
+        costPrice:
+          type: number
+          format: double
+          minimum: 0
+          description: 成本价格
+        productStatus:
+          type: integer
+          enum: [0, 1]
+          description: 产品状态（0-下架 1-上架）
+        stockQuantity:
+          type: integer
+          minimum: 0
+          description: 库存数量
+        allowDiscount:
+          type: integer
+          enum: [0, 1]
+          description: 是否允许折扣
+        maxDiscountRate:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 1
+          description: 最大折扣率
+        productImage:
+          type: string
+          description: 产品图片
+        productDescription:
+          type: string
+          maxLength: 500
+          description: 产品描述
+        productTags:
+          type: string
+          maxLength: 255
+          description: 产品标签
+
+    ProductUpdateForm:
+      type: object
+      properties:
+        productName:
+          type: string
+          description: 产品名称
+          maxLength: 100
+        basePrice:
+          type: number
+          format: double
+          minimum: 0.01
+          description: 基础价格
+        salePrice:
+          type: number
+          format: double
+          minimum: 0.01
+          description: 销售价格
+        costPrice:
+          type: number
+          format: double
+          minimum: 0
+          description: 成本价格
+        productStatus:
+          type: integer
+          enum: [0, 1]
+          description: 产品状态
+        stockQuantity:
+          type: integer
+          minimum: 0
+          description: 库存数量
+        allowDiscount:
+          type: integer
+          enum: [0, 1]
+          description: 是否允许折扣
+        maxDiscountRate:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 1
+          description: 最大折扣率
+        productImage:
+          type: string
+          description: 产品图片
+        productDescription:
+          type: string
+          maxLength: 500
+          description: 产品描述
+        productTags:
+          type: string
+          maxLength: 255
+          description: 产品标签
+
+    # 消费记录相关Schema
+    ConsumeRecordVO:
+      type: object
+      properties:
+        recordId:
+          type: integer
+          format: int64
+          description: 消费记录ID
+        userId:
+          type: integer
+          format: int64
+          description: 用户ID
+        userName:
+          type: string
+          description: 用户姓名
+        productId:
+          type: integer
+          format: int64
+          description: 产品ID
+        productName:
+          type: string
+          description: 产品名称
+        productCode:
+          type: string
+          description: 产品编码
+        originalAmount:
+          type: number
+          format: double
+          description: 原始金额
+        actualAmount:
+          type: number
+          format: double
+          description: 实际金额
+        discountAmount:
+          type: number
+          format: double
+          description: 折扣金额
+        consumeTime:
+          type: string
+          format: date-time
+          description: 消费时间
+        deviceCode:
+          type: string
+          description: 设备编码
+        deviceName:
+          type: string
+          description: 设备名称
+        paymentMethod:
+          type: string
+          description: 支付方式
+        consumeType:
+          type: integer
+          description: 消费类型
+        recordStatus:
+          type: integer
+          description: 记录状态
+
+    ConsumeRecordAddForm:
+      type: object
+      required:
+        - userId
+        - productId
+        - originalAmount
+        - actualAmount
+      properties:
+        userId:
+          type: integer
+          format: int64
+          description: 用户ID
+        productId:
+          type: integer
+          format: int64
+          description: 产品ID
+        originalAmount:
+          type: number
+          format: double
+          minimum: 0.01
+          description: 原始金额
+        actualAmount:
+          type: number
+          format: double
+          minimum: 0.01
+          description: 实际金额
+        discountAmount:
+          type: number
+          format: double
+          description: 折扣金额
+        deviceCode:
+          type: string
+          description: 设备编码
+        paymentMethod:
+          type: string
+          description: 支付方式
+        consumeType:
+          type: integer
+          description: 消费类型
+        remark:
+          type: string
+          description: 备注信息
+
+    # 补贴相关Schema
+    ConsumeSubsidyVO:
+      type: object
+      properties:
+        subsidyId:
+          type: integer
+          format: int64
+          description: 补贴ID
+        subsidyCode:
+          type: string
+          description: 补贴编码
+        subsidyName:
+          type: string
+          description: 补贴名称
+        userId:
+          type: integer
+          format: int64
+          description: 用户ID
+        userName:
+          type: string
+          description: 用户姓名
+        subsidyType:
+          type: integer
+          description: 补贴类型
+        subsidyTypeName:
+          type: string
+          description: 补贴类型名称
+        subsidyPeriod:
+          type: integer
+          description: 补贴周期
+        subsidyPeriodName:
+          type: string
+          description: 补贴周期名称
+        subsidyAmount:
+          type: number
+          format: double
+          description: 补贴金额
+        usedAmount:
+          type: number
+          format: double
+          description: 已使用金额
+        remainingAmount:
+          type: number
+          format: double
+          description: 剩余金额
+        subsidyStatus:
+          type: integer
+          description: 补贴状态
+        subsidyStatusName:
+          type: string
+          description: 补贴状态名称
+        effectiveDate:
+          type: string
+          format: date-time
+          description: 生效日期
+        expiryDate:
+          type: string
+          format: date-time
+          description: 过期日期
+        issueDate:
+          type: string
+          format: date-time
+          description: 发放日期
+        issuerName:
+          type: string
+          description: 发放人姓名
+        applicableMerchants:
+          type: string
+          description: 适用商户
+        dailyLimit:
+          type: number
+          format: double
+          description: 每日限额
+        dailyUsedAmount:
+          type: number
+          format: double
+          description: 每日已使用金额
+        dailyUsageDate:
+          type: string
+          format: date
+          description: 每日使用日期
+        autoRenew:
+          type: integer
+          description: 是否自动续期
+        renewalRule:
+          type: string
+          description: 续期规则
+        remark:
+          type: string
+          description: 备注信息
+
+    ConsumeSubsidyAddForm:
+      type: object
+      required:
+        - subsidyCode
+        - subsidyName
+        - userId
+        - subsidyType
+        - subsidyPeriod
+        - subsidyAmount
+        - effectiveDate
+        - expiryDate
+      properties:
+        subsidyCode:
+          type: string
+          description: 补贴编码
+          maxLength: 50
+        subsidyName:
+          type: string
+          description: 补贴名称
+          maxLength: 100
+        userId:
+          type: integer
+          format: int64
+          description: 用户ID
+        subsidyType:
+          type: integer
+          description: 补贴类型
+        subsidyPeriod:
+          type: integer
+          description: 补贴周期
+        subsidyAmount:
+          type: number
+          format: double
+          minimum: 0.01
+          description: 补贴金额
+        effectiveDate:
+          type: string
+          format: date-time
+          description: 生效日期
+        expiryDate:
+          type: string
+          format: date-time
+          description: 过期日期
+        applicableMerchants:
+          type: string
+          description: 适用商户
+        dailyLimit:
+          type: number
+          format: double
+          minimum: 0
+          description: 每日限额
+        maxDiscountRate:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 1
+          description: 最大折扣率
+        autoRenew:
+          type: integer
+          enum: [0, 1]
+          description: 是否自动续期
+        renewalRule:
+          type: string
+          description: 续期规则
+        remark:
+          type: string
+          maxLength: 500
+          description: 备注信息
+
+    # 餐次分类相关Schema
+    ConsumeMealCategoryVO:
+      type: object
+      properties:
+        categoryId:
+          type: integer
+          format: int64
+          description: 分类ID
+        categoryCode:
+          type: string
+          description: 分类编码
+        categoryName:
+          type: string
+          description: 分类名称
+        parentId:
+          type: integer
+          format: int64
+          description: 父分类ID
+        categoryLevel:
+          type: integer
+          description: 分类层级
+        sortOrder:
+          type: integer
+          description: 排序号
+        categoryIcon:
+          type: string
+          description: 分类图标
+        categoryColor:
+          type: string
+          description: 分类颜色
+        status:
+          type: integer
+          description: 状态
+        isSystem:
+          type: integer
+          description: 是否系统预设
+        description:
+          type: string
+          description: 描述信息
+        availableTimePeriods:
+          type: string
+          description: 可用时间段
+        maxAmountLimit:
+          type: number
+          format: double
+          description: 最大消费金额限制
+        minAmountLimit:
+          type: number
+          format: double
+          description: 最小消费金额限制
+        dailyLimitCount:
+          type: integer
+          description: 每日消费次数限制
+        allowDiscount:
+          type: integer
+          description: 是否允许折扣
+        discountRate:
+          type: number
+          format: double
+          description: 折扣比例
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsumeMealCategoryVO'
+        consumptionCount:
+          type: integer
+          format: int64
+          description: 消费记录数
+        totalConsumptionAmount:
+          type: number
+          format: double
+          description: 总消费金额
+        todayConsumptionCount:
+          type: integer
+          format: int64
+          description: 今日消费次数
+        todayConsumptionAmount:
+          type: number
+          format: double
+          description: 今日消费金额
+
+    ConsumeMealCategoryTreeVO:
+      allOf:
+        - $ref: '#/components/schemas/ConsumeMealCategoryVO'
+        - type: object
+          properties:
+            children:
+              type: array
+              items:
+                $ref: '#/components/schemas/ConsumeMealCategoryTreeVO'
+
+    ConsumeMealCategoryAddForm:
+      type: object
+      required:
+        - categoryCode
+        - categoryName
+        - categoryLevel
+        - sortOrder
+        - status
+      properties:
+        categoryCode:
+          type: string
+          description: 分类编码
+          maxLength: 50
+        categoryName:
+          type: string
+          description: 分类名称
+          maxLength: 100
+        parentId:
+          type: integer
+          format: int64
+          description: 父分类ID
+        categoryLevel:
+          type: integer
+          minimum: 1
+          maximum: 3
+          description: 分类层级
+        sortOrder:
+          type: integer
+          minimum: 1
+          description: 排序号
+        categoryIcon:
+          type: string
+          description: 分类图标
+          maxLength: 255
+        categoryColor:
+          type: string
+          description: 分类颜色
+          maxLength: 20
+        status:
+          type: integer
+          enum: [0, 1]
+          description: 状态
+        description:
+          type: string
+          maxLength: 500
+          description: 描述信息
+        availableTimePeriods:
+          type: string
+          description: 可用时间段
+        maxAmountLimit:
+          type: number
+          format: double
+          minimum: 0.01
+          description: 最大消费金额限制
+        minAmountLimit:
+          type: number
+          format: double
+          minimum: 0
+          description: 最小消费金额限制
+        dailyLimitCount:
+          type: integer
+          minimum: 0
+          description: 每日消费次数限制
+        allowDiscount:
+          type: integer
+          enum: [0, 1]
+          description: 是否允许折扣
+        discountRate:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 1
+          description: 折扣比例
+
+    # 设备相关Schema
+    ConsumeDeviceVO:
+      type: object
+      properties:
+        deviceId:
+          type: integer
+          format: int64
+          description: 设备ID
+        deviceCode:
+          type: string
+          description: 设备编码
+        deviceName:
+          type: string
+          description: 设备名称
+        deviceType:
+          type: integer
+          description: 设备类型
+        deviceTypeName:
+          type: string
+          description: 设备类型名称
+        deviceModel:
+          type: string
+          description: 设备型号
+        manufacturer:
+          type: string
+          description: 制造商
+        deviceStatus:
+          type: integer
+          description: 设备状态
+        deviceStatusName:
+          type: string
+          description: 设备状态名称
+        ipAddress:
+          type: string
+          description: IP地址
+        port:
+          type: integer
+          description: 端口号
+        location:
+          type: string
+          description: 安装位置
+        installationDate:
+          type: string
+          format: date-time
+          description: 安装日期
+        lastHeartbeatTime:
+          type: string
+          format: date-time
+          description: 最后心跳时间
+        onlineDuration:
+          type: integer
+          description: 在线时长（分钟）
+        totalTransactions:
+          type: integer
+          format: int64
+          description: 总交易次数
+        todayTransactions:
+          type: integer
+          description: 今日交易次数
+        firmwareVersion:
+          type: string
+          description: 固件版本
+        hardwareVersion:
+          type: string
+          description: 硬件版本
+        configuration:
+          type: string
+          description: 设备配置
+
+    ConsumeDeviceAddForm:
+      type: object
+      required:
+        - deviceCode
+        - deviceName
+        - deviceType
+        - deviceModel
+        - manufacturer
+        - ipAddress
+        - port
+      properties:
+        deviceCode:
+          type: string
+          description: 设备编码
+          maxLength: 50
+        deviceName:
+          type: string
+          description: 设备名称
+          maxLength: 100
+        deviceType:
+          type: integer
+          description: 设备类型
+        deviceModel:
+          type: string
+          description: 设备型号
+          maxLength: 100
+        manufacturer:
+          type: string
+          description: 制造商
+          maxLength: 100
+        ipAddress:
+          type: string
+          description: IP地址
+        port:
+          type: integer
+          description: 端口号
+        location:
+          type: string
+          description: 安装位置
+          maxLength: 200
+        configuration:
+          type: string
+          description: 设备配置
+
+    # 充值记录相关Schema
+    ConsumeRechargeVO:
+      type: object
+      properties:
+        recordId:
+          type: integer
+          format: int64
+          description: 充值记录ID
+        userId:
+          type: integer
+          format: int64
+          description: 用户ID
+        userName:
+          type: string
+          description: 用户姓名
+        rechargeAmount:
+          type: number
+          format: double
+          description: 充值金额
+        beforeBalance:
+          type: number
+          format: double
+          description: 充值前余额
+        afterBalance:
+          type: number
+          format: double
+          description: 充值后余额
+        rechargeWay:
+          type: integer
+          description: 充值方式
+        rechargeWayName:
+          type: string
+          description: 充值方式名称
+        rechargeChannel:
+          type: integer
+          description: 充值渠道
+        rechargeChannelName:
+          type: string
+          description: 充值渠道名称
+        transactionNo:
+          type: string
+          description: 交易流水号
+        thirdPartyNo:
+          type: string
+          description: 第三方交易号
+        rechargeStatus:
+          type: integer
+          description: 充值状态
+        rechargeStatusName:
+          type: string
+          description: 充值状态名称
+        rechargeTime:
+          type: string
+          format: date-time
+          description: 充值时间
+        arrivalTime:
+          type: string
+          format: date-time
+          description: 到账时间
+        deviceCode:
+          type: string
+          description: 充值设备编码
+        operatorName:
+          type: string
+          description: 操作员姓名
+        auditStatus:
+          type: integer
+          description: 审核状态
+        auditStatusName:
+          type: string
+          description: 审核状态名称
+        auditTime:
+          type: string
+          format: date-time
+          description: 审核时间
+        auditRemark:
+          type: string
+          description: 审核意见
+        rechargeDescription:
+          type: string
+          description: 充值说明
+        remark:
+          type: string
+          description: 备注信息
+
+    ConsumeRechargeAddForm:
+      type: object
+      required:
+        - userId
+        - userName
+        - rechargeAmount
+        - beforeBalance
+        - afterBalance
+        - rechargeWay
+        - rechargeChannel
+        - rechargeTime
+      properties:
+        userId:
+          type: integer
+          format: int64
+          description: 用户ID
+        userName:
+          type: string
+          description: 用户姓名
+          maxLength: 100
+        rechargeAmount:
+          type: number
+          format: double
+          minimum: 0.01
+          description: 充值金额
+        beforeBalance:
+          type: number
+          format: double
+          minimum: 0
+          description: 充值前余额
+        afterBalance:
+          type: number
+          format: double
+          minimum: 0
+          description: 充值后余额
+        rechargeWay:
+          type: integer
+          description: 充值方式
+        rechargeChannel:
+          type: integer
+          description: 充值渠道
+        transactionNo:
+          type: string
+          description: 交易流水号
+        thirdPartyNo:
+          type: string
+          description: 第三方交易号
+        deviceCode:
+          type: string
+          description: 充值设备编码
+        operatorName:
+          type: string
+          description: 操作员姓名
+        rechargeDescription:
+          type: string
+          description: 充值说明
+        remark:
+          type: string
+          description: 备注信息
+
+    # 统计数据Schema
+    OverviewStatistics:
+      type: object
+      properties:
+        totalProducts:
+          type: integer
+          description: 产品总数
+        totalUsers:
+          type: integer
+          description: 用户总数
+        totalDevices:
+          type: integer
+          description: 设备总数
+        onlineDevices:
+          type: integer
+          description: 在线设备数
+        totalConsumption:
+          type: number
+          format: double
+          description: 总消费金额
+        totalRevenue:
+          type: number
+          format: double
+          description: 总收入
+        todayConsumption:
+          type: number
+          format: double
+          description: 今日消费金额
+        todayRevenue:
+          type: number
+          format: double
+          description: 今日收入
+        totalRecharge:
+          type: number
+          format: double
+          description: 总充值金额
+        todayRecharge:
+          type: number
+          format: double
+          description: 今日充值金额
+        activeUsers:
+          type: integer
+          description: 活跃用户数
+        totalSubsidies:
+          type: number
+          format: double
+          description: 补贴总额
+        usedSubsidies:
+          type: number
+          format: double
+          description: 已使用补贴
+
+    # 泛型响应结构
+    ResponseData-ProductVO:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: "操作成功"
+        data:
+          $ref: '#/components/schemas/ProductVO'
+        timestamp:
+          type: string
+          format: date-time
+
+    ResponseData-List-ConsumeMealCategoryVO:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: "操作成功"
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsumeMealCategoryVO'
+        timestamp:
+          type: string
+          format: date-time
+
+    ResponseData-List-ConsumeMealCategoryTreeVO:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: "操作成功"
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsumeMealCategoryTreeVO'
+        timestamp:
+          type: string
+          format: date-time
+
+    PageResult-ProductVO:
+      allOf:
+        - $ref: '#/components/schemas/PageResult'
+        - type: object
+          properties:
+            list:
+              type: array
+              items:
+                $ref: '#/components/schemas/ProductVO'
+
+    PageResult-ConsumeRecordVO:
+      allOf:
+        - $ref: '#/components/schemas/PageResult'
+        - type: object
+          properties:
+            list:
+              type: array
+              items:
+                $ref: '#/components/schemas/ConsumeRecordVO'
+
+    PageResult-ConsumeSubsidyVO:
+      allOf:
+        - $ref: '#/components/schemas/PageResult'
+        - type: object
+          properties:
+            list:
+              type: array
+              items:
+                $ref: '#/components/schemas/ConsumeSubsidyVO'
+
+    PageResult-ConsumeDeviceVO:
+      allOf:
+        - $ref: '#/components/schemas/PageResult'
+        - type: object
+          properties:
+            list:
+              type: array
+              items:
+                $ref: '#/components/schemas/ConsumeDeviceVO'
+
+    PageResult-ConsumeRechargeVO:
+      allOf:
+        - $ref: '#/components/schemas/PageResult'
+        - type: object
+          properties:
+            list:
+              type: array
+              items:
+                $ref: '#/components/schemas/ConsumeRechargeVO'
+
+    ResponseData-ConsumeRecordVO:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: "操作成功"
+        data:
+          $ref: '#/components/schemas/ConsumeRecordVO'
+        timestamp:
+          type: string
+          format: date-time
+
+    ResponseData-ConsumeSubsidyVO:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: "操作成功"
+        data:
+          $ref: '#/components/schemas/ConsumeSubsidyVO'
+        timestamp:
+          type: string
+          format: date-time
+
+    ResponseData-ConsumeMealCategoryVO:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: "操作成功"
+        data:
+          $ref: '#/components/schemas/ConsumeMealCategoryVO'
+        timestamp:
+          type: string
+          format: date-time
+
+    ResponseData-ConsumeDeviceVO:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: "操作成功"
+        data:
+          $ref: '#/components/schemas/ConsumeDeviceVO'
+        timestamp:
+          type: string
+          format: date-time
+
+    ResponseData-ConsumeRechargeVO:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: "操作成功"
+        data:
+          $ref: '#/components/schemas/ConsumeRechargeVO'
+        timestamp:
+          type: string
+          format: date-time
+
+    ResponseData-OverviewStatistics:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: "操作成功"
+        data:
+          $ref: '#/components/schemas/OverviewStatistics'
+        timestamp:
+          type: string
+          format: date-time
+
+  responses:
+    BadRequest:
+      description: 请求参数错误
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                example: 400
+              message:
+                type: string
+                example: "请求参数错误"
+              error:
+                type: object
+                properties:
+                  field:
+                  type: string
+                  example: "productName"
+                  message:
+                  type: string
+                  example: "产品名称不能为空"
+              timestamp:
+                type: string
+                format: date-time
+
+    Unauthorized:
+      description: 未授权访问
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResponseSuccess'
+
+    Forbidden:
+      description: 权限不足
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResponseSuccess'
+
+    NotFound:
+      description: 资源不存在
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResponseSuccess'
+
+    InternalError:
+      description: 服务器内部错误
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResponseSuccess'
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT认证
+
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API密钥认证
+
+tags:
+  - name: 产品管理
+    description: 产品信息、价格、库存管理
+  - name: 消费记录
+    description: 消费记录创建、查询、统计分析
+  - name: 补贴管理
+    description: 补贴发放、使用、统计
+  - name: 餐次分类
+    description: 分类管理、树结构构建
+  - name: 设备管理
+    description: 设备监控、状态管理、配置
+  - name: 充值记录
+    description: 充值记录、统计分析、对账
+  - name: 统计分析
+    description: 综合统计、报表生成、数据可视化
+  - name: 数据导入导出
+    description: 批量导入、数据导出、模板下载
+  - name: 配置管理
+    description: 系统配置、业务参数、开关管理

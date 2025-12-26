@@ -12,6 +12,7 @@ import { loginRouters } from './system/login';
 import { helpDocRouters } from './support/help-doc';
 import { smartVideoRouters } from './business/smart-video';
 import { smartVideoDecoderRouters } from './business/smart-video-decoder';
+import { smartScheduleRouters } from './business/smart-schedule';
 import NotFound from '/@/views/system/40X/404.vue';
 import NoPrivilege from '/@/views/system/40X/403.vue';
 
@@ -21,6 +22,7 @@ export const routerArray = [
     ...helpDocRouters,
     ...smartVideoRouters,
     ...smartVideoDecoderRouters,
+    ...smartScheduleRouters,
     { path: '/:pathMatch(.*)*', name: '404', component: NotFound },
     { path: '/403', name: '403', component: NoPrivilege }
 ];

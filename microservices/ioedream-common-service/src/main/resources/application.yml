@@ -25,6 +25,7 @@ spring:
       - "optional:nacos:ioedream-common-service-docker.yaml"  # 2025.0.0.0版本需要显式指定dataId
       - "classpath:common-config/cache-application.yml"        # 引入统一缓存配置
       - "classpath:common-config/database-application.yml"     # 引入统一数据库配置
+      - "classpath:common-config/springdoc-application.yml"   # 引入API文档配置
 
 # ==================== Nacos服务发现配置 ====================
   cloud:

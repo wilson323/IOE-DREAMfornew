@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.lab1024.sa.access.dao.FirmwareUpgradeTaskDao">
+
+    <!-- 更新任务统计信息 -->
+    <update id="updateTaskStatistics">
+        UPDATE t_firmware_upgrade_task
+        SET success_count = #{successCount},
+            failed_count = #{failedCount},
+            pending_count = #{pendingCount},
+            upgrade_progress = #{upgradeProgress}
+        WHERE task_id = #{taskId}
+    </update>
+
+    <!-- 更新任务状态 -->
+    <update id="updateTaskStatus">
+        UPDATE t_firmware_upgrade_task
+        SET task_status = #{taskStatus},
+            <if test="taskStatus == 2 or taskStatus == 4">
+                start_time = NOW(),
+            </if>
+            <if test="taskStatus == 4 or taskStatus == 5">
+                end_time = NOW(),
+                duration_seconds = TIMESTAMPDIFF(SECOND, start_time, NOW())
+            </if>
+        WHERE task_id = #{taskId}
+    </update>
+
+    <!-- 查询待执行的任务 -->
+    <select id="selectPendingTasks" resultType="net.lab1024.sa.access.domain.entity.FirmwareUpgradeTaskEntity">
+        SELECT *
+        FROM t_firmware_upgrade_task
+        WHERE task_status = 1
+          AND upgrade_strategy = 2
+          AND schedule_time &lt;= NOW()
+          AND deleted = 0
+        ORDER BY schedule_time ASC
+    </select>
+
+</mapper>

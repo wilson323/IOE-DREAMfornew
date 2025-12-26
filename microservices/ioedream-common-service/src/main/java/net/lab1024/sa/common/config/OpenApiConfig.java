@@ -139,4 +139,3 @@ public class OpenApiConfig {
         return new SecurityRequirement().addList("BearerAuth");
     }
 }
-

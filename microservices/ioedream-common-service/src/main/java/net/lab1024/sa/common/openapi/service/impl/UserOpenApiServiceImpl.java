@@ -1,27 +1,40 @@
 package net.lab1024.sa.common.openapi.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.common.exception.BusinessException;
-import net.lab1024.sa.common.openapi.domain.request.*;
-import net.lab1024.sa.common.openapi.domain.response.*;
-import net.lab1024.sa.common.openapi.service.UserOpenApiService;
-import net.lab1024.sa.common.auth.dao.UserDao;
-import net.lab1024.sa.common.security.entity.UserEntity;
-import net.lab1024.sa.common.openapi.manager.SecurityManager;
-import net.lab1024.sa.common.auth.util.JwtTokenUtil;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+
+import jakarta.annotation.Resource;
+import net.lab1024.sa.common.auth.dao.UserDao;
+import net.lab1024.sa.common.auth.util.JwtTokenUtil;
+import net.lab1024.sa.common.domain.PageResult;
+import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.common.openapi.domain.request.ChangePasswordRequest;
+import net.lab1024.sa.common.openapi.domain.request.LoginRequest;
+import net.lab1024.sa.common.openapi.domain.request.UpdateUserProfileRequest;
+import net.lab1024.sa.common.openapi.domain.request.UserExtendedInfoRequest;
+import net.lab1024.sa.common.openapi.domain.request.UserQueryRequest;
+import net.lab1024.sa.common.openapi.domain.response.LoginResponse;
+import net.lab1024.sa.common.openapi.domain.response.RefreshTokenResponse;
+import net.lab1024.sa.common.openapi.domain.response.TokenValidationResponse;
+import net.lab1024.sa.common.openapi.domain.response.UserInfoResponse;
+import net.lab1024.sa.common.openapi.domain.response.UserPermissionResponse;
+import net.lab1024.sa.common.openapi.domain.response.UserProfileResponse;
+import net.lab1024.sa.common.openapi.manager.SecurityManager;
+import net.lab1024.sa.common.openapi.service.UserOpenApiService;
+import net.lab1024.sa.common.organization.entity.UserEntity;
+import net.lab1024.sa.common.security.util.PasswordStrengthValidator;
 
 /**
  * 用户管理开放API服务实现类
@@ -30,16 +43,20 @@ import java.util.stream.Collectors;
  * @version 1.0.0
  * @since 2025-12-16
  */
-@Slf4j
 @Service
-@RequiredArgsConstructor
 @Transactional(rollbackFor = Exception.class)
+@Slf4j
 public class UserOpenApiServiceImpl implements UserOpenApiService {
 
-    private final UserDao userDao;
-    private final SecurityManager securityManager;
-    private final PasswordEncoder passwordEncoder;
-    private final JwtTokenUtil jwtTokenUtil;
+
+    @Resource
+    private UserDao userDao;
+    @Resource
+    private SecurityManager securityManager;
+    @Resource
+    private PasswordEncoder passwordEncoder;
+    @Resource
+    private JwtTokenUtil jwtTokenUtil;
 
     @Override
     public LoginResponse authenticate(LoginRequest request, String clientIp) {
@@ -201,14 +218,15 @@ public class UserOpenApiServiceImpl implements UserOpenApiService {
                 .phone(user.getPhone())
                 .avatar(user.getAvatar())
                 .gender(securityManager.getUserGender(userId))
-                .birthday(securityManager.getUserBirthday(userId) != null ?
-                    securityManager.getUserBirthday(userId).toString() : null)
+                .birthday(securityManager.getUserBirthday(userId) != null
+                        ? securityManager.getUserBirthday(userId).toString()
+                        : null)
                 .departmentId(securityManager.getUserDepartmentId(userId))
                 .departmentName(securityManager.getUserDepartmentName(userId))
                 .position(securityManager.getUserPosition(userId))
                 .employeeNo(securityManager.getUserEmployeeNo(userId))
                 .status(user.getStatus())
-                .accountLocked(user.getAccountLocked())
+                .accountLocked(user.getAccountLocked() != null && user.getAccountLocked() ? 1 : 0) // Boolean转Integer（getAccountLocked返回Boolean）
                 .lockReason(user.getLockReason())
                 .lastLoginTime(user.getLastLoginTime())
                 .lastLoginIp(user.getLastLoginIp())
@@ -309,6 +327,18 @@ public class UserOpenApiServiceImpl implements UserOpenApiService {
         if (passwordEncoder.matches(request.getNewPassword(), user.getPassword())) {
             throw new BusinessException("SAME_PASSWORD", "新密码不能与原密码相同");
         }
+
+        // 5.5. 验证新密码强度（P1-8.1）
+        PasswordStrengthValidator.ValidationResult validationResult =
+                PasswordStrengthValidator.validate(request.getNewPassword());
+        if (!validationResult.isValid()) {
+            log.warn("[开放API] 密码强度验证失败: userId={}, errors={}",
+                    user.getUserId(), validationResult.getErrorMessage());
+            throw new BusinessException("PASSWORD_WEAK",
+                    "密码强度不符合要求: " + validationResult.getErrorMessage());
+        }
+        log.info("[开放API] 密码强度验证通过: userId={}, strength={}",
+                user.getUserId(), validationResult.getStrength().getDescription());
 
         // 6. 更新密码
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
@@ -416,8 +446,7 @@ public class UserOpenApiServiceImpl implements UserOpenApiService {
                 userInfoList,
                 userPage.getTotal(),
                 (int) userPage.getCurrent(),
-                (int) userPage.getSize()
-        );
+                (int) userPage.getSize());
     }
 
     @Override
@@ -512,18 +541,23 @@ public class UserOpenApiServiceImpl implements UserOpenApiService {
             }
 
             // 2. 获取令牌信息
-            Long userId = jwtTokenUtil.getUserIdFromAccessToken(token);
-            String username = jwtTokenUtil.getUsernameFromAccessToken(token);
-            java.util.Date expireDate = jwtTokenUtil.getExpirationFromAccessToken(token);
-            java.util.Date issueDate = jwtTokenUtil.getIssuedAtFromAccessToken(token);
-            LocalDateTime expireTime = expireDate != null ?
-                expireDate.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDateTime() : null;
-            LocalDateTime issueTime = issueDate != null ?
-                issueDate.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDateTime() : null;
-            Long remainingTime = jwtTokenUtil.getRemainingTimeFromAccessToken(token);
+            Long userId = jwtTokenUtil.getUserIdFromToken(token);
+            String username = jwtTokenUtil.getUsernameFromToken(token);
+            Long expireTimestamp = jwtTokenUtil.getExpirationFromAccessToken(token);
+            Long issueTimestamp = jwtTokenUtil.getIssuedAtFromAccessToken(token);
+            LocalDateTime expireTime = expireTimestamp != null
+                    ? java.time.Instant.ofEpochMilli(expireTimestamp).atZone(java.time.ZoneId.systemDefault())
+                            .toLocalDateTime()
+                    : null;
+            LocalDateTime issueTime = issueTimestamp != null
+                    ? java.time.Instant.ofEpochMilli(issueTimestamp).atZone(java.time.ZoneId.systemDefault())
+                            .toLocalDateTime()
+                    : null;
+            long remainingTime = jwtTokenUtil.getRemainingTimeFromAccessToken(token);
 
             // 3. 检查用户是否存在且有效
             UserEntity user = userDao.selectById(userId);
+
             if (user == null || user.getStatus() != 1) {
                 return TokenValidationResponse.builder()
                         .valid(false)
@@ -591,7 +625,8 @@ public class UserOpenApiServiceImpl implements UserOpenApiService {
         if (user.getStatus() != 1) {
             throw new BusinessException("USER_DISABLED", "用户已被禁用");
         }
-        if (user.getAccountLocked() == 1) {
+        Boolean isLocked = user.getAccountLocked();
+        if (isLocked != null && isLocked) {
             throw new BusinessException("USER_LOCKED", "用户账户已被锁定：" + user.getLockReason());
         }
         if (user.getAccountExpireTime() != null && user.getAccountExpireTime().isBefore(LocalDateTime.now())) {
@@ -605,11 +640,9 @@ public class UserOpenApiServiceImpl implements UserOpenApiService {
     private void updateUserLoginInfo(UserEntity user, String clientIp) {
         user.setLastLoginTime(LocalDateTime.now());
         user.setLastLoginIp(clientIp);
-        user.setLoginFailCount(0);
+        // loginFailCount, lockTime, unlockTime字段在UserEntity中不存在，需要从其他表或扩展字段获取
         user.setLockReason(null);
-        user.setAccountLocked(0);
-        user.setLockTime(null);
-        user.setUnlockTime(null);
+        user.setAccountLocked(false); // Boolean类型，false表示未锁定
 
         userDao.updateById(user);
     }
@@ -685,3 +718,4 @@ public class UserOpenApiServiceImpl implements UserOpenApiService {
         return detail;
     }
 }
+

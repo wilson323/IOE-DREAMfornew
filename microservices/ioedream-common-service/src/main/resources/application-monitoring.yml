@@ -1,4 +1,4 @@
-# =====================================================
+﻿# =====================================================
 # IOE-DREAM 监控体系配置
 # 企业级监控告警体系配置
 # 支持 Micrometer + Prometheus + Grafana + 告警通知
@@ -156,8 +156,8 @@ management:
 
     # 自定义指标
     tags:
-      application: ${spring.application.name:ioedream-common-service}
-      environment: ${spring.profiles.active:dev}
+      application: ${"spring.application.name":ioedream-common-service}
+      environment: ${"spring.profiles.active":dev}
       instance: ${INSTANCE_ID:${HOSTNAME:${random.uuid}}}
 
     # 指标导出配置
@@ -322,13 +322,13 @@ tracing:
   zipkin:
     enabled: false
     base-url: ${ZIPKIN_BASE_URL:http://localhost:9411}
-    service-name: ${spring.application.name:ioedream-common-service}
+    service-name: ${"spring.application.name":ioedream-common-service}
 
   # Jaeger配置
   jaeger:
     enabled: false
     endpoint: ${JAEGER_ENDPOINT:http://localhost:14268/api/traces}
-    service-name: ${spring.application.name:ioedream-common-service}
+    service-name: ${"spring.application.name":ioedream-common-service}
 
 # ===========================================
 # 性能剖析配置

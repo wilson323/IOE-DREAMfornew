@@ -1,0 +1,45 @@
+name: Local Upload SARIF
+description: Local replacement for github/codeql-action/upload-sarif
+inputs:
+  sarif_file:
+    description: SARIF file path
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: Collect SARIF (bash)
+      if: runner.os != 'Windows'
+      shell: bash
+      run: |
+        set -euo pipefail
+        FILE="${INPUT_SARIF_FILE:-}"
+        DEST="artifacts/sarif"
+        mkdir -p "$DEST"
+        if [ -z "$FILE" ]; then
+          echo "sarif_file is required"
+          exit 1
+        fi
+        if [ -f "$FILE" ]; then
+          cp "$FILE" "$DEST/"
+          echo "SARIF copied to $DEST"
+        else
+          echo "SARIF file not found: $FILE"
+        fi
+    - name: Collect SARIF (pwsh)
+      if: runner.os == 'Windows'
+      shell: pwsh
+      run: |
+        $ErrorActionPreference = "Stop"
+        $file = $env:INPUT_SARIF_FILE
+        if ([string]::IsNullOrWhiteSpace($file)) {
+          Write-Host "sarif_file is required"
+          exit 1
+        }
+        $dest = "artifacts/sarif"
+        New-Item -ItemType Directory -Path $dest -Force | Out-Null
+        if (Test-Path -Path $file) {
+          Copy-Item -Path $file -Destination $dest -Force
+          Write-Host "SARIF copied to $dest"
+        } else {
+          Write-Host "SARIF file not found: $file"
+        }

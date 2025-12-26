@@ -1,6 +1,6 @@
 package net.lab1024.sa.video.adapter;
 
-import net.lab1024.sa.common.organization.entity.DeviceEntity;
+import net.lab1024.sa.common.gateway.domain.response.DeviceResponse;
 import net.lab1024.sa.video.domain.vo.VideoStream;
 
 /**
@@ -31,10 +31,10 @@ public interface IVideoStreamAdapter {
      * 根据设备信息创建对应的视频流URL
      * </p>
      *
-     * @param device 设备实体
+     * @param device 设备响应对象
      * @return 视频流对象
      */
-    VideoStream createStream(DeviceEntity device);
+    VideoStream createStream(DeviceResponse device);
 
     /**
      * 停止视频流

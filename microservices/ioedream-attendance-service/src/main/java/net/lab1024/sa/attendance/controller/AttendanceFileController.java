@@ -1,8 +1,9 @@
 package net.lab1024.sa.attendance.controller;
 
+import lombok.extern.slf4j.Slf4j;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.storage.FileStorageStrategy;
 import org.springframework.web.bind.annotation.*;
@@ -25,11 +26,11 @@ import java.util.Map;
  * @author IOE-DREAM Team
  * @since 2025-12-18
  */
-@Slf4j
 @RestController
+@Slf4j
 @RequestMapping("/attendance/file")
 @Tag(name = "考勤文件管理")
-public class AttendanceFileController {
+ public class AttendanceFileController {
 
     @Resource
     private FileStorageStrategy fileStorageStrategy;

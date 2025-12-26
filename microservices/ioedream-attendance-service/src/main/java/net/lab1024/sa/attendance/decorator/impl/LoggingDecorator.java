@@ -1,9 +1,11 @@
 package net.lab1024.sa.attendance.decorator.impl;
 
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.stereotype.Component;
+
 import net.lab1024.sa.attendance.decorator.IPunchExecutor;
 import net.lab1024.sa.attendance.decorator.PunchDecorator;
-import org.springframework.stereotype.Component;
 
 /**
  * 日志装饰器
@@ -16,8 +18,8 @@ import org.springframework.stereotype.Component;
  * @version 1.0.0
  * @since 2025-12-18
  */
-@Slf4j
 @Component
+@Slf4j
 public class LoggingDecorator extends PunchDecorator {
 
     /**
@@ -30,14 +32,14 @@ public class LoggingDecorator extends PunchDecorator {
     }
 
     @Override
-    public PunchResult execute(MobilePunchRequest request) {
+    public IPunchExecutor.PunchResult execute(IPunchExecutor.MobilePunchRequest request) {
         log.info("[日志装饰器] 打卡请求: userId={}, type={}, location=({}, {})",
                 request.getUserId(), request.getPunchType(),
                 request.getLatitude(), request.getLongitude());
 
         long startTime = System.currentTimeMillis();
         try {
-            PunchResult result = super.execute(request);
+            IPunchExecutor.PunchResult result = super.execute(request);
 
             long duration = System.currentTimeMillis() - startTime;
             log.info("[日志装饰器] 打卡完成: userId={}, result={}, duration={}ms",

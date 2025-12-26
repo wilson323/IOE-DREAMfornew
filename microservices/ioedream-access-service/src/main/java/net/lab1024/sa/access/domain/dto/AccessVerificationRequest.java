@@ -47,6 +47,19 @@ public class AccessVerificationRequest {
     @Schema(description = "区域ID", example = "3001", required = true)
     private Long areaId;
 
+    // 显式添加getter方法以确保编译通过
+    public Long getUserId() {
+        return userId;
+    }
+
+    public Long getDeviceId() {
+        return deviceId;
+    }
+
+    public Long getAreaId() {
+        return areaId;
+    }
+
     /**
      * 设备序列号
      */

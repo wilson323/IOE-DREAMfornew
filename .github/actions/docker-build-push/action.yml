@@ -1,0 +1,109 @@
+name: Local Docker Build Push
+description: Local replacement for docker/build-push-action
+inputs:
+  context:
+    description: Build context
+    required: true
+  file:
+    description: Dockerfile
+    required: false
+  push:
+    description: Push image
+    required: false
+  tags:
+    description: Image tags
+    required: false
+  labels:
+    description: Image labels
+    required: false
+  platforms:
+    description: Target platforms
+    required: false
+  cache-from:
+    description: Cache from
+    required: false
+  cache-to:
+    description: Cache to
+    required: false
+runs:
+  using: composite
+  steps:
+    - name: Build and push (bash)
+      if: runner.os != 'Windows'
+      shell: bash
+      run: |
+        set -euo pipefail
+        CONTEXT="${INPUT_CONTEXT:-.}"
+        FILE="${INPUT_FILE:-}"
+        PUSH="${INPUT_PUSH:-false}"
+        TAGS_RAW="${INPUT_TAGS:-}"
+        LABELS_RAW="${INPUT_LABELS:-}"
+        PLATFORMS="${INPUT_PLATFORMS:-}"
+        CACHE_FROM="${INPUT_CACHE_FROM:-}"
+        CACHE_TO="${INPUT_CACHE_TO:-}"
+        cmd=(docker buildx build)
+        if [ -n "$FILE" ]; then
+          cmd+=(--file "$FILE")
+        fi
+        if [ -n "$PLATFORMS" ]; then
+          cmd+=(--platform "$PLATFORMS")
+        fi
+        if [ -n "$CACHE_FROM" ]; then
+          cmd+=(--cache-from "$CACHE_FROM")
+        fi
+        if [ -n "$CACHE_TO" ]; then
+          cmd+=(--cache-to "$CACHE_TO")
+        fi
+        if [ -n "$LABELS_RAW" ]; then
+          while IFS= read -r label; do
+            [ -z "$label" ] && continue
+            cmd+=(--label "$label")
+          done <<< "$LABELS_RAW"
+        fi
+        if [ -n "$TAGS_RAW" ]; then
+          while IFS= read -r tag; do
+            [ -z "$tag" ] && continue
+            cmd+=(-t "$tag")
+          done <<< "$TAGS_RAW"
+        fi
+        if [ "$PUSH" = "true" ]; then
+          cmd+=(--push)
+        else
+          cmd+=(--load)
+        fi
+        cmd+=("$CONTEXT")
+        "${cmd[@]}"
+    - name: Build and push (pwsh)
+      if: runner.os == 'Windows'
+      shell: pwsh
+      run: |
+        $ErrorActionPreference = "Stop"
+        $context = $env:INPUT_CONTEXT
+        if ([string]::IsNullOrWhiteSpace($context)) { $context = "." }
+        $file = $env:INPUT_FILE
+        $push = $env:INPUT_PUSH
+        $tagsRaw = $env:INPUT_TAGS
+        $labelsRaw = $env:INPUT_LABELS
+        $platforms = $env:INPUT_PLATFORMS
+        $cacheFrom = $env:INPUT_CACHE_FROM
+        $cacheTo = $env:INPUT_CACHE_TO
+        $cmd = @("docker", "buildx", "build")
+        if (-not [string]::IsNullOrWhiteSpace($file)) { $cmd += @("--file", $file) }
+        if (-not [string]::IsNullOrWhiteSpace($platforms)) { $cmd += @("--platform", $platforms) }
+        if (-not [string]::IsNullOrWhiteSpace($cacheFrom)) { $cmd += @("--cache-from", $cacheFrom) }
+        if (-not [string]::IsNullOrWhiteSpace($cacheTo)) { $cmd += @("--cache-to", $cacheTo) }
+        foreach ($label in ($labelsRaw -split "`n")) {
+          if ([string]::IsNullOrWhiteSpace($label)) { continue }
+          $cmd += @("--label", $label)
+        }
+        foreach ($tag in ($tagsRaw -split "`n")) {
+          if ([string]::IsNullOrWhiteSpace($tag)) { continue }
+          $cmd += @("-t", $tag)
+        }
+        if ($push -eq "true") {
+          $cmd += "--push"
+        } else {
+          $cmd += "--load"
+        }
+        $cmd += $context
+        & $cmd

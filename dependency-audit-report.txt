@@ -1,0 +1,69 @@
+﻿IOE-DREAM 依赖关系审计报告
+生成时间: 2025-12-21 06:00:33
+
+====================================================
+一、循环依赖检查
+====================================================
+状态: ✅ 通过
+
+====================================================
+二、Maven Reactor构建顺序验证
+====================================================
+状态: ❌ 失败
+
+====================================================
+三、模块依赖关系审计
+====================================================
+模块: microservices-common-core
+状态: OK
+
+
+模块: microservices-common-entity
+状态: OK
+
+
+模块: microservices-common-business
+状态: OK
+
+
+模块: microservices-common
+状态: OK
+
+
+模块: ioedream-access-service
+状态: OK
+
+
+模块: ioedream-attendance-service
+状态: ISSUES
+问题:
+  - 发现 3 个缺失的依赖声明
+  -   - 缺失依赖: microservices-common-entity (在 \microservices\ioedream-attendance-service\src\test\java\net\lab1024\sa\attendance\service\AttendanceMobileServiceImplTest.java 中使用)
+
+
+模块: ioedream-consume-service
+状态: OK
+
+
+模块: ioedream-visitor-service
+状态: OK
+
+
+模块: ioedream-video-service
+状态: OK
+
+
+模块: ioedream-database-service
+状态: OK
+
+====================================================
+四、总结
+====================================================
+总模块数: 10
+有问题模块: 4
+总问题数: 2
+
+建议:
+1. 修复缺失的依赖声明
+2. 确保所有依赖都在pom.xml中正确声明
+3. 使用Maven Reactor自动计算构建顺序

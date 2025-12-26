@@ -1,0 +1,204 @@
+package net.lab1024.sa.attendance.solver.algorithm;
+
+import lombok.extern.slf4j.Slf4j;
+import net.lab1024.sa.attendance.solver.model.AttendanceScheduleSolution;
+import net.lab1024.sa.attendance.solver.model.AttendanceConstraintProvider;
+import org.optaplanner.core.api.solver.Solver;
+import org.optaplanner.core.api.solver.SolverFactory;
+import org.optaplanner.core.config.solver.SolverConfig;
+import org.optaplanner.core.config.solver.termination.TerminationConfig;
+import org.springframework.stereotype.Component;
+
+import java.time.Duration;
+import java.util.concurrent.TimeUnit;
+
+/**
+ * 考勤排班求解器 - OptaPlanner Solver配置
+ *
+ * 核心概念:
+ * - Solver: OptaPlanner的优化引擎
+ * - SolverFactory: 创建Solver的工厂
+ * - Termination: 求解终止条件 (时间限制、分数阈值等)
+ * - Algorithm: 求解算法 (Tabu Search, Simulated Annealing等)
+ *
+ * @author IOE-DREAM
+ * @since 2025-12-26
+ */
+@Slf4j
+@Component
+public class AttendanceSchedulingSolver {
+
+    /**
+     * 求解排班方案
+     *
+     * @param problem 问题定义 (未分配的方案)
+     * @param seconds 求解时长 (秒)
+     * @return 最优解
+     */
+    public AttendanceScheduleSolution solve(AttendanceScheduleSolution problem, long seconds) {
+        log.info("[排班求解器] 开始求解: timeLimit={}s", seconds);
+
+        // 1. 创建SolverFactory
+        SolverFactory<AttendanceScheduleSolution> solverFactory = SolverFactory.create(
+                new SolverConfig()
+                        .withSolutionClass(AttendanceScheduleSolution.class)
+                        .withEntityClasses(
+                                net.lab1024.sa.attendance.solver.model.ShiftAssignment.class
+                        )
+                        // 使用ConstraintProvider定义约束
+                        .withConstraintProviderClass(AttendanceConstraintProvider.class)
+                        // 配置求解算法 (Tabu Search + Simulated Annealing)
+                        .withAlgorithmConfig(
+                                org.optaplanner.core.config.solver.algorithm.LocalSearchAlgorithmConfig
+                                        .buildTabuSearch()
+                                        // 或者使用Simulated Annealing
+                                        // .buildSimulatedAnnealing()
+                        )
+                        // 配置终止条件
+                        .withTerminationConfig(
+                                TerminationConfig
+                                        .build()
+                                        // 时间限制
+                                        .withTimeSpentLimit(Duration.ofSeconds(seconds))
+                                        // 最好分数限制 (可选)
+                                        // .withBestScoreLimit("0hard/-1000soft")
+                        )
+        );
+
+        // 2. 创建Solver
+        Solver<AttendanceScheduleSolution> solver = solverFactory.buildSolver();
+
+        // 3. 求解
+        AttendanceScheduleSolution bestSolution = solver.solve(problem);
+
+        // 4. 记录求解结果
+        log.info("[排班求解器] 求解完成: score={}, timeSpent={}s",
+                bestSolution.getScore(),
+                seconds);
+
+        return bestSolution;
+    }
+
+    /**
+     * 求解排班方案 (使用默认配置: 5分钟)
+     */
+    public AttendanceScheduleSolution solve(AttendanceScheduleSolution problem) {
+        return solve(problem, 300); // 默认5分钟
+    }
+
+    /**
+     * 求解排班方案 (异步模式)
+     *
+     * @param problem 问题定义
+     * @param seconds 求解时长
+     * @param callback 求解完成回调
+     */
+    public void solveAsync(AttendanceScheduleSolution problem,
+                          long seconds,
+                          SolutionCallback callback) {
+        new Thread(() -> {
+            try {
+                AttendanceScheduleSolution solution = solve(problem, seconds);
+                callback.onSuccess(solution);
+            } catch (Exception e) {
+                log.error("[排班求解器] 求解异常", e);
+                callback.onError(e);
+            }
+        }).start();
+    }
+
+    /**
+     * 终止正在运行的求解器 (需要异步模式)
+     */
+    public void terminateSolving(Solver<AttendanceScheduleSolution> solver) {
+        if (solver != null && !solver.isTerminateEarly()) {
+            log.info("[排班求解器] 终止求解");
+            solver.terminateEarly();
+        }
+    }
+
+    // ============================================================
+    // 高级配置方法 (可选)
+    // ============================================================
+
+    /**
+     * 创建自定义求解器 (使用Simulated Annealing算法)
+     */
+    public AttendanceScheduleSolution solveWithSimulatedAnnealing(
+            AttendanceScheduleSolution problem,
+            long seconds) {
+
+        log.info("[排班求解器] 使用Simulated Annealing算法: timeLimit={}s", seconds);
+
+        SolverFactory<AttendanceScheduleSolution> solverFactory = SolverFactory.create(
+                new SolverConfig()
+                        .withSolutionClass(AttendanceScheduleSolution.class)
+                        .withEntityClasses(
+                                net.lab1024.sa.attendance.solver.model.ShiftAssignment.class
+                        )
+                        .withConstraintProviderClass(AttendanceConstraintProvider.class)
+                        .withAlgorithmConfig(
+                                org.optaplanner.core.config.solver.algorithm.LocalSearchAlgorithmConfig
+                                        .buildSimulatedAnnealing()
+                        )
+                        .withTerminationConfig(
+                                TerminationConfig
+                                        .build()
+                                        .withTimeSpentLimit(Duration.ofSeconds(seconds))
+                        )
+        );
+
+        Solver<AttendanceScheduleSolution> solver = solverFactory.buildSolver();
+        return solver.solve(problem);
+    }
+
+    /**
+     * 创建自定义求解器 (使用Late Acceptance算法)
+     */
+    public AttendanceScheduleSolution solveWithLateAcceptance(
+            AttendanceScheduleSolution problem,
+            long seconds) {
+
+        log.info("[排班求解器] 使用Late Acceptance算法: timeLimit={}s", seconds);
+
+        SolverFactory<AttendanceScheduleSolution> solverFactory = SolverFactory.create(
+                new SolverConfig()
+                        .withSolutionClass(AttendanceScheduleSolution.class)
+                        .withEntityClasses(
+                                net.lab1024.sa.attendance.solver.model.ShiftAssignment.class
+                        )
+                        .withConstraintProviderClass(AttendanceConstraintProvider.class)
+                        .withAlgorithmConfig(
+                                org.optaplanner.core.config.solver.algorithm.LocalSearchAlgorithmConfig
+                                        .buildLateAcceptance()
+                        )
+                        .withTerminationConfig(
+                                TerminationConfig
+                                        .build()
+                                        .withTimeSpentLimit(Duration.ofSeconds(seconds))
+                        )
+        );
+
+        Solver<AttendanceScheduleSolution> solver = solverFactory.buildSolver();
+        return solver.solve(problem);
+    }
+
+    // ============================================================
+    // 回调接口
+    // ============================================================
+
+    /**
+     * 求解完成回调接口
+     */
+    public interface SolutionCallback {
+        /**
+         * 求解成功回调
+         */
+        void onSuccess(AttendanceScheduleSolution solution);
+
+        /**
+         * 求解失败回调
+         */
+        void onError(Exception e);
+    }
+}

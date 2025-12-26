@@ -1,95 +1,94 @@
 package net.lab1024.sa.common.dto;
 
-import java.io.Serializable;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 /**
- * 统一响应DTO
+ * 统一响应结果封装类
  * <p>
- * 所有API接口的统一响应格式
- * 严格遵循CLAUDE.md规范：
- * - 统一的响应结构
- * - 标准化的错误码
- * - 完整的响应信息
+ * 提供统一的API响应格式，包含状态码、消息、数据和时间戳
+ * 注意：手动生成getter/setter，避免依赖Lombok
  * </p>
  *
  * @author IOE-DREAM Team
  * @version 1.0.0
  * @since 2025-01-30
+ * @updated 2025-12-20 企业级重构，基于新版Flowable工作流实现
  */
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class ResponseDTO<T> implements Serializable {
-
-    private static final Logger log = LoggerFactory.getLogger(ResponseDTO.class);
-    private static final long serialVersionUID = 1L;
+public class ResponseDTO<T> {
 
     /**
-     * 状态码
-     * <p>
-     * 200-成功
-     * 400-499 客户端错误
-     * 500-599 服务端错误
-     * 1000+ 业务错误码
-     * </p>
+     * 业务状态码
      */
     private Integer code;
 
     /**
-     * 消息
+     * 响应消息
      */
     private String message;
 
     /**
-     * 数据
+     * 响应数据
      */
     private T data;
 
     /**
-     * 时间戳（毫秒）
+     * 时间戳
      */
     private Long timestamp;
 
-    /**
-     * 判断是否为成功响应
-     *
-     * @return 是否成功
-     */
-    public boolean getOk() {
-        return code != null && code == 200;
+    // 默认构造函数
+    public ResponseDTO() {
+        this.timestamp = System.currentTimeMillis();
+    }
+
+    // 全参数构造函数
+    public ResponseDTO(Integer code, String message, T data, Long timestamp) {
+        this.code = code;
+        this.message = message;
+        this.data = data;
+        this.timestamp = timestamp;
+    }
+
+    // Getter和Setter方法
+    public Integer getCode() {
+        return code;
+    }
+
+    public void setCode(Integer code) {
+        this.code = code;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public T getData() {
+        return data;
+    }
+
+    public void setData(T data) {
+        this.data = data;
+    }
+
+    public Long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Long timestamp) {
+        this.timestamp = timestamp;
     }
 
     /**
      * 成功响应（无数据）
-     *
-     * @return 成功响应
      */
     public static <T> ResponseDTO<T> ok() {
-        return ResponseDTO.<T>builder()
-                .code(200)
-                .message("操作成功")
-                .timestamp(System.currentTimeMillis())
-                .build();
+        return ok(null);
     }
 
     /**
      * 成功响应（带数据）
-     * <p>
-     * 严格遵循ENTERPRISE_REFACTORING_COMPLETE_SOLUTION.md文档要求：
-     * - message统一为"success"
-     * </p>
-     *
-     * @param data 响应数据
-     * @return 成功响应
      */
     public static <T> ResponseDTO<T> ok(T data) {
         ResponseDTO<T> response = new ResponseDTO<>();
@@ -102,192 +101,227 @@ public class ResponseDTO<T> implements Serializable {
 
     /**
      * 成功响应（自定义消息）
-     *
-     * @param message 消息
-     * @param data 响应数据
-     * @return 成功响应
      */
     public static <T> ResponseDTO<T> ok(String message, T data) {
-        return ResponseDTO.<T>builder()
-                .code(200)
-                .message(message)
-                .data(data)
-                .timestamp(System.currentTimeMillis())
-                .build();
-    }
-
-    /**
-     * 错误响应（整数错误码）
-     *
-     * @param code 错误码
-     * @param message 错误消息
-     * @return 错误响应
-     */
-    public static <T> ResponseDTO<T> error(Integer code, String message) {
-        return ResponseDTO.<T>builder()
-                .code(code)
-                .message(message)
-                .timestamp(System.currentTimeMillis())
-                .build();
-    }
-
-    /**
-     * 错误响应（字符串错误码）
-     * <p>
-     * 优先尝试将字符串错误码转换为整数，失败则使用hashCode生成
-     * </p>
-     *
-     * @param code 错误码（字符串）
-     * @param message 错误消息
-     * @return 错误响应
-     */
-    public static <T> ResponseDTO<T> error(String code, String message) {
-        try {
-            // 优先尝试将字符串错误码转换为整数
-            Integer errorCode = Integer.parseInt(code);
-            return error(errorCode, message);
-        } catch (NumberFormatException e) {
-            // 如果无法解析为整数，使用hashCode生成错误码
-            // 确保错误码在40000-139999范围内，避免与HTTP状态码冲突
-            log.debug("[响应DTO] 错误码字符串解析失败，使用hashCode生成: code={}, error={}", code, e.getMessage());
-            int errorCode = Math.abs(code.hashCode() % 100000) + 40000;
-            return ResponseDTO.<T>builder()
-                    .code(errorCode)
-                    .message(message)
-                    .timestamp(System.currentTimeMillis())
-                    .build();
-        }
-    }
-
-    /**
-     * 错误响应（字符串错误码 + 数据）
-     *
-     * @param code 错误码（字符串）
-     * @param message 错误消息
-     * @param data 响应数据
-     * @return 错误响应
-     */
-    public static <T> ResponseDTO<T> error(String code, String message, T data) {
-        try {
-            Integer errorCode = Integer.parseInt(code);
-            return ResponseDTO.<T>builder()
-                    .code(errorCode)
-                    .message(message)
-                    .data(data)
-                    .timestamp(System.currentTimeMillis())
-                    .build();
-        } catch (NumberFormatException e) {
-            log.debug("[响应DTO] 错误码字符串解析失败，使用hashCode生成: code={}, error={}", code, e.getMessage());
-            int errorCode = Math.abs(code.hashCode() % 100000) + 40000;
-            return ResponseDTO.<T>builder()
-                    .code(errorCode)
-                    .message(message)
-                    .data(data)
-                    .timestamp(System.currentTimeMillis())
-                    .build();
-        }
-    }
-
-    /**
-     * 错误响应（仅消息，默认错误码500）
-     * <p>
-     * 便捷方法，用于快速返回错误响应
-     * 使用默认错误码500（服务器内部错误）
-     * 严格遵循ENTERPRISE_REFACTORING_COMPLETE_SOLUTION.md文档要求
-     * </p>
-     *
-     * @param message 错误消息
-     * @return 错误响应
-     */
-    public static <T> ResponseDTO<T> error(String message) {
         ResponseDTO<T> response = new ResponseDTO<>();
-        response.setCode(500);
+        response.setCode(200);
         response.setMessage(message);
+        response.setData(data);
         response.setTimestamp(System.currentTimeMillis());
         return response;
     }
 
     /**
-     * 参数错误响应
-     * <p>
-     * 用于参数验证失败的情况
-     * 错误码：400（客户端错误）
-     * </p>
-     *
-     * @param message 错误消息
-     * @return 错误响应
-     */
-    public static <T> ResponseDTO<T> errorParam(String message) {
-        return ResponseDTO.<T>builder()
-                .code(400)
-                .message(message)
-                .timestamp(System.currentTimeMillis())
-                .build();
-    }
-
-    /**
-     * 资源未找到错误响应
-     * <p>
-     * 用于资源不存在的情况
-     * 错误码：404（资源未找到）
-     * </p>
-     *
-     * @param message 错误消息
-     * @return 错误响应
-     */
-    public static <T> ResponseDTO<T> errorNotFound(String message) {
-        return ResponseDTO.<T>builder()
-                .code(404)
-                .message(message)
-                .timestamp(System.currentTimeMillis())
-                .build();
-    }
-
-    /**
-     * 成功响应（仅消息，无数据）
-     * <p>
-     * 用于操作成功但无需返回数据的场景
-     * </p>
-     *
-     * @param message 成功消息
-     * @return 成功响应
+     * 成功响应（仅消息）
      */
     public static <T> ResponseDTO<T> okMsg(String message) {
-        return ResponseDTO.<T>builder()
-                .code(200)
-                .message(message)
-                .timestamp(System.currentTimeMillis())
-                .build();
+        return ok(message, null);
     }
 
     /**
-     * 用户参数错误响应
-     * <p>
-     * 用于用户相关参数验证失败的情况
-     * 错误码：400（客户端错误）
-     * </p>
-     *
-     * @param message 错误消息
-     * @return 错误响应
+     * 错误响应（默认错误码）
+     */
+    public static <T> ResponseDTO<T> error(String message) {
+        return error(500, message);
+    }
+
+    /**
+     * 错误响应（自定义错误码）
+     */
+    public static <T> ResponseDTO<T> error(Integer code, String message) {
+        ResponseDTO<T> response = new ResponseDTO<>();
+        response.setCode(code);
+        response.setMessage(message);
+        response.setTimestamp(System.currentTimeMillis());
+        return response;
+    }
+
+    public static <T> ResponseDTO<T> error(String code, String message) {
+        return error(resolveCode(code), message);
+    }
+
+    public static <T> ResponseDTO<T> error(String code, String message, T data) {
+        ResponseDTO<T> response = new ResponseDTO<>();
+        response.setCode(resolveCode(code));
+        response.setMessage(message);
+        response.setData(data);
+        response.setTimestamp(System.currentTimeMillis());
+        return response;
+    }
+
+    /**
+     * 错误响应（自定义错误码和数据）
+     */
+    public static <T> ResponseDTO<T> error(Integer code, String message, T data) {
+        ResponseDTO<T> response = new ResponseDTO<>();
+        response.setCode(code);
+        response.setMessage(message);
+        response.setData(data);
+        response.setTimestamp(System.currentTimeMillis());
+        return response;
+    }
+
+    /**
+     * 用户错误响应
+     */
+    public static <T> ResponseDTO<T> userError(String message) {
+        return error(400, message);
+    }
+
+    /**
+     * 用户错误响应（带数据）
+     */
+    public static <T> ResponseDTO<T> userError(String message, T data) {
+        return error(400, message, data);
+    }
+
+    /**
+     * 参数错误响应
+     */
+    public static <T> ResponseDTO<T> paramError(String message) {
+        return error(400, message);
+    }
+
+    /**
+     * 参数错误响应（带数据）
+     */
+    public static <T> ResponseDTO<T> paramError(String message, T data) {
+        return error(400, message, data);
+    }
+
+    /**
+     * 用户参数错误响应（兼容别名）
      */
     public static <T> ResponseDTO<T> userErrorParam(String message) {
-        return ResponseDTO.<T>builder()
-                .code(400)
-                .message(message)
-                .timestamp(System.currentTimeMillis())
-                .build();
+        return paramError(message);
+    }
+
+    /**
+     * 系统错误响应
+     */
+    public static <T> ResponseDTO<T> systemError(String message) {
+        return error(500, message);
+    }
+
+    /**
+     * 系统错误响应（带数据）
+     */
+    public static <T> ResponseDTO<T> systemError(String message, T data) {
+        return error(500, message, data);
+    }
+
+    /**
+     * 业务错误响应
+     */
+    public static <T> ResponseDTO<T> businessError(String code, String message) {
+        return error(Integer.parseInt(code), message);
+    }
+
+    /**
+     * 业务错误响应（带数据）
+     */
+    public static <T> ResponseDTO<T> businessError(String code, String message, T data) {
+        return error(Integer.parseInt(code), message, data);
     }
 
     /**
      * 判断响应是否成功
-     * <p>
-     * 状态码为200表示成功
-     * </p>
-     *
-     * @return true表示成功，false表示失败
      */
     public boolean isSuccess() {
-        return this.code != null && this.code == 200;
+        return code != null && code == 200;
+    }
+
+    /**
+     * 判断是否为错误响应
+     */
+    public boolean isError() {
+        return !isSuccess();
+    }
+
+    /**
+     * 判断是否为用户错误
+     */
+    public boolean isUserError() {
+        return code != null && code >= 400 && code < 500;
+    }
+
+    /**
+     * 判断是否为系统错误
+     */
+    public boolean isSystemError() {
+        return code != null && code >= 500;
+    }
+
+    /**
+     * equals方法：比较code、message和data
+     * 注意：不比较timestamp，因为每次创建都会生成新时间戳
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        ResponseDTO<?> other = (ResponseDTO<?>) obj;
+        if (code == null) {
+            if (other.code != null) return false;
+        } else if (!code.equals(other.code)) {
+            return false;
+        }
+        if (message == null) {
+            if (other.message != null) return false;
+        } else if (!message.equals(other.message)) {
+            return false;
+        }
+        if (data == null) {
+            if (other.data != null) return false;
+        } else if (!data.equals(other.data)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * hashCode方法：基于code、message和data计算
+     * 注意：不包含timestamp
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((code == null) ? 0 : code.hashCode());
+        result = prime * result + ((message == null) ? 0 : message.hashCode());
+        result = prime * result + ((data == null) ? 0 : data.hashCode());
+        return result;
+    }
+
+    private static Integer resolveCode(String code) {
+        if (code == null || code.isBlank()) {
+            return 500;
+        }
+        try {
+            return Integer.parseInt(code);
+        } catch (NumberFormatException ignore) {
+        }
+        String upper = code.trim().toUpperCase();
+        if ("UNAUTHORIZED".equals(upper)) {
+            return 401;
+        }
+        if ("FORBIDDEN".equals(upper)) {
+            return 403;
+        }
+        if ("NOT_FOUND".equals(upper)) {
+            return 404;
+        }
+        if (upper.contains("PARAM") || upper.contains("INVALID") || upper.contains("ARG")) {
+            return 400;
+        }
+        if (upper.contains("BUSINESS") || upper.contains("USER")) {
+            return 400;
+        }
+        return 500;
     }
 }
 

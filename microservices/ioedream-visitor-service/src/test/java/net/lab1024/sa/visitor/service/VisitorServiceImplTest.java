@@ -1,8 +1,14 @@
 package net.lab1024.sa.visitor.service;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
 
@@ -12,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import net.lab1024.sa.common.dto.ResponseDTO;
@@ -19,7 +26,6 @@ import net.lab1024.sa.common.exception.BusinessException;
 import net.lab1024.sa.common.exception.ParamException;
 import net.lab1024.sa.visitor.dao.VisitorAppointmentDao;
 import net.lab1024.sa.visitor.entity.VisitorAppointmentEntity;
-import net.lab1024.sa.visitor.service.impl.VisitorServiceImpl;
 
 /**
  * VisitorServiceImpl Unit Test
@@ -38,8 +44,9 @@ class VisitorServiceImplTest {
     @Mock
     private VisitorAppointmentDao visitorAppointmentDao;
 
+    @Spy
     @InjectMocks
-    private VisitorServiceImpl visitorServiceImpl;
+    private net.lab1024.sa.visitor.service.impl.VisitorServiceImpl visitorServiceImpl;
 
     private VisitorAppointmentEntity mockAppointment;
 
@@ -69,7 +76,7 @@ class VisitorServiceImplTest {
         ResponseDTO<?> result = visitorServiceImpl.getVisitorInfo(visitorId);
 
         // Then
-        assertTrue(result.getOk());
+        assertTrue(result.isSuccess());
         assertNotNull(result.getData());
         verify(visitorAppointmentDao, times(1)).selectById(visitorId);
     }

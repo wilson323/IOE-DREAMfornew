@@ -63,10 +63,10 @@ class VideoPlayServiceImplTest {
     void setUp() {
         // Prepare test data
         mockDevice = new DeviceEntity();
-        mockDevice.setId(1L);
+        mockDevice.setDeviceId(1L);  // Long: 设备ID
         mockDevice.setDeviceCode("CAM001");
         mockDevice.setDeviceName("Test Camera");
-        mockDevice.setDeviceType("CAMERA");
+        mockDevice.setDeviceType(1);  // Integer: CAMERA设备类型
         mockDevice.setIpAddress("192.168.1.100");
         mockDevice.setPort(554);
         mockDevice.setEnabled(1);
@@ -74,7 +74,7 @@ class VideoPlayServiceImplTest {
         mockDevice.setDeletedFlag(0);
 
         mockVideoDeviceVO = new VideoDeviceVO();
-        mockVideoDeviceVO.setDeviceId(1L);
+        mockVideoDeviceVO.setDeviceId(1L);  // Long: VO的设备ID类型
         mockVideoDeviceVO.setDeviceName("Test Camera");
         mockVideoDeviceVO.setDeviceStatus(1);
     }
@@ -131,7 +131,7 @@ class VideoPlayServiceImplTest {
     void test_getVideoStream_DeviceTypeMismatch() {
         // Given
         Long deviceId = 1L;
-        mockDevice.setDeviceType("ACCESS_CONTROL"); // Not a camera
+        mockDevice.setDeviceType(2);  // Integer: 非摄像头设备类型
         when(deviceDao.selectById(deviceId)).thenReturn(mockDevice);
 
         // When & Then

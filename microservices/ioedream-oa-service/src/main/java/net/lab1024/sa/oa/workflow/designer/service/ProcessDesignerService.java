@@ -1,8 +1,8 @@
 package net.lab1024.sa.oa.workflow.designer.service;
 
+import lombok.extern.slf4j.Slf4j;
+
 import jakarta.annotation.Resource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import net.lab1024.sa.oa.workflow.designer.domain.ProcessDefinitionDTO;
 import net.lab1024.sa.oa.workflow.designer.entity.ProcessTemplateEntity;
 import net.lab1024.sa.oa.workflow.designer.dao.ProcessTemplateDao;
@@ -27,9 +27,8 @@ import java.util.stream.Collectors;
  * @since 2025-01-17
  */
 @Service
-public class ProcessDesignerService {
-
-    private static final Logger log = LoggerFactory.getLogger(ProcessDesignerService.class);
+@Slf4j
+ public class ProcessDesignerService {
 
     @Resource
     private ProcessTemplateDao processTemplateDao;
@@ -192,3 +191,6 @@ public class ProcessDesignerService {
         return dto;
     }
 }
+
+
+

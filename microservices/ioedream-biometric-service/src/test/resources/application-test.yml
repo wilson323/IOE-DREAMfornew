@@ -1,0 +1,31 @@
+spring:
+  profiles:
+    active: test
+
+  # 数据源配置（测试环境）
+  datasource:
+    url: jdbc:h2:mem:testdb;MODE=MySQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  # JPA配置
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+
+  # Redis配置（测试环境使用嵌入式Redis）
+  redis:
+    host: localhost
+    port: 6379
+    database: 15
+    timeout: 3000
+
+# 日志配置
+logging:
+  level:
+    root: INFO
+    net.lab1024.sa.biometric: DEBUG
+    org.springframework.web: INFO
+    org.hibernate: INFO

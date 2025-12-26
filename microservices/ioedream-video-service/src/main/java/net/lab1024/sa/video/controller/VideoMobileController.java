@@ -1,5 +1,6 @@
 package net.lab1024.sa.video.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.permission.annotation.PermissionCheck;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,7 +13,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.validation.constraints.NotNull;
-import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.video.domain.vo.VideoDeviceVO;
 import net.lab1024.sa.video.service.VideoPlayService;
@@ -49,7 +49,7 @@ import java.util.Map;
 @RequestMapping("/api/v1/mobile/video")
 @Tag(name = "视频监控移动端", description = "移动端视频监控相关API")
 @PermissionCheck(value = "VIDEO_MOBILE", description = "视频监控移动端模块权限")
-public class VideoMobileController {
+ public class VideoMobileController {
 
     @Resource
     private VideoPlayService videoPlayService;

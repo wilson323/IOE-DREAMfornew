@@ -83,3 +83,4 @@ public class BiometricServiceApplication {
         SpringApplication.run(BiometricServiceApplication.class, args);
     }
 }
+

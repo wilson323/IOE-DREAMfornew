@@ -1,47 +1,27 @@
 package net.lab1024.sa.consume.domain.vo;
 
+import java.util.List;
+
 import lombok.Data;
 
 /**
- * 消费设备配置VO
+ * 消费设备配置
  *
  * @author IOE-DREAM Team
- * @version 1.0.0
- * @since 2025-01-30
+ * @since 2025-12-22
  */
 @Data
 public class ConsumeDeviceConfigVO {
 
-    /**
-     * 设备ID
-     */
     private Long deviceId;
 
-    /**
-     * 设备名称
-     */
     private String deviceName;
 
-    /**
-     * 设备类型
-     */
-    private String deviceType;
+    private String areaId;
 
-    /**
-     * 区域ID
-     */
-    private Long areaId;
+    private Integer manageMode;
 
-    /**
-     * 是否启用
-     */
-    private Boolean enabled;
+    private List<String> consumeModes;
 
-    /**
-     * 设备配置参数（JSON格式）
-     */
-    private String configParams;
+    private Boolean offlineEnabled;
 }
-
-
-

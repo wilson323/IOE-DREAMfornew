@@ -106,3 +106,4 @@ public class CostOptimizationResult {
         return costSavings;
     }
 }
+

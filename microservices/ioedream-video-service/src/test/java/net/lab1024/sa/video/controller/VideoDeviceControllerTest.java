@@ -15,7 +15,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.common.openapi.domain.response.PageResult;
+import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.video.domain.form.VideoDeviceQueryForm;
 import net.lab1024.sa.video.domain.vo.VideoDeviceVO;
 import net.lab1024.sa.video.service.VideoDeviceService;
@@ -48,19 +48,19 @@ class VideoDeviceControllerTest {
     @DisplayName("queryDevices-成功场景-返回分页结果")
     void test_queryDevices_Success_ReturnsPageResult() {
         // Given
-        Integer pageNum = 1;
-        Integer pageSize = 10;
-        String keyword = "摄像头";
-        String areaId = "AREA001";
-        Integer status = 1;
+        VideoDeviceQueryForm queryForm = new VideoDeviceQueryForm();
+        queryForm.setPageNum(1);
+        queryForm.setPageSize(10);
+        queryForm.setKeyword("摄像头");
+        queryForm.setAreaId("AREA001");
+        queryForm.setStatus(1);
 
         PageResult<VideoDeviceVO> pageResult = new PageResult<>();
         when(videoDeviceService.queryDevices(any(VideoDeviceQueryForm.class)))
                 .thenReturn(pageResult);
 
         // When
-        ResponseDTO<PageResult<VideoDeviceVO>> response = videoDeviceController.queryDevices(
-                pageNum, pageSize, keyword, areaId, status);
+        ResponseDTO<PageResult<VideoDeviceVO>> response = videoDeviceController.queryDevices(queryForm);
 
         // Then
         assertNotNull(response);

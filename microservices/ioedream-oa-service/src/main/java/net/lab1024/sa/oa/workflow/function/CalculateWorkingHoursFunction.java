@@ -1,8 +1,5 @@
 package net.lab1024.sa.oa.workflow.function;
 
-import com.googlecode.aviator.runtime.function.AbstractFunction;
-import com.googlecode.aviator.runtime.type.AviatorDouble;
-import com.googlecode.aviator.runtime.type.AviatorObject;
 import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
@@ -11,6 +8,11 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
+
+
+import com.googlecode.aviator.runtime.function.AbstractFunction;
+import com.googlecode.aviator.runtime.type.AviatorDouble;
+import com.googlecode.aviator.runtime.type.AviatorObject;
 
 /**
  * 计算工作时间函数
@@ -61,7 +63,7 @@ public class CalculateWorkingHoursFunction extends AbstractFunction {
      * 计算工作时间
      *
      * @param startTime 开始时间
-     * @param endTime 结束时间
+     * @param endTime   结束时间
      * @return 工作小时数
      */
     private double calculateWorkingHours(LocalDateTime startTime, LocalDateTime endTime) {
@@ -86,7 +88,3 @@ public class CalculateWorkingHoursFunction extends AbstractFunction {
                 .doubleValue();
     }
 }
-
-
-
-

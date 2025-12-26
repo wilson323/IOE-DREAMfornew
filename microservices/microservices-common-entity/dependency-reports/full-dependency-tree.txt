@@ -1,0 +1,4 @@
+net.lab1024.sa:microservices-common-entity:jar:1.0.0
++- org.projectlombok:lombok:jar:1.18.30:compile (optional)
++- com.baomidou:mybatis-plus-annotation:jar:3.5.15:compile
+\- io.swagger.core.v3:swagger-annotations:jar:2.2.0:compile

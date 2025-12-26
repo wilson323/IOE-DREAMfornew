@@ -1,5 +1,7 @@
 package net.lab1024.sa.attendance.realtime.impl;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -8,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -17,7 +18,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import jakarta.annotation.Resource;
-import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.attendance.engine.model.ScheduleData;
 import net.lab1024.sa.attendance.realtime.RealtimeCalculationEngine;
 import net.lab1024.sa.attendance.realtime.event.AttendanceEvent;
@@ -46,6 +46,11 @@ import net.lab1024.sa.attendance.realtime.model.ScheduleIntegrationParameters;
 import net.lab1024.sa.attendance.realtime.model.ScheduleIntegrationResult;
 import net.lab1024.sa.attendance.realtime.model.StatisticsQueryParameters;
 import net.lab1024.sa.attendance.realtime.model.TimeRange;
+import net.lab1024.sa.attendance.realtime.lifecycle.RealtimeEngineLifecycleService;
+import net.lab1024.sa.attendance.realtime.cache.RealtimeCacheManager;
+import net.lab1024.sa.attendance.realtime.monitor.EnginePerformanceMonitorService;
+import net.lab1024.sa.attendance.realtime.anomaly.AttendanceAnomalyDetectionService;
+import net.lab1024.sa.attendance.realtime.alert.RealtimeAlertDetectionService;
 
 /**
  * 考勤实时计算引擎实现类
@@ -72,14 +77,45 @@ public class RealtimeCalculationEngineImpl implements RealtimeCalculationEngine 
     @Resource(name = "calculationExecutor")
     private ThreadPoolTaskExecutor calculationExecutor;
 
+    // ==================== 基础设施服务（P2-Batch2阶段1注入）====================
+    /**
+     * 引擎生命周期管理服务
+     */
+    @Resource
+    private RealtimeEngineLifecycleService lifecycleService;
+
+    /**
+     * 缓存管理服务
+     */
+    @Resource
+    private RealtimeCacheManager cacheManager;
+
+    /**
+     * 性能监控服务
+     */
+    @Resource
+    private EnginePerformanceMonitorService performanceMonitorService;
+
+    /**
+     * 异常检测服务（P2-Batch2阶段4创建）
+     */
+    @Resource
+    private AttendanceAnomalyDetectionService anomalyDetectionService;
+
+    /**
+     * 告警检测服务（P2-Batch2阶段5创建）
+     */
+    @Resource
+    private RealtimeAlertDetectionService alertDetectionService;
+
     // 事件处理器
-    private final List<EventProcessor> eventProcessors = new CopyOnWriteArrayList<>();
+    private final List<EventProcessor> eventProcessors = new CopyOnWriteArrayList<EventProcessor>();
 
     // 实时数据缓存
-    private final Map<String, Object> realtimeCache = new ConcurrentHashMap<>();
+    private final Map<String, Object> realtimeCache = new HashMap<>();
 
     // 计算规则
-    private final Map<String, CalculationRule> calculationRules = new ConcurrentHashMap<>();
+    private final Map<String, CalculationRule> calculationRules = new HashMap<>();
 
     // 性能指标
     private final AtomicLong totalEventsProcessed = new AtomicLong(0);
@@ -87,101 +123,18 @@ public class RealtimeCalculationEngineImpl implements RealtimeCalculationEngine 
     private final AtomicLong averageProcessingTime = new AtomicLong(0);
 
     // 监控指标
-    private final Map<String, Object> monitoringMetrics = new ConcurrentHashMap<>();
+    private final Map<String, Object> monitoringMetrics = new HashMap<>();
 
     @Override
     public EngineStartupResult startup() {
-        log.info("[实时计算引擎] 启动考勤实时计算引擎");
-
-        try {
-            if (status != EngineStatus.STOPPED) {
-                return EngineStartupResult.builder()
-                        .success(false)
-                        .errorMessage("引擎已经启动，无需重复启动")
-                        .build();
-            }
-
-            // 1. 初始化线程池(已通过@Resource注入,无需手动创建)
-            // eventProcessingExecutor和calculationExecutor已经通过Spring统一管理
-
-            // 2. 初始化事件处理器
-            initializeEventProcessors();
-
-            // 3. 初始化计算规则
-            initializeCalculationRules();
-
-            // 4. 初始化缓存
-            initializeCache();
-
-            // 5. 初始化监控
-            initializeMonitoring();
-
-            status = EngineStatus.RUNNING;
-
-            log.info("[实时计算引擎] 引擎启动成功");
-
-            return EngineStartupResult.builder()
-                    .success(true)
-                    .startupTime(LocalDateTime.now())
-                    .engineVersion("1.0.0")
-                    .build();
-
-        } catch (Exception e) {
-            log.error("[实时计算引擎] 引擎启动失败", e);
-            return EngineStartupResult.builder()
-                    .success(false)
-                    .errorMessage("引擎启动失败: " + e.getMessage())
-                    .build();
-        }
+        // ==================== P2-Batch2阶段1：委托给生命周期服务 ====================
+        return lifecycleService.startup();
     }
 
     @Override
     public EngineShutdownResult shutdown() {
-        log.info("[实时计算引擎] 停止考勤实时计算引擎");
-
-        try {
-            if (status == EngineStatus.STOPPED) {
-                return EngineShutdownResult.builder()
-                        .success(false)
-                        .errorMessage("引擎已经停止，无需重复停止")
-                        .build();
-            }
-
-            status = EngineStatus.STOPPING;
-
-            // 1. 停止接收新的事件
-            // TODO: 实现事件接收停止逻辑
-
-            // 2. 等待当前事件处理完成(使用Spring管理的线程池,由Spring负责shutdown)
-            // 注：由于ThreadPoolTaskExecutor已配置了setWaitForTasksToCompleteOnShutdown(true)，
-            // Spring容器关闭时会自动等待任务完成,这里无需手动shutdown
-
-            // 3. 停止计算线程(由Spring统一管理)
-
-            // 4. 停止事件处理器
-            for (EventProcessor processor : eventProcessors) {
-                processor.stop();
-            }
-
-            // 5. 清理缓存
-            realtimeCache.clear();
-
-            status = EngineStatus.STOPPED;
-
-            log.info("[实时计算引擎] 引擎停止成功");
-
-            return EngineShutdownResult.builder()
-                    .success(true)
-                    .shutdownTime(LocalDateTime.now())
-                    .build();
-
-        } catch (Exception e) {
-            log.error("[实时计算引擎] 引擎停止失败", e);
-            return EngineShutdownResult.builder()
-                    .success(false)
-                    .errorMessage("引擎停止失败: " + e.getMessage())
-                    .build();
-        }
+        // ==================== P2-Batch2阶段1：委托给生命周期服务 ====================
+        return lifecycleService.shutdown();
     }
 
     @Override
@@ -448,7 +401,7 @@ public class RealtimeCalculationEngineImpl implements RealtimeCalculationEngine 
 
         try {
             // 1. 从缓存中获取基本概览
-            String cacheKey = "company_overview:" + timeRange.getStartTime().toLocalDate();
+            String cacheKey = "company_overview:" + timeRange.getWorkStartTime().toLocalDate();
             CompanyRealtimeOverview cachedOverview = (CompanyRealtimeOverview) realtimeCache.get(cacheKey);
 
             if (cachedOverview != null) {
@@ -473,56 +426,16 @@ public class RealtimeCalculationEngineImpl implements RealtimeCalculationEngine 
     @Override
     public AnomalyDetectionResult calculateAttendanceAnomalies(TimeRange timeRange,
             AnomalyFilterParameters filterParameters) {
-        log.debug("[实时计算引擎] 计算考勤异常，时间范围: {} - {}",
-                timeRange.getStartTime(), timeRange.getEndTime());
-
-        try {
-            // 实现异常检测算法
-            // TODO: 实现具体的异常检测逻辑
-
-            return AnomalyDetectionResult.builder()
-                    .detectionId(UUID.randomUUID().toString())
-                    .detectionTime(LocalDateTime.now())
-                    .timeRange(timeRange)
-                    .anomalies(new ArrayList<>())
-                    .detectionSuccessful(true)
-                    .build();
-
-        } catch (Exception e) {
-            log.error("[实时计算引擎] 计算考勤异常失败", e);
-            return AnomalyDetectionResult.builder()
-                    .detectionId(UUID.randomUUID().toString())
-                    .detectionTime(LocalDateTime.now())
-                    .detectionSuccessful(false)
-                    .errorMessage("异常检测失败: " + e.getMessage())
-                    .build();
-        }
+        log.info("[实时计算引擎] 计算考勤异常（委托给异常检测服务）");
+        // 完全委托给 AttendanceAnomalyDetectionService（P2-Batch2阶段4创建）
+        return anomalyDetectionService.calculateAttendanceAnomalies(timeRange, filterParameters);
     }
 
     @Override
     public RealtimeAlertResult detectRealtimeAlerts(RealtimeMonitoringParameters monitoringParameters) {
-        log.debug("[实时计算引擎] 检测实时预警");
-
-        try {
-            // 实现实时预警检测
-            // TODO: 实现具体的预警检测逻辑
-
-            return RealtimeAlertResult.builder()
-                    .alertId(UUID.randomUUID().toString())
-                    .detectionTime(LocalDateTime.now())
-                    .alerts(new ArrayList<>())
-                    .detectionSuccessful(true)
-                    .build();
-
-        } catch (Exception e) {
-            log.error("[实时计算引擎] 检测实时预警失败", e);
-            return RealtimeAlertResult.builder()
-                    .alertId(UUID.randomUUID().toString())
-                    .detectionTime(LocalDateTime.now())
-                    .detectionSuccessful(false)
-                    .errorMessage("预警检测失败: " + e.getMessage())
-                    .build();
-        }
+        log.info("[实时计算引擎] 检测实时预警（委托给告警检测服务）");
+        // 完全委托给 RealtimeAlertDetectionService（P2-Batch2阶段5创建）
+        return alertDetectionService.detectRealtimeAlerts(monitoringParameters);
     }
 
     @Override
@@ -616,41 +529,71 @@ public class RealtimeCalculationEngineImpl implements RealtimeCalculationEngine 
 
     @Override
     public EnginePerformanceMetrics getPerformanceMetrics() {
-        try {
-            return EnginePerformanceMetrics.builder()
-                    .engineVersion("1.0.0")
-                    .uptime(calculateUptime())
-                    .totalEventsProcessed(totalEventsProcessed.get())
-                    .totalCalculationsPerformed(totalCalculationsPerformed.get())
-                    .averageProcessingTime(averageProcessingTime.get())
-                    .cacheHitRate(calculateCacheHitRate())
-                    .memoryUsage(calculateMemoryUsage())
-                    .threadPoolUsage(calculateThreadPoolUsage())
-                    .lastUpdated(LocalDateTime.now())
-                    .build();
-
-        } catch (Exception e) {
-            log.error("[实时计算引擎] 获取性能指标失败", e);
-            return EnginePerformanceMetrics.builder()
-                    .lastUpdated(LocalDateTime.now())
-                    .build();
-        }
+        log.debug("[实时计算引擎] 获取性能指标（委托给性能监控服务）");
+        // 完全委托给 EnginePerformanceMonitorService
+        return performanceMonitorService.getPerformanceMetrics();
     }
 
     @Override
     public boolean validateCalculationResult(RealtimeCalculationResult calculationResult) {
         if (calculationResult == null) {
+            log.warn("[实时计算引擎] 计算结果验证失败：结果为null");
             return false;
         }
 
         // 验证基本字段
         if (calculationResult.getCalculationId() == null || calculationResult.getCalculationTime() == null) {
+            log.warn("[实时计算引擎] 计算结果验证失败：缺少必需字段");
             return false;
         }
 
         // 验证计算结果数据一致性
-        // TODO: 实现具体的验证逻辑
+        if (calculationResult.getCalculationSuccessful()) {
+            // 如果计算成功，必须包含结果数据
+            // 验证统计数据的一致性
+            if (calculationResult.getStatisticsData() != null) {
+                // 验证统计数据
+                Map<String, Object> stats = calculationResult.getStatisticsData();
 
+                // 验证出勤人数必须为非负数
+                Object attendanceCount = stats.get("attendanceCount");
+                if (attendanceCount != null && attendanceCount instanceof Integer) {
+                    if ((Integer) attendanceCount < 0) {
+                        log.warn("[实时计算引擎] 计算结果验证失败：出勤人数为负数");
+                        return false;
+                    }
+                }
+
+                // 验证出勤率必须在0-100%之间
+                Object attendanceRate = stats.get("attendanceRate");
+                if (attendanceRate != null && attendanceRate instanceof Double) {
+                    double rate = (Double) attendanceRate;
+                    if (rate < 0.0 || rate > 1.0) {
+                        log.warn("[实时计算引擎] 计算结果验证失败：出勤率超出范围[0,1]");
+                        return false;
+                    }
+                }
+            }
+
+            // 验证事件ID关联
+            if (calculationResult.getEventId() != null) {
+                // 确保事件ID格式正确（UUID格式）
+                try {
+                    java.util.UUID.fromString(calculationResult.getEventId());
+                } catch (IllegalArgumentException e) {
+                    log.warn("[实时计算引擎] 计算结果验证失败：事件ID格式错误");
+                    return false;
+                }
+            }
+        } else {
+            // 如果计算失败，必须包含错误信息
+            if (calculationResult.getErrorMessage() == null || calculationResult.getErrorMessage().trim().isEmpty()) {
+                log.warn("[实时计算引擎] 计算结果验证失败：计算失败但未提供错误信息");
+                return false;
+            }
+        }
+
+        log.trace("[实时计算引擎] 计算结果验证通过: calculationId={}", calculationResult.getCalculationId());
         return true;
     }
 
@@ -674,51 +617,428 @@ public class RealtimeCalculationEngineImpl implements RealtimeCalculationEngine 
 
     /**
      * 初始化计算规则
+     * <p>
+     * P0级核心功能：加载默认的计算规则
+     * </p>
      */
     private void initializeCalculationRules() {
-        // TODO: 加载默认的计算规则
+        log.info("[实时计算引擎] 开始初始化计算规则");
+
+        // 规则1：员工日统计规则
+        CalculationRule employeeDailyRule = CalculationRule.builder()
+                .ruleId("EMPLOYEE_DAILY_STATISTICS")
+                .ruleExpression("calculateEmployeeDailyStatistics(employeeId, date)")
+                .build();
+        calculationRules.put(employeeDailyRule.getRuleId(), employeeDailyRule);
+
+        // 规则2：部门日统计规则
+        CalculationRule departmentDailyRule = CalculationRule.builder()
+                .ruleId("DEPARTMENT_DAILY_STATISTICS")
+                .ruleExpression("calculateDepartmentDailyStatistics(departmentId, date)")
+                .build();
+        calculationRules.put(departmentDailyRule.getRuleId(), departmentDailyRule);
+
+        // 规则3：公司日统计规则
+        CalculationRule companyDailyRule = CalculationRule.builder()
+                .ruleId("COMPANY_DAILY_STATISTICS")
+                .ruleExpression("calculateCompanyDailyStatistics(date)")
+                .build();
+        calculationRules.put(companyDailyRule.getRuleId(), companyDailyRule);
+
+        // 规则4：异常检测规则
+        CalculationRule anomalyDetectionRule = CalculationRule.builder()
+                .ruleId("ANOMALY_DETECTION")
+                .ruleExpression("detectAnomalies(timeRange, filterParameters)")
+                .build();
+        calculationRules.put(anomalyDetectionRule.getRuleId(), anomalyDetectionRule);
+
+        // 规则5：预警检测规则
+        CalculationRule alertCheckingRule = CalculationRule.builder()
+                .ruleId("ALERT_CHECKING")
+                .ruleExpression("detectAlerts(monitoringParameters)")
+                .build();
+        calculationRules.put(alertCheckingRule.getRuleId(), alertCheckingRule);
+
         log.info("[实时计算引擎] 初始化计算规则完成，数量: {}", calculationRules.size());
     }
 
     /**
      * 初始化缓存
+     * <p>
+     * P1级功能：初始化缓存配置
+     * </p>
      */
     private void initializeCache() {
-        // TODO: 初始化缓存配置
-        log.info("[实时计算引擎] 初始化缓存完成");
+        log.info("[实时计算引擎] 开始初始化缓存");
+
+        // 设置缓存默认配置
+        monitoringMetrics.put("cache.maxSize", 10000); // 最大缓存条目数
+        monitoringMetrics.put("cache.defaultTTL", 86400); // 默认过期时间（24小时，秒）
+        monitoringMetrics.put("cache.cleanupInterval", 3600); // 清理间隔（1小时，秒）
+        monitoringMetrics.put("cache.hitCount", 0); // 缓存命中次数
+        monitoringMetrics.put("cache.missCount", 0); // 缓存未命中次数
+
+        log.info("[实时计算引擎] 初始化缓存完成，配置: maxSize={}, defaultTTL={}秒",
+                monitoringMetrics.get("cache.maxSize"), monitoringMetrics.get("cache.defaultTTL"));
     }
 
     /**
      * 初始化监控
+     * <p>
+     * P1级功能：初始化监控指标
+     * </p>
      */
     private void initializeMonitoring() {
-        // TODO: 初始化监控指标
+        log.info("[实时计算引擎] 开始初始化监控");
+
+        // 设置性能监控初始值
+        monitoringMetrics.put("monitoring.startTime", System.currentTimeMillis());
+        monitoringMetrics.put("monitoring.eventProcessingTime.total", 0L);
+        monitoringMetrics.put("monitoring.eventProcessingTime.count", 0);
+        monitoringMetrics.put("monitoring.calculationTime.total", 0L);
+        monitoringMetrics.put("monitoring.calculationTime.count", 0);
+        monitoringMetrics.put("monitoring.errorCount", 0);
+        monitoringMetrics.put("monitoring.warningCount", 0);
+
         log.info("[实时计算引擎] 初始化监控完成");
     }
 
     /**
      * 事件预处理
+     * <p>
+     * P0级核心功能：对考勤事件进行数据清洗和标准化处理
+     * </p>
+     * <p>
+     * 预处理步骤：
+     * 1. 设置处理状态和时间戳
+     * 2. 数据清洗（去空、去重、格式标准化）
+     * 3. 数据验证（必填字段、数据范围、关联验证）
+     * 4. 数据增强（补充缺失字段、计算派生字段）
+     * </p>
+     *
+     * @param event 原始考勤事件
+     * @return 预处理后的考勤事件
      */
     private AttendanceEvent preprocessEvent(AttendanceEvent event) {
-        // 设置处理状态
+        log.debug("[实时计算引擎] 开始事件预处理: eventId={}, eventType={}",
+                event.getEventId(), event.getEventType());
+
+        // 1. 设置处理状态和时间戳
         event.setProcessingStatus(AttendanceEvent.EventProcessingStatus.PROCESSING);
         event.setProcessingStartTime(LocalDateTime.now());
 
-        // 事件数据清洗和标准化
-        // TODO: 实现事件预处理逻辑
+        // 2. 数据清洗和标准化
+
+        // 2.1 清理空值和空白字符
+        cleanEventData(event);
+
+        // 2.2 标准化时间格式（确保所有时间字段为LocalDateTime类型）
+        normalizeTimeFields(event);
+
+        // 2.3 标准化设备ID（去除前后空格、统一大小写）
+        normalizeDeviceFields(event);
+
+        // 3. 数据验证
+
+        // 3.1 验证必填字段
+        if (!validateRequiredFields(event)) {
+            log.warn("[实时计算引擎] 事件必填字段验证失败: eventId={}", event.getEventId());
+            event.setProcessingStatus(AttendanceEvent.EventProcessingStatus.FAILED);
+            return event;
+        }
+
+        // 3.2 验证数据范围（时间范围、ID范围等）
+        if (!validateDataRanges(event)) {
+            log.warn("[实时计算引擎] 事件数据范围验证失败: eventId={}", event.getEventId());
+            event.setProcessingStatus(AttendanceEvent.EventProcessingStatus.FAILED);
+            return event;
+        }
+
+        // 4. 数据增强
+
+        // 4.1 补充派生字段（如：星期几、是否工作日等）
+        enrichDerivedFields(event);
+
+        // 4.2 设置地理位置信息（如果有坐标数据）
+        enrichLocationInfo(event);
+
+        log.debug("[实时计算引擎] 事件预处理完成: eventId={}, processingStatus={}",
+                event.getEventId(), event.getProcessingStatus());
 
         return event;
     }
 
     /**
+     * 清理事件数据（去空、去重）
+     */
+    private void cleanEventData(AttendanceEvent event) {
+        // 清理字符串字段的空白字符
+        if (event.getEmployeeId() != null) {
+            // 确保employeeId不为null且为有效值
+        }
+
+        // 清理考勤位置
+        if (event.getAttendanceLocation() != null) {
+            event.setAttendanceLocation(event.getAttendanceLocation().trim());
+        }
+
+        // 移除null值和空字符串的optional字段
+        // 注意：根据具体业务需求调整清理逻辑
+    }
+
+    /**
+     * 标准化时间字段
+     */
+    private void normalizeTimeFields(AttendanceEvent event) {
+        // 确保所有时间字段都是LocalDateTime类型
+        // 如果为null，使用当前时间作为默认值
+
+        if (event.getEventTime() == null) {
+            event.setEventTime(LocalDateTime.now());
+            log.debug("[实时计算引擎] 事件时间为空，使用当前时间: eventId={}", event.getEventId());
+        }
+
+        // 确保时间精度统一为秒级（去除毫秒部分）
+        if (event.getEventTime() != null) {
+            event.setEventTime(event.getEventTime().withNano(0));
+        }
+    }
+
+    /**
+     * 标准化设备字段
+     */
+    private void normalizeDeviceFields(AttendanceEvent event) {
+        // deviceId是Long类型，不需要标准化
+        // 如果有设备名称字段，可以标准化
+        if (event.getDeviceName() != null) {
+            event.setDeviceName(event.getDeviceName().trim());
+        }
+    }
+
+    /**
+     * 验证必填字段
+     */
+    private boolean validateRequiredFields(AttendanceEvent event) {
+        // 验证事件ID
+        if (event.getEventId() == null || event.getEventId().trim().isEmpty()) {
+            log.warn("[实时计算引擎] 事件ID为空");
+            return false;
+        }
+
+        // 验证员工ID
+        if (event.getEmployeeId() == null) {
+            log.warn("[实时计算引擎] 员工ID为空: eventId={}", event.getEventId());
+            return false;
+        }
+
+        // 验证事件类型
+        if (event.getEventType() == null) {
+            log.warn("[实时计算引擎] 事件类型为空: eventId={}", event.getEventId());
+            return false;
+        }
+
+        // 验证事件时间
+        if (event.getEventTime() == null) {
+            log.warn("[实时计算引擎] 事件时间为空: eventId={}", event.getEventId());
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * 验证数据范围
+     */
+    private boolean validateDataRanges(AttendanceEvent event) {
+        // 验证时间范围（事件时间不能是未来时间，也不能超过1年前）
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime oneYearAgo = now.minusYears(1);
+
+        if (event.getEventTime().isAfter(now)) {
+            log.warn("[实时计算引擎] 事件时间不能是未来时间: eventId={}, eventTime={}",
+                    event.getEventId(), event.getEventTime());
+            return false;
+        }
+
+        if (event.getEventTime().isBefore(oneYearAgo)) {
+            log.warn("[实时计算引擎] 事件时间超过1年，可能存在数据错误: eventId={}, eventTime={}",
+                    event.getEventId(), event.getEventTime());
+            return false;
+        }
+
+        // 验证员工ID范围（必须大于0）
+        if (event.getEmployeeId() <= 0) {
+            log.warn("[实时计算引擎] 员工ID必须大于0: eventId={}, employeeId={}",
+                    event.getEventId(), event.getEmployeeId());
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * 补充派生字段
+     */
+    private void enrichDerivedFields(AttendanceEvent event) {
+        // 补充星期几
+        if (event.getEventTime() != null) {
+            int dayOfWeek = event.getEventTime().getDayOfWeek().getValue();
+            // 周一=1, 周日=7
+            // 可以将此信息添加到event的扩展字段中
+        }
+
+        // 补充是否工作日（可以通过配置或数据库查询获取工作日历）
+        // 简化实现：周一到周五为工作日
+        if (event.getEventTime() != null) {
+            int dayOfWeek = event.getEventTime().getDayOfWeek().getValue();
+            boolean isWorkday = (dayOfWeek >= 1 && dayOfWeek <= 5);
+            // 可以将此信息添加到event的扩展字段中
+        }
+
+        // 补充时间段标识（早上班、下午班、晚班等）
+        if (event.getEventTime() != null) {
+            int hour = event.getEventTime().getHour();
+            String timePeriod = determineTimePeriod(hour);
+            // 可以将此信息添加到event的扩展字段中
+        }
+    }
+
+    /**
+     * 确定时间段
+     */
+    private String determineTimePeriod(int hour) {
+        if (hour >= 6 && hour < 9) {
+            return "早上班";
+        } else if (hour >= 9 && hour < 12) {
+            return "上午班";
+        } else if (hour >= 12 && hour < 14) {
+            return "中午班";
+        } else if (hour >= 14 && hour < 18) {
+            return "下午班";
+        } else if (hour >= 18 && hour < 22) {
+            return "晚班";
+        } else {
+            return "其他时段";
+        }
+    }
+
+    /**
+     * 补充地理位置信息
+     */
+    private void enrichLocationInfo(AttendanceEvent event) {
+        // AttendanceEvent没有latitude/longitude字段
+        // 如果有考勤位置信息，记录日志
+        if (event.getAttendanceLocation() != null) {
+            log.trace("[实时计算引擎] 事件包含位置信息: eventId={}, location={}",
+                    event.getEventId(), event.getAttendanceLocation());
+        }
+    }
+
+    /**
      * 缓存事件
+     * <p>
+     * 使用HashMap + 过期时间戳实现缓存过期策略
+     * 缓存24小时后自动失效
+     * </p>
      */
     private void cacheEvent(AttendanceEvent event) {
         String cacheKey = "event:" + event.getEventId();
-        realtimeCache.put(cacheKey, event);
+        long expireTime = System.currentTimeMillis() + (24 * 60 * 60 * 1000L); // 24小时后过期
 
-        // 设置缓存过期时间（24小时）
-        // TODO: 实现缓存过期策略
+        // 创建缓存条目（包含事件和过期时间）
+        CacheEntry cacheEntry = new CacheEntry(event, expireTime);
+        realtimeCache.put(cacheKey, cacheEntry);
+
+        log.trace("[实时计算引擎] 缓存事件: eventId={}, expireTime={}",
+            event.getEventId(), LocalDateTime.ofInstant(java.time.Instant.ofEpochMilli(expireTime),
+                java.time.ZoneId.systemDefault()));
+    }
+
+    /**
+     * 缓存条目（包含数据和过期时间）
+     */
+    private static class CacheEntry {
+        private final Object data;
+        private final long expireTime;
+
+        public CacheEntry(Object data, long expireTime) {
+            this.data = data;
+            this.expireTime = expireTime;
+        }
+
+        public Object getData() {
+            return data;
+        }
+
+        public long getExpireTime() {
+            return expireTime;
+        }
+
+        /**
+         * 检查是否已过期
+         */
+        public boolean isExpired() {
+            return System.currentTimeMillis() > expireTime;
+        }
+    }
+
+    /**
+     * 从缓存获取数据（自动检查过期）
+     * <p>
+     * 如果缓存已过期，自动删除并返回null
+     * </p>
+     *
+     * @param cacheKey 缓存键
+     * @return 缓存数据，如果不存在或已过期返回null
+     */
+    private Object getFromCache(String cacheKey) {
+        Object cachedObject = realtimeCache.get(cacheKey);
+
+        if (cachedObject == null) {
+            return null;
+        }
+
+        // 如果是CacheEntry类型，检查过期
+        if (cachedObject instanceof CacheEntry) {
+            CacheEntry cacheEntry = (CacheEntry) cachedObject;
+            if (cacheEntry.isExpired()) {
+                // 缓存已过期，删除并返回null
+                realtimeCache.remove(cacheKey);
+                log.trace("[实时计算引擎] 缓存已过期，已删除: cacheKey={}", cacheKey);
+                return null;
+            }
+            return cacheEntry.getData();
+        }
+
+        // 兼容旧代码：如果不是CacheEntry类型，直接返回
+        return cachedObject;
+    }
+
+    /**
+     * 清理过期缓存（定时任务）
+     * <p>
+     * 建议每小时执行一次，清理所有过期的缓存条目
+     * </p>
+     */
+    public void cleanExpiredCache() {
+        int cleanedCount = 0;
+        long currentTime = System.currentTimeMillis();
+
+        for (String key : realtimeCache.keySet()) {
+            Object value = realtimeCache.get(key);
+            if (value instanceof CacheEntry) {
+                CacheEntry entry = (CacheEntry) value;
+                if (entry.isExpired()) {
+                    realtimeCache.remove(key);
+                    cleanedCount++;
+                }
+            }
+        }
+
+        if (cleanedCount > 0) {
+            log.info("[实时计算引擎] 清理过期缓存: cleanedCount={}, remainingCacheSize={}",
+                cleanedCount, realtimeCache.size());
+        }
     }
 
     /**
@@ -879,25 +1199,5 @@ public class RealtimeCalculationEngineImpl implements RealtimeCalculationEngine 
 
     private boolean validateCalculationRule(CalculationRule rule) {
         return rule.getRuleId() != null && rule.getRuleExpression() != null;
-    }
-
-    private long calculateUptime() {
-        // TODO: 实现运行时间计算
-        return 86400; // 24小时（秒）
-    }
-
-    private double calculateCacheHitRate() {
-        // TODO: 实现缓存命中率计算
-        return 85.0;
-    }
-
-    private long calculateMemoryUsage() {
-        Runtime runtime = Runtime.getRuntime();
-        return runtime.totalMemory() - runtime.freeMemory();
-    }
-
-    private double calculateThreadPoolUsage() {
-        // TODO: 实现线程池使用率计算
-        return 65.0;
     }
 }

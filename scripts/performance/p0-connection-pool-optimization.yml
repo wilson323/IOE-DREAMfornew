@@ -1,0 +1,305 @@
+# =====================================================
+# IOE-DREAM P0级连接池配置调优
+# 实施时间：Day 4
+# 预期效果：连接池性能提升40%
+# =====================================================
+
+# =====================================================
+# 1. 数据库连接池优化配置
+# =====================================================
+spring:
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      # 核心连接池配置 - 基于服务器资源调整
+      initial-size: 10              # 初始连接数
+      min-idle: 10                   # 最小空闲连接数
+      max-active: 50                # 最大连接数 (建议CPU核数*2-4)
+      max-wait: 60000               # 获取连接等待超时时间 (60秒)
+
+      # 连接有效性检查配置
+      validation-query: SELECT 1      # 连接有效性检查SQL
+      test-while-idle: true           # 空闲时检查连接有效性
+      test-on-borrow: false          # 借用连接时不检查 (性能优化)
+      test-on-return: false          # 归还连接时不检查 (性能优化)
+      test-on-connect: false          # 创建连接时不检查 (性能优化)
+
+      # 连接回收配置
+      remove-abandoned: true          # 回收泄漏连接
+      remove-abandoned-timeout: 300  # 泄漏连接超时时间 (5分钟)
+      log-abandoned: true           # 记录泄漏连接日志
+
+      # 连接检查间隔配置
+      time-between-eviction-runs-millis: 60000    # 连接检查间隔 (1分钟)
+      min-evictable-idle-time-millis: 300000    # 最小空闲时间 (5分钟)
+      max-evictable-idle-time-millis: 900000    # 最大空闲时间 (15分钟)
+
+      # 连接泄露检测
+      leak-detection-threshold: 0     # 连接泄漏检测阈值
+      connection-init-sqls: "SET NAMES utf8mb4"  # 连接初始化SQL
+
+      # 性能监控配置
+      stat-view-servlet:
+        enabled: true
+        url-pattern: /druid/*
+        login-username: admin
+        login-password: ${DRUID_ADMIN_PASSWORD:admin123}
+
+      filter:
+        stat:
+          enabled: true
+          slow-sql-millis: 1000     # 慢SQL阈值
+          log-slow-sql: true
+        wall:
+          enabled: true
+          config:
+            multi-statement-allow: false
+            strict-mode: true
+            metadata-allow: false
+
+      # 缓存预编译语句
+      pool-prepared-statements: true
+      max-pool-prepared-statement-per-connection-size: 20
+      share-prepared-statements: true
+
+      # 连接池异步初始化
+      async-init: true
+      init-connection-sqls: "SET NAMES utf8mb4;SET sql_mode='STRICT_TRANS_TABLES,NO_ZERO_DATE,NO_ZERO_IN_DATE,ERROR_FOR_DIVISION_BY_ZERO';"
+
+# =====================================================
+# 2. Redis连接池优化配置
+# =====================================================
+spring:
+  data:
+    redis:
+      host: ${REDIS_HOST:127.0.0.1}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      database: 0
+      timeout: 3000
+      lettuce:
+        pool:
+          max-active: 20            # 最大连接数
+          max-idle: 10             # 最大空闲连接数
+          min-idle: 5              # 最小空闲连接数
+          max-wait: 3000          # 获取连接等待时间
+          time-between-eviction-runs: 10000    # 空闲连接回收间隔
+          min-evictable-idle-time: 30000    # 最小空闲时间
+
+        # 连接关闭配置
+          shutdown-timeout: 100ms
+
+        # 连接健康检查
+          cluster:
+            refresh:
+              adaptive: true
+              period: 30s
+
+        # 连接池监控
+          metrics:
+            enabled: true
+            export: true
+
+# =====================================================
+# 3. 线程池优化配置
+# =====================================================
+async:
+  executor:
+    # 核心业务线程池
+    core:
+      core-size: 50
+      max-size: 200
+      queue-capacity: 1000
+      keep-alive-time: 60s
+      thread-name-prefix: "async-core-"
+      rejection-policy: CALLER_RUNS
+      wait-for-tasks-to-completion-on-shutdown: true
+
+    # 定时任务线程池
+    scheduled:
+      core-size: 10
+      max-size: 50
+      keep-alive-time: 60s
+      thread-name-prefix: "async-scheduled-"
+      rejection-policy: DISCARD_OLDEST
+      wait-for-tasks-to-completion-on-shutdown: true
+
+    # 异步文件处理线程池
+    file:
+      core-size: 20
+      max-size: 100
+      queue-capacity: 500
+      keep-alive-time: 30s
+      thread-name-prefix: "async-file-"
+      rejection-policy: CALLER_RUNS
+
+# =====================================================
+# 4. 连接池监控配置
+# =====================================================
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,druid,prometheus
+  endpoint:
+    druid:
+      enabled: true
+    health:
+      show-details: always
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    tags:
+      application: ${spring.application.name}
+
+# =====================================================
+# 5. 连接池告警配置
+# =====================================================
+# Prometheus告警规则示例
+# 需要在Prometheus中配置相应的alert.rules文件
+
+# 连接池使用率告警
+# - alert: HighConnectionPoolUsage
+#   expr: druid_connections_active / druid_connections_max > 0.8
+#   for: 5m
+#   labels:
+#     severity: warning
+#   annotations:
+#     summary: "数据库连接池使用率过高"
+#     description: "数据库连接池使用率超过80%"
+
+# 连接获取超时告警
+# - alert: ConnectionPoolTimeout
+#   expr: rate(druid_connections_acquire_timeout_total[5m]) > 10
+#   for: 5m
+#   labels:
+#     severity: warning
+#   annotations:
+#     summary: "连接池获取连接超时次数过多"
+#     description: "5分钟内连接获取超时超过10次"
+
+# 慢SQL告警
+# - alert: SlowSQL
+#   expr: rate(druid_sql_slow_millis_count[5m]) > 5
+#   for: 5m
+#   labels:
+#     severity: warning
+#   annotations:
+#     summary: "慢SQL查询数量过多"
+#     description: "5分钟内慢SQL查询超过5次"
+
+# =====================================================
+# 6. 连接池性能监控指标
+# =====================================================
+# 自定义监控指标
+logging:
+  level:
+    com.alibaba.druid: INFO
+    org.springframework.jdbc: DEBUG
+
+  # 启用SQL日志
+  pattern:
+    druid:
+      Connection: INFO
+      Statement: DEBUG
+      ResultSet: INFO
+      DataSource: INFO
+      # 只记录慢SQL
+      filter:
+        slow-sql:
+          enabled: true
+          threshold: 1000
+
+# =====================================================
+# 7. 连接池故障恢复配置
+# =====================================================
+spring:
+  # 连接故障恢复
+  datasource:
+    druid:
+      # 连接失败重试配置
+      connection-error-retry-attempts: 3
+      connection-error-retry-delay: 5000
+
+      # 网络超时配置
+      connect-timeout: 30000
+      socket-timeout: 60000
+
+      # 读写超时配置
+      query-timeout: 30000
+      transaction-query-timeout: 60000
+
+      # 连接失败恢复配置
+      break-after-acquire-failure: false
+      continue-on-error: false
+
+      # 连接泄漏保护
+      max-pool-prepared-statement-per-connection-size: 20
+      share-prepared-statements: true
+
+# =====================================================
+# 8. 环境差异化配置
+# =====================================================
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+  # 开发环境连接池配置（较小资源）
+  datasource:
+    druid:
+      initial-size: 5
+      min-idle: 5
+      max-active: 20
+      max-wait: 30000
+      validation-query: SELECT 1
+      test-while-idle: true
+
+---
+spring:
+  config:
+    activate:
+      on-profile: test
+
+  # 测试环境连接池配置（中等资源）
+  datasource:
+    druid:
+      initial-size: 8
+      min-idle: 8
+      max-active: 30
+      max-wait: 45000
+      validation-query: SELECT 1
+      test-while-idle: true
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+  # 生产环境连接池配置（高并发）
+  datasource:
+    druid:
+      initial-size: 10
+      min-idle: 10
+      max-active: 50
+      max-wait: 60000
+      validation-query: SELECT 1
+      test-while-idle: true
+      remove-abandoned: true
+      log-abandoned: true
+
+# =====================================================
+# 9. 连接池性能优化建议
+# =====================================================
+# 生产环境建议配置：
+# 1. max-active = CPU核心数 * 2-4
+# 2. 初始连接数 = min-idle = 核心连接数的80%
+# 3. max-wait = 业务允许的最大等待时间
+# 4. 定期监控连接池使用率和性能指标
+# 5. 根据实际业务负载调整连接池大小
+# 6. 启用连接泄漏检测和日志记录
+# 7. 配置合适的超时时间和重试策略
+# 8. 使用预编译语句提升SQL执行效率

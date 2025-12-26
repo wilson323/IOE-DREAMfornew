@@ -2,14 +2,13 @@ package net.lab1024.sa.video.manager;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.springframework.scheduling.annotation.Async;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 
 /**
  * AI事件管理器
@@ -131,9 +130,9 @@ public class AIEventManager {
             this.eventTime = LocalDateTime.now();
             this.requiresEscalation = false;
             this.requiresNotification = false;
-            this.relatedDeviceIds = new java.util.ArrayList<>();
-            this.contextInfo = new ConcurrentHashMap<>();
-            this.eventData = new ConcurrentHashMap<>();
+            this.relatedDeviceIds = new ArrayList<>();
+            this.contextInfo = new HashMap<>();
+            this.eventData = new HashMap<>();
         }
 
         // Getters and Setters
@@ -524,7 +523,7 @@ public class AIEventManager {
      * 获取事件统计信息
      */
     public Map<String, Object> getEventStatistics() {
-        Map<String, Object> statistics = new ConcurrentHashMap<>();
+        Map<String, Object> statistics = new HashMap<>();
 
         statistics.put("totalEvents", 12580);
         statistics.put("todayEvents", 245);
@@ -535,7 +534,7 @@ public class AIEventManager {
         statistics.put("ignoredEvents", 0);
 
         // 按类型统计
-        Map<String, Long> typeStatistics = new ConcurrentHashMap<>();
+        Map<String, Long> typeStatistics = new HashMap<>();
         typeStatistics.put("FACE_RECOGNITION", 5230L);
         typeStatistics.put("BEHAVIOR_ANALYSIS", 4150L);
         typeStatistics.put("OBJECT_DETECTION", 3200L);
@@ -544,7 +543,7 @@ public class AIEventManager {
         statistics.put("typeStatistics", typeStatistics);
 
         // 按级别统计
-        Map<String, Long> levelStatistics = new ConcurrentHashMap<>();
+        Map<String, Long> levelStatistics = new HashMap<>();
         levelStatistics.put("INFO", 8450L);
         levelStatistics.put("WARNING", 2850L);
         levelStatistics.put("CRITICAL", 980L);
@@ -698,7 +697,7 @@ public class AIEventManager {
     }
 
     private Map<String, Object> buildAlertData(AIEvent event) {
-        Map<String, Object> alertData = new ConcurrentHashMap<>();
+        Map<String, Object> alertData = new HashMap<>();
 
         alertData.put("eventId", event.getEventId());
         alertData.put("eventType", event.getEventType().getDescription());

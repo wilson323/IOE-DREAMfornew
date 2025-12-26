@@ -1,15 +1,21 @@
 package net.lab1024.sa.common.user.controller;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.common.storage.FileStorageStrategy;
-import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
-import java.util.Map;
+import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.common.storage.FileStorageStrategy;
 
 /**
  * 人员管理 - 文件上传Controller
@@ -26,11 +32,12 @@ import java.util.Map;
  * @author IOE-DREAM Team
  * @since 2025-12-18
  */
-@Slf4j
 @RestController
 @RequestMapping("/user/file")
 @Tag(name = "人员文件管理")
+@Slf4j
 public class UserFileController {
+
 
     @Resource
     private FileStorageStrategy fileStorageStrategy;
@@ -77,8 +84,7 @@ public class UserFileController {
             @RequestParam(value = "type", defaultValue = "avatar") String type) {
         try {
             String folder = "avatar".equals(type) ? "common/avatars" : "common/id-cards";
-            Map<String, String> result = fileStorageStrategy.getPresignedUploadUrl(
-                folder, fileName, 3600);
+            Map<String, String> result = fileStorageStrategy.getPresignedUploadUrl(folder, fileName, 3600);
 
             log.info("[人员管理] 生成预签名URL: type={}, fileName={}", type, fileName);
             return ResponseDTO.ok(result);

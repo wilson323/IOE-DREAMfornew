@@ -74,6 +74,15 @@ management:
     prometheus:
       enabled: ${ACTUATOR_PROMETHEUS_ENABLED:true}
 
+  # Prometheus 指标导出（Spring Boot 3.5.x 推荐键）
+  # 说明：旧键 management.metrics.export.prometheus.* 已弃用
+  prometheus:
+    metrics:
+      export:
+        enabled: ${METRICS_EXPORT_PROMETHEUS_ENABLED:true}
+        step: ${METRICS_EXPORT_PROMETHEUS_STEP:60}
+        descriptions: ${METRICS_EXPORT_PROMETHEUS_DESCRIPTIONS:true}
+
   # 监控指标配置
   metrics:
     # 启用所有指标
@@ -87,14 +96,8 @@ management:
       redis: ${METRICS_ENABLE_REDIS:true}
       spring: ${METRICS_ENABLE_SPRING:true}
 
-    # 导出配置
+    # 其他导出配置
     export:
-      # Prometheus导出
-      prometheus:
-        enabled: ${METRICS_EXPORT_PROMETHEUS_ENABLED:true}
-        step: ${METRICS_EXPORT_PROMETHEUS_STEP:60}
-        descriptions: ${METRICS_EXPORT_PROMETHEUS_DESCRIPTIONS:true}
-
       # JMX导出
       jmx:
         enabled: ${METRICS_EXPORT_JMX_ENABLED:true}
@@ -105,20 +108,20 @@ management:
         enabled: ${METRICS_EXPORT_SIMPLE_ENABLED:false}
         step: ${METRICS_EXPORT_SIMPLE_STEP:60}
 
-    # 分布式追踪
+    # 分布式追踪/分布统计
     distribution:
-      # 百分位配置
+      # 百分位直方图（map key 含特殊字符需转义）
       percentiles-histogram:
-        http.server.requests: ${METRICS_DISTRIBUTION_HISTOGRAM_ENABLED:true}
-        spring.data.repository.invocations: ${METRICS_DISTRIBUTION_HISTOGRAM_ENABLED:true}
+        "[http.server.requests]": ${METRICS_DISTRIBUTION_HISTOGRAM_ENABLED:true}
+        "[spring.data.repository.invocations]": ${METRICS_DISTRIBUTION_HISTOGRAM_ENABLED:true}
 
       percentiles:
-        http.server.requests: ${METRICS_DISTRIBUTION_PERCENTILES:"0.5,0.9,0.95,0.99"}
-        spring.data.repository.invocations: ${METRICS_DISTRIBUTION_PERCENTILES:"0.5,0.9,0.95,0.99"}
+        "[http.server.requests]": ${METRICS_DISTRIBUTION_PERCENTILES:"0.5,0.9,0.95,0.99"}
+        "[spring.data.repository.invocations]": ${METRICS_DISTRIBUTION_PERCENTILES:"0.5,0.9,0.95,0.99"}
 
       # SLO配置
       sla:
-        http.server.requests: ${METRICS_SLA_HTTP:"100ms,200ms,500ms,1s,2s,5s"}
+        "[http.server.requests]": ${METRICS_SLA_HTTP:"100ms,200ms,500ms,1s,2s,5s"}
 
     # 自定义指标
     tags:
@@ -170,7 +173,6 @@ logging:
     org.mybatis: ${LOG_LEVEL_MYBATIS:WARN}
     net.lab1024.sa: ${LOG_LEVEL_APPLICATION:DEBUG}
     com.alibaba.druid: ${LOG_LEVEL_DRUID:INFO}
-    com.zaxxer.hikari: ${LOG_LEVEL_HIKARI:WARN}
     redis.clients.jedis: ${LOG_LEVEL_JEDIS:WARN}
     io.lettuce.core: ${LOG_LEVEL_LETTUCE:WARN}
 

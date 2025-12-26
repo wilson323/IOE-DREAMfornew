@@ -1,0 +1,24 @@
+QueryBuilder批量迁移结果报告
+======================================================================
+
+总计服务: 14
+成功: 13
+跳过: 1
+失败: 0
+
+详细结果:
+----------------------------------------------------------------------
+✅ AccessAreaServiceImpl: ✅ 成功
+✅ AccessUserPermissionServiceImpl: ✅ 成功
+✅ AttendanceReportServiceImpl: ✅ 成功
+✅ AttendanceRuleServiceImpl: ✅ 成功
+✅ AttendanceSummaryServiceImpl: ✅ 成功
+✅ SmartScheduleServiceImpl: ✅ 成功
+✅ ConsumeSubsidyServiceImpl: ✅ 成功
+✅ VideoRecordingServiceImpl: ✅ 成功
+✅ VideoFaceServiceImpl: ✅ 成功
+✅ VideoBehaviorServiceImpl: ✅ 成功
+⏭️ VisitorStatisticsServiceImpl: 无需迁移（未使用LambdaQueryWrapper）
+✅ EmployeeServiceImpl: ✅ 成功
+✅ AreaUnifiedServiceImpl: ✅ 成功
+✅ BiometricTemplateServiceImpl: ✅ 成功

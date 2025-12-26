@@ -1,0 +1,4 @@
+﻿ioedream-device-comm-service	1
+ioedream-oa-service	1
+ioedream-attendance-service	1
+ioedream-database-service	1

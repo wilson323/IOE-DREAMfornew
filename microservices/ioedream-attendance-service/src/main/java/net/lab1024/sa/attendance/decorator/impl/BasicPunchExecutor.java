@@ -20,8 +20,8 @@ import java.time.LocalDateTime;
  * @version 1.0.0
  * @since 2025-12-18
  */
-@Slf4j
 @Component
+@Slf4j
 public class BasicPunchExecutor implements IPunchExecutor {
 
     @Resource
@@ -43,3 +43,4 @@ public class BasicPunchExecutor implements IPunchExecutor {
         return IPunchExecutor.PunchResult.success(record);
     }
 }
+

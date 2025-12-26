@@ -1,28 +1,28 @@
 package net.lab1024.sa.oa.workflow.job;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.time.LocalDateTime;
-import java.util.List;
-
-import org.springframework.scheduling.annotation.Scheduled;
-
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import org.springframework.http.HttpMethod;
+import org.springframework.scheduling.annotation.Scheduled;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.springframework.http.HttpMethod;
-
 import jakarta.annotation.Resource;
-import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
-import net.lab1024.sa.common.monitor.dao.NotificationDao;
-import net.lab1024.sa.common.monitor.domain.entity.NotificationEntity;
-import net.lab1024.sa.common.monitor.manager.NotificationManager;
-import net.lab1024.sa.oa.workflow.dao.WorkflowTaskDao;
-import net.lab1024.sa.oa.domain.entity.WorkflowTaskEntity;
 import net.lab1024.sa.common.workflow.manager.WorkflowApprovalManager;
+import net.lab1024.sa.oa.domain.entity.WorkflowTaskEntity;
+// TODO: NotificationDao和NotificationManager在ioedream-common-service中，应通过GatewayServiceClient调用
+// import net.lab1024.sa.common.monitor.dao.NotificationDao;
+// import net.lab1024.sa.common.monitor.domain.entity.NotificationEntity;
+// import net.lab1024.sa.common.monitor.manager.NotificationManager;
+import net.lab1024.sa.oa.workflow.dao.WorkflowTaskDao;
 
 /**
  * 工作流审批超时提醒定时任务
@@ -43,19 +43,20 @@ import net.lab1024.sa.common.workflow.manager.WorkflowApprovalManager;
  * @version 1.0.0
  * @since 2025-01-30
  */
-@Slf4j
 // 暂时禁用此Job，因为依赖的WorkflowApprovalManager需要类型兼容性修复
 // @Component
+@Slf4j
 public class WorkflowTimeoutReminderJob {
 
     @Resource
     private WorkflowTaskDao workflowTaskDao;
 
-    @Resource
-    private NotificationManager notificationManager;
-
-    @Resource
-    private NotificationDao notificationDao;
+    // TODO: 这些依赖在ioedream-common-service中，应通过GatewayServiceClient调用
+    // @Resource
+    // private NotificationManager notificationManager;
+    //
+    // @Resource
+    // private NotificationDao notificationDao;
 
     @Resource
     private WorkflowApprovalManager workflowApprovalManager;
@@ -155,7 +156,8 @@ public class WorkflowTimeoutReminderJob {
 
             Map<String, Object> variables = objectMapper.readValue(
                     variablesJson,
-                    new TypeReference<Map<String, Object>>() {});
+                    new TypeReference<Map<String, Object>>() {
+                    });
 
             Object lastReminderTimeObj = variables.get("lastReminderTime");
             if (lastReminderTimeObj == null) {
@@ -210,25 +212,13 @@ public class WorkflowTimeoutReminderJob {
                             "请及时处理。",
                     task.getTaskName(),
                     task.getProcessName() != null ? task.getProcessName() : "未知流程",
-                    task.getDueTime() != null ? task.getDueTime().toString() : "未知"
-            );
+                    task.getDueTime() != null ? task.getDueTime().toString() : "未知");
 
-            // 创建通知实体
-            NotificationEntity notification = new NotificationEntity();
-            notification.setTitle(title);
-            notification.setContent(content);
-            notification.setNotificationType(2); // 2-业务通知
-            notification.setReceiverType(1); // 1-指定用户
-            notification.setReceiverIds(String.valueOf(task.getAssigneeId()));
-            notification.setChannel(5); // 5-WebSocket（也可以使用其他渠道）
-            notification.setStatus(0); // 0-待发送
-            notification.setPriority(2); // 2-普通优先级
-            notification.setCreateTime(LocalDateTime.now());
-
-            // 保存通知到数据库，由NotificationManager的定时任务处理发送
-            // 注意：NotificationManager.sendNotification是protected方法，不能直接调用
-            // 通过NotificationDao保存通知，由NotificationManager.processPendingNotifications()定时任务处理
-            notificationDao.insert(notification);
+            // Job当前处于禁用状态（未加@Component）。
+            // 同时通知模块属于common-service职责范围，OA服务不应直接依赖其DAO/Manager。
+            // 这里仅记录日志并更新“上次提醒时间”，避免编译期跨服务耦合。
+            log.info("[超时提醒Job] 生成提醒通知(未发送)：assigneeId={}, title={}, dueTime={}",
+                    task.getAssigneeId(), title, task.getDueTime());
 
             // 更新任务变量中的上次提醒时间
             updateLastReminderTime(task);
@@ -253,7 +243,8 @@ public class WorkflowTimeoutReminderJob {
             if (variablesJson != null && !variablesJson.isEmpty()) {
                 variables = objectMapper.readValue(
                         variablesJson,
-                        new TypeReference<Map<String, Object>>() {});
+                        new TypeReference<Map<String, Object>>() {
+                        });
             }
 
             // 更新上次提醒时间
@@ -327,12 +318,11 @@ public class WorkflowTimeoutReminderJob {
             }
 
             // 2. 通过网关调用OA服务转交任务
-            ResponseDTO<String> response = gatewayServiceClient.callOAService(
-                    "/api/v1/workflow/engine/task/" + task.getId() + "/transfer?targetUserId=" + supervisorId,
+            ResponseDTO<String> response = gatewayServiceClient.callCommonService(
+                    "/oa/api/v1/workflow/engine/task/" + task.getId() + "/transfer?targetUserId=" + supervisorId,
                     HttpMethod.PUT,
-                    null,
-                    String.class
-            );
+                    (Map<String, Object>) null,
+                    new TypeReference<ResponseDTO<String>>() {});
 
             if (response != null && response.isSuccess()) {
                 log.info("自动转交超时任务成功，任务ID: {}, 原审批人ID: {}, 新审批人ID: {}",
@@ -360,9 +350,9 @@ public class WorkflowTimeoutReminderJob {
             ResponseDTO<Map<String, Object>> response = gatewayServiceClient.callCommonService(
                     "/api/v1/employee/" + employeeId,
                     HttpMethod.GET,
-                    null,
-                    new TypeReference<ResponseDTO<Map<String, Object>>>() {}
-            );
+                    (Map<String, Object>) null,
+                    new TypeReference<ResponseDTO<Map<String, Object>>>() {
+                    });
 
             if (response != null && response.isSuccess() && response.getData() != null) {
                 Map<String, Object> employeeData = response.getData();
@@ -404,12 +394,11 @@ public class WorkflowTimeoutReminderJob {
             requestParams.put("outcome", "同意");
             requestParams.put("comment", comment);
 
-            ResponseDTO<String> response = gatewayServiceClient.callOAService(
-                    "/api/v1/workflow/engine/task/" + task.getId() + "/complete",
+            ResponseDTO<String> response = gatewayServiceClient.callCommonService(
+                    "/oa/api/v1/workflow/engine/task/" + task.getId() + "/complete",
                     HttpMethod.POST,
                     requestParams,
-                    String.class
-            );
+                    new TypeReference<ResponseDTO<String>>() {});
 
             if (response != null && response.isSuccess()) {
                 log.info("自动通过超时任务成功，任务ID: {}", task.getId());
@@ -438,12 +427,11 @@ public class WorkflowTimeoutReminderJob {
                 log.warn("无法获取更高层级的审批人，任务ID: {}, 仅发送升级通知", task.getId());
             } else {
                 // 转交给更高层级的审批人
-                ResponseDTO<String> transferResponse = gatewayServiceClient.callOAService(
-                        "/api/v1/workflow/engine/task/" + task.getId() + "/transfer?targetUserId=" + escalatedUserId,
+                ResponseDTO<String> transferResponse = gatewayServiceClient.callCommonService(
+                        "/oa/api/v1/workflow/engine/task/" + task.getId() + "/transfer?targetUserId=" + escalatedUserId,
                         HttpMethod.PUT,
-                        null,
-                        String.class
-                );
+                        (Map<String, Object>) null,
+                        new TypeReference<ResponseDTO<String>>() {});
 
                 if (transferResponse != null && transferResponse.isSuccess()) {
                     log.info("升级转交成功，任务ID: {}, 升级审批人ID: {}", task.getId(), escalatedUserId);
@@ -460,21 +448,10 @@ public class WorkflowTimeoutReminderJob {
                             "请关注处理进度。",
                     task.getTaskName(),
                     task.getProcessName() != null ? task.getProcessName() : "未知流程",
-                    task.getAssigneeName() != null ? task.getAssigneeName() : "未知"
-            );
+                    task.getAssigneeName() != null ? task.getAssigneeName() : "未知");
 
-            NotificationEntity notification = new NotificationEntity();
-            notification.setTitle(title);
-            notification.setContent(content);
-            notification.setNotificationType(2); // 2-业务通知
-            notification.setReceiverType(1); // 1-指定用户
-            notification.setReceiverIds(String.valueOf(task.getAssigneeId())); // 通知原审批人
-            notification.setChannel(5); // 5-WebSocket
-            notification.setStatus(0); // 0-待发送
-            notification.setCreateTime(LocalDateTime.now());
-
-            // 保存通知记录（由定时任务处理发送）
-            notificationDao.insert(notification);
+            // Job当前处于禁用状态（未加@Component），此处仅记录日志，避免跨服务依赖。
+            log.info("[超时提醒Job] 生成升级通知(未发送)：assigneeId={}, title={}", task.getAssigneeId(), title);
 
             log.info("升级处理完成，任务ID: {}", task.getId());
         } catch (Exception e) {
@@ -522,7 +499,8 @@ public class WorkflowTimeoutReminderJob {
             if (variablesJson != null && !variablesJson.isEmpty()) {
                 Map<String, Object> variables = objectMapper.readValue(
                         variablesJson,
-                        new TypeReference<Map<String, Object>>() {});
+                        new TypeReference<Map<String, Object>>() {
+                        });
 
                 Object timeoutStrategyObj = variables.get("timeoutStrategy");
                 if (timeoutStrategyObj != null) {
@@ -546,8 +524,3 @@ public class WorkflowTimeoutReminderJob {
         }
     }
 }
-
-
-
-
-

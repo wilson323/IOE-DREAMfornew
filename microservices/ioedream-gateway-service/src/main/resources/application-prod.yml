@@ -1,4 +1,4 @@
-# ============================================================
+﻿# ============================================================
 # IOE-DREAM Gateway Service 生产环境配置
 #
 # @Author:    IOE-DREAM Team
@@ -47,7 +47,7 @@ spring:
       # 跨域配置
       globalcors:
         cors-configurations:
-          '[/**]':
+          "[/**]":
             allowedOriginPatterns: ${CORS_ALLOWED_ORIGINS:http://localhost:3000,http://localhost:8080}
             allowedMethods:
               - GET
@@ -239,18 +239,18 @@ spring:
       # 负载均衡配置
       loadbalancer:
         ribbon:
-          enabled: false  # 使用Spring Cloud LoadBalancer
+          enabled: false # 使用Spring Cloud LoadBalancer
 
   # ==================== 缓存配置 ====================
   cache:
     type: redis
     redis:
-      time-to-live: 600000  # 10分钟
+      time-to-live: 600000 # 10分钟
       cache-null-values: false
       key-prefix: gateway_cache_
 
-  # ==================== Zipkin分布式追踪配置 ====================
-  sleuth:
+  # ==================== 分布式追踪配置 ====================
+  tracing:
     zipkin:
       base-url: ${ZIPKIN_BASE_URL:http://zipkin-prod:9411}
       enabled: ${ZIPKIN_ENABLED:true}
@@ -275,22 +275,23 @@ management:
       enabled: true
     gateway:
       enabled: true
-  metrics:
-    export:
-      prometheus:
+  prometheus:
+    metrics:
+      export:
         enabled: true
         step: 30s
+  metrics:
     distribution:
       percentiles-histogram:
-        http.server.requests: true
+        "[http.server.requests]": true
       percentiles:
-        http.server.requests: 0.5,0.9,0.95,0.99
+        "[http.server.requests]": 0.5,0.9,0.95,0.99
 
 # ==================== 日志配置 ====================
 logging:
   level:
-    org.springframework.cloud.gateway: INFO
-    org.springframework.web.reactive.function.client: INFO
+    "org.springframework.cloud.gateway": INFO
+    "org.springframework.web.reactive.function.client": INFO
   pattern:
     console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr([%X{traceId:-},%X{spanId:-}]){blue} %clr(%5p){magenta} %clr(${PID:- }){yellow} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}"
     file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{traceId:-},%X{spanId:-}] %5p ${PID:- } --- [%t] %-40.40logger{39} : %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}"
@@ -346,3 +347,4 @@ gateway:
   websocket:
     allowed-origins: ${WEBSOCKET_ALLOWED_ORIGINS:*}
     heartbeat-interval: ${WEBSOCKET_HEARTBEAT:30}
+

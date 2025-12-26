@@ -63,12 +63,12 @@
     "@dcloudio/uni-quickapp-webview": "3.0.0-3090920231225001",
     "@dcloudio/uni-ui": "1.5.0",
     "crypto-js": "4.1.1",
-    "dayjs": "1.11.10",
+    "dayjs": "1.11.13",
     "lodash": "4.17.21",
     "pinia": "2.0.36",
     "sm-crypto": "0.3.13",
-    "vue": "3.2.47",
-    "vue-i18n": "9.1.9"
+    "vue": "3.4.27",
+    "vue-i18n": "9.13.1"
   },
   "devDependencies": {
     "@dcloudio/types": "3.3.2",

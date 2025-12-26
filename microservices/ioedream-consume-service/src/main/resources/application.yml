@@ -1,4 +1,4 @@
-# ============================================================
+﻿# ============================================================
 # IOE-DREAM Consume Service 配置文件
 #
 # @Author:    IOE-DREAM Team
@@ -17,22 +17,18 @@ spring:
     name: ioedream-consume-service
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:dev}
+  # 引入统一配置文件
   config:
     import:
-      - "optional:nacos:ioedream-consume-service-docker.yaml"
+      - "classpath:common-config/cache-application.yml"
+      - "classpath:common-config/database-application.yml"
+      - "classpath:common-config/resilience4j-application.yml"
 
-  # ==================== 数据源配置 ====================
+  # ==================== 数据源配置（服务特定数据库信息）============================
   datasource:
-    type: com.alibaba.druid.pool.DruidDataSource
-    driver-class-name: com.mysql.cj.jdbc.Driver
     url: "jdbc:mysql://${MYSQL_HOST:127.0.0.1}:${MYSQL_PORT:3306}/${MYSQL_DATABASE:ioedream}?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true"
     username: ${MYSQL_USERNAME:root}
     password: ${MYSQL_PASSWORD:ENC(AES256:G6K7X8J9M0N1O2P3Q4R5S6T7U8V9W0X)}
-    druid:
-      initial-size: 5
-      min-idle: 5
-      max-active: 20
-      max-wait: 60000
 
   # ==================== Redis配置 ====================
   data:
@@ -75,7 +71,7 @@ spring:
         namespace: ${NACOS_NAMESPACE:dev}
         group: ${NACOS_GROUP:IOE-DREAM}
         username: ${NACOS_USERNAME:nacos}
-        password: ${NACOS_PASSWORD:nacos}
+        password: ${NACOS_PASSWORD:ENC(I2//JcHFpBc7vLPrYnCJNA==)}
         enabled: true
         register-enabled: true
       config:
@@ -83,11 +79,24 @@ spring:
         namespace: ${NACOS_NAMESPACE:dev}
         group: ${NACOS_GROUP:IOE-DREAM}
         username: ${NACOS_USERNAME:nacos}
-        password: ${NACOS_PASSWORD:nacos}
+        password: ${NACOS_PASSWORD:ENC(I2//JcHFpBc7vLPrYnCJNA==)}
         file-extension: yaml
-        enabled: false  # 本地开发环境禁用配置中心，使用本地配置文件
+        enabled: false # 本地开发环境禁用配置中心，使用本地配置文件
         import-check:
           enabled: false
+    # ==================== LoadBalancer负载均衡配置 ====================
+    loadbalancer:
+      ribbon:
+        enabled: false
+      # 缓存配置
+      cache:
+        enabled: true
+        ttl: 3600
+      # 重试配置
+      retry:
+        enabled: true
+        max-retries-on-same-service: 1
+        max-retries-on-next-service: 1
 
 # ==================== 安全配置 ====================
 security:
@@ -119,7 +128,7 @@ mybatis-plus:
 logging:
   level:
     root: INFO
-    net.lab1024.sa: DEBUG
+    "net.lab1024.sa": DEBUG
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"
 
@@ -145,3 +154,146 @@ management:
   zipkin:
     tracing:
       endpoint: ${ZIPKIN_ENDPOINT:http://localhost:9411/api/v2/spans}
+
+# ==================== Spring Cloud OpenFeign配置 ====================
+feign:
+  client:
+    config:
+      default:
+        # 连接超时（毫秒）
+        connectTimeout: 5000
+        # 读取超时（毫秒）
+        readTimeout: 10000
+        # 日志级别
+        loggerLevel: basic
+  # 启用压缩
+  compression:
+    request:
+      enabled: true
+      mime-types: text/xml,application/xml,application/json
+      min-request-size: 2048
+    response:
+      enabled: true
+  # 启用OkHttp作为HTTP客户端（可选，性能更好）
+  okhttp:
+    enabled: false
+
+# ==================== Seata分布式事务配置 ====================
+seata:
+  # 是否启用Seata
+  enabled: ${SEATA_ENABLED:true}
+  # 应用ID
+  application-id: ioedream-consume-service
+  # 事务组
+  tx-service-group: ioedream-tx-group
+  # 服务配置
+  service:
+    # 事务分组映射
+    vgroup-mapping:
+      ioedream-tx-group: default
+    # 分组列表
+    grouplist:
+      - ${SEATA_SERVER_ADDR:127.0.0.1:8091}
+    # 关闭全局事务
+    disable-global-transaction: false
+    # 数据源代理模式
+    enable-autoDataSourceProxy: true
+    # 数据源代理类型
+    data-source-proxy-mode: AT
+  # 配置中心配置
+  config:
+    type: nacos
+    nacos:
+      server-addr: ${spring.cloud.nacos.discovery.server-addr}
+      namespace: ${NACOS_NAMESPACE:dev}
+      group: SEATA_GROUP
+      username: ${NACOS_USERNAME:nacos}
+      password: ${NACOS_PASSWORD:ENC(I2//JcHFpBc7vPrYnCJNA==)}
+      data-id: seata-server.properties
+  # 注册中心配置
+  registry:
+    type: nacos
+    nacos:
+      server-addr: ${spring.cloud.nacos.discovery.server-addr}
+      namespace: ${NACOS_NAMESPACE:dev}
+      group: SEATA_GROUP
+      username: ${NACOS_USERNAME:nacos}
+      password: ${NACOS_PASSWORD:ENC(I2//JcHFpBc7vPrYnCJNA==)}
+      application: seata-server
+  # undo_log表配置
+  undo:
+    log-validation: true
+    log-serialization: jackson
+    # 只有在AT模式下才需要
+    data:
+      # 每个分支事务的缓存大小
+      cache-size: 1000
+      # undo日志表的表名
+      table: undo_log
+  # 客户端配置
+  client:
+    rm:
+      asyncCommitBufferLimit: 10000
+      lock:
+        retry-interval: 10
+        retry-times: 30
+        retry-branch-rollback-on: true
+      report:
+        retry-count: 5
+        report-success-count: 3
+    tm:
+      commit-retry-count: 5
+      rollback-retry-count: 5
+    undo:
+      data-validation: true
+      log-serialization: jackson
+
+# ==================== Resilience4j熔断器配置 ====================
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        # 滑动窗口大小
+        slidingWindowSize: 50
+        # 最小调用次数
+        minimumNumberOfCalls: 20
+        # 失败率阈值（百分比）
+        failureRateThreshold: 50
+        # 慢调用阈值（毫秒）
+        slowCallRateThreshold: 100
+        slowCallDurationThreshold: 2000
+        # 半开状态等待时间（毫秒）
+        waitDurationInOpenState: 5000
+        # 半开状态允许的调用次数
+        permittedNumberOfCallsInHalfOpenState: 3
+        # 自动从开启转换到半开的时间
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+    instances:
+      ioedream-account-service:
+        baseConfig: default
+  timelimiter:
+    configs:
+      default:
+        # 超时时间（毫秒）
+        timeoutDuration: 5000
+    instances:
+      ioedream-account-service:
+        baseConfig: default
+  retry:
+    configs:
+      default:
+        # 最大重试次数
+        maxAttempts: 3
+        # 重试间隔（毫秒）
+        waitDuration: 1000
+        # 重试异常配置
+        retryExceptions:
+          - java.lang.IllegalArgumentException
+          - java.util.concurrent.TimeoutException
+          - java.net.UnknownHostException
+        ignoreExceptions:
+          - java.lang.IllegalStateException
+    instances:
+      ioedream-account-service:
+        baseConfig: default
+

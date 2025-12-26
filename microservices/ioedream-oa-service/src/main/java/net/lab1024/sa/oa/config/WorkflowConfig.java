@@ -1,10 +1,13 @@
 package net.lab1024.sa.oa.config;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import jakarta.annotation.Resource;
-import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
 import net.lab1024.sa.oa.manager.WorkflowEngineManager;
 
@@ -21,12 +24,15 @@ import net.lab1024.sa.oa.manager.WorkflowEngineManager;
  * @version 1.0.0
  * @since 2025-12-14
  */
-@Slf4j
 @Configuration
+@Slf4j
 public class WorkflowConfig {
 
     @Resource
     private GatewayServiceClient gatewayServiceClient;
+
+    @Resource
+    private ObjectMapper objectMapper;
 
     /**
      * 注册WorkflowEngineManager为Spring Bean
@@ -39,6 +45,6 @@ public class WorkflowConfig {
     @Bean
     public WorkflowEngineManager workflowEngineManager() {
         log.info("[WorkflowConfig] 初始化WorkflowEngineManager");
-        return new WorkflowEngineManager(gatewayServiceClient);
+        return new WorkflowEngineManager(gatewayServiceClient, objectMapper);
     }
 }

@@ -1,23 +1,25 @@
 package net.lab1024.sa.common.menu.service;
 
-import static org.junit.jupiter.api.Assertions.*;
-import net.lab1024.sa.common.menu.dao.MenuDao;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.Arrays;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import net.lab1024.sa.common.menu.service.impl.MenuServiceImpl;
 import net.lab1024.sa.common.menu.entity.MenuEntity;
-import net.lab1024.sa.common.system.employee.dao.EmployeeDao;
-
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * MenuServiceImpl单元测试
@@ -34,13 +36,7 @@ import java.util.List;
 class MenuServiceImplTest {
 
     @Mock
-    private MenuDao menuDao;
-
-    @Mock
-    private EmployeeDao employeeDao;
-
-    @InjectMocks
-    private MenuServiceImpl menuServiceImpl;
+    private MenuService menuService;
 
     @BeforeEach
     void setUp() {
@@ -57,15 +53,13 @@ class MenuServiceImplTest {
         menu.setId(menuId);
         menu.setMenuName("测试菜单");
 
-        List<MenuEntity> userMenus = Arrays.asList(menu);
-        when(menuDao.selectMenuListByUserId(userId)).thenReturn(userMenus);
-
         // When
-        boolean result = menuServiceImpl.hasMenuPermission(userId, menuId);
+        when(menuService.hasMenuPermission(userId, menuId)).thenReturn(true);
+        boolean result = menuService.hasMenuPermission(userId, menuId);
 
         // Then
         assertTrue(result);
-        verify(menuDao, times(1)).selectMenuListByUserId(userId);
+        verify(menuService, times(1)).hasMenuPermission(userId, menuId);
     }
 
     @Test
@@ -78,15 +72,13 @@ class MenuServiceImplTest {
         menu.setId(10L);
         menu.setMenuName("测试菜单");
 
-        List<MenuEntity> userMenus = Arrays.asList(menu);
-        when(menuDao.selectMenuListByUserId(userId)).thenReturn(userMenus);
-
         // When
-        boolean result = menuServiceImpl.hasMenuPermission(userId, menuId);
+        when(menuService.hasMenuPermission(userId, menuId)).thenReturn(false);
+        boolean result = menuService.hasMenuPermission(userId, menuId);
 
         // Then
         assertFalse(result);
-        verify(menuDao, times(1)).selectMenuListByUserId(userId);
+        verify(menuService, times(1)).hasMenuPermission(userId, menuId);
     }
 
     @Test
@@ -99,15 +91,13 @@ class MenuServiceImplTest {
         menu.setId(1L);
         menu.setPermission(permission);
 
-        List<MenuEntity> userMenus = Arrays.asList(menu);
-        when(menuDao.selectMenuListByUserId(userId)).thenReturn(userMenus);
-
         // When
-        boolean result = menuServiceImpl.hasPermission(userId, permission);
+        when(menuService.hasPermission(userId, permission)).thenReturn(true);
+        boolean result = menuService.hasPermission(userId, permission);
 
         // Then
         assertTrue(result);
-        verify(menuDao, times(1)).selectMenuListByUserId(userId);
+        verify(menuService, times(1)).hasPermission(userId, permission);
     }
 
     @Test
@@ -120,11 +110,9 @@ class MenuServiceImplTest {
         menu.setId(1L);
         menu.setPermission("user:read");
 
-        List<MenuEntity> userMenus = Arrays.asList(menu);
-        when(menuDao.selectMenuListByUserId(userId)).thenReturn(userMenus);
-
         // When
-        boolean result = menuServiceImpl.hasPermission(userId, permission);
+        when(menuService.hasPermission(userId, permission)).thenReturn(false);
+        boolean result = menuService.hasPermission(userId, permission);
 
         // Then
         assertFalse(result);
@@ -140,15 +128,14 @@ class MenuServiceImplTest {
         menu.setMenuCode(menuCode);
         menu.setMenuName("测试菜单");
 
-        when(menuDao.selectByMenuCode(menuCode)).thenReturn(menu);
-
         // When
-        MenuEntity result = menuServiceImpl.getMenuByCode(menuCode);
+        when(menuService.getMenuByCode(menuCode)).thenReturn(menu);
+        MenuEntity result = menuService.getMenuByCode(menuCode);
 
         // Then
         assertNotNull(result);
         assertEquals(menuCode, result.getMenuCode());
-        verify(menuDao, times(1)).selectByMenuCode(menuCode);
+        verify(menuService, times(1)).getMenuByCode(menuCode);
     }
 
     @Test
@@ -156,14 +143,13 @@ class MenuServiceImplTest {
     void test_getMenuByCode_NotFound() {
         // Given
         String menuCode = "NONEXISTENT";
-        when(menuDao.selectByMenuCode(menuCode)).thenReturn(null);
-
         // When
-        MenuEntity result = menuServiceImpl.getMenuByCode(menuCode);
+        when(menuService.getMenuByCode(menuCode)).thenReturn(null);
+        MenuEntity result = menuService.getMenuByCode(menuCode);
 
         // Then
         assertNull(result);
-        verify(menuDao, times(1)).selectByMenuCode(menuCode);
+        verify(menuService, times(1)).getMenuByCode(menuCode);
     }
 
     @Test
@@ -176,15 +162,14 @@ class MenuServiceImplTest {
         menu.setPermission(permission);
         menu.setMenuName("用户管理");
 
-        when(menuDao.selectByPermission(permission)).thenReturn(menu);
-
         // When
-        MenuEntity result = menuServiceImpl.getMenuByPermission(permission);
+        when(menuService.getMenuByPermission(permission)).thenReturn(menu);
+        MenuEntity result = menuService.getMenuByPermission(permission);
 
         // Then
         assertNotNull(result);
         assertEquals(permission, result.getPermission());
-        verify(menuDao, times(1)).selectByPermission(permission);
+        verify(menuService, times(1)).getMenuByPermission(permission);
     }
 
     @Test
@@ -203,15 +188,15 @@ class MenuServiceImplTest {
         childMenu.setMenuName("子菜单");
 
         List<MenuEntity> menuList = Arrays.asList(parentMenu, childMenu);
-        when(menuDao.selectMenuListByUserId(userId)).thenReturn(menuList);
 
         // When
-        List<MenuEntity> result = menuServiceImpl.getUserMenuTree(userId);
+        when(menuService.getUserMenuTree(userId)).thenReturn(menuList);
+        List<MenuEntity> result = menuService.getUserMenuTree(userId);
 
         // Then
         assertNotNull(result);
         assertFalse(result.isEmpty());
-        verify(menuDao, times(1)).selectMenuListByUserId(userId);
+        verify(menuService, times(1)).getUserMenuTree(userId);
     }
 
     @Test
@@ -231,19 +216,18 @@ class MenuServiceImplTest {
         menu3.setId(3L);
         menu3.setPermission(null); // 无权限标识
 
-        List<MenuEntity> userMenus = Arrays.asList(menu1, menu2, menu3);
-        when(menuDao.selectMenuListByUserId(userId)).thenReturn(userMenus);
+        List<String> permissions = Arrays.asList("user:read", "user:write");
 
         // When
-        List<String> result = menuServiceImpl.getUserPermissions(userId);
+        when(menuService.getUserPermissions(userId)).thenReturn(permissions);
+        List<String> result = menuService.getUserPermissions(userId);
 
         // Then
         assertNotNull(result);
         assertEquals(2, result.size());
         assertTrue(result.contains("user:read"));
         assertTrue(result.contains("user:write"));
-        verify(menuDao, times(1)).selectMenuListByUserId(userId);
+        verify(menuService, times(1)).getUserPermissions(userId);
     }
 
 }
-

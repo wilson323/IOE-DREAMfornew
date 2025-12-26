@@ -1,4 +1,4 @@
-# ============================================================
+﻿# ============================================================
 # IOE-DREAM 微服务统一基础配置
 #
 # 所有业务微服务共享的基础配置
@@ -69,7 +69,7 @@ mybatis-plus:
 logging:
   level:
     root: INFO
-    net.lab1024.sa: DEBUG
+    "net.lab1024.sa": DEBUG
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"
 
@@ -94,3 +94,4 @@ management:
     metrics:
       export:
         enabled: true
+

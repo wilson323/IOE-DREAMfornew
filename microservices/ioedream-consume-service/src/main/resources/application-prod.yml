@@ -1,4 +1,4 @@
-# ============================================================
+﻿# ============================================================
 # IOE-DREAM Consume Service 生产环境配置
 #
 # 基于统一模板 v1.0.0 - 企业级标准版
@@ -11,7 +11,7 @@
 
 # ==================== 服务基础配置 ====================
 server:
-  port: ${SERVER_PORT:8094}  # 消费服务专用端口
+  port: ${SERVER_PORT:8094} # 消费服务专用端口
   servlet:
     context-path: /
 
@@ -33,9 +33,9 @@ spring:
       driver-class-name: com.mysql.cj.jdbc.Driver
 
       # 企业级优化连接池配置（统一标准）
-      initial-size: 15        # 消费服务适当增加初始连接
+      initial-size: 15 # 消费服务适当增加初始连接
       min-idle: 15
-      max-active: 60         # 适中的最大连接数
+      max-active: 60 # 适中的最大连接数
       max-wait: 10000
       time-between-eviction-runs-millis: 60000
       min-evictable-idle-time-millis: 300000
@@ -58,7 +58,7 @@ spring:
       filter:
         stat:
           enabled: true
-          slow-sql-millis: 500      # 消费服务快速SQL监控
+          slow-sql-millis: 500 # 消费服务快速SQL监控
           log-slow-sql: true
         wall:
           enabled: true
@@ -76,7 +76,7 @@ spring:
     timeout: 3000
     lettuce:
       pool:
-        max-active: 20        # 消费服务Redis连接池
+        max-active: 20 # 消费服务Redis连接池
         max-idle: 10
         min-idle: 3
         max-wait: 3000
@@ -89,17 +89,17 @@ spring:
   cache:
     type: redis
     redis:
-      time-to-live: 180000  # 3分钟 - 消费数据快速变化
+      time-to-live: 180000 # 3分钟 - 消费数据快速变化
       cache-null-values: false
       key-prefix: consume_cache_
 
   # ==================== 分布式追踪配置（基于统一模板） ====================
-  sleuth:
+  tracing:
     zipkin:
       base-url: ${ZIPKIN_BASE_URL:http://zipkin-prod:9411}
       enabled: ${ZIPKIN_ENABLED:true}
     sampler:
-      probability: ${ZIPKIN_SAMPLE_RATE:0.1}  # 生产环境10%采样率
+      probability: ${ZIPKIN_SAMPLE_RATE:0.1} # 生产环境10%采样率
 
 # ==================== MyBatis-Plus配置 ====================
 mybatis-plus:
@@ -145,9 +145,9 @@ management:
         step: 30s
     distribution:
       percentiles-histogram:
-        http.server.requests: true
+        "[http.server.requests]": true
       percentiles:
-        http.server.requests: 0.5,0.9,0.95,0.99
+        "[http.server.requests]": 0.5,0.9,0.95,0.99
     tags:
       application: ioedream-consume-service
       environment: prod
@@ -183,7 +183,7 @@ resilience4j:
 # ==================== 日志配置 ====================
 logging:
   level:
-    net.lab1024.sa.consume: INFO
+    "net.lab1024.sa.consume": INFO
   pattern:
     console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr([%X{traceId:-},%X{spanId:-}]){blue} %clr(%5p){magenta} %clr(${PID:- }){yellow} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}"
 
@@ -260,7 +260,7 @@ consume:
       risk-score-threshold: ${CONSUME_RISK_THRESHOLD:80}
       suspicious-pattern-detection: ${SUSPICIOUS_PATTERN_DETECTION:true}
 
-    # 冻结机制
+      # 冻结机制
       freeze-conditions: ${FREEZE_CONDITIONS:daily-limit-exceeded,risk-score-high,suspicious-activity}
       auto-unfreeze: ${AUTO_UNFREEZE:false}
       manual-review-required: ${MANUAL_REVIEW_REQUIRED:true}
@@ -279,14 +279,14 @@ consume:
     # 发放策略
     distribution:
       auto-distribute: ${CONSUME_AUTO_DISTRIBUTE:true}
-      schedule: ${CONSUME_DISTRIBUTION_SCHEDULE:0 0 1 * *}  # 每月1号
+      schedule: ${CONSUME_DISTRIBUTION_SCHEDULE:0 0 1 * *} # 每月1号
       calculation-method: ${CONSUME_CALCULATION_METHOD:attendance-based}
       advance-payment: ${ADVANCE_SUBSIDY_PAYMENT:false}
 
     # 补贴规则
     rules:
       meal-subsidy-amount: ${CONSUME_MEAL_AMOUNT:30}
-      max-meal-subsidy: ${CONSUME_MAX_MEAL:90}  # 每天3餐
+      max-meal-subsidy: ${CONSUME_MAX_MEAL:90} # 每天3餐
       carry-forward: ${CONSUME_CARRY_FORWARD:false}
       expiry-days: ${CONSUME_EXPIRY_DAYS:30}
       weekend-multiplier: ${WEEKEND_SUBSIDY_MULTIPLIER:1.0}
@@ -407,23 +407,23 @@ consume:
   cache:
     # 缓存配置
     account-balance:
-      ttl: ${CONSUME_BALANCE_TTL:300}           # 5分钟
+      ttl: ${CONSUME_BALANCE_TTL:300} # 5分钟
       max-size: ${CONSUME_BALANCE_MAX_SIZE:50000}
 
     product-price:
-      ttl: ${CONSUME_PRICE_TTL:600}            # 10分钟
+      ttl: ${CONSUME_PRICE_TTL:600} # 10分钟
       max-size: ${CONSUME_PRICE_MAX_SIZE:10000}
 
     transaction-records:
-      ttl: ${CONSUME_TRANSACTION_TTL:1800}     # 30分钟
+      ttl: ${CONSUME_TRANSACTION_TTL:1800} # 30分钟
       max-size: ${CONSUME_TRANSACTION_MAX_SIZE:100000}
 
     user-preferences:
-      ttl: ${USER_PREFERENCES_TTL:3600}        # 1小时
+      ttl: ${USER_PREFERENCES_TTL:3600} # 1小时
       max-size: ${USER_PREFERENCES_MAX_SIZE:20000}
 
     subsidy-rules:
-      ttl: ${SUBSIDY_RULES_TTL:7200}           # 2小时
+      ttl: ${SUBSIDY_RULES_TTL:7200} # 2小时
       max-size: ${SUBSIDY_RULES_MAX_SIZE:1000}
 
   notification:
@@ -510,3 +510,4 @@ consume:
       transaction-monitoring: ${AML_TRANSACTION_MONITORING:true}
       suspicious-activity-report: ${SAR_ENABLED:true}
       reporting-threshold: ${AML_REPORTING_THRESHOLD:10000}
+

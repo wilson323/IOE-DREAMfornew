@@ -26,7 +26,7 @@ import java.util.List;
  * @since 2025-01-30
  */
 @Mapper
-// @Repository  // 禁止使用@Repository注解，统一使用@Mapper
+// 使用 @Mapper 注解，符合 DAO 规范
 public interface VisitorApprovalRecordDao extends BaseMapper<VisitorApprovalRecordEntity> {
 
     /**

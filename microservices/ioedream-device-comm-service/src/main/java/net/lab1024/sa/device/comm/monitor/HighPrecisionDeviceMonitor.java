@@ -1,24 +1,34 @@
 package net.lab1024.sa.device.comm.monitor;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.common.organization.entity.DeviceEntity;
-import net.lab1024.sa.common.organization.dao.DeviceDao;
-import net.lab1024.sa.common.gateway.GatewayServiceClient;
-import net.lab1024.sa.common.dto.ResponseDTO;
+
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+
 import org.springframework.http.HttpMethod;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.*;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.concurrent.ConcurrentLinkedDeque;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.annotation.Resource;
+import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.common.gateway.GatewayServiceClient;
+import net.lab1024.sa.common.organization.dao.DeviceDao;
+import net.lab1024.sa.common.organization.entity.DeviceEntity;
 
 /**
  * 高精度设备监控器
@@ -35,9 +45,9 @@ import java.util.concurrent.ConcurrentLinkedDeque;
  * @version 1.0.0
  * @since 2025-12-16
  */
-@Slf4j
 @Component
 @Schema(description = "高精度设备监控器")
+@Slf4j
 public class HighPrecisionDeviceMonitor {
 
     @Resource
@@ -47,11 +57,11 @@ public class HighPrecisionDeviceMonitor {
     private GatewayServiceClient gatewayServiceClient;
 
     // 高精度监控配置
-    private static final int HIGH_PRECISION_INTERVAL_MS = 100;    // 100ms高精度采集
-    private static final int NORMAL_PRECISION_INTERVAL_MS = 1000;  // 1s普通精度采集
-    private static final int BATCH_SIZE = 50;                       // 批处理大小
-    private static final int MAX_CACHE_SIZE = 10000;               // 最大缓存大小
-    private static final long CACHE_EXPIRE_MINUTES = 30;            // 缓存过期时间（分钟）
+    private static final int HIGH_PRECISION_INTERVAL_MS = 100; // 100ms高精度采集
+    private static final int NORMAL_PRECISION_INTERVAL_MS = 1000; // 1s普通精度采集
+    private static final int BATCH_SIZE = 50; // 批处理大小
+    private static final int MAX_CACHE_SIZE = 10000; // 最大缓存大小
+    private static final long CACHE_EXPIRE_MINUTES = 30; // 缓存过期时间（分钟）
 
     // 线程池配置
     private final ScheduledExecutorService highPrecisionScheduler;
@@ -79,13 +89,13 @@ public class HighPrecisionDeviceMonitor {
         private String deviceId;
         private String deviceType;
         private DeviceStatus status;
-        private long responseTimeMs;          // 响应时间（毫秒）
-        private double cpuUsage;               // CPU使用率
-        private long memoryUsage;             // 内存使用量
-        private double networkLatency;        // 网络延迟
-        private int connectionCount;          // 连接数
-        private LocalDateTime timestamp;       // 时间戳
-        private String healthLevel;           // 健康等级
+        private long responseTimeMs; // 响应时间（毫秒）
+        private double cpuUsage; // CPU使用率
+        private long memoryUsage; // 内存使用量
+        private double networkLatency; // 网络延迟
+        private int connectionCount; // 连接数
+        private LocalDateTime timestamp; // 时间戳
+        private String healthLevel; // 健康等级
         private Map<String, Object> extendedAttributes; // 扩展属性
 
         // 构造函数
@@ -95,38 +105,93 @@ public class HighPrecisionDeviceMonitor {
         }
 
         // getters and setters
-        public String getDeviceId() { return deviceId; }
-        public void setDeviceId(String deviceId) { this.deviceId = deviceId; }
+        public String getDeviceId() {
+            return deviceId;
+        }
 
-        public String getDeviceType() { return deviceType; }
-        public void setDeviceType(String deviceType) { this.deviceType = deviceType; }
+        public void setDeviceId(String deviceId) {
+            this.deviceId = deviceId;
+        }
 
-        public DeviceStatus getStatus() { return status; }
-        public void setStatus(DeviceStatus status) { this.status = status; }
+        public String getDeviceType() {
+            return deviceType;
+        }
 
-        public long getResponseTimeMs() { return responseTimeMs; }
-        public void setResponseTimeMs(long responseTimeMs) { this.responseTimeMs = responseTimeMs; }
+        public void setDeviceType(String deviceType) {
+            this.deviceType = deviceType;
+        }
 
-        public double getCpuUsage() { return cpuUsage; }
-        public void setCpuUsage(double cpuUsage) { this.cpuUsage = cpuUsage; }
+        public DeviceStatus getStatus() {
+            return status;
+        }
 
-        public long getMemoryUsage() { return memoryUsage; }
-        public void setMemoryUsage(long memoryUsage) { this.memoryUsage = memoryUsage; }
+        public void setStatus(DeviceStatus status) {
+            this.status = status;
+        }
 
-        public double getNetworkLatency() { return networkLatency; }
-        public void setNetworkLatency(double networkLatency) { this.networkLatency = networkLatency; }
+        public long getResponseTimeMs() {
+            return responseTimeMs;
+        }
 
-        public int getConnectionCount() { return connectionCount; }
-        public void setConnectionCount(int connectionCount) { this.connectionCount = connectionCount; }
+        public void setResponseTimeMs(long responseTimeMs) {
+            this.responseTimeMs = responseTimeMs;
+        }
 
-        public LocalDateTime getTimestamp() { return timestamp; }
-        public void setTimestamp(LocalDateTime timestamp) { this.timestamp = timestamp; }
+        public double getCpuUsage() {
+            return cpuUsage;
+        }
 
-        public String getHealthLevel() { return healthLevel; }
-        public void setHealthLevel(String healthLevel) { this.healthLevel = healthLevel; }
+        public void setCpuUsage(double cpuUsage) {
+            this.cpuUsage = cpuUsage;
+        }
 
-        public Map<String, Object> getExtendedAttributes() { return extendedAttributes; }
-        public void setExtendedAttributes(Map<String, Object> extendedAttributes) { this.extendedAttributes = extendedAttributes; }
+        public long getMemoryUsage() {
+            return memoryUsage;
+        }
+
+        public void setMemoryUsage(long memoryUsage) {
+            this.memoryUsage = memoryUsage;
+        }
+
+        public double getNetworkLatency() {
+            return networkLatency;
+        }
+
+        public void setNetworkLatency(double networkLatency) {
+            this.networkLatency = networkLatency;
+        }
+
+        public int getConnectionCount() {
+            return connectionCount;
+        }
+
+        public void setConnectionCount(int connectionCount) {
+            this.connectionCount = connectionCount;
+        }
+
+        public LocalDateTime getTimestamp() {
+            return timestamp;
+        }
+
+        public void setTimestamp(LocalDateTime timestamp) {
+            this.timestamp = timestamp;
+        }
+
+        public String getHealthLevel() {
+            return healthLevel;
+        }
+
+        public void setHealthLevel(String healthLevel) {
+            this.healthLevel = healthLevel;
+        }
+
+        public Map<String, Object> getExtendedAttributes() {
+            return extendedAttributes;
+        }
+
+        public void setExtendedAttributes(Map<String, Object> extendedAttributes) {
+            this.extendedAttributes = extendedAttributes;
+        }
     }
 
     /**
@@ -149,8 +214,13 @@ public class HighPrecisionDeviceMonitor {
             this.code = code;
         }
 
-        public String getDescription() { return description; }
-        public int getCode() { return code; }
+        public String getDescription() {
+            return description;
+        }
+
+        public int getCode() {
+            return code;
+        }
     }
 
     /**
@@ -190,10 +260,21 @@ public class HighPrecisionDeviceMonitor {
         }
 
         // getters
-        public String getDeviceId() { return deviceId; }
-        public Deque<DeviceStatusSnapshot> getRecentSnapshots() { return recentSnapshots; }
-        public int getMaxHistorySize() { return maxHistorySize; }
-        public LocalDateTime getLastUpdateTime() { return lastUpdateTime; }
+        public String getDeviceId() {
+            return deviceId;
+        }
+
+        public Deque<DeviceStatusSnapshot> getRecentSnapshots() {
+            return recentSnapshots;
+        }
+
+        public int getMaxHistorySize() {
+            return maxHistorySize;
+        }
+
+        public LocalDateTime getLastUpdateTime() {
+            return lastUpdateTime;
+        }
     }
 
     /**
@@ -201,17 +282,17 @@ public class HighPrecisionDeviceMonitor {
      */
     @Schema(description = "设备监控配置")
     public static class DeviceMonitorConfig {
-        private int monitorIntervalMs;      // 监控间隔（毫秒）
-        private int timeoutMs;              // 超时时间（毫秒）
-        private int maxHistorySize;         // 最大历史记录数
+        private int monitorIntervalMs; // 监控间隔（毫秒）
+        private int timeoutMs; // 超时时间（毫秒）
+        private int maxHistorySize; // 最大历史记录数
         private boolean enableHighPrecision; // 启用高精度监控
-        private double cpuThreshold;        // CPU阈值
-        private long memoryThreshold;       // 内存阈值
-        private double latencyThreshold;    // 延迟阈值
+        private double cpuThreshold; // CPU阈值
+        private long memoryThreshold; // 内存阈值
+        private double latencyThreshold; // 延迟阈值
 
         public DeviceMonitorConfig(int monitorIntervalMs, int timeoutMs, int maxHistorySize,
-                                 boolean enableHighPrecision, double cpuThreshold,
-                                 long memoryThreshold, double latencyThreshold) {
+                boolean enableHighPrecision, double cpuThreshold,
+                long memoryThreshold, double latencyThreshold) {
             this.monitorIntervalMs = monitorIntervalMs;
             this.timeoutMs = timeoutMs;
             this.maxHistorySize = maxHistorySize;
@@ -222,13 +303,33 @@ public class HighPrecisionDeviceMonitor {
         }
 
         // getters
-        public int getMonitorIntervalMs() { return monitorIntervalMs; }
-        public int getTimeoutMs() { return timeoutMs; }
-        public int getMaxHistorySize() { return maxHistorySize; }
-        public boolean isEnableHighPrecision() { return enableHighPrecision; }
-        public double getCpuThreshold() { return cpuThreshold; }
-        public long getMemoryThreshold() { return memoryThreshold; }
-        public double getLatencyThreshold() { return latencyThreshold; }
+        public int getMonitorIntervalMs() {
+            return monitorIntervalMs;
+        }
+
+        public int getTimeoutMs() {
+            return timeoutMs;
+        }
+
+        public int getMaxHistorySize() {
+            return maxHistorySize;
+        }
+
+        public boolean isEnableHighPrecision() {
+            return enableHighPrecision;
+        }
+
+        public double getCpuThreshold() {
+            return cpuThreshold;
+        }
+
+        public long getMemoryThreshold() {
+            return memoryThreshold;
+        }
+
+        public double getLatencyThreshold() {
+            return latencyThreshold;
+        }
     }
 
     /**
@@ -255,9 +356,9 @@ public class HighPrecisionDeviceMonitor {
         });
 
         // 初始化存储
-        this.deviceStatusCache = new ConcurrentHashMap<>();
-        this.deviceMetricsHistory = new ConcurrentHashMap<>();
-        this.monitorConfigs = new ConcurrentHashMap<>();
+        this.deviceStatusCache = new HashMap<>();
+        this.deviceMetricsHistory = new HashMap<>();
+        this.monitorConfigs = new HashMap<>();
 
         // 初始化监控配置
         initializeMonitorConfigs();
@@ -356,7 +457,7 @@ public class HighPrecisionDeviceMonitor {
      * @return 监控结果
      */
     public Map<String, DeviceStatusSnapshot> batchMonitorDevices(List<String> deviceIds) {
-        Map<String, DeviceStatusSnapshot> results = new ConcurrentHashMap<>();
+        Map<String, DeviceStatusSnapshot> results = new HashMap<>();
 
         // 分批处理
         List<List<String>> batches = partitionList(deviceIds, BATCH_SIZE);
@@ -454,8 +555,8 @@ public class HighPrecisionDeviceMonitor {
      */
     private DeviceStatusSnapshot collectHighPrecisionStatus(DeviceEntity device, DeviceMonitorConfig config) {
         DeviceStatusSnapshot snapshot = new DeviceStatusSnapshot();
-        snapshot.setDeviceId(device.getDeviceId());
-        snapshot.setDeviceType(device.getDeviceType());
+        snapshot.setDeviceId(device.getDeviceId() != null ? device.getDeviceId().toString() : null);
+        snapshot.setDeviceType(device.getDeviceType() != null ? device.getDeviceType().toString() : null);
 
         // 1. 基础状态检查
         DeviceStatus basicStatus = checkDeviceBasicStatus(device);
@@ -514,21 +615,21 @@ public class HighPrecisionDeviceMonitor {
     /**
      * 收集高精度性能指标
      */
-    private void collectHighPrecisionMetrics(DeviceStatusSnapshot snapshot, DeviceEntity device, DeviceMonitorConfig config) {
+    private void collectHighPrecisionMetrics(DeviceStatusSnapshot snapshot, DeviceEntity device,
+            DeviceMonitorConfig config) {
         try {
             // 通过设备通讯服务获取实时指标
             if (gatewayServiceClient != null) {
                 @SuppressWarnings("unchecked")
-                CompletableFuture<ResponseDTO<Map<String, Object>>> metricsFuture =
-                        CompletableFuture.supplyAsync(() -> {
+                CompletableFuture<ResponseDTO<Map<String, Object>>> metricsFuture = CompletableFuture
+                        .supplyAsync(() -> {
                             try {
-                                return (ResponseDTO<Map<String, Object>>) (ResponseDTO<?>)
-                                        gatewayServiceClient.callDeviceCommService(
+                                return (ResponseDTO<Map<String, Object>>) (ResponseDTO<?>) gatewayServiceClient
+                                        .callDeviceCommService(
                                                 "/api/v1/device/realtime-metrics/" + device.getDeviceId(),
                                                 HttpMethod.GET,
                                                 null,
-                                                Map.class
-                                        );
+                                                Map.class);
                             } catch (Exception e) {
                                 log.debug("[高精度监控] 获取实时指标失败, deviceId={}, error={}",
                                         device.getDeviceId(), e.getMessage());
@@ -637,12 +738,7 @@ public class HighPrecisionDeviceMonitor {
             extendedAttributes.put("areaId", device.getAreaId());
         }
 
-        // 协议信息（从扩展属性中解析，或使用业务模块）
-        if (device.getBusinessModule() != null) {
-            extendedAttributes.put("businessModule", device.getBusinessModule());
-        }
-
-        // 其他业务属性
+        // 其他业务属性（从扩展属性JSON中解析）
         if (device.getExtendedAttributes() != null) {
             extendedAttributes.put("businessAttributes", device.getExtendedAttributes());
         }
@@ -815,11 +911,13 @@ public class HighPrecisionDeviceMonitor {
             List<DeviceEntity> devices = deviceDao.selectList(null);
             return devices.stream()
                     .filter(device -> {
-                        DeviceMonitorConfig config = getDeviceMonitorConfig(device.getDeviceId());
-                        return config.isEnableHighPrecision() &&
-                               DeviceStatus.ONLINE.equals(checkDeviceBasicStatus(device));
+                        DeviceMonitorConfig config = getDeviceMonitorConfig(
+                                device.getDeviceId() != null ? device.getDeviceId().toString() : null);
+                        return config != null && config.isEnableHighPrecision() &&
+                                DeviceStatus.ONLINE.equals(checkDeviceBasicStatus(device));
                     })
-                    .map(DeviceEntity::getDeviceId)
+                    .map(device -> device.getDeviceId() != null ? device.getDeviceId().toString() : null)
+                    .filter(id -> id != null)
                     .collect(java.util.stream.Collectors.toList());
         } catch (Exception e) {
             log.error("[高精度监控] 获取高精度设备列表失败", e);

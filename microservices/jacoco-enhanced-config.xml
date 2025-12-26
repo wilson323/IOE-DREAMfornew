@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!--
+        IOE-DREAM JaCoCo 增强配置
+        企业级代码覆盖率标准：总体≥80%，核心模块≥85%
+    -->
+
+    <!-- 配置文件版本 -->
+    <configVersion>1.0.0</configVersion>
+    <projectName>IOE-DREAM</projectName>
+    <createdDate>2025-12-20</createdDate>
+
+    <!-- 基础配置 -->
+    <baseConfig>
+        <!-- 生成HTML和XML报告 -->
+        <formats>
+            <format>HTML</format>
+            <format>XML</format>
+            <format>CSV</format>
+        </formats>
+
+        <!-- 输出目录 -->
+        <outputDirectory>${project.reporting.outputDirectory}/jacoco</outputDirectory>
+
+        <!-- 数据文件路径 -->
+        <dataFile>${project.build.directory}/jacoco.exec</dataFile>
+
+        <!-- 包含的类 -->
+        <includes>
+            <include>**/*.class</include>
+        </includes>
+
+        <!-- 排除的类（更精简） -->
+        <excludes>
+            <!-- 测试相关 -->
+            <exclude>**/*Test*.class</exclude>
+            <exclude>**/*Tests.class</exclude>
+
+            <!-- 配置类 -->
+            <exclude>**/*Application.class</exclude>
+            <exclude>**/*Config*.class</exclude>
+            <exclude>**/*Configuration.class</exclude>
+
+            <!-- DTO/VO/Form -->
+            <exclude>**/dto/**/*.class</exclude>
+            <exclude>**/vo/**/*.class</exclude>
+            <exclude>**/form/**/*.class</exclude>
+
+            <!-- 实体类（仅包含简单的getter/setter） -->
+            <exclude>**/entity/**/*.class</exclude>
+
+            <!-- 常量类 -->
+            <exclude>**/constant/**/*.class</exclude>
+            <exclude>**/constants/**/*.class</exclude>
+
+            <!-- 异常类 -->
+            <exclude>**/exception/**/*.class</exclude>
+            <exclude>**/*Exception.class</exclude>
+
+            <!-- 枚举类 -->
+            <exclude>**/*Enum.class</exclude>
+
+            <!-- 第三方生成的类 -->
+            <exclude>**/generated/**/*.class</exclude>
+            <exclude>**/openapi/**/*.class</exclude>
+        </excludes>
+    </baseConfig>
+
+    <!-- 模块特定配置 -->
+    <moduleConfigs>
+        <!-- 公共模块 - 更严格的覆盖率要求 -->
+        <module>
+            <pattern>microservices-common</pattern>
+            <rules>
+                <rule>
+                    <element>BUNDLE</element>
+                    <limits>
+                        <limit>
+                            <counter>LINE</counter>
+                            <value>COVEREDRATIO</value>
+                            <minimum>0.90</minimum> <!-- 90% 行覆盖率 -->
+                        </limit>
+                        <limit>
+                            <counter>BRANCH</counter>
+                            <value>COVEREDRATIO</value>
+                            <minimum>0.85</minimum> <!-- 85% 分支覆盖率 -->
+                        </limit>
+                        <limit>
+                            <counter>METHOD</counter>
+                            <value>COVEREDRATIO</value>
+                            <minimum>0.85</minimum> <!-- 85% 方法覆盖率 -->
+                        </limit>
+                        <limit>
+                            <counter>CLASS</counter>
+                            <value>COVEREDRATIO</value>
+                            <minimum>0.80</minimum> <!-- 80% 类覆盖率 -->
+                        </limit>
+                        <limit>
+                            <counter>INSTRUCTION</counter>
+                            <value>COVEREDRATIO</value>
+                            <minimum>0.90</minimum> <!-- 90% 指令覆盖率 -->
+                        </limit>
+                    </limits>
+                </rule>
+            </rules>
+        </module>
+
+        <!-- 核心服务模块 - 标准覆盖率要求 -->
+        <module>
+            <pattern>ioedream-common-service</pattern>
+            <rules>
+                <rule>
+                    <element>BUNDLE</element>
+                    <limits>
+                        <limit>
+                            <counter>LINE</counter>
+                            <value>COVEREDRATIO</value>
+                            <minimum>0.85</minimum> <!-- 85% 行覆盖率 -->
+                        </limit>
+                        <limit>
+                            <counter>BRANCH</counter>
+                            <value>COVEREDRATIO</value>
+                            <minimum>0.80</minimum> <!-- 80% 分支覆盖率 -->
+                        </limit>
+                        <limit>
+                            <counter>METHOD</counter>
+                            <value>COVEREDRATIO</value>
+                            <minimum>0.80</minimum> <!-- 80% 方法覆盖率 -->
+                        </limit>
+                        <limit>
+                            <counter>CLASS</counter>
+                            <value>COVEREDRATIO</value>
+                            <minimum>0.75</minimum> <!-- 75% 类覆盖率 -->
+                        </limit>
+                    </limits>
+                </rule>
+            </rules>
+        </module>
+
+        <!-- 业务服务模块 - 高覆盖率要求 -->
+        <modules>
+            <module>ioedream-access-service</module>
+            <module>ioedream-attendance-service</module>
+            <module>ioedream-consume-service</module>
+            <module>ioedream-visitor-service</module>
+        </modules>
+        <rules>
+            <rule>
+                <element>BUNDLE</element>
+                <limits>
+                    <limit>
+                        <counter>LINE</counter>
+                        <value>COVEREDRATIO</value>
+                        <minimum>0.85</minimum> <!-- 85% 行覆盖率 -->
+                    </limit>
+                    <limit>
+                        <counter>BRANCH</counter>
+                        <value>COVEREDRATIO</value>
+                        <minimum>0.80</minimum> <!-- 80% 分支覆盖率 -->
+                    </limit>
+                    <limit>
+                        <counter>METHOD</counter>
+                        <value>COVEREDRATIO</value>
+                        <minimum>0.80</minimum> <!-- 80% 方法覆盖率 -->
+                    </limit>
+                </limits>
+            </rule>
+        </rules>
+
+        <!-- 设备通讯和视频服务 - 稍低的覆盖率要求 -->
+        <modules>
+            <module>ioedream-device-comm-service</module>
+            <module>ioedream-video-service</module>
+            <module>ioedream-oa-service</module>
+        </modules>
+        <rules>
+            <rule>
+                <element>BUNDLE</element>
+                <limits>
+                    <limit>
+                        <counter>LINE</counter>
+                        <value>COVEREDRATIO</value>
+                        <minimum>0.80</minimum> <!-- 80% 行覆盖率 -->
+                    </limit>
+                    <limit>
+                        <counter>BRANCH</counter>
+                        <value>COVEREDRATIO</value>
+                        <minimum>0.75</minimum> <!-- 75% 分支覆盖率 -->
+                    </limit>
+                    <limit>
+                        <counter>METHOD</counter>
+                        <value>COVEREDRATIO</value>
+                        <minimum>0.75</minimum> <!-- 75% 方法覆盖率 -->
+                    </limit>
+                </limits>
+            </rule>
+        </rules>
+    </moduleConfigs>
+
+    <!-- 层级特定配置 -->
+    <layerConfigs>
+        <!-- Controller层 -->
+        <layer>
+            <name>controller</name>
+            <pattern>**/controller/**</pattern>
+            <rules>
+                <rule>
+                    <element>PACKAGE</element>
+                    <limits>
+                        <limit>
+                            <counter>LINE</counter>
+                            <value>COVEREDRATIO</value>
+                            <minimum>0.85</minimum> <!-- 85% 行覆盖率 -->
+                        </limit>
+                        <limit>
+                            <counter>BRANCH</counter>
+                            <value>COVEREDRATIO</value>
+                            <minimum>0.80</minimum> <!-- 80% 分支覆盖率 -->
+                        </limit>
+                    </limits>
+                </rule>
+            </rules>
+        </layer>
+
+        <!-- Service层 - 核心业务逻辑，要求最高 -->
+        <layer>
+            <name>service</name>
+            <pattern>**/service/impl/**</pattern>
+            <rules>
+                <rule>
+                    <element>PACKAGE</element>
+                    <limits>
+                        <limit>
+                            <counter>LINE</counter>
+                            <value>COVEREDRATIO</value>
+                            <minimum>0.90</minimum> <!-- 90% 行覆盖率 -->
+                        </limit>
+                        <limit>
+                            <counter>BRANCH</counter>
+                            <value>COVEREDRATIO</value>
+                            <minimum>0.85</minimum> <!-- 85% 分支覆盖率 -->
+                        </limit>
+                    </limits>
+                </rule>
+            </rules>
+        </layer>
+
+        <!-- Manager层 - 业务编排 -->
+        <layer>
+            <name>manager</name>
+            <pattern>**/manager/**</pattern>
+            <rules>
+                <rule>
+                    <element>PACKAGE</element>
+                    <limits>
+                        <limit>
+                            <counter>LINE</counter>
+                            <value>COVEREDRATIO</value>
+                            <minimum>0.85</minimum> <!-- 85% 行覆盖率 -->
+                        </limit>
+                        <limit>
+                            <counter>BRANCH</counter>
+                            <value>COVEREDRATIO</value>
+                            <minimum>0.80</minimum> <!-- 80% 分支覆盖率 -->
+                        </limit>
+                    </limits>
+                </rule>
+            </rules>
+        </layer>
+
+        <!-- DAO层 - 数据访问 -->
+        <layer>
+            <name>dao</name>
+            <pattern>**/dao/**</pattern>
+            <rules>
+                <rule>
+                    <element>PACKAGE</element>
+                    <limits>
+                        <limit>
+                            <counter>LINE</counter>
+                            <value>COVEREDRATIO</value>
+                            <minimum>0.80</minimum> <!-- 80% 行覆盖率 -->
+                        </limit>
+                        <limit>
+                            <counter>BRANCH</counter>
+                            <value>COVEREDRATIO</value>
+                            <minimum>0.75</minimum> <!-- 75% 分支覆盖率 -->
+                        </limit>
+                    </limits>
+                </rule>
+            </rules>
+        </layer>
+    </layerConfigs>
+
+    <!-- 质量门禁规则 -->
+    <qualityGate>
+        <!-- 总体覆盖率要求 -->
+        <overallCoverage>
+            <lineCoverage>80</lineCoverage>
+            <branchCoverage>75</branchCoverage>
+            <methodCoverage>75</methodCoverage>
+            <classCoverage>70</classCoverage>
+            <instructionCoverage>80</instructionCoverage>
+        </overallCoverage>
+
+        <!-- 新代码覆盖率要求 -->
+        <newCodeCoverage>
+            <lineCoverage>85</lineCoverage>
+            <branchCoverage>80</branchCoverage>
+            <methodCoverage>80</methodCoverage>
+        </newCodeCoverage>
+
+        <!-- 覆盖率下降警告 -->
+        <coverageDecreaseWarning>
+            <threshold>5</threshold> <!-- 覆盖率下降超过5%时警告 -->
+        </coverageDecreaseWarning>
+
+        <!-- 复杂度检查 -->
+        <complexityCheck>
+            <maxMethodComplexity>15</maxMethodComplexity>
+            <maxClassComplexity>150</maxClassComplexity>
+        </complexityCheck>
+    </qualityGate>
+
+    <!-- 报告配置 -->
+    <reporting>
+        <!-- HTML报告配置 -->
+        <htmlReport>
+            <enabled>true</enabled>
+            <title>IOE-DREAM 代码覆盖率报告</title>
+            <footer>IOE-DREAM 智慧园区一卡通管理平台</footer>
+            <encoding>UTF-8</encoding>
+            <locale>zh_CN</locale>
+        </htmlReport>
+
+        <!-- XML报告配置（SonarQube使用） -->
+        <xmlReport>
+            <enabled>true</enabled>
+            <encoding>UTF-8</encoding>
+        </xmlReport>
+
+        <!-- CSV报告配置 -->
+        <csvReport>
+            <enabled>true</enabled>
+            <encoding>UTF-8</encoding>
+        </csvReport>
+
+        <!-- 覆盖率趋势报告 -->
+        <trendReport>
+            <enabled>true</enabled>
+            <history>30</history> <!-- 保留30天的历史数据 -->
+        </trendReport>
+    </reporting>
+
+    <!-- 集成配置 -->
+    <integration>
+        <!-- SonarQube集成 -->
+        <sonarqube>
+            <enabled>true</enabled>
+            <reportPaths>
+                <path>target/site/jacoco/jacoco.xml</path>
+            </reportPaths>
+        </sonarqube>
+
+        <!-- CI/CD集成 -->
+        <cicd>
+            <failOnViolation>true</failOnViolation>
+            <skipOnFailure>false</skipOnFailure>
+        </cicd>
+    </integration>
+</configuration>

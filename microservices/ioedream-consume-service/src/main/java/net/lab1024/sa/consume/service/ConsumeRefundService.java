@@ -1,34 +1,30 @@
 package net.lab1024.sa.consume.service;
 
-import net.lab1024.sa.common.domain.PageResult;
-import net.lab1024.sa.consume.domain.form.RefundQueryForm;
-import net.lab1024.sa.consume.domain.form.RefundRequestForm;
-import net.lab1024.sa.consume.domain.vo.RefundRecordVO;
-
-import jakarta.servlet.http.HttpServletResponse;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
+import net.lab1024.sa.common.domain.PageResult;
+import net.lab1024.sa.consume.domain.form.ConsumeRefundAddForm;
+import net.lab1024.sa.consume.domain.form.ConsumeRefundQueryForm;
+import net.lab1024.sa.consume.domain.vo.ConsumeRefundRecordVO;
+
 /**
- * 消费退款服务接口
- * <p>
- * 提供完整的退款业务功能
- * 包括退款申请、审批、处理、查询等核心服务
- * </p>
+ * 退款服务接口
  *
  * @author IOE-DREAM Team
  * @version 1.0.0
- * @since 2025-12-09
+ * @since 2025-12-24
  */
 public interface ConsumeRefundService {
 
     /**
-     * 申请退款
+     * 分页查询退款记录
      *
-     * @param refundRequest 退款申请表单
-     * @return 退款ID
+     * @param queryForm 查询表单
+     * @return 退款记录分页结果
      */
-    Long applyRefund(RefundRequestForm refundRequest);
+    PageResult<ConsumeRefundRecordVO> queryRefundRecords(ConsumeRefundQueryForm queryForm);
 
     /**
      * 获取退款记录详情
@@ -36,141 +32,188 @@ public interface ConsumeRefundService {
      * @param refundId 退款ID
      * @return 退款记录详情
      */
-    RefundRecordVO getRefundDetail(Long refundId);
+    ConsumeRefundRecordVO getRefundRecordDetail(Long refundId);
 
     /**
-     * 分页查询退款记录
+     * 申请退款
      *
-     * @param queryForm 查询表单
-     * @return 分页结果
+     * @param addForm 退款申请表单
+     * @return 退款ID
      */
-    PageResult<RefundRecordVO> getRefundPage(RefundQueryForm queryForm);
+    Long applyRefund(ConsumeRefundAddForm addForm);
 
     /**
-     * 批量申请退款
+     * 审批退款
      *
-     * @param transactionNos 交易号列表
-     * @param reason 退款原因
-     * @return 成功处理数量
+     * @param refundId      退款ID
+     * @param approved      是否批准
+     * @param approveReason 审批原因
      */
-    int batchApplyRefund(List<String> transactionNos, String reason);
+    void approveRefund(Long refundId, Boolean approved, String approveReason);
 
     /**
-     * 批量申请退款（带金额）
-     *
-     * @param refundRequests 退款申请列表
-     * @return 成功处理数量
-     */
-    int batchApplyRefundWithAmount(List<Map<String, Object>> refundRequests);
-
-    /**
-     * 审批退款申请
-     *
-     * @param refundId 退款ID
-     * @param approved 审批结果
-     * @param comment 审批意见
-     * @return 是否成功
-     */
-    boolean approveRefund(Long refundId, Boolean approved, String comment);
-
-    /**
-     * 批量审批退款申请
+     * 批量审批退款
      *
      * @param refundIds 退款ID列表
-     * @param approved 审批结果
-     * @param comment 审批意见
-     * @return 成功处理数量
+     * @param approved  是否批准
+     * @param reason    审批原因
+     * @return 批量操作结果
      */
-    int batchApproveRefund(List<Long> refundIds, Boolean approved, String comment);
+    Map<String, Object> batchApproveRefunds(List<Long> refundIds, Boolean approved, String reason);
 
     /**
-     * 取消退款申请
+     * 获取待审批退款列表
      *
-     * @param refundId 退款ID
-     * @param reason 取消原因
-     * @return 是否成功
+     * @return 待审批退款列表
      */
-    boolean cancelRefund(Long refundId, String reason);
-
-    /**
-     * 处理退款（执行退款）
-     *
-     * @param refundId 退款ID
-     * @return 是否成功
-     */
-    boolean processRefund(Long refundId);
+    List<ConsumeRefundRecordVO> getPendingRefunds();
 
     /**
      * 获取退款统计信息
      *
+     * @param userId    用户ID
+     * @param startDate 开始日期
+     * @param endDate   结束日期
      * @return 统计信息
      */
-    Map<String, Object> getRefundStatistics();
+    Map<String, Object> getRefundStatistics(Long userId, LocalDateTime startDate, LocalDateTime endDate);
 
     /**
-     * 获取用户退款统计
+     * 获取退款统计信息（支持String日期参数）
+     *
+     * @param userId    用户ID
+     * @param startDate 开始日期（字符串格式）
+     * @param endDate   结束日期（字符串格式）
+     * @return 统计信息
+     */
+    Map<String, Object> getRefundStatistics(Long userId, String startDate, String endDate);
+
+    /**
+     * 执行退款
+     *
+     * @param refundId 退款ID
+     * @return 是否成功
+     */
+    boolean executeRefund(Long refundId);
+
+    /**
+     * 取消退款申请
+     *
+     * @param refundId      退款ID
+     * @param cancelReason  取消原因
+     */
+    void cancelRefund(Long refundId, String cancelReason);
+
+    /**
+     * 重新提交退款申请
+     *
+     * @param refundId 退款ID
+     */
+    void resubmitRefund(Long refundId);
+
+    /**
+     * 导出退款记录
+     *
+     * @param queryForm 查询表单
+     * @return 导出文件URL
+     */
+    String exportRefundRecords(ConsumeRefundQueryForm queryForm);
+
+    /**
+     * 获取退款趋势
+     *
+     * @param days 天数
+     * @return 趋势数据
+     */
+    Map<String, Object> getRefundTrend(Integer days);
+
+    /**
+     * 根据消费记录ID查询退款
+     *
+     * @param recordId 消费记录ID
+     * @return 退款记录列表
+     */
+    List<ConsumeRefundRecordVO> getRefundsByRecordId(Long recordId);
+
+    /**
+     * 取消退款申请（旧接口，保持兼容）
+     *
+     * @param refundId 退款ID
+     * @deprecated 使用 {@link #cancelRefund(Long, String)} 替代
+     */
+    @Deprecated
+    void cancelRefund(Long refundId);
+
+    /**
+     * 获取退款统计信息（旧接口，保持兼容）
      *
      * @param userId 用户ID
      * @return 统计信息
+     * @deprecated 使用 {@link #getRefundStatistics(Long, LocalDateTime, LocalDateTime)} 替代
      */
-    Map<String, Object> getUserRefundStatistics(Long userId);
+    @Deprecated
+    Map<String, Object> getRefundStatistics(Long userId);
+
+    // ==================== 移动端API方法 ====================
 
     /**
-     * 获取退款趋势数据
+     * 申请退款（移动端）
      *
-     * @param startDate 开始时间
-     * @param endDate 结束时间
-     * @param statisticsType 统计类型
-     * @return 趋势数据
+     * @param addForm 退款申请表单
+     * @return 退款申请结果
      */
-    Map<String, Object> getRefundTrend(String startDate, String endDate, String statisticsType);
+    Map<String, Object> applyRefundForApp(ConsumeRefundAddForm addForm);
 
     /**
-     * 导出退款数据
+     * 申请退款（移动端 - 简化表单）
      *
-     * @param queryForm 查询表单
-     * @param response HTTP响应
+     * @param applyForm 退款申请表单
+     * @return 退款申请结果
      */
-    void exportRefundData(RefundQueryForm queryForm, HttpServletResponse response);
+    Map<String, Object> applyRefundWithForm(net.lab1024.sa.consume.domain.form.ConsumeRefundApplyForm applyForm);
 
     /**
-     * 检查退款状态
+     * 获取用户退款记录（移动端）
+     *
+     * @param userId   用户ID
+     * @param pageNum  页码
+     * @param pageSize 每页大小
+     * @return 退款记录分页结果
+     */
+    PageResult<ConsumeRefundRecordVO> getRefundRecords(Long userId, Integer pageNum, Integer pageSize);
+
+    /**
+     * 获取用户退款记录（移动端 - 带状态筛选）
+     *
+     * @param userId       用户ID
+     * @param pageNum      页码
+     * @param pageSize     每页大小
+     * @param refundStatus 退款状态（可选）
+     * @return 退款记录分页结果
+     */
+    PageResult<ConsumeRefundRecordVO> getRefundRecords(Long userId, Integer pageNum, Integer pageSize, Integer refundStatus);
+
+    /**
+     * 获取退款状态
      *
      * @param refundId 退款ID
-     * @return 状态信息
+     * @return 退款状态信息
      */
-    Map<String, Object> checkRefundStatus(Long refundId);
+    Map<String, Object> getRefundStatus(Long refundId);
 
     /**
-     * 获取可退款金额
+     * 获取可申请退费的消费记录
      *
-     * @param transactionNo 交易号
-     * @return 可退款金额信息
+     * @param userId 用户ID
+     * @return 可退款的消费记录列表
      */
-    Map<String, Object> getAvailableRefundAmount(String transactionNo);
+    List<Map<String, Object>> getAvailableRefundRecords(Long userId);
 
     /**
-     * 根据交易号查询退款记录
+     * 获取退款详情（移动端）
      *
-     * @param transactionNo 交易号
-     * @return 退款记录列表
+     * @param refundId 退款ID
+     * @return 退款详情
      */
-    List<RefundRecordVO> getRefundByTransactionNo(String transactionNo);
-
-    /**
-     * 验证退款申请
-     *
-     * @param refundRequest 退款申请表单
-     * @return 验证结果
-     */
-    Map<String, Object> validateRefundRequest(RefundRequestForm refundRequest);
-
-    /**
-     * 获取退款政策信息
-     *
-     * @return 政策信息
-     */
-    Map<String, Object> getRefundPolicy();
+    ConsumeRefundRecordVO getRefundDetail(Long refundId);
 }
-
-

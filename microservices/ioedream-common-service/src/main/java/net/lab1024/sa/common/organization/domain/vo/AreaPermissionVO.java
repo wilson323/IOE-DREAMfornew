@@ -30,5 +30,30 @@ public class AreaPermissionVO {
     private String endTime;
 
     private String createTime;
+
+    // 手动添加setter方法以确保编译通过
+    public void setPermissionId(String permissionId) {
+        this.permissionId = permissionId;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public void setUserCode(String userCode) {
+        this.userCode = userCode;
+    }
+
+    public void setPermissionLevel(String permissionLevel) {
+        this.permissionLevel = permissionLevel;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
+    }
 }
 

@@ -1,9 +1,8 @@
 package net.lab1024.sa.visitor.config;
 
-import org.springframework.context.annotation.Configuration;
-
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.context.annotation.Configuration;
 /**
  * Manager配置类
  * <p>
@@ -19,13 +18,11 @@ import lombok.extern.slf4j.Slf4j;
  * @since 2025-01-30
  * @updated 2025-12-14 移除重复的公共Bean定义，改用统一自动装配
  */
-@Slf4j
 @Configuration("visitorManagerConfiguration")
+@Slf4j
 public class ManagerConfiguration {
 
     // 公共Bean（NotificationManager、WorkflowApprovalManager）已由CommonBeanAutoConfiguration统一装配
     // 此处仅保留访客模块特有的Manager定义（如有）
 
 }
-
-

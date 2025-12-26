@@ -56,11 +56,11 @@ class EdgeVerificationStrategyTest {
                 .verifyTime(LocalDateTime.now())
                 .build();
 
-        // Mock Redis操作
-        when(redisTemplate.opsForValue()).thenReturn(valueOperations);
-        when(redisTemplate.hasKey(anyString())).thenReturn(false);
-        when(accessRecordDao.selectByCompositeKey(anyLong(), anyLong(), any())).thenReturn(null);
-        when(accessRecordDao.insert(any(AccessRecordEntity.class))).thenReturn(1);
+        // Mock Redis操作 - 使用lenient()宽松模式，允许不必要的stubbing
+        lenient().when(redisTemplate.opsForValue()).thenReturn(valueOperations);
+        lenient().when(redisTemplate.hasKey(anyString())).thenReturn(false);
+        lenient().when(accessRecordDao.selectByCompositeKey(anyLong(), anyLong(), any())).thenReturn(null);
+        lenient().when(accessRecordDao.insert(any(AccessRecordEntity.class))).thenReturn(1);
     }
 
     @Test

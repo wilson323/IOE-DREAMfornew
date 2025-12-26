@@ -1,6 +1,8 @@
 package net.lab1024.sa.common.recommend;
 
 import lombok.extern.slf4j.Slf4j;
+
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,11 +30,12 @@ import java.util.stream.Collectors;
  * - 停车位推荐
  * - 访客路线推荐
  */
-@Slf4j
 @Service
 @Transactional(readOnly = true)
 @SuppressWarnings("null")
+@Slf4j
 public class RecommendationEngine {
+
 
     /**
      * 基于用户的协同过滤推荐
@@ -324,4 +327,3 @@ public class RecommendationEngine {
         }
     }
 }
-

@@ -1,5 +1,6 @@
 package net.lab1024.sa.video.config;
 
+import lombok.extern.slf4j.Slf4j;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.springframework.boot.actuate.health.Health;
@@ -11,8 +12,6 @@ import org.springframework.context.annotation.Configuration;
 
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
-import lombok.extern.slf4j.Slf4j;
-
 /**
  * 视频服务监控配置
  * <p>

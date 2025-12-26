@@ -1,0 +1,142 @@
+# ============================================================
+# Prometheus告警规则
+# ============================================================
+# 功能：定义消费服务的性能告警阈值
+# 维护：IOE-DREAM架构团队
+# ============================================================
+
+groups:
+  - name: consume_service_alerts
+    interval: 30s
+    rules:
+      # TPS过低告警
+      - alert: ConsumeServiceLowTPS
+        expr: rate(consume_transaction_total[1m]) < 100
+        for: 2m
+        labels:
+          severity: warning
+          team: 'consume-service'
+        annotations:
+          summary: "消费服务TPS过低"
+          description: "消费服务TPS低于100（当前值: {{ $value }}）"
+
+      # TPS严重过低告警
+      - alert: ConsumeServiceCriticalTPS
+        expr: rate(consume_transaction_total[1m]) < 50
+        for: 1m
+        labels:
+          severity: critical
+          team: 'consume-service'
+        annotations:
+          summary: "消费服务TPS严重过低"
+          description: "消费服务TPS低于50（当前值: {{ $value }}），请立即检查！"
+
+      # 响应时间过长告警
+      - alert: ConsumeServiceHighResponseTime
+        expr: rate(consume_response_time_sum[1m]) / rate(consume_response_time_count[1m]) > 0.1
+        for: 2m
+        labels:
+          severity: warning
+          team: 'consume-service'
+        annotations:
+          summary: "消费服务响应时间过长"
+          description: "平均响应时间超过100ms（当前值: {{ $value }}ms）"
+
+      # 响应时间严重过长告警
+      - alert: ConsumeServiceCriticalResponseTime
+        expr: rate(consume_response_time_sum[1m]) / rate(consume_response_time_count[1m]) > 0.5
+        for: 1m
+        labels:
+          severity: critical
+          team: 'consume-service'
+        annotations:
+          summary: "消费服务响应时间严重过长"
+          description: "平均响应时间超过500ms（当前值: {{ $value }}ms），请立即检查！"
+
+      # 错误率过高告警
+      - alert: ConsumeServiceHighErrorRate
+        expr: rate(consume_transaction_error_total[1m]) / rate(consume_transaction_total[1m]) > 0.01
+        for: 2m
+        labels:
+          severity: warning
+          team: 'consume-service'
+        annotations:
+          summary: "消费服务错误率过高"
+          description: "错误率超过1%（当前值: {{ $value }}）"
+
+      # 错误率严重过高告警
+      - alert: ConsumeServiceCriticalErrorRate
+        expr: rate(consume_transaction_error_total[1m]) / rate(consume_transaction_total[1m]) > 0.05
+        for: 1m
+        labels:
+          severity: critical
+          team: 'consume-service'
+        annotations:
+          summary: "消费服务错误率严重过高"
+          description: "错误率超过5%（当前值: {{ $value }}），请立即检查！"
+
+      # 缓存命中率过低告警
+      - alert: ConsumeServiceLowCacheHitRate
+        expr: consume_cache_hit_rate < 0.8
+        for: 5m
+        labels:
+          severity: warning
+          team: 'consume-service'
+        annotations:
+          summary: "消费服务缓存命中率过低"
+          description: "缓存命中率低于80%（当前值: {{ $value }}）"
+
+      # 缓存命中率严重过低告警
+      - alert: ConsumeServiceCriticalCacheHitRate
+        expr: consume_cache_hit_rate < 0.7
+        for: 2m
+        labels:
+          severity: critical
+          team: 'consume-service'
+        annotations:
+          summary: "消费服务缓存命中率严重过低"
+          description: "缓存命中率低于70%（当前值: {{ $value }}），请立即检查！"
+
+      # 数据一致性告警
+      - alert: DualWriteDataInconsistency
+        expr: dual_write_consistency_rate < 0.999
+        for: 1m
+        labels:
+          severity: critical
+          team: 'consume-service'
+        annotations:
+          summary: "双写数据一致性不达标"
+          description: "新旧表数据一致性低于99.9%（当前值: {{ $value }}），请立即检查！"
+
+      # JVM堆内存使用率过高告警
+      - alert: ConsumeServiceHighHeapMemory
+        expr: jvm_memory_used_bytes{area="heap"} / jvm_memory_max_bytes{area="heap"} > 0.8
+        for: 5m
+        labels:
+          severity: warning
+          team: 'consume-service'
+        annotations:
+          summary: "消费服务堆内存使用率过高"
+          description: "堆内存使用率超过80%（当前值: {{ $value }}）"
+
+      # JVM堆内存使用率严重过高告警
+      - alert: ConsumeServiceCriticalHeapMemory
+        expr: jvm_memory_used_bytes{area="heap"} / jvm_memory_max_bytes{area="heap"} > 0.9
+        for: 2m
+        labels:
+          severity: critical
+          team: 'consume-service'
+        annotations:
+          summary: "消费服务堆内存使用率严重过高"
+          description: "堆内存使用率超过90%（当前值: {{ $value }}），请立即检查！"
+
+      # GC时间过长告警
+      - alert: ConsumeServiceLongGCPause
+        expr: rate(jvm_gc_pause_seconds_sum[1m]) > 0.1
+        for: 2m
+        labels:
+          severity: warning
+          team: 'consume-service'
+        annotations:
+          summary: "消费服务GC时间过长"
+          description: "GC暂停时间占比超过10%（当前值: {{ $value }}）"

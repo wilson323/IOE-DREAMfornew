@@ -17,8 +17,8 @@ import org.springframework.stereotype.Component;
  * @version 1.0.0
  * @since 2025-12-18
  */
-@Slf4j
 @Component
+@Slf4j
 public class BasicCommandExecutor implements IDeviceCommandExecutor {
 
     @Override
@@ -34,3 +34,4 @@ public class BasicCommandExecutor implements IDeviceCommandExecutor {
         return DeviceCommandDecorator.DeviceCommandResult.success("命令执行成功");
     }
 }
+

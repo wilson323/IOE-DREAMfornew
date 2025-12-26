@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.5">
+  <hashTree>
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="访客服务性能测试" enabled="true">
+      <stringProp name="TestPlan.comments">Tasks 11-12 关键接口性能压力测试</stringProp>
+      <boolProp name="TestPlan.functional_mode">false</boolProp>
+      <boolProp name="TestPlan.tearDown_on_shutdown">true</boolProp>
+      <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
+      <elementProp name="TestPlan.user_defined_variables" elementType="Arguments">
+        <collectionProp name="Arguments.arguments">
+          <elementProp name="BASE_URL" elementType="Argument">
+            <stringProp name="Argument.name">BASE_URL</stringProp>
+            <stringProp name="Argument.value">http://localhost:8095</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="THREAD_COUNT" elementType="Argument">
+            <stringProp name="Argument.name">THREAD_COUNT</stringProp>
+            <stringProp name="Argument.value">80</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="RAMP_UP_TIME" elementType="Argument">
+            <stringProp name="Argument.name">RAMP_UP_TIME</stringProp>
+            <stringProp name="Argument.value">10</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="LOOP_COUNT" elementType="Argument">
+            <stringProp name="Argument.name">LOOP_COUNT</stringProp>
+            <stringProp name="Argument.value">800</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+        </collectionProp>
+      </elementProp>
+      <stringProp name="TestPlan.user_define_classpath"></stringProp>
+    </TestPlan>
+
+    <!-- HTTP Cookie Manager -->
+    <hashTree>
+      <CookieManager guiclass="CookiePanel" testclass="CookieManager" testname="HTTP Cookie Manager" enabled="true"/>
+    </hashTree>
+
+    <!-- HTTP Header Manager -->
+    <hashTree>
+      <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+        <collectionProp name="HeaderManager.headers">
+          <elementProp name="" elementType="Header">
+            <stringProp name="Header.name">Content-Type</stringProp>
+            <stringProp name="Header.value">application/json</stringProp>
+          </elementProp>
+          <elementProp name="" elementType="Header">
+            <stringProp name="Header.name">Accept</stringProp>
+            <stringProp name="Header.value">application/json</stringProp>
+          </elementProp>
+        </collectionProp>
+      </HeaderManager>
+    </hashTree>
+
+    <!-- Thread Group -->
+    <hashTree>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="访客服务压力测试" enabled="true">
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <stringProp name="LoopController.loops">${LOOP_COUNT}</stringProp>
+        </elementProp>
+        <stringProp name="ThreadGroup.num_threads">${THREAD_COUNT}</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">${RAMP_UP_TIME}</stringProp>
+        <boolProp name="ThreadGroup.scheduler">false</boolProp>
+        <stringProp name="ThreadGroup.duration"></stringProp>
+        <stringProp name="ThreadGroup.delay">0</stringProp>
+        <boolProp name="ThreadGroup.same_user_on_sim_iteration">true</boolProp>
+      </ThreadGroup>
+
+      <!-- HTTP Request Defaults -->
+      <hashTree>
+        <ConfigTestElement guiclass="HttpDefaultsGui" testclass="ConfigTestElement" testname="HTTP Request Defaults" enabled="true">
+          <stringProp name="HTTPSampler.domain">${BASE_URL}</stringProp>
+          <stringProp name="HTTPSampler.port"></stringProp>
+          <stringProp name="HTTPSampler.protocol">http</stringProp>
+          <stringProp name="HTTPSampler.contentEncoding">UTF-8</stringProp>
+          <stringProp name="HTTPSampler.path"></stringProp>
+        </ConfigTestElement>
+
+        <!-- Self-Service Registration Test -->
+        <hashTree>
+          <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="自助登记接口性能测试" enabled="true"/>
+
+          <!-- 1. Create Registration -->
+          <hashTree>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="创建自助登记" enabled="true">
+              <stringProp name="HTTPSampler.path">/api/v1/visitor/registration/registration</stringProp>
+              <stringProp name="HTTPSampler.method">POST</stringProp>
+              <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="" elementType="HTTPArgument">
+                    <stringProp name="Argument.name"></stringProp>
+                    <stringProp name="Argument.value">{"visitorName":"张三","idCardType":1,"idCard":"110101199001011234","phone":"13800138000","visitorType":1,"visitPurpose":"商务洽谈","intervieweeId":2001,"intervieweeName":"李四","intervieweeDepartment":"技术部","visitDate":"2025-12-26","expectedEnterTime":"2025-12-26T10:00:00","expectedLeaveTime":"2025-12-26T18:00:00","facePhotoUrl":"http://example.com/face.jpg","terminalId":"TERM001","terminalLocation":"大厅登记机"}</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                    <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                    <stringProp name="HTTPArgument.use_equals">true</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </elementProp>
+            </HTTPSamplerProxy>
+          </hashTree>
+
+          <!-- 2. Query Pending Approvals -->
+          <hashTree>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="查询待审批记录" enabled="true">
+              <stringProp name="HTTPSampler.path">/api/v1/visitor/registration/pending</stringProp>
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="intervieweeId" elementType="HTTPArgument">
+                    <stringProp name="Argument.value">2001</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </elementProp>
+            </HTTPSamplerProxy>
+          </hashTree>
+
+          <!-- 3. Approve Registration -->
+          <hashTree>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="审批登记申请" enabled="true">
+              <stringProp name="HTTPSampler.path">/api/v1/visitor/registration/${registrationId}/approve</stringProp>
+              <stringProp name="HTTPSampler.method">POST</stringProp>
+              <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="" elementType="HTTPArgument">
+                    <stringProp name="Argument.name"></stringProp>
+                    <stringProp name="Argument.value">{"approverId":3001,"approverName":"王经理","approved":true,"approvalComment":"同意接待"}</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                    <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                    <stringProp name="HTTPArgument.use_equals">true</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </elementProp>
+            </HTTPSamplerProxy>
+          </hashTree>
+
+          <!-- 4. Visitor Check-In -->
+          <hashTree>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="访客签到" enabled="true">
+              <stringProp name="HTTPSampler.path">/api/v1/visitor/registration/check-in</stringProp>
+              <stringProp name="HTTPSampler.method">POST</stringProp>
+              <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="" elementType="HTTPArgument">
+                    <stringProp name="Argument.name"></stringProp>
+                    <stringProp name="Argument.value">{"visitorCode":"${visitorCode}","terminalId":"CHECKIN001","terminalLocation":"大厅签到机"}</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                    <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                    <stringProp name="HTTPArgument.use_equals">true</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </elementProp>
+            </HTTPSamplerProxy>
+          </hashTree>
+        </hashTree>
+
+        <!-- Self-Service Checkout Test -->
+        <hashTree>
+          <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="自助签离接口性能测试" enabled="true"/>
+
+          <!-- 1. Perform Self Checkout -->
+          <hashTree>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="执行自助签离" enabled="true">
+              <stringProp name="HTTPSampler.path">/api/v1/visitor/self-check-out/perform</stringProp>
+              <stringProp name="HTTPSampler.method">POST</stringProp>
+              <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="" elementType="HTTPArgument">
+                    <stringProp name="Argument.name"></stringProp>
+                    <stringProp name="Argument.value">{"visitorCode":"${visitorCode}","terminalId":"CHECKOUT001","terminalLocation":"大厅签离机","cardReturnStatus":1,"visitorCard":"VC001"}</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                    <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                    <stringProp name="HTTPArgument.use_equals">true</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </elementProp>
+            </HTTPSamplerProxy>
+          </hashTree>
+
+          <!-- 2. Query Checkout Record -->
+          <hashTree>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="查询签离记录" enabled="true">
+              <stringProp name="HTTPSampler.path">/api/v1/visitor/self-check-out/query</stringProp>
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="visitorCode" elementType="HTTPArgument">
+                    <stringProp name="Argument.value">${visitorCode}</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </elementProp>
+            </HTTPSamplerProxy>
+          </hashTree>
+
+          <!-- 3. Query Overtime Records -->
+          <hashTree>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="查询超时签离记录" enabled="true">
+              <stringProp name="HTTPSampler.path">/api/v1/visitor/self-check-out/overtime</stringProp>
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="startDate" elementType="HTTPArgument">
+                    <stringProp name="Argument.value">2025-12-01</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                  <elementProp name="endDate" elementType="HTTPArgument">
+                    <stringProp name="Argument.value">2025-12-31</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </elementProp>
+            </HTTPSamplerProxy>
+          </hashTree>
+
+          <!-- 4. Get Duration Statistics -->
+          <hashTree>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="获取访问时长统计" enabled="true">
+              <stringProp name="HTTPSampler.path">/api/v1/visitor/self-check-out/duration-statistics</stringProp>
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="startDate" elementType="HTTPArgument">
+                    <stringProp name="Argument.value">2025-12-01</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                  <elementProp name="endDate" elementType="HTTPArgument">
+                    <stringProp name="Argument.value">2025-12-31</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </elementProp>
+            </HTTPSamplerProxy>
+          </hashTree>
+
+          <!-- 5. Get Satisfaction Statistics -->
+          <hashTree>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="获取满意度统计" enabled="true">
+              <stringProp name="HTTPSampler.path">/api/v1/visitor/self-check-out/satisfaction-statistics</stringProp>
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="startDate" elementType="HTTPArgument">
+                    <stringProp name="Argument.value">2025-12-01</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                  <elementProp name="endDate" elementType="HTTPArgument">
+                    <stringProp name="Argument.value">2025-12-31</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </elementProp>
+            </HTTPSamplerProxy>
+          </hashTree>
+        </hashTree>
+
+        <!-- Results Summary -->
+        <hashTree>
+          <ResultCollector guiclass="SummaryReport" testclass="SummaryReport" testname="Summary Report" enabled="true"/>
+          <ResultCollector guiclass="StatVisualizer" testclass="StatVisualizer" testname="Aggregate Report" enabled="true"/>
+          <ResultCollector guiclass="RespTimeGraphVisualizer" testclass="RespTimeGraphVisualizer" testname="Response Times Graph" enabled="true"/>
+        </hashTree>
+      </hashTree>
+    </hashTree>
+  </hashTree>
+</jmeterTestPlan>

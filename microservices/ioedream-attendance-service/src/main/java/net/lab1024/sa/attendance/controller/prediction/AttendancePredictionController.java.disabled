@@ -1,0 +1,138 @@
+package net.lab1024.sa.attendance.controller.prediction;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
+import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.attendance.service.prediction.AttendancePredictionService;
+import org.springframework.web.bind.annotation.*;
+
+import jakarta.annotation.Resource;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * 考勤预测控制器 - REST API
+ *
+ * @author IOE-DREAM
+ * @since 2025-12-26
+ */
+@Slf4j
+@RestController
+@RequestMapping("/api/prediction")
+@Tag(name = "考勤预测")
+public class AttendancePredictionController {
+
+    @Resource
+    private AttendancePredictionService attendancePredictionService;
+
+    /**
+     * 训练预测模型
+     */
+    @PostMapping("/model/train")
+    @Operation(summary = "训练预测模型")
+    public ResponseDTO<Long> trainModel(@RequestBody Map<String, Object> request) {
+        log.info("[考勤预测] 训练模型: request={}", request);
+
+        String modelName = (String) request.get("modelName");
+        String modelType = (String) request.get("modelType");
+        String trainingStartDateStr = (String) request.get("trainingStartDate");
+        String trainingEndDateStr = (String) request.get("trainingEndDate");
+        @SuppressWarnings("unchecked")
+        Map<String, Object> hyperparameters = (Map<String, Object>) request.getOrDefault("hyperparameters", new HashMap<>());
+
+        LocalDate trainingStartDate = LocalDate.parse(trainingStartDateStr);
+        LocalDate trainingEndDate = LocalDate.parse(trainingEndDateStr);
+
+        Long modelId = attendancePredictionService.trainModel(
+                modelName,
+                modelType,
+                trainingStartDate,
+                trainingEndDate,
+                hyperparameters
+        );
+
+        return ResponseDTO.ok(modelId);
+    }
+
+    /**
+     * 执行考勤预测
+     */
+    @PostMapping("/predict")
+    @Operation(summary = "执行考勤预测")
+    public ResponseDTO<List<Map<String, Object>>> predict(@RequestBody Map<String, Object> request) {
+        log.info("[考勤预测] 执行预测: request={}", request);
+
+        Long modelId = Long.valueOf(request.get("modelId").toString());
+        Long employeeId = Long.valueOf(request.get("employeeId").toString());
+        String startDateStr = (String) request.get("startDate");
+        String endDateStr = (String) request.get("endDate");
+
+        LocalDate startDate = LocalDate.parse(startDateStr);
+        LocalDate endDate = LocalDate.parse(endDateStr);
+
+        List<Map<String, Object>> predictions = attendancePredictionService.predict(
+                modelId,
+                employeeId,
+                startDate,
+                endDate
+        );
+
+        return ResponseDTO.ok(predictions);
+    }
+
+    /**
+     * 检测考勤异常
+     */
+    @PostMapping("/anomaly/detect")
+    @Operation(summary = "检测考勤异常")
+    public ResponseDTO<List<Map<String, Object>>> detectAnomalies(@RequestBody Map<String, Object> request) {
+        log.info("[考勤预测] 检测异常: request={}", request);
+
+        Long modelId = Long.valueOf(request.get("modelId").toString());
+        String startDateStr = (String) request.get("startDate");
+        String endDateStr = (String) request.get("endDate");
+
+        LocalDate startDate = LocalDate.parse(startDateStr);
+        LocalDate endDate = LocalDate.parse(endDateStr);
+
+        List<Map<String, Object>> anomalies = attendancePredictionService.detectAnomalies(
+                modelId,
+                startDate,
+                endDate
+        );
+
+        return ResponseDTO.ok(anomalies);
+    }
+
+    /**
+     * 获取模型信息
+     */
+    @GetMapping("/model/{modelId}")
+    @Operation(summary = "获取模型信息")
+    public ResponseDTO<Map<String, Object>> getModelInfo(@PathVariable Long modelId) {
+        log.info("[考勤预测] 查询模型信息: modelId={}", modelId);
+
+        Map<String, Object> modelInfo = attendancePredictionService.getModelInfo(modelId);
+
+        if (modelInfo == null) {
+            return ResponseDTO.error("MODEL_NOT_FOUND", "模型不存在");
+        }
+
+        return ResponseDTO.ok(modelInfo);
+    }
+
+    /**
+     * 获取模型版本列表
+     */
+    @GetMapping("/model/versions")
+    @Operation(summary = "获取模型版本列表")
+    public ResponseDTO<List<Map<String, Object>>> getModelVersions() {
+        log.info("[考勤预测] 查询模型版本列表");
+
+        List<Map<String, Object>> versions = attendancePredictionService.getModelVersions();
+
+        return ResponseDTO.ok(versions);
+    }
+}

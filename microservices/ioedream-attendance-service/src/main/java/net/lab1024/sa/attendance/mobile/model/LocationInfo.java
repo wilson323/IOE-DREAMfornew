@@ -23,6 +23,11 @@ import lombok.NoArgsConstructor;
 public class LocationInfo {
 
     /**
+     * 位置类型（GPS/WiFi/BaseStation）
+     */
+    private String locationType;
+
+    /**
      * 纬度
      */
     private Double latitude;
@@ -41,4 +46,14 @@ public class LocationInfo {
      * 精度（米）
      */
     private Double accuracy;
+
+    /**
+     * WiFi SSID
+     */
+    private String wifiSsid;
+
+    /**
+     * 基站ID
+     */
+    private String baseStationId;
 }

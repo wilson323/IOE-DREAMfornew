@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.access.manager.AccessVerificationManager;
 import net.lab1024.sa.access.manager.AntiPassbackManager;
+import net.lab1024.sa.access.manager.FirmwareManager;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
 import net.lab1024.sa.common.organization.dao.DeviceDao;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -71,6 +72,33 @@ public class AccessManagerConfiguration {
     @Resource
     private java.util.List<net.lab1024.sa.access.strategy.MultiModalAuthenticationStrategy> multiModalAuthenticationStrategyList;
 
+    @Resource
+    private net.lab1024.sa.access.dao.DeviceImportBatchDao deviceImportBatchDao;
+
+    @Resource
+    private net.lab1024.sa.access.dao.DeviceImportSuccessDao deviceImportSuccessDao;
+
+    @Resource
+    private net.lab1024.sa.access.dao.DeviceImportErrorDao deviceImportErrorDao;
+
+    @Resource
+    private net.lab1024.sa.access.service.DeviceDiscoveryService deviceDiscoveryService;
+
+    @Resource
+    private org.springframework.web.client.RestTemplate restTemplate;
+
+    @Resource
+    private net.lab1024.sa.access.dao.DeviceFirmwareDao deviceFirmwareDao;
+
+    @Resource
+    private net.lab1024.sa.access.dao.FirmwareUpgradeTaskDao firmwareUpgradeTaskDao;
+
+    @Resource
+    private net.lab1024.sa.access.dao.FirmwareUpgradeDeviceDao firmwareUpgradeDeviceDao;
+
+    @Resource
+    private net.lab1024.sa.access.service.FirmwareUpgradeService firmwareUpgradeService;
+
     /**
      * 注册MultiModalAuthenticationManager为Spring Bean
      *
@@ -130,6 +158,43 @@ public class AccessManagerConfiguration {
                 interlockRecordDao,
                 multiPersonRecordDao,
                 verificationProperties
+        );
+    }
+
+    /**
+     * 注册DeviceDiscoveryManager为Spring Bean
+     *
+     * @return DeviceDiscoveryManager实例
+     */
+    @Bean
+    @ConditionalOnMissingBean(net.lab1024.sa.access.manager.DeviceDiscoveryManager.class)
+    public net.lab1024.sa.access.manager.DeviceDiscoveryManager deviceDiscoveryManager() {
+        log.info("[Manager配置] 注册DeviceDiscoveryManager Bean");
+        return new net.lab1024.sa.access.manager.DeviceDiscoveryManager(
+                deviceDao,
+                deviceImportBatchDao,
+                deviceImportSuccessDao,
+                deviceImportErrorDao,
+                deviceDiscoveryService,
+                gatewayServiceClient,
+                restTemplate
+        );
+    }
+
+    /**
+     * 注册FirmwareManager为Spring Bean
+     *
+     * @return FirmwareManager实例
+     */
+    @Bean
+    @ConditionalOnMissingBean(FirmwareManager.class)
+    public FirmwareManager firmwareManager() {
+        log.info("[Manager配置] 注册FirmwareManager Bean");
+        return new FirmwareManager(
+                deviceFirmwareDao,
+                firmwareUpgradeTaskDao,
+                firmwareUpgradeDeviceDao,
+                firmwareUpgradeService
         );
     }
 

@@ -42,10 +42,15 @@
 
     <!-- 预约列表 -->
     <a-card :bordered="false" class="table-card">
+      <!-- 骨架屏 -->
+      <SkeletonLoader v-if="loadingAppointments && appointmentList.length === 0" type="table" :rowCount="8" />
+
+      <!-- 实际内容 -->
       <a-table
+        v-else
         :columns="appointmentColumns"
         :data-source="appointmentList"
-        :loading="loadingAppointments"
+        :loading="loadingAppointments && appointmentList.length > 0"
         :pagination="pagination"
         @change="handleTableChange"
         row-key="appointmentId"
@@ -109,6 +114,7 @@ import { SearchOutlined, PlusOutlined } from '@ant-design/icons-vue';
 import { visitorApi } from '/@/api/business/visitor/visitor-api';
 import AppointmentFormModal from './components/AppointmentFormModal.vue';
 import VisitorDetailModal from './components/VisitorDetailModal.vue';
+import SkeletonLoader from '/@/components/SkeletonLoader.vue';
 import dayjs from 'dayjs';
 
 // 搜索表单

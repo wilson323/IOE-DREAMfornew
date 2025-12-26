@@ -100,15 +100,16 @@ data:
       endpoint:
         health:
           show-details: always
-      metrics:
-        export:
-          prometheus:
+      prometheus:
+        metrics:
+          export:
             enabled: true
+      metrics:
         distribution:
           percentiles-histogram:
-            http.server.requests: true
+            "[http.server.requests]": true
           percentiles:
-            http.server.requests: 0.5,0.9,0.95,0.99
+            "[http.server.requests]": 0.5,0.9,0.95,0.99
 
     # 日志配置
     logging:
@@ -230,15 +231,16 @@ data:
       endpoint:
         health:
           show-details: when-authorized
-      metrics:
-        export:
-          prometheus:
+      prometheus:
+        metrics:
+          export:
             enabled: true
+      metrics:
         distribution:
           percentiles-histogram:
-            http.server.requests: true
+            "[http.server.requests]": true
           percentiles:
-            http.server.requests: 0.5,0.9,0.95,0.99
+            "[http.server.requests]": 0.5,0.9,0.95,0.99
 
     # 日志配置
     logging:

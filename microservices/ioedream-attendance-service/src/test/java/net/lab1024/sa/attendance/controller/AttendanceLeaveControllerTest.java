@@ -1,8 +1,13 @@
 package net.lab1024.sa.attendance.controller;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,10 +20,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.attendance.domain.entity.AttendanceLeaveEntity;
 import net.lab1024.sa.attendance.domain.form.AttendanceLeaveForm;
 import net.lab1024.sa.attendance.service.AttendanceLeaveService;
+import net.lab1024.sa.common.dto.ResponseDTO;
 
 /**
  * AttendanceLeaveController单元测试
@@ -35,7 +40,7 @@ import net.lab1024.sa.attendance.service.AttendanceLeaveService;
 class AttendanceLeaveControllerTest {
     @Mock
     private AttendanceLeaveService attendanceLeaveService;
-    
+
     @InjectMocks
     private AttendanceLeaveController attendanceLeaveController;
 
@@ -50,12 +55,12 @@ class AttendanceLeaveControllerTest {
         // Given
         AttendanceLeaveForm form = new AttendanceLeaveForm();
         form.setEmployeeId(1L);
-        form.setLeaveType("ANNUAL");  // 修复：leaveType是String类型
-        
+        form.setLeaveType("ANNUAL"); // 修复：leaveType是String类型
+
         AttendanceLeaveEntity entity = new AttendanceLeaveEntity();
         entity.setLeaveNo("LEAVE001");
         when(attendanceLeaveService.submitLeaveApplication(any(AttendanceLeaveForm.class)))
-            .thenReturn(entity);
+                .thenReturn(entity);
 
         // When
         ResponseDTO<AttendanceLeaveEntity> response = attendanceLeaveController.submitLeaveApplication(form);
@@ -76,7 +81,7 @@ class AttendanceLeaveControllerTest {
         Map<String, Object> requestParams = new HashMap<>();
         requestParams.put("status", "APPROVED");
         requestParams.put("approvalComment", "同意");
-        
+
         doNothing().when(attendanceLeaveService).updateLeaveStatus(anyString(), anyString(), anyString());
 
         // When

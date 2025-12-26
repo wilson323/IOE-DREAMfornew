@@ -1,0 +1,201 @@
+# IOE-DREAM 代码质量分析Hook
+# 确保所有提交的代码符合项目统一规范
+
+hook {
+  name: "代码质量分析器"
+  description: "系统化检查代码质量、规范符合性和依赖问题"
+  priority: "P0"
+
+  # 触发条件
+  triggers {
+    file_patterns {
+      # Java文件变更
+      include: ["**/*.java"]
+      # Maven配置文件变更
+      include: ["**/pom.xml", "**/.m2/**"]
+      # 技能文档变更
+      include: [".claude/skills/*.md"]
+      # 核心配置文件变更
+      include: ["CLAUDE.md", "application*.yml"]
+    }
+  }
+
+  # 执行阶段
+  stages {
+    stage1: {
+      name: "语法和编译检查"
+      commands: [
+        "echo \"🔍 Stage 1: 语法和编译检查\"",
+        "mvn clean compile -q",
+        "if [ $? -ne 0 ]; then",
+        "  echo \"❌ 编译失败，请检查代码语法错误\"",
+        "  exit 1",
+        "fi",
+        "echo \"✅ 编译检查通过\""
+      ]
+    }
+
+    stage2: {
+      name: "代码规范检查"
+      commands: [
+        "echo \"📏 Stage 2: 代码规范检查\"",
+        "# 检查@Autowired违规使用",
+        "echo \"检查@Autowired违规使用...\"",
+        "AUTOWIRED_COUNT=$(git diff --cached --name-only | xargs grep -l '@Autowired' 2>/dev/null | wc -l || echo 0)",
+        "if [ \"$AUTOWIRED_COUNT\" -gt 0 ]; then",
+        "  echo \"❌ 发现@Autowired违规使用，必须使用@Resource替代\"",
+        "  git diff --cached --name-only | xargs grep -H '@Autowired' || true",
+        "  exit 1",
+        "fi",
+        "",
+        "# 检查@Repository违规使用",
+        "echo \"检查@Repository违规使用...\"",
+        "REPOSITORY_COUNT=$(git diff --cached --name-only | xargs grep -l '@Repository' 2>/dev/null | wc -l || echo 0)",
+        "if [ \"$REPOSITORY_COUNT\" -gt 0 ]; then",
+        "  echo \"❌ 发现@Repository违规使用，必须使用@Mapper替代\"",
+        "  git diff --cached --name-only | xargs grep -H '@Repository' || true",
+        "  exit 1",
+        "fi",
+        "",
+        "# 检查JPA注解违规使用",
+        "echo \"检查JPA注解违规使用...\"",
+        "JPA_VIOLATIONS=$(git diff --cached --name-only | xargs grep -l 'jakarta\.persistence\.' 2>/dev/null | wc -l || echo 0)",
+        "if [ \"$JPA_VIOLATIONS\" -gt 0 ]; then",
+        "  echo \"❌ 发现JPA注解违规使用，项目已迁移到MyBatis-Plus\"",
+        "  git diff --cached --name-only | xargs grep -H 'jakarta\.persistence\.' || true",
+        "  exit 1",
+        "fi",
+        "",
+        "echo \"✅ 代码规范检查通过\""
+      ]
+    }
+
+    stage3: {
+      name: "依赖架构检查"
+      commands: [
+        "echo \"🏗️ Stage 3: 依赖架构检查\"",
+        "# 检查是否使用了禁用的microservices-common聚合依赖",
+        "echo \"检查聚合依赖违规...\"",
+        "VIOLATION_COUNT=$(find . -name \"pom.xml\" -exec grep -l \"microservices-common\" {} \; | wc -l || echo 0)",
+        "if [ \"$VIOLATION_COUNT\" -gt 0 ]; then",
+        "  echo \"❌ 发现microservices-common聚合依赖违规使用，必须使用细粒度模块依赖\"",
+        "  find . -name \"pom.xml\" -exec grep -H \"microservices-common\" {} + || true",
+        "  exit 1",
+        "fi",
+        "",
+        "# 检查循环依赖",
+        "echo \"检查潜在的循环依赖...\"",
+        "CYCLE_RISK=$(git diff --cached --name-only | grep -E 'ioedream-.*-service' | head -5 | wc -l || echo 0)",
+        "if [ \"$CYCLE_RISK\" -gt 1 ]; then",
+        "  echo \"⚠️ 检测到多个微服务变更，请注意检查循环依赖风险\"",
+        "  git diff --cached --name-only | grep -E 'ioedream-.*-service' || true",
+        "fi",
+        "",
+        "echo \"✅ 依赖架构检查通过\""
+      ]
+    }
+
+    stage4: {
+      name: "技能文档一致性检查"
+      commands: [
+        "echo \"📚 Stage 4: 技能文档一致性检查\"",
+        "# 检查技能文档中的技术栈一致性",
+        "echo \"检查技能文档技术栈一致性...\"",
+        "TECH_STACK_VIOLATIONS=$(find .claude/skills -name \"*.md\" -exec grep -l \"javax\.persistence\.Entity\" {} \; 2>/dev/null | wc -l || echo 0)",
+        "if [ \"$TECH_STACK_VIOLATIONS\" -gt 0 ]; then",
+        "  echo \"❌ 发现技能文档中的技术栈违规，需要更新为MyBatis-Plus注解\"",
+        "  find .claude/skills -name \"*.md\" -exec grep -H \"javax\.persistence\.Entity\" {} + 2>/dev/null || true",
+        "  exit 1",
+        "fi",
+        "",
+        "# 检查技能文档版本号一致性",
+        "echo \"检查技能文档版本号一致性...\"",
+        "VERSION_VIOLATIONS=$(find .claude/skills -name \"*.md\" -exec grep -l \"Spring Boot 3.5.8\" {} \; | wc -l || echo 0)",
+        "REQUIRED_COUNT=$(find .claude/skills -name \"*.md\" | wc -l)",
+        "if [ \"$VERSION_VIOLATIONS\" -lt \"$REQUIRED_COUNT\" ]; then",
+        "  echo \"⚠️ 部分技能文档缺少Spring Boot 3.5.8版本声明，建议添加\"",
+        "fi",
+        "",
+        "echo \"✅ 技能文档一致性检查通过\""
+      ]
+    }
+
+    stage5: {
+      name: "格式和质量检查"
+      commands: [
+        "echo \"🎨 Stage 5: 格式和质量检查\"",
+        "# 检查文件编码（无BOM）",
+        "echo \"检查文件编码...\"",
+        "BOM_FILES=$(find . -name \"*.java\" -exec file {} \; | grep -c \"UTF-8 Unicode (with BOM)\" || echo 0)",
+        "if [ \"$BOM_FILES\" -gt 0 ]; then",
+        "  echo \"❌ 发现UTF-8 BOM文件，请移除BOM字符\"",
+        "  find . -name \"*.java\" -exec file {} \; | grep \"UTF-8 Unicode (with BOM)\" || true",
+        "  exit 1",
+        "fi",
+        "",
+        "# 检查包名规范",
+        "echo \"检查包名规范...\"",
+        "PACKAGE_VIOLATIONS=$(find . -name \"*.java\" -exec grep -l \"^package.*\.\.\.\" {} \; 2>/dev/null | wc -l || echo 0)",
+        "if [ \"$PACKAGE_VIOLATIONS\" -gt 0 ]; then",
+        "  echo \"❌ 发现包名不规范，禁止以com开头\"",
+        "  find . -name \"*.java\" -exec grep -H \"^package.*\.\.\.\" {} + 2>/dev/null || true",
+        "  exit 1",
+        "fi",
+        "",
+        "echo \"✅ 格式和质量检查通过\""
+      ]
+    }
+  }
+
+  # 成功消息
+  success {
+    message: "✅ 代码质量检查全部通过！🎉"
+    details: [
+      "- 编译检查: 通过",
+      "- 代码规范: 无@Autowired、@Repository、JPA违规",
+      "- 依赖架构: 无聚合依赖违规",
+      "- 技能文档: 技术栈一致",
+      "- 格式质量: 无BOM、包名规范"
+    ]
+  }
+
+  # 失败消息和建议
+  failure {
+    message: "❌ 代码质量检查失败！请修复后重试"
+    suggestions: [
+      "1. 使用@Resource替代@Autowired",
+      "2. 使用@Mapper替代@Repository",
+      "3. 使用MyBatis-Plus注解替代JPA注解",
+      "4. 使用细粒度模块依赖替代microservices-common",
+      "5. 使用/call-skills global-dependency-manager进行依赖分析",
+      "6. 使用/call-skills compilation-error-fixer进行编译异常修复"
+    ]
+    blocking: true
+  }
+
+  # 例外情况（允许特定场景跳过部分检查）
+  exceptions {
+    scenarios: [
+      {
+        condition: "文件包含migration关键字",
+        patterns: ["*migration*", "*migrate*"],
+        allowed_checks: ["syntax", "format"],
+        reason: "迁移文件可能临时包含旧注解"
+      },
+      {
+        condition: "测试文件或示例代码",
+        patterns: ["*Test.java", "*Example.java", "*example*"],
+        allowed_checks: ["syntax"],
+        reason: "测试文件可能有特殊测试需求"
+      }
+    ]
+  }
+
+  # 输出配置
+  output {
+    verbose: true
+    color: true
+    log_file: ".kiro/logs/code-quality-$(date +%Y%m%d-%H%M%S).log"
+    metrics: true
+  }
+}

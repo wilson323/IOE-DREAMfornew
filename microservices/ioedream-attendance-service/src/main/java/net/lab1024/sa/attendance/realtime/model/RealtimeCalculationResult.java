@@ -56,6 +56,14 @@ public class RealtimeCalculationResult {
      */
     private Long calculationDuration;
 
+    public boolean isSuccess() {
+        return Boolean.TRUE.equals(calculationSuccessful);
+    }
+
+    public long getProcessedTime() {
+        return calculationDuration != null ? calculationDuration : 0L;
+    }
+
     /**
      * 计算结果数据
      */

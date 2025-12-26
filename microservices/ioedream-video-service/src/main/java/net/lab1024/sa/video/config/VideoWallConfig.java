@@ -1,5 +1,4 @@
 package net.lab1024.sa.video.config;
-
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.video.dao.VideoDecoderDao;
 import net.lab1024.sa.video.dao.VideoDisplayTaskDao;
@@ -29,7 +28,7 @@ import jakarta.annotation.Resource;
  */
 @Slf4j
 @Configuration
-public class VideoWallConfig {
+ public class VideoWallConfig {
 
     @Resource
     private VideoWallDao videoWallDao;
@@ -76,3 +75,5 @@ public class VideoWallConfig {
         return new WallTaskManager(videoDisplayTaskDao, videoWallWindowDao);
     }
 }
+
+

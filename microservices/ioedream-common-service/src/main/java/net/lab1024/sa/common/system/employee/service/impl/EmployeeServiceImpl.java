@@ -1,30 +1,30 @@
 package net.lab1024.sa.common.system.employee.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 import io.micrometer.observation.annotation.Observed;
 import jakarta.annotation.Resource;
-import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.domain.PageResult;
-import net.lab1024.sa.common.system.employee.domain.entity.EmployeeEntity;
+import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.common.exception.ParamException;
+import net.lab1024.sa.common.exception.SystemException;
+import net.lab1024.sa.common.system.employee.dao.EmployeeDao;
 import net.lab1024.sa.common.system.employee.domain.dto.EmployeeAddDTO;
 import net.lab1024.sa.common.system.employee.domain.dto.EmployeeQueryDTO;
 import net.lab1024.sa.common.system.employee.domain.dto.EmployeeUpdateDTO;
+import net.lab1024.sa.common.system.employee.domain.entity.EmployeeEntity;
 import net.lab1024.sa.common.system.employee.domain.vo.EmployeeVO;
 import net.lab1024.sa.common.system.employee.manager.EmployeeManager;
-import net.lab1024.sa.common.system.employee.dao.EmployeeDao;
 import net.lab1024.sa.common.system.employee.service.EmployeeService;
-import net.lab1024.sa.common.exception.BusinessException;
-import net.lab1024.sa.common.exception.SystemException;
-import net.lab1024.sa.common.exception.ParamException;
 
 /**
  * 员工管理Service实现
@@ -41,11 +41,12 @@ import net.lab1024.sa.common.exception.ParamException;
  * @version 1.0.0
  * @since 2025-12-02
  */
-@Slf4j
 @Service
 @Transactional(rollbackFor = Exception.class)
 @SuppressWarnings("null")
+@Slf4j
 public class EmployeeServiceImpl implements EmployeeService {
+
 
     @Resource
     private EmployeeManager employeeManager;
@@ -239,6 +240,9 @@ public class EmployeeServiceImpl implements EmployeeService {
             EmployeeEntity entity = new EmployeeEntity();
             BeanUtils.copyProperties(updateDTO, entity);
 
+            // 手动映射ID字段（DTO使用employeeId，Entity使用id）
+            entity.setId(updateDTO.getEmployeeId());
+
             int result = employeeDao.updateById(entity);
 
             if (result > 0) {
@@ -406,6 +410,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     private EmployeeVO convertToVO(EmployeeEntity entity) {
         EmployeeVO vo = new EmployeeVO();
         BeanUtils.copyProperties(entity, vo);
+
+        // 手动映射ID字段（Entity使用id，VO使用employeeId）
+        vo.setEmployeeId(entity.getId());
 
         // 计算工龄
         if (entity.getHireDate() != null) {

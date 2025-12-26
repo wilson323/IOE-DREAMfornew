@@ -1,15 +1,19 @@
 package net.lab1024.sa.oa.workflow.function;
 
-import com.googlecode.aviator.runtime.function.AbstractFunction;
-import com.googlecode.aviator.runtime.type.AviatorBoolean;
-import com.googlecode.aviator.runtime.type.AviatorObject;
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.common.gateway.GatewayServiceClient;
-import org.springframework.http.HttpMethod;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import org.springframework.http.HttpMethod;
+
+import com.googlecode.aviator.runtime.function.AbstractFunction;
+import com.googlecode.aviator.runtime.type.AviatorBoolean;
+import com.googlecode.aviator.runtime.type.AviatorObject;
+
+import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.common.gateway.GatewayServiceClient;
+import com.fasterxml.jackson.core.type.TypeReference;
 
 /**
  * 检查区域权限函数
@@ -24,6 +28,7 @@ import java.util.Map;
  */
 @Slf4j
 public class CheckAreaPermissionFunction extends AbstractFunction {
+
 
     @Override
     public String getName() {
@@ -93,11 +98,12 @@ public class CheckAreaPermissionFunction extends AbstractFunction {
 
             // 调用区域权限检查API
             // 注意：如果API路径不存在，这里会返回错误，我们会在catch中处理
-            ResponseDTO<Boolean> response = gatewayServiceClient.callCommonService(
+            @SuppressWarnings("unchecked")
+            ResponseDTO<Boolean> response = (ResponseDTO<Boolean>) gatewayServiceClient.callCommonService(
                     "/api/v1/area/check-access",
                     HttpMethod.POST,
                     requestData,
-                    Boolean.class
+                    new TypeReference<ResponseDTO<Boolean>>() {}
             );
 
             // 检查响应结果
@@ -120,7 +126,5 @@ public class CheckAreaPermissionFunction extends AbstractFunction {
         }
     }
 }
-
-
 
 

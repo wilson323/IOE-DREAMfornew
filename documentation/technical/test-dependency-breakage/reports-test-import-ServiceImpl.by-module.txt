@@ -1,0 +1,7 @@
+﻿ioedream-consume-service\t10
+ioedream-attendance-service\t7
+ioedream-visitor-service\t5
+ioedream-oa-service\t3
+ioedream-video-service\t2
+ioedream-access-service\t1
+ioedream-common-service\t1

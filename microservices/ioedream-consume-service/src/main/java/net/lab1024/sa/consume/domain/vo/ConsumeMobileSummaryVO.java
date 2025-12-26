@@ -1,38 +1,27 @@
 package net.lab1024.sa.consume.domain.vo;
 
 import java.math.BigDecimal;
+
 import lombok.Data;
 
 /**
- * 移动端交易汇总VO
+ * 实时交易汇总
  *
  * @author IOE-DREAM Team
- * @version 1.0.0
- * @since 2025-01-30
+ * @since 2025-12-22
  */
 @Data
 public class ConsumeMobileSummaryVO {
 
-    /**
-     * 区域ID
-     */
     private String areaId;
 
-    /**
-     * 总交易笔数
-     */
-    private Integer totalCount;
+    private Integer todayConsumeCount;
 
-    /**
-     * 总交易金额
-     */
-    private BigDecimal totalAmount;
+    private BigDecimal todayConsumeAmount;
 
-    /**
-     * 交易人数
-     */
-    private Integer userCount;
+    private Integer todayUserCount;
+
+    private Integer realtimeConsumeCount;
+
+    private BigDecimal realtimeConsumeAmount;
 }
-
-
-

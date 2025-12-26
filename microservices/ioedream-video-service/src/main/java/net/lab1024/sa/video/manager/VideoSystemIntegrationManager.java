@@ -1,14 +1,14 @@
 package net.lab1024.sa.video.manager;
 
-import lombok.extern.slf4j.Slf4j;
-
-import org.springframework.scheduling.annotation.Async;
-
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 
 /**
  * 视频系统集成管理器
@@ -20,19 +20,16 @@ import java.util.concurrent.ConcurrentHashMap;
  * 4. 告警与通知集成
  * 5. 性能监控与优化
  * </p>
- *
- * @author IOE-DREAM Team
- * @version 1.0.0
- * @since 2025-12-16
- */
-/**
- * 视频系统集成管理器
  * <p>
  * 严格遵循CLAUDE.md规范：
  * - Manager类是纯Java类，不使用Spring注解
  * - 通过构造函数注入依赖
  * - 在微服务中通过配置类注册为Spring Bean
  * </p>
+ *
+ * @author IOE-DREAM Team
+ * @version 1.0.0
+ * @since 2025-12-16
  */
 @Slf4j
 public class VideoSystemIntegrationManager {
@@ -54,19 +51,45 @@ public class VideoSystemIntegrationManager {
             this.systemName = systemName;
             this.isHealthy = true;
             this.lastCheckTime = LocalDateTime.now();
-            this.metrics = new ConcurrentHashMap<>();
+            this.metrics = new HashMap<>();
         }
 
         // Getters and Setters
-        public String getSystemName() { return systemName; }
-        public boolean isHealthy() { return isHealthy; }
-        public void setHealthy(boolean healthy) { isHealthy = healthy; }
-        public LocalDateTime getLastCheckTime() { return lastCheckTime; }
-        public void setLastCheckTime(LocalDateTime lastCheckTime) { this.lastCheckTime = lastCheckTime; }
-        public String getLastError() { return lastError; }
-        public void setLastError(String lastError) { this.lastError = lastError; }
-        public Map<String, Object> getMetrics() { return metrics; }
-        public void setMetrics(Map<String, Object> metrics) { this.metrics = metrics; }
+        public String getSystemName() {
+            return systemName;
+        }
+
+        public boolean isHealthy() {
+            return isHealthy;
+        }
+
+        public void setHealthy(boolean healthy) {
+            isHealthy = healthy;
+        }
+
+        public LocalDateTime getLastCheckTime() {
+            return lastCheckTime;
+        }
+
+        public void setLastCheckTime(LocalDateTime lastCheckTime) {
+            this.lastCheckTime = lastCheckTime;
+        }
+
+        public String getLastError() {
+            return lastError;
+        }
+
+        public void setLastError(String lastError) {
+            this.lastError = lastError;
+        }
+
+        public Map<String, Object> getMetrics() {
+            return metrics;
+        }
+
+        public void setMetrics(Map<String, Object> metrics) {
+            this.metrics = metrics;
+        }
     }
 
     /**
@@ -347,7 +370,7 @@ public class VideoSystemIntegrationManager {
      * 获取系统集成状态
      */
     public Map<String, SystemIntegrationStatus> getIntegrationStatus() {
-        return new ConcurrentHashMap<>(integrationStatusCache);
+        return new HashMap<>(integrationStatusCache);
     }
 
     /**
@@ -467,7 +490,7 @@ public class VideoSystemIntegrationManager {
      * 获取系统集成健康报告
      */
     public Map<String, Object> getIntegrationHealthReport() {
-        Map<String, Object> report = new ConcurrentHashMap<>();
+        Map<String, Object> report = new HashMap<>();
 
         int totalSystems = integrationStatusCache.size();
         long healthySystems = integrationStatusCache.values().stream()

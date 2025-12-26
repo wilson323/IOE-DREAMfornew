@@ -103,6 +103,64 @@
 
 ---
 
+### 1.6 全局代码分析模块 🆕
+
+**文档路径**: `documentation/api/global-code-analysis-api.md`
+
+**模块**: 全局代码分析系统 (ioedream-code-analyzer)
+
+**包含内容**:
+- ✅ 架构分析API接口（已设计）
+- ✅ 编译错误分析API接口（已设计）
+- ✅ 代码质量检测API接口（已设计）
+- ✅ 自动修复API接口（已设计）
+- ✅ 配置文件解析API接口（已设计）
+- ✅ 监控报告API接口（已设计）
+
+**API基础路径**: `/api/v1/code-analysis`
+
+**CLI工具**: `ioedream-analyzer`
+
+**技术特点**:
+- 系统性代码质量诊断与修复
+- 支持架构分析、编译错误修复、代码质量检测等8大核心功能
+- 提供RESTful API接口，支持JWT Bearer Token认证
+- 集成Git钩子和CI/CD流水线
+- 独立CLI工具，支持本地和CI/CD环境使用
+- 基于15个核心正确性属性的属性测试验证
+
+**安装使用**:
+```bash
+# 安装
+pip install ioedream-code-analyzer
+
+# 基本使用
+ioedream-analyzer analyze /path/to/IOE-DREAM
+ioedream-analyzer fix /path/to/IOE-DREAM --auto-backup
+ioedream-analyzer report /path/to/IOE-DREAM --format html
+```
+
+**项目结构**:
+```
+ioedream-code-analyzer/
+├── src/ioedream_analyzer/
+│   ├── cli/                 # 命令行界面
+│   ├── analysis/            # 分析引擎
+│   ├── fix/                 # 修复执行器
+│   ├── common/              # 公共组件
+│   ├── config/              # 配置管理
+│   ├── reporting/           # 报告生成
+│   └── monitoring/          # 监控组件
+├── tests/
+│   ├── unit/                # 单元测试
+│   ├── integration/         # 集成测试
+│   ├── property/            # 属性测试
+│   └── performance/         # 性能测试
+└── README.md                # 详细使用指南
+```
+
+---
+
 ## 📊 二、API接口统计
 
 ### 2.1 按模块统计

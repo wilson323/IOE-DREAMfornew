@@ -1,10 +1,11 @@
 package net.lab1024.sa.common.organization.controller;
 
+import lombok.extern.slf4j.Slf4j;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import jakarta.annotation.Resource;
 import net.lab1024.sa.common.organization.entity.AreaEntity;
 import net.lab1024.sa.common.organization.manager.RegionalHierarchyManager;
 import net.lab1024.sa.common.organization.service.RegionalHierarchyService;
@@ -27,15 +28,15 @@ import java.util.Map;
  * @version 1.0.0
  * @since 2025-01-16
  */
-@Slf4j
 @RestController
 @RequestMapping("/api/v1/organization/regional-hierarchy")
-@RequiredArgsConstructor
 @Tag(name = "区域层级管理", description = "区域层级管理相关接口")
 @Validated
+@Slf4j
 public class RegionalHierarchyController {
 
-    private final RegionalHierarchyService regionalHierarchyService;
+    @Resource
+    private RegionalHierarchyService regionalHierarchyService;
 
     @GetMapping("/path/{areaId}")
     @Operation(summary = "获取区域层级路径", description = "获取指定区域的完整层级路径")

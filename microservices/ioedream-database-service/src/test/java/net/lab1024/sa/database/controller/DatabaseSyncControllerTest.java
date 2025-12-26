@@ -1,4 +1,4 @@
-package net.lab1024.sa.database.controller;
+﻿package net.lab1024.sa.database.controller;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -13,7 +13,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.database.controller.DatabaseSyncController;
 import net.lab1024.sa.database.service.DatabaseSyncService;
 
 /**

@@ -1,10 +1,10 @@
 package net.lab1024.sa.video.sdk;
-
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.video.sdk.impl.LocalAiSdkProvider;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
+import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -19,9 +19,9 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Slf4j
 @Component
-public class AiSdkFactory {
+ public class AiSdkFactory {
 
-    private final Map<String, AiSdkProvider> providers = new ConcurrentHashMap<>();
+    private final Map<String, AiSdkProvider> providers = new HashMap<>();
 
     /**
      * 获取AI SDK提供者
@@ -119,3 +119,6 @@ public class AiSdkFactory {
         providers.clear();
     }
 }
+
+
+

@@ -6,27 +6,29 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
+import net.lab1024.sa.common.util.TypeUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import net.lab1024.sa.common.util.QueryBuilder;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.annotation.Resource;
-import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.domain.PageParam;
+import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.common.openapi.domain.response.PageResult;
 import net.lab1024.sa.video.dao.VideoBehaviorDao;
 import net.lab1024.sa.video.dao.VideoBehaviorPatternDao;
 import net.lab1024.sa.video.domain.form.VideoBehaviorAnalysisForm;
@@ -132,13 +134,13 @@ public class VideoBehaviorServiceImpl implements VideoBehaviorService {
         }
 
         // 排序
-        if (StringUtils.isNotBlank(form.getSortField())) {
+        if (TypeUtils.hasText(form.getSortField())) {
             if ("desc".equalsIgnoreCase(form.getSortOrder())) {
                 queryWrapper.orderByDesc(
-                        StringUtils.isNotBlank(form.getSortField()) ? VideoBehaviorEntity::getDetectionTime : null);
+                        TypeUtils.hasText(form.getSortField()) ? VideoBehaviorEntity::getDetectionTime : null);
             } else {
                 queryWrapper.orderByAsc(
-                        StringUtils.isNotBlank(form.getSortField()) ? VideoBehaviorEntity::getDetectionTime : null);
+                        TypeUtils.hasText(form.getSortField()) ? VideoBehaviorEntity::getDetectionTime : null);
             }
         } else {
             queryWrapper.orderByDesc(VideoBehaviorEntity::getDetectionTime);
@@ -389,7 +391,7 @@ public class VideoBehaviorServiceImpl implements VideoBehaviorService {
 
         LambdaQueryWrapper<VideoBehaviorPatternEntity> queryWrapper = new LambdaQueryWrapper<>();
 
-        if (StringUtils.isNotBlank(form.getPatternName())) {
+        if (TypeUtils.hasText(form.getPatternName())) {
             queryWrapper.like(VideoBehaviorPatternEntity::getPatternName, form.getPatternName());
         }
         if (form.getPatternType() != null) {
@@ -518,7 +520,7 @@ public class VideoBehaviorServiceImpl implements VideoBehaviorService {
         }
 
         // 解析JSON字段
-        if (StringUtils.isNotBlank(entity.getTargetIds())) {
+        if (TypeUtils.hasText(entity.getTargetIds())) {
             try {
                 vo.setTargetIdsList(objectMapper.readValue(entity.getTargetIds(), new TypeReference<List<Long>>() {
                 }));
@@ -527,7 +529,7 @@ public class VideoBehaviorServiceImpl implements VideoBehaviorService {
             }
         }
 
-        if (StringUtils.isNotBlank(entity.getSnapshotUrls())) {
+        if (TypeUtils.hasText(entity.getSnapshotUrls())) {
             try {
                 vo.setSnapshotUrlsList(
                         objectMapper.readValue(entity.getSnapshotUrls(), new TypeReference<List<String>>() {
@@ -537,7 +539,7 @@ public class VideoBehaviorServiceImpl implements VideoBehaviorService {
             }
         }
 
-        if (StringUtils.isNotBlank(entity.getEnvironmentInfo())) {
+        if (TypeUtils.hasText(entity.getEnvironmentInfo())) {
             try {
                 vo.setEnvironmentInfoParsed(
                         objectMapper.readValue(entity.getEnvironmentInfo(), new TypeReference<Map<String, Object>>() {

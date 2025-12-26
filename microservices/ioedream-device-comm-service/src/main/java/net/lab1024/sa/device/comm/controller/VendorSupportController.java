@@ -1,19 +1,28 @@
 package net.lab1024.sa.device.comm.controller;
 
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.util.SmartRequestUtil;
 import net.lab1024.sa.device.comm.service.VendorSupportService;
 import net.lab1024.sa.device.comm.vendor.DeviceVendorSupportManager;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * 厂商设备支持控制器
@@ -31,15 +40,15 @@ import java.util.Map;
  * @version 1.0.0
  * @since 2025-12-16
  */
-@Slf4j
 @RestController
 @RequestMapping("/api/v1/vendor-support")
 @Tag(name = "厂商设备支持", description = "厂商设备支持管理和查询接口")
+@Slf4j
 public class VendorSupportController {
 
     @Resource
     private VendorSupportService vendorSupportService;
-    
+
     @Resource
     private DeviceVendorSupportManager deviceVendorSupportManager;
 
@@ -74,8 +83,7 @@ public class VendorSupportController {
     @GetMapping("/vendors/{vendorName}")
     @Operation(summary = "获取厂商信息", description = "根据厂商名称获取详细信息")
     public ResponseDTO<DeviceVendorSupportManager.VendorInfo> getVendorInfo(
-            @Parameter(description = "厂商名称", required = true, example = "海康威视")
-            @PathVariable String vendorName) {
+            @Parameter(description = "厂商名称", required = true, example = "海康威视") @PathVariable String vendorName) {
         try {
             log.info("[厂商支持管理] 查询厂商信息: {}, 操作人: {}", vendorName, SmartRequestUtil.getUserId());
 
@@ -104,8 +112,7 @@ public class VendorSupportController {
     @GetMapping("/vendors/{vendorName}/devices")
     @Operation(summary = "获取厂商设备列表", description = "获取指定厂商的所有设备信息")
     public ResponseDTO<List<DeviceVendorSupportManager.DeviceInfo>> getVendorDevices(
-            @Parameter(description = "厂商名称", required = true, example = "海康威视")
-            @PathVariable String vendorName) {
+            @Parameter(description = "厂商名称", required = true, example = "海康威视") @PathVariable String vendorName) {
         try {
             log.info("[厂商支持管理] 查询厂商设备列表: {}, 操作人: {}", vendorName, SmartRequestUtil.getUserId());
 
@@ -129,12 +136,12 @@ public class VendorSupportController {
     @GetMapping("/devices")
     @Operation(summary = "根据设备类型查询设备", description = "获取指定类型的所有设备信息")
     public ResponseDTO<List<DeviceVendorSupportManager.DeviceInfo>> getDevicesByType(
-            @Parameter(description = "设备类型", example = "视频监控")
-            @RequestParam String deviceType) {
+            @Parameter(description = "设备类型", example = "视频监控") @RequestParam String deviceType) {
         try {
             log.info("[厂商支持管理] 查询设备类型: {}, 操作人: {}", deviceType, SmartRequestUtil.getUserId());
 
-            List<DeviceVendorSupportManager.DeviceInfo> devices = deviceVendorSupportManager.getDevicesByType(deviceType);
+            List<DeviceVendorSupportManager.DeviceInfo> devices = deviceVendorSupportManager
+                    .getDevicesByType(deviceType);
 
             log.info("[厂商支持管理] 查询设备类型成功: {}, 返回 {} 个设备", deviceType, devices.size());
             return ResponseDTO.ok(devices);
@@ -154,8 +161,7 @@ public class VendorSupportController {
     @GetMapping("/vendors/{vendorName}/support")
     @Operation(summary = "检查厂商支持", description = "检查指定厂商是否被支持")
     public ResponseDTO<Boolean> checkVendorSupport(
-            @Parameter(description = "厂商名称", required = true, example = "海康威视")
-            @PathVariable String vendorName) {
+            @Parameter(description = "厂商名称", required = true, example = "海康威视") @PathVariable String vendorName) {
         try {
             log.info("[厂商支持管理] 检查厂商支持: {}, 操作人: {}", vendorName, SmartRequestUtil.getUserId());
 
@@ -179,8 +185,7 @@ public class VendorSupportController {
     @GetMapping("/devices/{deviceModel}/support")
     @Operation(summary = "检查设备型号支持", description = "检查指定设备型号是否被支持")
     public ResponseDTO<Boolean> checkDeviceModelSupport(
-            @Parameter(description = "设备型号", required = true, example = "DS-2CD2032-I")
-            @PathVariable String deviceModel) {
+            @Parameter(description = "设备型号", required = true, example = "DS-2CD2032-I") @PathVariable String deviceModel) {
         try {
             log.info("[厂商支持管理] 检查设备型号支持: {}, 操作人: {}", deviceModel, SmartRequestUtil.getUserId());
 
@@ -278,8 +283,9 @@ public class VendorSupportController {
     public ResponseDTO<Map<String, Boolean>> batchRegisterVendorDevices(
             @Valid @RequestBody Map<String, List<DeviceVendorSupportManager.DeviceInfo>> vendorDevices) {
         try {
+            String userId = SmartRequestUtil.getUserId();
             log.info("[厂商支持管理] 批量注册厂商设备, 厂商数: {}, 操作人: {}",
-                    vendorDevices.size(), SmartRequestUtil.getUserId());
+                    vendorDevices.size(), userId != null ? userId : "unknown");
 
             Map<String, Boolean> results = vendorSupportService.batchRegisterVendorDevices(vendorDevices);
 
@@ -299,20 +305,19 @@ public class VendorSupportController {
     /**
      * 移除厂商设备
      *
-     * @param vendorName 厂商名称
+     * @param vendorName  厂商名称
      * @param deviceModel 设备型号
      * @return 操作结果
      */
     @DeleteMapping("/vendors/{vendorName}/devices/{deviceModel}")
     @Operation(summary = "移除厂商设备", description = "移除指定厂商的设备型号支持")
     public ResponseDTO<Void> removeVendorDevice(
-            @Parameter(description = "厂商名称", required = true, example = "海康威视")
-            @PathVariable String vendorName,
-            @Parameter(description = "设备型号", required = true, example = "DS-2CD2032-I")
-            @PathVariable String deviceModel) {
+            @Parameter(description = "厂商名称", required = true, example = "海康威视") @PathVariable String vendorName,
+            @Parameter(description = "设备型号", required = true, example = "DS-2CD2032-I") @PathVariable String deviceModel) {
         try {
+            String userId = SmartRequestUtil.getUserId();
             log.info("[厂商支持管理] 移除厂商设备: {} - {}, 操作人: {}",
-                    vendorName, deviceModel, SmartRequestUtil.getUserId());
+                    vendorName, deviceModel, userId != null ? userId : "unknown");
 
             boolean success = vendorSupportService.removeVendorDevice(vendorName, deviceModel);
 

@@ -1,19 +1,21 @@
 package net.lab1024.sa.common.config;
 
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.common.monitoring.AlertManager;
-import net.lab1024.sa.common.monitoring.EnterpriseMonitoringManager;
-import net.lab1024.sa.common.notification.manager.NotificationConfigManager;
-import io.micrometer.core.instrument.MeterRegistry;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.RestTemplate;
 
+import io.micrometer.core.instrument.MeterRegistry;
 import jakarta.annotation.PreDestroy;
+import net.lab1024.sa.common.monitoring.AlertManager;
+import net.lab1024.sa.common.monitoring.EnterpriseMonitoringManager;
+import net.lab1024.sa.common.monitoring.MetricsCollector;
+import net.lab1024.sa.common.notification.manager.NotificationConfigManager;
 
 /**
  * 告警自动配置类
@@ -27,10 +29,11 @@ import jakarta.annotation.PreDestroy;
  * @author IOE-DREAM Team
  * @since 2025-12-08
  */
-@Slf4j
 @Configuration
 @ConditionalOnProperty(name = "monitoring.alert.enabled", havingValue = "true", matchIfMissing = true)
+@Slf4j
 public class AlertAutoConfiguration {
+
 
     private AlertManager alertManager;
 
@@ -41,15 +44,15 @@ public class AlertAutoConfiguration {
     @ConditionalOnMissingBean(AlertManager.class)
     @ConditionalOnBean(NotificationConfigManager.class)
     public AlertManager alertManager(
+            MeterRegistry meterRegistry,
             NotificationConfigManager notificationConfigManager) {
         // 创建MetricsCollector实例
-        net.lab1024.sa.common.monitoring.MetricsCollector metricsCollector = new net.lab1024.sa.common.monitoring.MetricsCollector();
+        MetricsCollector metricsCollector = new MetricsCollector(meterRegistry);
         // 使用完整构造函数，支持从数据库读取配置
         alertManager = new AlertManager(
                 metricsCollector,
                 null, // GatewayServiceClient（可选）
-                notificationConfigManager, // NotificationConfigManager（支持从数据库读取配置）
-                null, null, null, null, null, null, null // 其他可选参数
+                notificationConfigManager // NotificationConfigManager（支持从数据库读取配置）
         );
 
         log.info("[告警配置] AlertManager 已配置并启用（支持数据库配置）");
@@ -74,9 +77,9 @@ public class AlertAutoConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean(AlertManager.class)
-    public AlertManager alertManagerFallback() {
+    public AlertManager alertManagerFallback(MeterRegistry meterRegistry) {
         // 创建MetricsCollector实例并使用简化构造函数
-        net.lab1024.sa.common.monitoring.MetricsCollector metricsCollector = new net.lab1024.sa.common.monitoring.MetricsCollector();
+        MetricsCollector metricsCollector = new MetricsCollector(meterRegistry);
         alertManager = new AlertManager(metricsCollector);
 
         log.info("[告警配置] AlertManager 已配置并启用（使用默认配置）");
@@ -143,8 +146,7 @@ public class AlertAutoConfiguration {
                 emailFrom,
                 emailTo,
                 emailApiUrl,
-                emailApiKey
-        );
+                emailApiKey);
 
         // 调用初始化方法
         manager.init();

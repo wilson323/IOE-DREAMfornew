@@ -1,20 +1,22 @@
 package net.lab1024.sa.consume.service;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.consume.domain.dto.RechargeRequestDTO;
-import net.lab1024.sa.consume.domain.form.AccountQueryForm;
-import net.lab1024.sa.consume.domain.vo.AccountVO;
-
-import jakarta.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.util.List;
+
+import net.lab1024.sa.common.domain.PageResult;
+import net.lab1024.sa.consume.domain.form.ConsumeAccountAddForm;
+import net.lab1024.sa.consume.domain.form.ConsumeAccountQueryForm;
+import net.lab1024.sa.consume.domain.form.ConsumeAccountUpdateForm;
+import net.lab1024.sa.consume.domain.form.ConsumeAccountRechargeForm;
+import net.lab1024.sa.consume.domain.vo.ConsumeAccountVO;
 
 /**
  * 消费账户服务接口
  *
- * @author IOE-DREAM
- * @since 2025-12-09
+ * @author IOE-DREAM Team
+ * @version 1.0.0
+ * @since 2025-12-21
  */
 public interface ConsumeAccountService {
 
@@ -24,93 +26,92 @@ public interface ConsumeAccountService {
      * @param queryForm 查询条件
      * @return 分页结果
      */
-    ResponseDTO<IPage<AccountVO>> queryAccountPage(AccountQueryForm queryForm);
+    PageResult<ConsumeAccountVO> queryAccounts(ConsumeAccountQueryForm queryForm);
 
     /**
-     * 根据ID查询账户详情
+     * 获取账户详情
      *
      * @param accountId 账户ID
      * @return 账户详情
      */
-    ResponseDTO<AccountVO> getAccountById(Long accountId);
+    ConsumeAccountVO getAccountDetail(Long accountId);
 
     /**
-     * 根据账户编号查询账户详情
-     *
-     * @param accountNo 账户编号
-     * @return 账户详情
-     */
-    ResponseDTO<AccountVO> getAccountByNo(String accountNo);
-
-    /**
-     * 根据用户ID查询账户
+     * 根据用户ID获取账户
      *
      * @param userId 用户ID
-     * @return 账户详情
+     * @return 账户信息
      */
-    AccountVO getAccountByUserId(Long userId);
+    ConsumeAccountVO getAccountByUserId(Long userId);
+
+    /**
+     * 创建账户
+     *
+     * @param addForm 创建表单
+     * @return 账户ID
+     */
+    Long createAccount(ConsumeAccountAddForm addForm);
+
+    /**
+     * 更新账户信息
+     *
+     * @param accountId 账户ID
+     * @param updateForm 更新表单
+     */
+    void updateAccount(Long accountId, ConsumeAccountUpdateForm updateForm);
 
     /**
      * 账户充值
      *
-     * @param rechargeRequest 充值请求
+     * @param accountId 账户ID
+     * @param rechargeForm 充值表单
      * @return 充值结果
      */
-    ResponseDTO<Void> recharge(RechargeRequestDTO rechargeRequest);
+    Boolean rechargeAccount(Long accountId, ConsumeAccountRechargeForm rechargeForm);
 
     /**
-     * 账户扣费
+     * 账户扣款
      *
      * @param accountId 账户ID
-     * @param amount    扣费金额
-     * @return 扣费结果
+     * @param amount 扣款金额
+     * @param description 扣款描述
+     * @return 扣款结果
      */
-    ResponseDTO<Void> deduct(Long accountId, BigDecimal amount);
+    Boolean deductAmount(Long accountId, BigDecimal amount, String description);
 
     /**
      * 账户退款
      *
      * @param accountId 账户ID
-     * @param amount    退款金额
-     * @param reason    退款原因
+     * @param amount 退款金额
+     * @param reason 退款原因
      * @return 退款结果
      */
-    ResponseDTO<Void> refund(Long accountId, BigDecimal amount, String reason);
+    Boolean refundAmount(Long accountId, BigDecimal amount, String reason);
 
     /**
-     * 账户冻结
+     * 冻结账户
      *
      * @param accountId 账户ID
-     * @param amount    冻结金额
-     * @return 冻结结果
+     * @param reason 冻结原因
      */
-    ResponseDTO<Void> freeze(Long accountId, BigDecimal amount);
+    void freezeAccount(Long accountId, String reason);
 
     /**
-     * 账户解冻
+     * 解冻账户
      *
      * @param accountId 账户ID
-     * @param amount    解冻金额
-     * @return 解冻结果
+     * @param reason 解冻原因
      */
-    ResponseDTO<Void> unfreeze(Long accountId, BigDecimal amount);
+    void unfreezeAccount(Long accountId, String reason);
 
     /**
-     * 账户启用/禁用
+     * 注销账户
      *
      * @param accountId 账户ID
-     * @param enabled   是否启用
-     * @return 操作结果
+     * @param reason 注销原因
      */
-    ResponseDTO<Void> updateAccountStatus(Long accountId, Boolean enabled);
-
-    /**
-     * 导出账户数据
-     *
-     * @param queryForm 查询条件
-     * @param response  HTTP响应
-     */
-    void exportAccountData(AccountQueryForm queryForm, HttpServletResponse response);
+    void closeAccount(Long accountId, String reason);
 
     /**
      * 获取账户余额
@@ -118,152 +119,30 @@ public interface ConsumeAccountService {
      * @param accountId 账户ID
      * @return 账户余额
      */
-    ResponseDTO<BigDecimal> getAccountBalance(Long accountId);
+    BigDecimal getAccountBalance(Long accountId);
 
     /**
-     * 更新账户信息
-     *
-     * @param accountVO 账户信息
-     * @return 更新结果
-     */
-    ResponseDTO<Void> updateAccount(AccountVO accountVO);
-
-    /**
-     * 检查账户是否存在
-     *
-     * @param accountId 账户ID
-     * @return 是否存在
-     */
-    Boolean existsAccount(Long accountId);
-
-    /**
-     * 检查账户余额是否充足
-     *
-     * @param accountId 账户ID
-     * @param amount    需要的金额
-     * @return 是否充足
-     */
-    Boolean checkBalance(Long accountId, BigDecimal amount);
-
-    /**
-     * 账户余额变动通知
-     *
-     * @param accountId 账户ID
-     * @param oldBalance 变动前余额
-     * @param newBalance 变动后余额
-     * @param changeType 变动类型
-     * @param remark     备注
-     */
-    void balanceChangeNotification(Long accountId, BigDecimal oldBalance, BigDecimal newBalance, String changeType, String remark);
-
-    /**
-     * 获取用户账户余额信息
+     * 获取用户消费统计
      *
      * @param userId 用户ID
-     * @return 账户余额信息
+     * @param startDate 开始日期
+     * @param endDate 结束日期
+     * @return 消费统计
      */
-    Map<String, Object> getUserBalanceInfo(Long userId);
-
-   
-    /**
-     * 冻结账户
-     *
-     * @param accountId 账户ID
-     * @param reason 冻结原因
-     * @param freezeDays 冻结天数
-     * @return 是否成功
-     */
-    boolean freezeAccount(Long accountId, String reason, Integer freezeDays);
+    java.util.Map<String, Object> getUserConsumeStatistics(Long userId, LocalDateTime startDate, LocalDateTime endDate);
 
     /**
-     * 解冻账户
+     * 获取活跃账户列表
      *
-     * @param accountId 账户ID
-     * @param reason 解冻原因
-     * @return 是否成功
+     * @return 活跃账户列表
      */
-    boolean unfreezeAccount(Long accountId, String reason);
+    List<ConsumeAccountVO> getActiveAccounts();
 
     /**
-     * 账户充值
+     * 批量创建账户
      *
-     * @param accountId 账户ID
-     * @param amount 充值金额
-     * @param rechargeType 充值类型
-     * @param remark 备注
-     * @return 是否成功
+     * @param addForms 账户列表
+     * @return 创建结果
      */
-    boolean rechargeAccount(Long accountId, BigDecimal amount, String rechargeType, String remark);
-
-    /**
-     * 设置账户限额
-     *
-     * @param accountId 账户ID
-     * @param dailyLimit 日限额
-     * @param monthlyLimit 月限额
-     * @return 是否成功
-     */
-    boolean setAccountLimit(Long accountId, BigDecimal dailyLimit, BigDecimal monthlyLimit);
-
-    /**
-     * 批量更新账户状态
-     *
-     * @param accountIds 账户ID列表
-     * @param operationType 操作类型
-     * @param reason 操作原因
-     * @return 成功数量
-     */
-    int batchUpdateAccountStatus(java.util.List<Long> accountIds, String operationType, String reason);
-
-    /**
-     * 获取账户统计信息
-     *
-     * @return 统计信息
-     */
-    Map<String, Object> getAccountStatistics();
-
-   
-    /**
-     * 获取账户消费记录
-     *
-     * @param accountId 账户ID
-     * @param pageNum 页码
-     * @param pageSize 页大小
-     * @return 消费记录
-     */
-    net.lab1024.sa.common.domain.PageResult<Map<String, Object>> getAccountConsumeRecords(Long accountId, Integer pageNum, Integer pageSize);
-
-    /**
-     * 检查账户状态
-     *
-     * @param accountId 账户ID
-     * @return 状态信息
-     */
-    Map<String, Object> checkAccountStatus(Long accountId);
-
-    /**
-     * 创建账户
-     *
-     * @param accountEntity 账户实体
-     * @return 账户ID
-     */
-    Long createAccount(net.lab1024.sa.consume.entity.AccountEntity accountEntity);
-
-    /**
-     * 更新账户
-     *
-     * @param accountEntity 账户实体
-     * @return 是否成功
-     */
-    boolean updateAccount(net.lab1024.sa.consume.entity.AccountEntity accountEntity);
-
-    /**
-     * 删除账户
-     *
-     * @param accountId 账户ID
-     * @return 是否成功
-     */
-    boolean deleteAccount(Long accountId);
+    java.util.Map<String, Object> batchCreateAccounts(List<ConsumeAccountAddForm> addForms);
 }
-
-

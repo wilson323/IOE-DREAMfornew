@@ -1,5 +1,7 @@
 package net.lab1024.sa.attendance.engine.rule.cache.impl;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,9 +20,6 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import net.lab1024.sa.attendance.engine.rule.cache.RuleCacheManager;
 import net.lab1024.sa.attendance.engine.rule.model.RuleEvaluationResult;
 import net.lab1024.sa.attendance.engine.rule.model.RuleExecutionContext;
-
-import lombok.extern.slf4j.Slf4j;
-
 /**
  * 规则缓存管理器实现类 - 三级缓存架构
  * <p>
@@ -247,9 +246,8 @@ public class RuleCacheManagerImpl implements RuleCacheManager {
 
             if (userCacheKeys != null && !userCacheKeys.isEmpty ()) {
                 // 删除相关缓存，需要转换为String类型
-                List<String> keysToDelete = userCacheKeys.stream()
-                        .map(Object::toString)
-                        .collect(java.util.stream.Collectors.toList());
+                List<String> keysToDelete = userCacheKeys.stream ().map (Object::toString)
+                        .collect (java.util.stream.Collectors.toList ());
                 redisTemplate.delete (keysToDelete);
                 evictions.addAndGet (userCacheKeys.size ());
             }
@@ -279,9 +277,8 @@ public class RuleCacheManagerImpl implements RuleCacheManager {
 
             if (deptCacheKeys != null && !deptCacheKeys.isEmpty ()) {
                 // 删除相关缓存，需要转换为String类型
-                List<String> keysToDelete = deptCacheKeys.stream()
-                        .map(Object::toString)
-                        .collect(java.util.stream.Collectors.toList());
+                List<String> keysToDelete = deptCacheKeys.stream ().map (Object::toString)
+                        .collect (java.util.stream.Collectors.toList ());
                 redisTemplate.delete (keysToDelete);
                 evictions.addAndGet (deptCacheKeys.size ());
             }
@@ -514,3 +511,4 @@ public class RuleCacheManagerImpl implements RuleCacheManager {
         l1Cache.asMap ().entrySet ().removeIf (entry -> entry.getKey ().contains (":" + departmentId + ":"));
     }
 }
+

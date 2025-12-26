@@ -1,5 +1,7 @@
 package net.lab1024.sa.attendance.realtime.event.impl;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
@@ -9,7 +11,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
-import lombok.extern.slf4j.Slf4j;
+
 import net.lab1024.sa.attendance.realtime.event.AttendanceEvent;
 import net.lab1024.sa.attendance.realtime.event.BatchEventProcessingResult;
 import net.lab1024.sa.attendance.realtime.event.EventProcessingResult;
@@ -30,6 +32,7 @@ import net.lab1024.sa.attendance.realtime.event.ProcessorStatus;
  */
 @Slf4j
 public class AttendanceEventProcessor implements EventProcessor {
+
 
     // 处理器状态
     private volatile ProcessorStatus status = ProcessorStatus.STOPPED;
@@ -85,7 +88,7 @@ public class AttendanceEventProcessor implements EventProcessor {
                     .batchId(java.util.UUID.randomUUID().toString())
                     .totalEvents(events.size())
                     .processingStartTime(LocalDateTime.now())
-                    .results(new java.util.ArrayList<>())
+                    .results(new java.util.ArrayList<EventProcessingResult>())
                     .build();
 
             // 并行处理事件

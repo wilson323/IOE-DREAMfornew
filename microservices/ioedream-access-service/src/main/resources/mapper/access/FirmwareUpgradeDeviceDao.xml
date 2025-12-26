@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.lab1024.sa.access.dao.FirmwareUpgradeDeviceDao">
+
+    <!-- 根据任务ID查询设备列表 -->
+    <select id="selectByTaskId" resultType="net.lab1024.sa.access.domain.entity.FirmwareUpgradeDeviceEntity">
+        SELECT *
+        FROM t_firmware_upgrade_device
+        WHERE task_id = #{taskId}
+        ORDER BY detail_id
+    </select>
+
+    <!-- 查询待升级的设备列表 -->
+    <select id="selectPendingDevices" resultType="net.lab1024.sa.access.domain.entity.FirmwareUpgradeDeviceEntity">
+        SELECT *
+        FROM t_firmware_upgrade_device
+        WHERE task_id = #{taskId}
+          AND upgrade_status = 1
+        ORDER BY device_id
+    </select>
+
+    <!-- 批量插入设备明细 -->
+    <insert id="insertBatch">
+        INSERT INTO t_firmware_upgrade_device (
+            task_id, device_id, device_code, device_name, device_ip,
+            current_version, target_version, upgrade_status,
+            retry_count, max_retry
+        ) VALUES
+        <foreach collection="deviceList" item="item" separator=",">
+            (#{item.taskId}, #{item.deviceId}, #{item.deviceCode}, #{item.deviceName},
+             #{item.deviceIp}, #{item.currentVersion}, #{item.targetVersion}, 1,
+             0, #{item.maxRetry})
+        </foreach>
+    </insert>
+
+    <!-- 更新设备升级状态 -->
+    <update id="updateUpgradeStatus">
+        UPDATE t_firmware_upgrade_device
+        SET upgrade_status = #{upgradeStatus},
+            <if test="upgradeStatus == 3 or upgradeStatus == 4">
+                end_time = NOW(),
+                duration_seconds = TIMESTAMPDIFF(SECOND, start_time, NOW())
+            </if>
+            <if test="errorCode != null">
+                error_code = #{errorCode},
+            </if>
+            <if test="errorMessage != null">
+                error_message = #{errorMessage},
+            </if>
+        WHERE detail_id = #{detailId}
+    </update>
+
+    <!-- 增加重试次数 -->
+    <update id="incrementRetryCount">
+        UPDATE t_firmware_upgrade_device
+        SET retry_count = retry_count + 1
+        WHERE detail_id = #{detailId}
+    </update>
+
+    <!-- 查询升级失败的设备列表 -->
+    <select id="selectFailedDevices" resultType="net.lab1024.sa.access.domain.entity.FirmwareUpgradeDeviceEntity">
+        SELECT *
+        FROM t_firmware_upgrade_device
+        WHERE task_id = #{taskId}
+          AND upgrade_status = 4
+          AND retry_count &lt; max_retry
+        ORDER BY detail_id
+    </select>
+
+    <!-- 查询任务统计信息 -->
+    <select id="selectTaskStatistics" resultType="java.util.HashMap">
+        SELECT
+            COUNT(*) as totalCount,
+            SUM(CASE WHEN upgrade_status = 1 THEN 1 ELSE 0 END) as pendingCount,
+            SUM(CASE WHEN upgrade_status = 2 THEN 1 ELSE 0 END) as upgradingCount,
+            SUM(CASE WHEN upgrade_status = 3 THEN 1 ELSE 0 END) as successCount,
+            SUM(CASE WHEN upgrade_status = 4 THEN 1 ELSE 0 END) as failedCount,
+            SUM(CASE WHEN upgrade_status = 5 THEN 1 ELSE 0 END) as rollbackCount
+        FROM t_firmware_upgrade_device
+        WHERE task_id = #{taskId}
+    </select>
+
+</mapper>

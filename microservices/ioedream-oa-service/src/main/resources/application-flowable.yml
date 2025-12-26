@@ -1,4 +1,4 @@
-# Flowable工作流引擎配置
+﻿# Flowable工作流引擎配置
 flowable:
   # 数据库配置
   database-schema-update: true
@@ -18,7 +18,7 @@ flowable:
   mail:
     server:
       host: ${spring.mail.host}
-      port: ${spring.mail.port:587}
+      port: ${"spring.mail.port":587}
       username: ${spring.mail.username}
       password: ${spring.mail.password}
 
@@ -79,6 +79,6 @@ spring:
 logging:
   level:
     org.flowable: INFO
-    org.flowable.engine: DEBUG
-    org.flowable.task: DEBUG
-    org.flowable.job: DEBUG
+    "org.flowable.engine": DEBUG
+    "org.flowable.task": DEBUG
+    "org.flowable.job": DEBUG

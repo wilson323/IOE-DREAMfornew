@@ -1,0 +1,66 @@
+package net.lab1024.sa.common.auth.dao;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import net.lab1024.sa.common.auth.entity.UserSessionEntity;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
+
+/**
+ * 用户会话数据访问接口
+ * <p>
+ * 管理用户登录会话信息的持久化操作
+ * 支持Redis分布式会话和数据库会话存储
+ * </p>
+ *
+ * @author IOE-DREAM架构团队
+ * @version 1.0.0
+ * @since 2025-12-20
+ */
+@Mapper
+public interface UserSessionDao extends BaseMapper<UserSessionEntity> {
+
+    /**
+     * 根据用户ID查找有效的会话
+     *
+     * @param userId 用户ID
+     * @return 用户会话实体
+     */
+    @Select("SELECT * FROM t_user_session WHERE user_id = #{userId} AND status = 1 AND expire_time > NOW() ORDER BY create_time DESC LIMIT 1")
+    UserSessionEntity findValidSessionByUserId(@Param("userId") Long userId);
+
+    /**
+     * 根据令牌查找会话
+     *
+     * @param token 令牌
+     * @return 用户会话实体
+     */
+    @Select("SELECT * FROM t_user_session WHERE token = #{token} AND status = 1 AND expire_time > NOW()")
+    UserSessionEntity findByToken(@Param("token") String token);
+
+    /**
+     * 根据令牌删除会话
+     *
+     * @param token 令牌
+     * @return 删除的记录数
+     */
+    @Select("UPDATE t_user_session SET status = 0, update_time = NOW() WHERE token = #{token}")
+    int revokeByToken(@Param("token") String token);
+
+    /**
+     * 根据用户ID删除所有会话
+     *
+     * @param userId 用户ID
+     * @return 删除的记录数
+     */
+    @Select("UPDATE t_user_session SET status = 0, update_time = NOW() WHERE user_id = #{userId}")
+    int revokeAllByUserId(@Param("userId") Long userId);
+
+    /**
+     * 清理过期会话
+     *
+     * @return 清理的记录数
+     */
+    @Select("DELETE FROM t_user_session WHERE expire_time < NOW() OR status = 0")
+    int cleanExpiredSessions();
+}

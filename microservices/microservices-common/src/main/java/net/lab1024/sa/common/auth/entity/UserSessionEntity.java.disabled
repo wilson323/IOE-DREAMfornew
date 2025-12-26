@@ -1,0 +1,131 @@
+package net.lab1024.sa.common.auth.entity;
+
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
+import net.lab1024.sa.common.entity.BaseEntity;
+
+import java.time.LocalDateTime;
+
+/**
+ * 用户会话实体类
+ * <p>
+ * 存储用户登录会话信息，支持多端登录管理
+ * 包含令牌信息、设备信息、登录位置等
+ * </p>
+ *
+ * @author IOE-DREAM架构团队
+ * @version 1.0.0
+ * @since 2025-12-20
+ */
+@Data
+@EqualsAndHashCode(callSuper = true)
+@Accessors(chain = true)
+@TableName("t_user_session")
+public class UserSessionEntity extends BaseEntity {
+
+    /**
+     * 会话ID
+     */
+    @TableField("session_id")
+    private Long sessionId;
+
+    /**
+     * 用户ID
+     */
+    @TableField("user_id")
+    private Long userId;
+
+    /**
+     * 用户名
+     */
+    @TableField("username")
+    private String username;
+
+    /**
+     * 访问令牌
+     */
+    @TableField("access_token")
+    private String accessToken;
+
+    /**
+     * 刷新令牌
+     */
+    @TableField("refresh_token")
+    private String refreshToken;
+
+    /**
+     * 令牌类型
+     */
+    @TableField("token_type")
+    private String tokenType;
+
+    /**
+     * 设备类型
+     */
+    @TableField("device_type")
+    private String deviceType;
+
+    /**
+     * 设备标识
+     */
+    @TableField("device_id")
+    private String deviceId;
+
+    /**
+     * 客户端IP
+     */
+    @TableField("client_ip")
+    private String clientIp;
+
+    /**
+     * 用户代理
+     */
+    @TableField("user_agent")
+    private String userAgent;
+
+    /**
+     * 登录位置
+     */
+    @TableField("login_location")
+    private String loginLocation;
+
+    /**
+     * 登录时间
+     */
+    @TableField("login_time")
+    private LocalDateTime loginTime;
+
+    /**
+     * 最后访问时间
+     */
+    @TableField("last_access_time")
+    private LocalDateTime lastAccessTime;
+
+    /**
+     * 过期时间
+     */
+    @TableField("expire_time")
+    private LocalDateTime expireTime;
+
+    /**
+     * 会话状态
+     * 1-有效 0-已失效
+     */
+    @TableField("status")
+    private Integer status;
+
+    /**
+     * 登录类型
+     */
+    @TableField("login_type")
+    private String loginType;
+
+    /**
+     * 扩展属性（JSON格式）
+     */
+    @TableField("extended_attributes")
+    private String extendedAttributes;
+}

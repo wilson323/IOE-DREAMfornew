@@ -1,5 +1,8 @@
 package net.lab1024.sa.common.filter;
 
+import lombok.extern.slf4j.Slf4j;
+
+
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.time.Instant;
@@ -18,7 +21,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.lang.NonNull;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.config.DirectCallProperties;
 
 /**
@@ -29,6 +31,7 @@ import net.lab1024.sa.common.config.DirectCallProperties;
  */
 @Slf4j
 public class DirectCallAuthFilter extends OncePerRequestFilter {
+
 
     private static final String DIRECT_CALL_HEADER = "X-Direct-Call";
     private static final String SOURCE_SERVICE_HEADER = "X-Source-Service";
@@ -168,4 +171,3 @@ public class DirectCallAuthFilter extends OncePerRequestFilter {
         return result == 0;
     }
 }
-

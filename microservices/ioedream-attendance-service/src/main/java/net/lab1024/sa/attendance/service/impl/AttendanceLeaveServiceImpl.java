@@ -1,5 +1,7 @@
 package net.lab1024.sa.attendance.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -10,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import jakarta.annotation.Resource;
 import io.github.resilience4j.retry.annotation.Retry;
 import io.micrometer.observation.annotation.Observed;
-import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.exception.BusinessException;
 import net.lab1024.sa.common.exception.ParamException;
@@ -38,10 +39,11 @@ import net.lab1024.sa.attendance.service.AttendanceLeaveService;
  * @version 1.0.0
  * @since 2025-01-30
  */
-@Slf4j
 @Service
 @Transactional(rollbackFor = Exception.class)
+@Slf4j
 public class AttendanceLeaveServiceImpl implements AttendanceLeaveService {
+
 
     @Resource
     private AttendanceLeaveDao attendanceLeaveDao;
@@ -93,7 +95,7 @@ public class AttendanceLeaveServiceImpl implements AttendanceLeaveService {
         variables.put("leaveDays", form.getLeaveDays()); // 用于判断审批层级（如：超过3天需要HR审批）
 
         // 4. 启动审批流程
-        ResponseDTO<Long> workflowResult = workflowApprovalManager.startApprovalProcess(
+        Long workflowInstanceId = workflowApprovalManager.startApprovalProcess(
                 WorkflowDefinitionConstants.ATTENDANCE_LEAVE, // 流程定义ID
                 entity.getLeaveNo(), // 业务Key
                 "请假申请-" + entity.getLeaveNo(), // 流程实例名称
@@ -103,14 +105,12 @@ public class AttendanceLeaveServiceImpl implements AttendanceLeaveService {
                 variables // 流程变量
         );
 
-        if (workflowResult == null || !workflowResult.isSuccess()) {
+        if (workflowInstanceId == null) {
             log.error("[请假申请] 启动审批流程失败，leaveNo={}", entity.getLeaveNo());
-            throw new BusinessException("启动审批流程失败: " +
-                    (workflowResult != null ? workflowResult.getMessage() : "未知错误"));
+            throw new BusinessException("启动审批流程失败");
         }
 
         // 5. 更新请假申请的workflowInstanceId
-        Long workflowInstanceId = workflowResult.getData();
         entity.setWorkflowInstanceId(workflowInstanceId);
         attendanceLeaveDao.updateById(entity);
 
@@ -215,6 +215,5 @@ public class AttendanceLeaveServiceImpl implements AttendanceLeaveService {
         return "LV" + System.currentTimeMillis();
     }
 }
-
 
 

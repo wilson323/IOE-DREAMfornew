@@ -1,33 +1,39 @@
 package net.lab1024.sa.oa.workflow.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
+
+import org.springframework.http.HttpMethod;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import io.micrometer.observation.annotation.Observed;
+import jakarta.annotation.Resource;
 import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.exception.BusinessException;
 import net.lab1024.sa.common.exception.ParamException;
 import net.lab1024.sa.common.exception.SystemException;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
-import net.lab1024.sa.oa.workflow.service.ApprovalService;
-import net.lab1024.sa.oa.workflow.domain.form.ApprovalTaskQueryForm;
-import net.lab1024.sa.oa.workflow.domain.form.ApprovalActionForm;
-import net.lab1024.sa.oa.workflow.domain.vo.ApprovalTaskVO;
-import net.lab1024.sa.oa.workflow.domain.vo.ApprovalInstanceVO;
-import net.lab1024.sa.oa.workflow.domain.vo.ApprovalStatisticsVO;
-import net.lab1024.sa.oa.workflow.dao.WorkflowTaskDao;
+import net.lab1024.sa.oa.domain.entity.WorkflowInstanceEntity;
+import net.lab1024.sa.oa.domain.entity.WorkflowTaskEntity;
 import net.lab1024.sa.oa.workflow.dao.ApprovalInstanceDao;
 import net.lab1024.sa.oa.workflow.dao.ApprovalStatisticsDao;
-import net.lab1024.sa.oa.domain.entity.WorkflowTaskEntity;
-import net.lab1024.sa.oa.domain.entity.WorkflowInstanceEntity;
-
-import io.micrometer.observation.annotation.Observed;
-import jakarta.annotation.Resource;
-import org.springframework.http.HttpMethod;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
+import net.lab1024.sa.oa.workflow.dao.WorkflowTaskDao;
+import net.lab1024.sa.oa.workflow.domain.form.ApprovalActionForm;
+import net.lab1024.sa.oa.workflow.domain.form.ApprovalTaskQueryForm;
+import net.lab1024.sa.oa.workflow.domain.vo.ApprovalInstanceVO;
+import net.lab1024.sa.oa.workflow.domain.vo.ApprovalStatisticsVO;
+import net.lab1024.sa.oa.workflow.domain.vo.ApprovalTaskVO;
+import net.lab1024.sa.oa.workflow.service.ApprovalService;
 
 /**
  * 企业级审批服务实现类
@@ -43,9 +49,9 @@ import java.util.stream.Collectors;
  * @version 1.0.0
  * @since 2025-12-09
  */
-@Slf4j
 @Service
 @Transactional(rollbackFor = Exception.class)
+@Slf4j
 public class ApprovalServiceImpl implements ApprovalService {
 
     @Resource
@@ -62,22 +68,20 @@ public class ApprovalServiceImpl implements ApprovalService {
 
     // 缓存业务类型和优先级数据
     private static final List<Map<String, Object>> BUSINESS_TYPES_CACHE = Arrays.asList(
-        Map.of("code", "LEAVE", "name", "请假", "description", "员工请假申请"),
-        Map.of("code", "EXPENSE", "name", "报销", "description", "费用报销申请"),
-        Map.of("code", "TRAVEL", "name", "出差", "description", "出差申请"),
-        Map.of("code", "OVERTIME", "name", "加班", "description", "加班申请"),
-        Map.of("code", "RESIGNATION", "name", "离职", "description", "员工离职申请"),
-        Map.of("code", "PROCUREMENT", "name", "采购", "description", "物品采购申请"),
-        Map.of("code", "EQUIPMENT", "name", "设备", "description", "设备申请"),
-        Map.of("code", "OTHER", "name", "其他", "description", "其他类型申请")
-    );
+            Map.of("code", "LEAVE", "name", "请假", "description", "员工请假申请"),
+            Map.of("code", "EXPENSE", "name", "报销", "description", "费用报销申请"),
+            Map.of("code", "TRAVEL", "name", "出差", "description", "出差申请"),
+            Map.of("code", "OVERTIME", "name", "加班", "description", "加班申请"),
+            Map.of("code", "RESIGNATION", "name", "离职", "description", "员工离职申请"),
+            Map.of("code", "PROCUREMENT", "name", "采购", "description", "物品采购申请"),
+            Map.of("code", "EQUIPMENT", "name", "设备", "description", "设备申请"),
+            Map.of("code", "OTHER", "name", "其他", "description", "其他类型申请"));
 
     private static final List<Map<String, Object>> PRIORITIES_CACHE = Arrays.asList(
-        Map.of("code", "URGENT", "name", "紧急", "level", 1, "description", "紧急审批，需立即处理"),
-        Map.of("code", "HIGH", "name", "高", "level", 2, "description", "高优先级，建议尽快处理"),
-        Map.of("code", "NORMAL", "name", "普通", "level", 3, "description", "普通优先级，按常规流程处理"),
-        Map.of("code", "LOW", "name", "低", "level", 4, "description", "低优先级，可延后处理")
-    );
+            Map.of("code", "URGENT", "name", "紧急", "level", 1, "description", "紧急审批，需立即处理"),
+            Map.of("code", "HIGH", "name", "高", "level", 2, "description", "高优先级，建议尽快处理"),
+            Map.of("code", "NORMAL", "name", "普通", "level", 3, "description", "普通优先级，按常规流程处理"),
+            Map.of("code", "LOW", "name", "低", "level", 4, "description", "低优先级，可延后处理"));
 
     @Override
     @Observed(name = "approval.task.getTodo", contextualName = "approval-task-get-todo")
@@ -90,7 +94,10 @@ public class ApprovalServiceImpl implements ApprovalService {
             // 参数验证
             if (queryForm.getUserId() == null) {
                 log.warn("[审批服务] 待办任务查询失败: 用户ID为空");
-                return PageResult.empty(queryForm.getPageNum(), queryForm.getPageSize());
+                PageResult<ApprovalTaskVO> emptyResult = PageResult.empty();
+                emptyResult.setPageNum(queryForm.getPageNum());
+                emptyResult.setPageSize(queryForm.getPageSize());
+                return emptyResult;
             }
 
             // 设置默认查询条件
@@ -120,10 +127,12 @@ public class ApprovalServiceImpl implements ApprovalService {
             log.warn("[审批服务] 查询待办任务参数错误: userId={}, error={}", queryForm.getUserId(), e.getMessage());
             throw new ParamException("PARAM_ERROR", "参数错误：" + e.getMessage(), e);
         } catch (BusinessException e) {
-            log.warn("[审批服务] 查询待办任务业务异常: userId={}, code={}, message={}", queryForm.getUserId(), e.getCode(), e.getMessage());
+            log.warn("[审批服务] 查询待办任务业务异常: userId={}, code={}, message={}", queryForm.getUserId(), e.getCode(),
+                    e.getMessage());
             throw e;
         } catch (SystemException e) {
-            log.error("[审批服务] 查询待办任务系统异常: userId={}, code={}, message={}", queryForm.getUserId(), e.getCode(), e.getMessage(), e);
+            log.error("[审批服务] 查询待办任务系统异常: userId={}, code={}, message={}", queryForm.getUserId(), e.getCode(),
+                    e.getMessage(), e);
             throw new SystemException("GET_TODO_TASKS_SYSTEM_ERROR", "查询待办任务失败：" + e.getMessage(), e);
         } catch (Exception e) {
             log.error("[审批服务] 查询待办任务未知异常: userId={}", queryForm.getUserId(), e);
@@ -142,7 +151,10 @@ public class ApprovalServiceImpl implements ApprovalService {
             // 参数验证
             if (queryForm.getUserId() == null) {
                 log.warn("[审批服务] 已办任务查询失败: 用户ID为空");
-                return PageResult.empty(queryForm.getPageNum(), queryForm.getPageSize());
+                PageResult<ApprovalTaskVO> emptyResult = PageResult.empty();
+                emptyResult.setPageNum(queryForm.getPageNum());
+                emptyResult.setPageSize(queryForm.getPageSize());
+                return emptyResult;
             }
 
             // 查询已办任务
@@ -167,10 +179,12 @@ public class ApprovalServiceImpl implements ApprovalService {
             log.warn("[审批服务] 查询已办任务参数错误: userId={}, error={}", queryForm.getUserId(), e.getMessage());
             throw new ParamException("PARAM_ERROR", "参数错误：" + e.getMessage(), e);
         } catch (BusinessException e) {
-            log.warn("[审批服务] 查询已办任务业务异常: userId={}, code={}, message={}", queryForm.getUserId(), e.getCode(), e.getMessage());
+            log.warn("[审批服务] 查询已办任务业务异常: userId={}, code={}, message={}", queryForm.getUserId(), e.getCode(),
+                    e.getMessage());
             throw e;
         } catch (SystemException e) {
-            log.error("[审批服务] 查询已办任务系统异常: userId={}, code={}, message={}", queryForm.getUserId(), e.getCode(), e.getMessage(), e);
+            log.error("[审批服务] 查询已办任务系统异常: userId={}, code={}, message={}", queryForm.getUserId(), e.getCode(),
+                    e.getMessage(), e);
             throw new SystemException("GET_COMPLETED_TASKS_SYSTEM_ERROR", "查询已办任务失败：" + e.getMessage(), e);
         } catch (Exception e) {
             log.error("[审批服务] 查询已办任务未知异常: userId={}", queryForm.getUserId(), e);
@@ -189,7 +203,7 @@ public class ApprovalServiceImpl implements ApprovalService {
             // 参数验证
             if (queryForm.getApplicantId() == null) {
                 log.warn("[审批服务] 我的申请查询失败: 申请人ID为空");
-                return PageResult.empty(queryForm.getPageNum(), queryForm.getPageSize());
+                return PageResult.of(List.of(), 0L, queryForm.getPageNum(), queryForm.getPageSize());
             }
 
             // 查询我的申请
@@ -214,10 +228,12 @@ public class ApprovalServiceImpl implements ApprovalService {
             log.warn("[审批服务] 查询我的申请参数错误: applicantId={}, error={}", queryForm.getApplicantId(), e.getMessage());
             throw new ParamException("PARAM_ERROR", "参数错误：" + e.getMessage(), e);
         } catch (BusinessException e) {
-            log.warn("[审批服务] 查询我的申请业务异常: applicantId={}, code={}, message={}", queryForm.getApplicantId(), e.getCode(), e.getMessage());
+            log.warn("[审批服务] 查询我的申请业务异常: applicantId={}, code={}, message={}", queryForm.getApplicantId(), e.getCode(),
+                    e.getMessage());
             throw e;
         } catch (SystemException e) {
-            log.error("[审批服务] 查询我的申请系统异常: applicantId={}, code={}, message={}", queryForm.getApplicantId(), e.getCode(), e.getMessage(), e);
+            log.error("[审批服务] 查询我的申请系统异常: applicantId={}, code={}, message={}", queryForm.getApplicantId(), e.getCode(),
+                    e.getMessage(), e);
             throw new SystemException("GET_MY_APPLICATIONS_SYSTEM_ERROR", "查询我的申请失败：" + e.getMessage(), e);
         } catch (Exception e) {
             log.error("[审批服务] 查询我的申请未知异常: applicantId={}", queryForm.getApplicantId(), e);
@@ -276,13 +292,16 @@ public class ApprovalServiceImpl implements ApprovalService {
             return "审批同意成功";
 
         } catch (IllegalArgumentException | ParamException e) {
-            log.warn("[审批服务] 审批同意参数错误: taskId={}, userId={}, error={}", actionForm.getTaskId(), actionForm.getUserId(), e.getMessage());
+            log.warn("[审批服务] 审批同意参数错误: taskId={}, userId={}, error={}", actionForm.getTaskId(), actionForm.getUserId(),
+                    e.getMessage());
             throw new ParamException("PARAM_ERROR", "参数错误：" + e.getMessage(), e);
         } catch (BusinessException e) {
-            log.warn("[审批服务] 审批同意业务异常: taskId={}, userId={}, code={}, message={}", actionForm.getTaskId(), actionForm.getUserId(), e.getCode(), e.getMessage());
+            log.warn("[审批服务] 审批同意业务异常: taskId={}, userId={}, code={}, message={}", actionForm.getTaskId(),
+                    actionForm.getUserId(), e.getCode(), e.getMessage());
             throw e;
         } catch (SystemException e) {
-            log.error("[审批服务] 审批同意系统异常: taskId={}, userId={}, code={}, message={}", actionForm.getTaskId(), actionForm.getUserId(), e.getCode(), e.getMessage(), e);
+            log.error("[审批服务] 审批同意系统异常: taskId={}, userId={}, code={}, message={}", actionForm.getTaskId(),
+                    actionForm.getUserId(), e.getCode(), e.getMessage(), e);
             throw new SystemException("APPROVE_TASK_SYSTEM_ERROR", "审批同意失败：" + e.getMessage(), e);
         } catch (Exception e) {
             log.error("[审批服务] 审批同意未知异常: taskId={}, userId={}", actionForm.getTaskId(), actionForm.getUserId(), e);
@@ -342,13 +361,16 @@ public class ApprovalServiceImpl implements ApprovalService {
             return "审批驳回成功";
 
         } catch (IllegalArgumentException | ParamException e) {
-            log.warn("[审批服务] 审批驳回参数错误: taskId={}, userId={}, error={}", actionForm.getTaskId(), actionForm.getUserId(), e.getMessage());
+            log.warn("[审批服务] 审批驳回参数错误: taskId={}, userId={}, error={}", actionForm.getTaskId(), actionForm.getUserId(),
+                    e.getMessage());
             throw new ParamException("PARAM_ERROR", "参数错误：" + e.getMessage(), e);
         } catch (BusinessException e) {
-            log.warn("[审批服务] 审批驳回业务异常: taskId={}, userId={}, code={}, message={}", actionForm.getTaskId(), actionForm.getUserId(), e.getCode(), e.getMessage());
+            log.warn("[审批服务] 审批驳回业务异常: taskId={}, userId={}, code={}, message={}", actionForm.getTaskId(),
+                    actionForm.getUserId(), e.getCode(), e.getMessage());
             throw e;
         } catch (SystemException e) {
-            log.error("[审批服务] 审批驳回系统异常: taskId={}, userId={}, code={}, message={}", actionForm.getTaskId(), actionForm.getUserId(), e.getCode(), e.getMessage(), e);
+            log.error("[审批服务] 审批驳回系统异常: taskId={}, userId={}, code={}, message={}", actionForm.getTaskId(),
+                    actionForm.getUserId(), e.getCode(), e.getMessage(), e);
             throw new SystemException("REJECT_TASK_SYSTEM_ERROR", "审批驳回失败：" + e.getMessage(), e);
         } catch (Exception e) {
             log.error("[审批服务] 审批驳回未知异常: taskId={}, userId={}", actionForm.getTaskId(), actionForm.getUserId(), e);
@@ -414,16 +436,22 @@ public class ApprovalServiceImpl implements ApprovalService {
             return "审批转办成功";
 
         } catch (IllegalArgumentException | ParamException e) {
-            log.warn("[审批服务] 审批转办参数错误: taskId={}, userId={}, targetUserId={}, error={}", actionForm.getTaskId(), actionForm.getUserId(), actionForm.getTargetUserId(), e.getMessage());
+            log.warn("[审批服务] 审批转办参数错误: taskId={}, userId={}, targetUserId={}, error={}", actionForm.getTaskId(),
+                    actionForm.getUserId(), actionForm.getTargetUserId(), e.getMessage());
             throw new ParamException("PARAM_ERROR", "参数错误：" + e.getMessage(), e);
         } catch (BusinessException e) {
-            log.warn("[审批服务] 审批转办业务异常: taskId={}, userId={}, targetUserId={}, code={}, message={}", actionForm.getTaskId(), actionForm.getUserId(), actionForm.getTargetUserId(), e.getCode(), e.getMessage());
+            log.warn("[审批服务] 审批转办业务异常: taskId={}, userId={}, targetUserId={}, code={}, message={}",
+                    actionForm.getTaskId(), actionForm.getUserId(), actionForm.getTargetUserId(), e.getCode(),
+                    e.getMessage());
             throw e;
         } catch (SystemException e) {
-            log.error("[审批服务] 审批转办系统异常: taskId={}, userId={}, targetUserId={}, code={}, message={}", actionForm.getTaskId(), actionForm.getUserId(), actionForm.getTargetUserId(), e.getCode(), e.getMessage(), e);
+            log.error("[审批服务] 审批转办系统异常: taskId={}, userId={}, targetUserId={}, code={}, message={}",
+                    actionForm.getTaskId(), actionForm.getUserId(), actionForm.getTargetUserId(), e.getCode(),
+                    e.getMessage(), e);
             throw new SystemException("TRANSFER_TASK_SYSTEM_ERROR", "审批转办失败：" + e.getMessage(), e);
         } catch (Exception e) {
-            log.error("[审批服务] 审批转办未知异常: taskId={}, userId={}, targetUserId={}", actionForm.getTaskId(), actionForm.getUserId(), actionForm.getTargetUserId(), e);
+            log.error("[审批服务] 审批转办未知异常: taskId={}, userId={}, targetUserId={}", actionForm.getTaskId(),
+                    actionForm.getUserId(), actionForm.getTargetUserId(), e);
             throw new SystemException("TRANSFER_TASK_SYSTEM_ERROR", "审批转办失败：" + e.getMessage(), e);
         }
     }
@@ -486,16 +514,22 @@ public class ApprovalServiceImpl implements ApprovalService {
             return "审批委派成功";
 
         } catch (IllegalArgumentException | ParamException e) {
-            log.warn("[审批服务] 审批委派参数错误: taskId={}, userId={}, targetUserId={}, error={}", actionForm.getTaskId(), actionForm.getUserId(), actionForm.getTargetUserId(), e.getMessage());
+            log.warn("[审批服务] 审批委派参数错误: taskId={}, userId={}, targetUserId={}, error={}", actionForm.getTaskId(),
+                    actionForm.getUserId(), actionForm.getTargetUserId(), e.getMessage());
             throw new ParamException("PARAM_ERROR", "参数错误：" + e.getMessage(), e);
         } catch (BusinessException e) {
-            log.warn("[审批服务] 审批委派业务异常: taskId={}, userId={}, targetUserId={}, code={}, message={}", actionForm.getTaskId(), actionForm.getUserId(), actionForm.getTargetUserId(), e.getCode(), e.getMessage());
+            log.warn("[审批服务] 审批委派业务异常: taskId={}, userId={}, targetUserId={}, code={}, message={}",
+                    actionForm.getTaskId(), actionForm.getUserId(), actionForm.getTargetUserId(), e.getCode(),
+                    e.getMessage());
             throw e;
         } catch (SystemException e) {
-            log.error("[审批服务] 审批委派系统异常: taskId={}, userId={}, targetUserId={}, code={}, message={}", actionForm.getTaskId(), actionForm.getUserId(), actionForm.getTargetUserId(), e.getCode(), e.getMessage(), e);
+            log.error("[审批服务] 审批委派系统异常: taskId={}, userId={}, targetUserId={}, code={}, message={}",
+                    actionForm.getTaskId(), actionForm.getUserId(), actionForm.getTargetUserId(), e.getCode(),
+                    e.getMessage(), e);
             throw new SystemException("DELEGATE_TASK_SYSTEM_ERROR", "审批委派失败：" + e.getMessage(), e);
         } catch (Exception e) {
-            log.error("[审批服务] 审批委派未知异常: taskId={}, userId={}, targetUserId={}", actionForm.getTaskId(), actionForm.getUserId(), actionForm.getTargetUserId(), e);
+            log.error("[审批服务] 审批委派未知异常: taskId={}, userId={}, targetUserId={}", actionForm.getTaskId(),
+                    actionForm.getUserId(), actionForm.getTargetUserId(), e);
             throw new SystemException("DELEGATE_TASK_SYSTEM_ERROR", "审批委派失败：" + e.getMessage(), e);
         }
     }
@@ -565,10 +599,12 @@ public class ApprovalServiceImpl implements ApprovalService {
             log.warn("[审批服务] 获取审批流程详情参数错误: instanceId={}, error={}", instanceId, e.getMessage());
             return null;
         } catch (BusinessException e) {
-            log.warn("[审批服务] 获取审批流程详情业务异常: instanceId={}, code={}, message={}", instanceId, e.getCode(), e.getMessage());
+            log.warn("[审批服务] 获取审批流程详情业务异常: instanceId={}, code={}, message={}", instanceId, e.getCode(),
+                    e.getMessage());
             return null;
         } catch (SystemException e) {
-            log.error("[审批服务] 获取审批流程详情系统异常: instanceId={}, code={}, message={}", instanceId, e.getCode(), e.getMessage(), e);
+            log.error("[审批服务] 获取审批流程详情系统异常: instanceId={}, code={}, message={}", instanceId, e.getCode(),
+                    e.getMessage(), e);
             return null;
         } catch (Exception e) {
             log.error("[审批服务] 获取审批流程详情未知异常: instanceId={}", instanceId, e);
@@ -583,7 +619,8 @@ public class ApprovalServiceImpl implements ApprovalService {
         log.info("[审批服务] 获取审批统计: userId={}, departmentId={}, type={}", userId, departmentId, statisticsType);
 
         try {
-            ApprovalStatisticsVO statistics = approvalStatisticsDao.selectStatistics(userId, departmentId, statisticsType);
+            ApprovalStatisticsVO statistics = approvalStatisticsDao.selectStatistics(userId, departmentId,
+                    statisticsType);
 
             if (statistics == null) {
                 // 返回默认统计信息
@@ -602,7 +639,8 @@ public class ApprovalServiceImpl implements ApprovalService {
             return statistics;
 
         } catch (IllegalArgumentException | ParamException e) {
-            log.warn("[审批服务] 获取审批统计参数错误: userId={}, departmentId={}, type={}, error={}", userId, departmentId, statisticsType, e.getMessage());
+            log.warn("[审批服务] 获取审批统计参数错误: userId={}, departmentId={}, type={}, error={}", userId, departmentId,
+                    statisticsType, e.getMessage());
             // 返回默认统计信息
             ApprovalStatisticsVO defaultStats = new ApprovalStatisticsVO();
             defaultStats.setTodoCount(0L);
@@ -614,7 +652,8 @@ public class ApprovalServiceImpl implements ApprovalService {
             defaultStats.setOverdueCount(0L);
             return defaultStats;
         } catch (BusinessException e) {
-            log.warn("[审批服务] 获取审批统计业务异常: userId={}, departmentId={}, type={}, code={}, message={}", userId, departmentId, statisticsType, e.getCode(), e.getMessage());
+            log.warn("[审批服务] 获取审批统计业务异常: userId={}, departmentId={}, type={}, code={}, message={}", userId,
+                    departmentId, statisticsType, e.getCode(), e.getMessage());
             // 返回默认统计信息
             ApprovalStatisticsVO defaultStats = new ApprovalStatisticsVO();
             defaultStats.setTodoCount(0L);
@@ -626,7 +665,8 @@ public class ApprovalServiceImpl implements ApprovalService {
             defaultStats.setOverdueCount(0L);
             return defaultStats;
         } catch (SystemException e) {
-            log.error("[审批服务] 获取审批统计系统异常: userId={}, departmentId={}, type={}, code={}, message={}", userId, departmentId, statisticsType, e.getCode(), e.getMessage(), e);
+            log.error("[审批服务] 获取审批统计系统异常: userId={}, departmentId={}, type={}, code={}, message={}", userId,
+                    departmentId, statisticsType, e.getCode(), e.getMessage(), e);
             // 返回默认统计信息
             ApprovalStatisticsVO defaultStats = new ApprovalStatisticsVO();
             defaultStats.setTodoCount(0L);
@@ -638,7 +678,8 @@ public class ApprovalServiceImpl implements ApprovalService {
             defaultStats.setOverdueCount(0L);
             return defaultStats;
         } catch (Exception e) {
-            log.error("[审批服务] 获取审批统计未知异常: userId={}, departmentId={}, type={}", userId, departmentId, statisticsType, e);
+            log.error("[审批服务] 获取审批统计未知异常: userId={}, departmentId={}, type={}", userId, departmentId, statisticsType,
+                    e);
             // 返回默认统计信息
             ApprovalStatisticsVO defaultStats = new ApprovalStatisticsVO();
             defaultStats.setTodoCount(0L);
@@ -1039,12 +1080,14 @@ public class ApprovalServiceImpl implements ApprovalService {
     @Override
     @Observed(name = "approval.handleProcessStarted", contextualName = "approval-handle-process-started")
     public void handleProcessStarted(String processInstanceId, String processDefinitionId) {
-        log.info("[审批服务] 处理Flowable流程启动事件: processInstanceId={}, processDefinitionId={}", processInstanceId, processDefinitionId);
+        log.info("[审批服务] 处理Flowable流程启动事件: processInstanceId={}, processDefinitionId={}", processInstanceId,
+                processDefinitionId);
 
         try {
             // 参数验证
             if (processInstanceId == null || processDefinitionId == null) {
-                log.warn("[审批服务] 流程启动事件参数为空: processInstanceId={}, processDefinitionId={}", processInstanceId, processDefinitionId);
+                log.warn("[审批服务] 流程启动事件参数为空: processInstanceId={}, processDefinitionId={}", processInstanceId,
+                        processDefinitionId);
                 return;
             }
 
@@ -1084,12 +1127,14 @@ public class ApprovalServiceImpl implements ApprovalService {
     @Override
     @Observed(name = "approval.handleProcessCompleted", contextualName = "approval-handle-process-completed")
     public void handleProcessCompleted(String processInstanceId, String processDefinitionId) {
-        log.info("[审批服务] 处理Flowable流程完成事件: processInstanceId={}, processDefinitionId={}", processInstanceId, processDefinitionId);
+        log.info("[审批服务] 处理Flowable流程完成事件: processInstanceId={}, processDefinitionId={}", processInstanceId,
+                processDefinitionId);
 
         try {
             // 参数验证
             if (processInstanceId == null || processDefinitionId == null) {
-                log.warn("[审批服务] 流程完成事件参数为空: processInstanceId={}, processDefinitionId={}", processInstanceId, processDefinitionId);
+                log.warn("[审批服务] 流程完成事件参数为空: processInstanceId={}, processDefinitionId={}", processInstanceId,
+                        processDefinitionId);
                 return;
             }
 
@@ -1184,9 +1229,11 @@ public class ApprovalServiceImpl implements ApprovalService {
         } catch (IllegalArgumentException | ParamException e) {
             log.warn("[审批服务] 开始节点处理参数错误: processInstanceId={}, error={}", processInstanceId, e.getMessage());
         } catch (BusinessException e) {
-            log.warn("[审批服务] 开始节点处理业务异常: processInstanceId={}, code={}, message={}", processInstanceId, e.getCode(), e.getMessage());
+            log.warn("[审批服务] 开始节点处理业务异常: processInstanceId={}, code={}, message={}", processInstanceId, e.getCode(),
+                    e.getMessage());
         } catch (SystemException e) {
-            log.error("[审批服务] 开始节点处理系统异常: processInstanceId={}, code={}, message={}", processInstanceId, e.getCode(), e.getMessage(), e);
+            log.error("[审批服务] 开始节点处理系统异常: processInstanceId={}, code={}, message={}", processInstanceId, e.getCode(),
+                    e.getMessage(), e);
         } catch (Exception e) {
             log.error("[审批服务] 开始节点处理未知异常: processInstanceId={}", processInstanceId, e);
         }
@@ -1287,7 +1334,8 @@ public class ApprovalServiceImpl implements ApprovalService {
         if (actionForm.getUserId() == null) {
             throw new ParamException("APPROVAL_USER_ID_NULL", "操作人ID不能为空");
         }
-        if ("REJECT".equals(actionType) && (actionForm.getComment() == null || actionForm.getComment().trim().isEmpty())) {
+        if ("REJECT".equals(actionType)
+                && (actionForm.getComment() == null || actionForm.getComment().trim().isEmpty())) {
             throw new ParamException("APPROVAL_REJECT_COMMENT_NULL", "驳回操作需要填写审批意见");
         }
     }
@@ -1419,7 +1467,7 @@ public class ApprovalServiceImpl implements ApprovalService {
      * 更新流程实例状态（任务完成后）
      *
      * @param instanceId 流程实例ID
-     * @param userId 用户ID
+     * @param userId     用户ID
      */
     private void updateInstanceStatusAfterTask(Long instanceId, Long userId) {
         try {
@@ -1440,9 +1488,11 @@ public class ApprovalServiceImpl implements ApprovalService {
         } catch (IllegalArgumentException | ParamException e) {
             log.warn("[审批服务] 更新流程实例状态参数错误: instanceId={}, error={}", instanceId, e.getMessage());
         } catch (BusinessException e) {
-            log.warn("[审批服务] 更新流程实例状态业务异常: instanceId={}, code={}, message={}", instanceId, e.getCode(), e.getMessage());
+            log.warn("[审批服务] 更新流程实例状态业务异常: instanceId={}, code={}, message={}", instanceId, e.getCode(),
+                    e.getMessage());
         } catch (SystemException e) {
-            log.error("[审批服务] 更新流程实例状态系统异常: instanceId={}, code={}, message={}", instanceId, e.getCode(), e.getMessage(), e);
+            log.error("[审批服务] 更新流程实例状态系统异常: instanceId={}, code={}, message={}", instanceId, e.getCode(),
+                    e.getMessage(), e);
         } catch (Exception e) {
             log.error("[审批服务] 更新流程实例状态未知异常: instanceId={}", instanceId, e);
         }
@@ -1470,7 +1520,8 @@ public class ApprovalServiceImpl implements ApprovalService {
         } catch (BusinessException e) {
             log.warn("[审批服务] 更新任务状态业务异常: instanceId={}, code={}, message={}", instanceId, e.getCode(), e.getMessage());
         } catch (SystemException e) {
-            log.error("[审批服务] 更新任务状态系统异常: instanceId={}, code={}, message={}", instanceId, e.getCode(), e.getMessage(), e);
+            log.error("[审批服务] 更新任务状态系统异常: instanceId={}, code={}, message={}", instanceId, e.getCode(), e.getMessage(),
+                    e);
         } catch (Exception e) {
             log.error("[审批服务] 更新任务状态未知异常: instanceId={}", instanceId, e);
         }
@@ -1501,11 +1552,10 @@ public class ApprovalServiceImpl implements ApprovalService {
                     // 调用通知服务
                     if (gatewayServiceClient != null) {
                         gatewayServiceClient.callCommonService(
-                            "/api/v1/notification/approval",
-                            HttpMethod.POST,
-                            Map.of("notification", notificationData),
-                            Map.class
-                        );
+                                "/api/v1/notification/approval",
+                                HttpMethod.POST,
+                                Map.of("notification", notificationData),
+                                Map.class);
                     }
 
                 } catch (IllegalArgumentException | ParamException e) {
@@ -1528,7 +1578,8 @@ public class ApprovalServiceImpl implements ApprovalService {
         } catch (BusinessException e) {
             log.warn("[审批服务] 发送审批通知业务异常: taskId={}, code={}, message={}", task.getId(), e.getCode(), e.getMessage());
         } catch (SystemException e) {
-            log.error("[审批服务] 发送审批通知系统异常: taskId={}, code={}, message={}", task.getId(), e.getCode(), e.getMessage(), e);
+            log.error("[审批服务] 发送审批通知系统异常: taskId={}, code={}, message={}", task.getId(), e.getCode(), e.getMessage(),
+                    e);
         } catch (Exception e) {
             log.error("[审批服务] 发送审批通知未知异常: taskId={}", task.getId(), e);
         }
@@ -1537,7 +1588,8 @@ public class ApprovalServiceImpl implements ApprovalService {
     /**
      * 发送转办通知
      */
-    private void sendTransferNotification(WorkflowTaskEntity task, Long oldApproverId, Long operatorId, Long newApproverId) {
+    private void sendTransferNotification(WorkflowTaskEntity task, Long oldApproverId, Long operatorId,
+            Long newApproverId) {
         try {
             Map<String, Object> notificationData = new HashMap<>();
             notificationData.put("taskId", task.getId());
@@ -1550,11 +1602,10 @@ public class ApprovalServiceImpl implements ApprovalService {
 
             if (gatewayServiceClient != null) {
                 gatewayServiceClient.callCommonService(
-                    "/api/v1/notification/approval/transfer",
-                    HttpMethod.POST,
-                    Map.of("notification", notificationData),
-                    Map.class
-                );
+                        "/api/v1/notification/approval/transfer",
+                        HttpMethod.POST,
+                        Map.of("notification", notificationData),
+                        Map.class);
             }
 
         } catch (IllegalArgumentException | ParamException e) {
@@ -1562,7 +1613,8 @@ public class ApprovalServiceImpl implements ApprovalService {
         } catch (BusinessException e) {
             log.warn("[审批服务] 发送转办通知业务异常: taskId={}, code={}, message={}", task.getId(), e.getCode(), e.getMessage());
         } catch (SystemException e) {
-            log.error("[审批服务] 发送转办通知系统异常: taskId={}, code={}, message={}", task.getId(), e.getCode(), e.getMessage(), e);
+            log.error("[审批服务] 发送转办通知系统异常: taskId={}, code={}, message={}", task.getId(), e.getCode(), e.getMessage(),
+                    e);
         } catch (Exception e) {
             log.error("[审批服务] 发送转办通知未知异常: taskId={}", task.getId(), e);
         }
@@ -1571,7 +1623,8 @@ public class ApprovalServiceImpl implements ApprovalService {
     /**
      * 发送委派通知
      */
-    private void sendDelegateNotification(WorkflowTaskEntity task, Long originalApproverId, Long operatorId, Long delegateUserId) {
+    private void sendDelegateNotification(WorkflowTaskEntity task, Long originalApproverId, Long operatorId,
+            Long delegateUserId) {
         try {
             Map<String, Object> notificationData = new HashMap<>();
             notificationData.put("taskId", task.getId());
@@ -1584,11 +1637,10 @@ public class ApprovalServiceImpl implements ApprovalService {
 
             if (gatewayServiceClient != null) {
                 gatewayServiceClient.callCommonService(
-                    "/api/v1/notification/approval/delegate",
-                    HttpMethod.POST,
-                    Map.of("notification", notificationData),
-                    Map.class
-                );
+                        "/api/v1/notification/approval/delegate",
+                        HttpMethod.POST,
+                        Map.of("notification", notificationData),
+                        Map.class);
             }
 
         } catch (IllegalArgumentException | ParamException e) {
@@ -1596,7 +1648,8 @@ public class ApprovalServiceImpl implements ApprovalService {
         } catch (BusinessException e) {
             log.warn("[审批服务] 发送委派通知业务异常: taskId={}, code={}, message={}", task.getId(), e.getCode(), e.getMessage());
         } catch (SystemException e) {
-            log.error("[审批服务] 发送委派通知系统异常: taskId={}, code={}, message={}", task.getId(), e.getCode(), e.getMessage(), e);
+            log.error("[审批服务] 发送委派通知系统异常: taskId={}, code={}, message={}", task.getId(), e.getCode(), e.getMessage(),
+                    e);
         } catch (Exception e) {
             log.error("[审批服务] 发送委派通知未知异常: taskId={}", task.getId(), e);
         }
@@ -1616,19 +1669,20 @@ public class ApprovalServiceImpl implements ApprovalService {
 
             if (gatewayServiceClient != null) {
                 gatewayServiceClient.callCommonService(
-                    "/api/v1/notification/approval/withdraw",
-                    HttpMethod.POST,
-                    Map.of("notification", notificationData),
-                    Map.class
-                );
+                        "/api/v1/notification/approval/withdraw",
+                        HttpMethod.POST,
+                        Map.of("notification", notificationData),
+                        Map.class);
             }
 
         } catch (IllegalArgumentException | ParamException e) {
             log.warn("[审批服务] 发送撤回通知参数错误: instanceId={}, error={}", instance.getId(), e.getMessage());
         } catch (BusinessException e) {
-            log.warn("[审批服务] 发送撤回通知业务异常: instanceId={}, code={}, message={}", instance.getId(), e.getCode(), e.getMessage());
+            log.warn("[审批服务] 发送撤回通知业务异常: instanceId={}, code={}, message={}", instance.getId(), e.getCode(),
+                    e.getMessage());
         } catch (SystemException e) {
-            log.error("[审批服务] 发送撤回通知系统异常: instanceId={}, code={}, message={}", instance.getId(), e.getCode(), e.getMessage(), e);
+            log.error("[审批服务] 发送撤回通知系统异常: instanceId={}, code={}, message={}", instance.getId(), e.getCode(),
+                    e.getMessage(), e);
         } catch (Exception e) {
             log.error("[审批服务] 发送撤回通知未知异常: instanceId={}", instance.getId(), e);
         }
@@ -1637,10 +1691,10 @@ public class ApprovalServiceImpl implements ApprovalService {
     /**
      * 记录审批操作日志
      *
-     * @param task 任务实体
-     * @param action 操作类型
+     * @param task       任务实体
+     * @param action     操作类型
      * @param operatorId 操作人ID
-     * @param comment 操作意见
+     * @param comment    操作意见
      */
     private void logApprovalAction(WorkflowTaskEntity task, String action, Long operatorId, String comment) {
         try {
@@ -1657,7 +1711,4 @@ public class ApprovalServiceImpl implements ApprovalService {
         }
     }
 }
-
-
-
 

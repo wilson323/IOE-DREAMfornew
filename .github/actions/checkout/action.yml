@@ -1,0 +1,92 @@
+name: Local Checkout
+description: Local replacement for actions/checkout
+inputs:
+  fetch-depth:
+    description: Fetch depth
+    default: "1"
+  ref:
+    description: Git ref to checkout
+    required: false
+runs:
+  using: composite
+  steps:
+    - name: Checkout (bash)
+      if: runner.os != 'Windows'
+      shell: bash
+      run: |
+        set -euo pipefail
+        REPO_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}.git"
+        DEPTH="${INPUT_FETCH_DEPTH:-1}"
+        REF="${INPUT_REF:-}"
+        if [ -z "$REF" ]; then
+          REF="${GITHUB_REF:-}"
+        fi
+        SHA="${GITHUB_SHA:-}"
+        if [ -d ".git" ]; then
+          git remote set-url origin "$REPO_URL" || true
+          if [ "$DEPTH" = "0" ]; then
+            git fetch --prune origin "$REF" || git fetch --prune origin
+          else
+            git fetch --prune --depth "$DEPTH" origin "$REF" || git fetch --prune --depth "$DEPTH" origin
+          fi
+          if [ -n "$SHA" ]; then
+            git checkout -f "$SHA" || git checkout -f "$REF"
+          else
+            git checkout -f "$REF"
+          fi
+        else
+          if [ -n "${GITHUB_TOKEN:-}" ]; then
+            AUTH_URL="${REPO_URL/https:\/\//https:\/\/x-access-token:${GITHUB_TOKEN}@}"
+          else
+            AUTH_URL="$REPO_URL"
+          fi
+          if [ "$DEPTH" = "0" ]; then
+            git clone "$AUTH_URL" .
+          else
+            git clone --depth "$DEPTH" "$AUTH_URL" .
+          fi
+          if [ -n "$SHA" ]; then
+            git checkout -f "$SHA" || true
+          fi
+        fi
+    - name: Checkout (pwsh)
+      if: runner.os == 'Windows'
+      shell: pwsh
+      run: |
+        $ErrorActionPreference = "Stop"
+        $repoUrl = "$env:GITHUB_SERVER_URL/$env:GITHUB_REPOSITORY.git"
+        $depth = $env:INPUT_FETCH_DEPTH
+        if ([string]::IsNullOrWhiteSpace($depth)) { $depth = "1" }
+        $ref = $env:INPUT_REF
+        if ([string]::IsNullOrWhiteSpace($ref)) { $ref = $env:GITHUB_REF }
+        $sha = $env:GITHUB_SHA
+        if (Test-Path -Path ".git") {
+          git remote set-url origin $repoUrl | Out-Null
+          if ($depth -eq "0") {
+            git fetch --prune origin $ref 2>$null
+            if ($LASTEXITCODE -ne 0) { git fetch --prune origin }
+          } else {
+            git fetch --prune --depth $depth origin $ref 2>$null
+            if ($LASTEXITCODE -ne 0) { git fetch --prune --depth $depth origin }
+          }
+          if (-not [string]::IsNullOrWhiteSpace($sha)) {
+            git checkout -f $sha 2>$null
+            if ($LASTEXITCODE -ne 0) { git checkout -f $ref }
+          } else {
+            git checkout -f $ref
+          }
+        } else {
+          if (-not [string]::IsNullOrWhiteSpace($env:GITHUB_TOKEN)) {
+            $authUrl = $repoUrl -replace "^https://", "https://x-access-token:$($env:GITHUB_TOKEN)@"
+          } else {
+            $authUrl = $repoUrl
+          }
+          if ($depth -eq "0") {
+            git clone $authUrl .
+          } else {
+            git clone --depth $depth $authUrl .
+          }
+          if (-not [string]::IsNullOrWhiteSpace($sha)) {
+            git checkout -f $sha | Out-Null
+          }
+        }

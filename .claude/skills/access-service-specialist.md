@@ -33,15 +33,17 @@
 
 ### 🚪 门禁权限管理
 ```java
-// 权限验证核心流程 (Jakarta EE 3.0+)
+// 权限验证核心流程 (Spring Boot 3.5.8 + MyBatis-Plus)
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import jakarta.transaction.Transactional;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import jakarta.persistence.Id;
-import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.baomidou.mybatisplus.annotation.Version;
+import lombok.Data;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -433,8 +435,8 @@ public interface VisitorProvisionLogDao extends BaseMapper<VisitorProvisionLogEn
 // 门禁事件实时监控 (Jakarta EE 3.0+)
 import jakarta.annotation.Resource;
 import jakarta.transaction.Transactional;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.springframework.stereotype.Repository;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -758,17 +760,17 @@ public class AccessAsyncConfig {
 
 ### 数据安全
 ```java
-// 敏感数据加密存储 (Jakarta EE 3.0+)
+// 敏感数据加密存储 (Spring Boot 3.5.8 + MyBatis-Plus)
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import jakarta.transaction.Transactional;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
-import jakarta.persistence.Lob;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.baomidou.mybatisplus.annotation.Version;
+import lombok.Data;
 
 @Data
 @EqualsAndHashCode(callSuper = true)

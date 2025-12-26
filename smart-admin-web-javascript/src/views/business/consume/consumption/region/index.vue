@@ -15,10 +15,11 @@
             <a-select-option value="supermarket">超市</a-select-option>
           </a-select>
         </a-form-item>
-        <a-form-item label="经营模式">
-          <a-select v-model:value="searchForm.businessMode" placeholder="请选择" allow-clear style="width: 120px">
-            <a-select-option value="meal">餐别模式</a-select-option>
-            <a-select-option value="product">商品模式</a-select-option>
+        <a-form-item label="管理模式">
+          <a-select v-model:value="searchForm.manageMode" placeholder="请选择" allow-clear style="width: 120px">
+            <a-select-option :value="1">餐别制</a-select-option>
+            <a-select-option :value="2">超市制</a-select-option>
+            <a-select-option :value="3">混合模式</a-select-option>
           </a-select>
         </a-form-item>
         <a-form-item>
@@ -75,8 +76,10 @@
           <template v-else-if="column.key === 'type'">
             <a-tag :color="getTypeColor(record.type)">{{ getTypeName(record.type) }}</a-tag>
           </template>
-          <template v-else-if="column.key === 'businessMode'">
-            {{ getBusinessModeName(record.businessMode) }}
+          <template v-else-if="column.key === 'manageMode'">
+            <a-tag :color="getManageModeColor(record.manageMode)">
+              {{ getManageModeName(record.manageMode) }}
+            </a-tag>
           </template>
           <template v-else-if="column.key === 'features'">
             <a-space>
@@ -193,16 +196,52 @@
           </a-select>
         </a-form-item>
 
-        <a-form-item label="经营模式" name="businessMode">
-          <a-select v-model:value="formData.businessMode" placeholder="请选择" @change="handleBusinessModeChange">
-            <a-select-option value="meal">餐别模式</a-select-option>
-            <a-select-option value="product">商品模式</a-select-option>
-          </a-select>
-          <template #extra>餐别模式：按早中晚餐管理；商品模式：按商品销售管理</template>
+        <!-- ⭐ 核心配置：管理模式 -->
+        <a-form-item label="管理模式">
+          <template #label>
+            <a-space>
+              <span>管理模式</span>
+              <a-tooltip title="餐别制：按早中晚餐管理；超市制：按商品销售管理；混合：同时支持两种模式">
+                <QuestionCircleOutlined />
+              </a-tooltip>
+            </a-space>
+          </template>
+          <a-radio-group v-model:value="formData.manageMode">
+            <a-radio :value="1">餐别制</a-radio>
+            <a-radio :value="2">超市制</a-radio>
+            <a-radio :value="3">混合模式</a-radio>
+          </a-radio-group>
+          <template #extra>
+            <div v-if="formData.manageMode === 1">
+              餐别制：适用于食堂场景，按早餐、午餐、晚餐、零食进行定额管理
+            </div>
+            <div v-if="formData.manageMode === 2">
+              超市制：适用于超市/便利店场景，按商品销售进行管理
+            </div>
+            <div v-if="formData.manageMode === 3">
+              混合模式：同时支持餐别制和超市制，灵活配置
+            </div>
+          </template>
         </a-form-item>
 
-        <!-- 餐别模式专属 -->
-        <a-form-item v-if="formData.businessMode === 'meal'" label="订餐扣款">
+        <!-- 定额配置 -->
+        <a-form-item label="定额配置">
+          <template #label>
+            <a-space>
+              <span>定额配置</span>
+              <a-tooltip title="配置该区域各餐别的消费限额，0表示不限制">
+                <QuestionCircleOutlined />
+              </a-tooltip>
+            </a-space>
+          </template>
+          <FixedValueConfigEditor
+            v-model="formData.fixedValueConfig"
+            :readonly="false"
+          />
+        </a-form-item>
+
+        <!-- 餐别制专属 -->
+        <a-form-item v-if="formData.manageMode === 1 || formData.manageMode === 3" label="订餐扣款">
           <a-radio-group v-model:value="formData.orderDeduction">
             <a-radio :value="true">启用订餐扣款</a-radio>
             <a-radio :value="false">不启用</a-radio>
@@ -210,8 +249,8 @@
           <template #extra>启用后，用户可以预订餐食并自动扣款</template>
         </a-form-item>
 
-        <!-- 商品模式专属 -->
-        <a-form-item v-if="formData.businessMode === 'product'" label="进销存管理">
+        <!-- 超市制专属 -->
+        <a-form-item v-if="formData.manageMode === 2 || formData.manageMode === 3" label="进销存管理">
           <a-radio-group v-model:value="formData.inventoryManagement">
             <a-radio :value="true">启用进销存</a-radio>
             <a-radio :value="false">不启用</a-radio>
@@ -260,14 +299,16 @@ import {
   AppstoreOutlined,
   HomeOutlined,
   ShoppingOutlined,
+  QuestionCircleOutlined,
 } from '@ant-design/icons-vue';
+import { FixedValueConfigEditor } from '/@/components/business/consume/json-editor';
 
 // 搜索表单
 const searchForm = reactive({
   name: '',
   code: '',
   type: undefined,
-  businessMode: undefined,
+  manageMode: undefined,
 });
 
 // 视图模式
@@ -290,7 +331,7 @@ const columns = [
   { title: '区域名称', dataIndex: 'name', key: 'name', width: 200 },
   { title: '区域代码', dataIndex: 'code', key: 'code', width: 150 },
   { title: '区域类型', dataIndex: 'type', key: 'type', width: 100 },
-  { title: '经营模式', dataIndex: 'businessMode', key: 'businessMode', width: 120 },
+  { title: '管理模式', dataIndex: 'manageMode', key: 'manageMode', width: 120 },
   { title: '特殊功能', key: 'features', width: 150 },
   { title: '设备数量', dataIndex: 'devices', key: 'devices', width: 100, align: 'center' },
   { title: '状态', key: 'status', width: 100 },
@@ -313,7 +354,21 @@ const formData = reactive({
   code: '',
   parentId: undefined,
   type: undefined,
-  businessMode: undefined,
+  manageMode: 1, // 1-餐别制 2-超市制 3-混合
+  fixedValueConfig: {
+    enabled: false,
+    mode: 'MEAL_BASED',
+    mealValues: {
+      BREAKFAST: 0,
+      LUNCH: 0,
+      DINNER: 0,
+      SNACK: 0
+    },
+    timeSlots: [],
+    overMode: 'FORBID',
+    overdrawLimit: 0,
+    showHint: true
+  },
   orderDeduction: false,
   inventoryManagement: false,
   sort: 0,
@@ -325,7 +380,7 @@ const formRules = {
   name: [{ required: true, message: '请输入区域名称', trigger: 'blur' }],
   code: [{ required: true, message: '请输入区域代码', trigger: 'blur' }],
   type: [{ required: true, message: '请选择区域类型', trigger: 'change' }],
-  businessMode: [{ required: true, message: '请选择经营模式', trigger: 'change' }],
+  manageMode: [{ required: true, message: '请选择管理模式', trigger: 'change' }],
 };
 
 // 上级区域选项
@@ -338,16 +393,26 @@ const mockData = ref([
     name: '第一食堂',
     code: 'CANTEEN01',
     type: 'canteen',
-    businessMode: 'meal',
+    manageMode: 1, // 1-餐别制
+    fixedValueConfig: {
+      enabled: true,
+      mode: 'MEAL_BASED',
+      mealValues: {
+        BREAKFAST: 1000, // 10元
+        LUNCH: 2000,    // 20元
+        DINNER: 1500,   // 15元
+        SNACK: 500      // 5元
+      }
+    },
     orderDeduction: true,
     parentId: null,
     level: 1,
     devices: 0,
     sort: 1,
     children: [
-      { id: 11, name: '一楼主食区', code: 'C01-F1', type: 'floor', businessMode: 'meal', parentId: 1, level: 2, devices: 4, sort: 1, children: [] },
-      { id: 12, name: '二楼面食区', code: 'C01-F2', type: 'floor', businessMode: 'meal', parentId: 1, level: 2, devices: 5, sort: 2, children: [] },
-      { id: 13, name: '三楼小吃区', code: 'C01-F3', type: 'floor', businessMode: 'meal', parentId: 1, level: 2, devices: 3, sort: 3, children: [] },
+      { id: 11, name: '一楼主食区', code: 'C01-F1', type: 'floor', manageMode: 1, parentId: 1, level: 2, devices: 4, sort: 1, children: [] },
+      { id: 12, name: '二楼面食区', code: 'C01-F2', type: 'floor', manageMode: 1, parentId: 1, level: 2, devices: 5, sort: 2, children: [] },
+      { id: 13, name: '三楼小吃区', code: 'C01-F3', type: 'floor', manageMode: 1, parentId: 1, level: 2, devices: 3, sort: 3, children: [] },
     ],
   },
   {
@@ -355,15 +420,25 @@ const mockData = ref([
     name: '第二食堂',
     code: 'CANTEEN02',
     type: 'canteen',
-    businessMode: 'meal',
+    manageMode: 1,
+    fixedValueConfig: {
+      enabled: true,
+      mode: 'MEAL_BASED',
+      mealValues: {
+        BREAKFAST: 800,
+        LUNCH: 1800,
+        DINNER: 1200,
+        SNACK: 400
+      }
+    },
     orderDeduction: false,
     parentId: null,
     level: 1,
     devices: 0,
     sort: 2,
     children: [
-      { id: 21, name: '一楼窗口区', code: 'C02-F1', type: 'floor', businessMode: 'meal', parentId: 2, level: 2, devices: 4, sort: 1, children: [] },
-      { id: 22, name: '二楼自选区', code: 'C02-F2', type: 'floor', businessMode: 'meal', parentId: 2, level: 2, devices: 4, sort: 2, children: [] },
+      { id: 21, name: '一楼窗口区', code: 'C02-F1', type: 'floor', manageMode: 1, parentId: 2, level: 2, devices: 4, sort: 1, children: [] },
+      { id: 22, name: '二楼自选区', code: 'C02-F2', type: 'floor', manageMode: 1, parentId: 2, level: 2, devices: 4, sort: 2, children: [] },
     ],
   },
   {
@@ -371,24 +446,39 @@ const mockData = ref([
     name: '超市便利店',
     code: 'SUPERMARKET01',
     type: 'supermarket',
-    businessMode: 'product',
+    manageMode: 2, // 2-超市制
+    fixedValueConfig: {
+      enabled: false // 超市制不启用定额
+    },
     inventoryManagement: true,
     parentId: null,
     level: 1,
     devices: 0,
     sort: 3,
     children: [
-      { id: 31, name: '日用品区', code: 'SM01-DAILY', type: 'area', businessMode: 'product', parentId: 3, level: 2, devices: 2, sort: 1, children: [] },
-      { id: 32, name: '食品饮料区', code: 'SM01-FOOD', type: 'area', businessMode: 'product', parentId: 3, level: 2, devices: 3, sort: 2, children: [] },
+      { id: 31, name: '日用品区', code: 'SM01-DAILY', type: 'area', manageMode: 2, parentId: 3, level: 2, devices: 2, sort: 1, children: [] },
+      { id: 32, name: '食品饮料区', code: 'SM01-FOOD', type: 'area', manageMode: 2, parentId: 3, level: 2, devices: 3, sort: 2, children: [] },
     ],
   },
   {
     id: 4,
-    name: '员工餐厅',
+    name: '员工餐厅（混合模式）',
     code: 'RESTAURANT01',
     type: 'canteen',
-    businessMode: 'meal',
-    orderDeduction: false,
+    manageMode: 3, // 3-混合模式
+    fixedValueConfig: {
+      enabled: true,
+      mode: 'HYBRID',
+      mealValues: {
+        BREAKFAST: 1200,
+        LUNCH: 2500,
+        DINNER: 1800,
+        SNACK: 800
+      },
+      timeSlots: []
+    },
+    orderDeduction: true,
+    inventoryManagement: true,
     parentId: null,
     level: 1,
     devices: 4,
@@ -449,13 +539,24 @@ const getTypeIcon = (type) => {
   return map[type] || ShopOutlined;
 };
 
-// 获取经营模式名称
-const getBusinessModeName = (mode) => {
+// 获取管理模式名称
+const getManageModeName = (mode) => {
   const map = {
-    meal: '餐别模式',
-    product: '商品模式',
+    1: '餐别制',
+    2: '超市制',
+    3: '混合模式'
   };
   return map[mode] || '-';
+};
+
+// 获取管理模式颜色
+const getManageModeColor = (mode) => {
+  const map = {
+    1: 'blue',    // 餐别制 - 蓝色
+    2: 'green',   // 超市制 - 绿色
+    3: 'purple'   // 混合模式 - 紫色
+  };
+  return map[mode] || 'default';
 };
 
 // 查询数据
@@ -471,7 +572,7 @@ const loadData = () => {
       if (searchForm.name && !item.name.includes(searchForm.name)) return false;
       if (searchForm.code && !item.code.includes(searchForm.code)) return false;
       if (searchForm.type && item.type !== searchForm.type) return false;
-      if (searchForm.businessMode && item.businessMode !== searchForm.businessMode) return false;
+      if (searchForm.manageMode && item.manageMode !== searchForm.manageMode) return false;
       return true;
     });
     
@@ -494,7 +595,7 @@ const handleReset = () => {
     name: '',
     code: '',
     type: undefined,
-    businessMode: undefined,
+    manageMode: undefined,
   });
   handleSearch();
 };
@@ -554,7 +655,21 @@ const handleEdit = (record) => {
       code: region.code,
       parentId: region.parentId,
       type: region.type,
-      businessMode: region.businessMode,
+      manageMode: region.manageMode || 1,
+      fixedValueConfig: region.fixedValueConfig || {
+        enabled: false,
+        mode: 'MEAL_BASED',
+        mealValues: {
+          BREAKFAST: 0,
+          LUNCH: 0,
+          DINNER: 0,
+          SNACK: 0
+        },
+        timeSlots: [],
+        overMode: 'FORBID',
+        overdrawLimit: 0,
+        showHint: true
+      },
       orderDeduction: region.orderDeduction || false,
       inventoryManagement: region.inventoryManagement || false,
       sort: region.sort || 0,
@@ -592,17 +707,6 @@ const handleDelete = (id) => {
   }
 };
 
-// 经营模式变化处理
-const handleBusinessModeChange = (value) => {
-  // 切换经营模式时，重置对应的配置
-  if (value !== 'meal') {
-    formData.orderDeduction = false;
-  }
-  if (value !== 'product') {
-    formData.inventoryManagement = false;
-  }
-};
-
 // 提交表单
 const handleSubmit = async () => {
   try {
@@ -610,15 +714,16 @@ const handleSubmit = async () => {
     submitLoading.value = true;
     
     setTimeout(() => {
-      // 根据经营模式设置相应的属性
+      // 根据管理模式设置相应的属性
       const submitData = { ...formData };
-      if (formData.businessMode === 'meal') {
-        // 餐别模式：保留订餐扣款，清除进销存
+      if (formData.manageMode === 1) {
+        // 餐别制：保留订餐扣款，清除进销存
         delete submitData.inventoryManagement;
-      } else if (formData.businessMode === 'product') {
-        // 商品模式：保留进销存，清除订餐扣款
+      } else if (formData.manageMode === 2) {
+        // 超市制：保留进销存，清除订餐扣款
         delete submitData.orderDeduction;
       }
+      // 混合模式：两者都保留
       
       if (currentEditId.value) {
         // 更新逻辑
@@ -688,7 +793,21 @@ const resetForm = () => {
     code: '',
     parentId: undefined,
     type: undefined,
-    businessMode: undefined,
+    manageMode: 1,
+    fixedValueConfig: {
+      enabled: false,
+      mode: 'MEAL_BASED',
+      mealValues: {
+        BREAKFAST: 0,
+        LUNCH: 0,
+        DINNER: 0,
+        SNACK: 0
+      },
+      timeSlots: [],
+      overMode: 'FORBID',
+      overdrawLimit: 0,
+      showHint: true
+    },
     orderDeduction: false,
     inventoryManagement: false,
     sort: 0,

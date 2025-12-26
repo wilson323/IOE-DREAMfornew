@@ -43,6 +43,18 @@ public class MobileStatisticsQueryParam {
      */
     @Schema(description = "员工ID", example = "1001")
     private Long employeeId;
+
+    /**
+     * 页码（用于分页查询详细记录）
+     */
+    @Schema(description = "页码", example = "1")
+    private Integer pageNum;
+
+    /**
+     * 每页大小（用于分页查询详细记录）
+     */
+    @Schema(description = "每页大小", example = "20")
+    private Integer pageSize;
 }
 
 

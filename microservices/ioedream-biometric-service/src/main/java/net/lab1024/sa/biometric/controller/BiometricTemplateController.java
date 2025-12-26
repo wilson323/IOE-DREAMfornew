@@ -1,14 +1,15 @@
 package net.lab1024.sa.biometric.controller;
 
+import lombok.extern.slf4j.Slf4j;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.biometric.domain.form.BiometricTemplateAddForm;
 import net.lab1024.sa.biometric.domain.form.BiometricTemplateQueryForm;
 import net.lab1024.sa.biometric.domain.form.BiometricTemplateUpdateForm;
 import net.lab1024.sa.biometric.domain.vo.BiometricTemplateVO;
 import net.lab1024.sa.biometric.service.BiometricTemplateService;
-import net.lab1024.sa.common.openapi.domain.response.PageResult;
+import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -32,11 +33,11 @@ import java.util.List;
  * @version 1.0.0
  * @since 2025-12-18
  */
-@Slf4j
 @RestController
 @RequestMapping("/api/v1/biometric/template")
 @Tag(name = "生物模板管理", description = "生物识别模板管理API")
 @Validated
+@Slf4j
 public class BiometricTemplateController {
 
     @Resource

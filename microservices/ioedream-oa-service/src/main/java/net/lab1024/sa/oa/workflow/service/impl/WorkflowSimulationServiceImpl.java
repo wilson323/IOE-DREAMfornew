@@ -1,28 +1,35 @@
 package net.lab1024.sa.oa.workflow.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.oa.workflow.domain.form.WorkflowSimulationForm;
-import net.lab1024.sa.oa.workflow.domain.vo.WorkflowPathAnalysisVO;
-import net.lab1024.sa.oa.workflow.domain.vo.WorkflowSimulationResultVO;
-import net.lab1024.sa.oa.workflow.service.WorkflowSimulationService;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
+
 import org.flowable.bpmn.model.BpmnModel;
 import org.flowable.engine.ProcessEngine;
 import org.flowable.engine.RepositoryService;
 import org.flowable.engine.RuntimeService;
 import org.flowable.engine.TaskService;
 import org.flowable.engine.repository.ProcessDefinition;
-import org.flowable.task.api.Task;
 import org.springframework.stereotype.Service;
 
 import jakarta.annotation.Resource;
-import java.time.LocalDateTime;
-import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.stream.Collectors;
+import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.oa.workflow.domain.form.WorkflowSimulationForm;
+import net.lab1024.sa.oa.workflow.domain.vo.WorkflowPathAnalysisVO;
+import net.lab1024.sa.oa.workflow.domain.vo.WorkflowSimulationResultVO;
+import net.lab1024.sa.oa.workflow.service.WorkflowSimulationService;
 
 /**
  * 工作流流程仿真服务实现
@@ -35,8 +42,8 @@ import java.util.stream.Collectors;
  * @version 1.0.0
  * @since 2025-01-16
  */
-@Slf4j
 @Service
+@Slf4j
 public class WorkflowSimulationServiceImpl implements WorkflowSimulationService {
 
     @Resource
@@ -52,10 +59,11 @@ public class WorkflowSimulationServiceImpl implements WorkflowSimulationService 
     private TaskService taskService;
 
     private final ExecutorService simulationExecutor = Executors.newFixedThreadPool(10);
-    private final Map<String, WorkflowSimulationResultVO> simulationResults = new ConcurrentHashMap<>();
+    private final Map<String, WorkflowSimulationResultVO> simulationResults = new HashMap<>();
 
     @Override
-    public CompletableFuture<ResponseDTO<WorkflowSimulationResultVO>> executeSimulation(WorkflowSimulationForm simulationForm) {
+    public CompletableFuture<ResponseDTO<WorkflowSimulationResultVO>> executeSimulation(
+            WorkflowSimulationForm simulationForm) {
         return CompletableFuture.supplyAsync(() -> {
             String simulationId = UUID.randomUUID().toString();
             log.info("[流程仿真] 开始执行仿真: simulationId={}, processDefinitionId={}",
@@ -96,8 +104,9 @@ public class WorkflowSimulationServiceImpl implements WorkflowSimulationService 
                         long startTime = System.currentTimeMillis();
 
                         // 模拟流程启动
-                        Map<String, Object> startParams = simulationForm.getStartParameters() != null ?
-                                new HashMap<>(simulationForm.getStartParameters()) : new HashMap<>();
+                        Map<String, Object> startParams = simulationForm.getStartParameters() != null
+                                ? new HashMap<>(simulationForm.getStartParameters())
+                                : new HashMap<>();
 
                         // 添加仿真标识
                         startParams.put("_simulation_", true);
@@ -142,7 +151,8 @@ public class WorkflowSimulationServiceImpl implements WorkflowSimulationService 
                 simulationResult.setPathAnalysis(analyzeProcessPaths(processDefinition));
                 simulationResult.setBottlenecks(identifyBottlenecks(processDefinition));
                 simulationResult.setOptimizationSuggestions(generateOptimizationSuggestions(processDefinition));
-                simulationResult.setTimePrediction(predictExecutionTime(processDefinition, simulationForm.getBusinessData()));
+                simulationResult
+                        .setTimePrediction(predictExecutionTime(processDefinition, simulationForm.getBusinessData()));
 
                 log.info("[流程仿真] 仿真执行完成: simulationId={}, successCount={}, failCount={}",
                         simulationId, successCount, failCount);
@@ -165,7 +175,8 @@ public class WorkflowSimulationServiceImpl implements WorkflowSimulationService 
     }
 
     @Override
-    public ResponseDTO<WorkflowPathAnalysisVO> analyzeProcessPath(String processDefinitionId, Map<String, Object> startParams) {
+    public ResponseDTO<WorkflowPathAnalysisVO> analyzeProcessPath(String processDefinitionId,
+            Map<String, Object> startParams) {
         try {
             ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery()
                     .processDefinitionId(processDefinitionId)
@@ -224,7 +235,8 @@ public class WorkflowSimulationServiceImpl implements WorkflowSimulationService 
             }
 
             // 基于历史数据和算法预测执行时间
-            WorkflowSimulationResultVO.ProcessTimePrediction prediction = WorkflowSimulationResultVO.ProcessTimePrediction.builder()
+            WorkflowSimulationResultVO.ProcessTimePrediction prediction = WorkflowSimulationResultVO.ProcessTimePrediction
+                    .builder()
                     .estimatedTotalTime(calculateEstimatedTime(processDefinition, businessData))
                     .minTime(calculateMinTime(processDefinition))
                     .maxTime(calculateMaxTime(processDefinition))
@@ -243,7 +255,8 @@ public class WorkflowSimulationServiceImpl implements WorkflowSimulationService 
     }
 
     @Override
-    public ResponseDTO<List<WorkflowSimulationResultVO.BottleneckAnalysis>> identifyBottlenecks(String processDefinitionId) {
+    public ResponseDTO<List<WorkflowSimulationResultVO.BottleneckAnalysis>> identifyBottlenecks(
+            String processDefinitionId) {
         try {
             ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery()
                     .processDefinitionId(processDefinitionId)
@@ -276,8 +289,8 @@ public class WorkflowSimulationServiceImpl implements WorkflowSimulationService 
                 return ResponseDTO.error("PROCESS_DEFINITION_NOT_FOUND", "流程定义不存在");
             }
 
-            List<WorkflowSimulationResultVO.OptimizationSuggestion> suggestions =
-                    generateOptimizationSuggestions(processDefinition);
+            List<WorkflowSimulationResultVO.OptimizationSuggestion> suggestions = generateOptimizationSuggestions(
+                    processDefinition);
 
             return ResponseDTO.ok(suggestions);
 
@@ -308,15 +321,15 @@ public class WorkflowSimulationServiceImpl implements WorkflowSimulationService 
             double loadBalanceScore = calculateLoadBalanceScore(results, candidateUsers);
 
             // 生成推荐分配方案
-            List<WorkflowSimulationResultVO.RecommendedAssignment> recommendations =
-                    generateRecommendedAssignments(candidateUsers);
+            List<WorkflowSimulationResultVO.RecommendedAssignment> recommendations = generateRecommendedAssignments(
+                    candidateUsers);
 
-            WorkflowSimulationResultVO.TaskAssignmentSimulation simulation =
-                    WorkflowSimulationResultVO.TaskAssignmentSimulation.builder()
-                            .results(results)
-                            .loadBalanceScore(loadBalanceScore)
-                            .recommendedAssignments(recommendations)
-                            .build();
+            WorkflowSimulationResultVO.TaskAssignmentSimulation simulation = WorkflowSimulationResultVO.TaskAssignmentSimulation
+                    .builder()
+                    .results(results)
+                    .loadBalanceScore(loadBalanceScore)
+                    .recommendedAssignments(recommendations)
+                    .build();
 
             return ResponseDTO.ok(simulation);
 
@@ -327,7 +340,8 @@ public class WorkflowSimulationServiceImpl implements WorkflowSimulationService 
     }
 
     @Override
-    public ResponseDTO<WorkflowSimulationResultVO.ProcessValidationResult> validateProcessIntegrity(String processDefinitionId) {
+    public ResponseDTO<WorkflowSimulationResultVO.ProcessValidationResult> validateProcessIntegrity(
+            String processDefinitionId) {
         try {
             ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery()
                     .processDefinitionId(processDefinitionId)
@@ -338,8 +352,7 @@ public class WorkflowSimulationServiceImpl implements WorkflowSimulationService 
             }
 
             // 验证流程完整性
-            WorkflowSimulationResultVO.ProcessValidationResult validationResult =
-                    validateProcess(processDefinition);
+            WorkflowSimulationResultVO.ProcessValidationResult validationResult = validateProcess(processDefinition);
 
             return ResponseDTO.ok(validationResult);
 
@@ -350,7 +363,8 @@ public class WorkflowSimulationServiceImpl implements WorkflowSimulationService 
     }
 
     @Override
-    public ResponseDTO<WorkflowSimulationResultVO.ProcessReport> generateProcessReport(String processDefinitionId, String reportType) {
+    public ResponseDTO<WorkflowSimulationResultVO.ProcessReport> generateProcessReport(String processDefinitionId,
+            String reportType) {
         try {
             ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery()
                     .processDefinitionId(processDefinitionId)
@@ -396,8 +410,7 @@ public class WorkflowSimulationServiceImpl implements WorkflowSimulationService 
                             .nodeName("结束节点")
                             .nodeType("endEvent")
                             .estimatedTime(50L)
-                            .build()
-            );
+                            .build());
 
             WorkflowPathAnalysisVO.ProcessPath path = WorkflowPathAnalysisVO.ProcessPath.builder()
                     .pathId("path_" + i)
@@ -416,7 +429,7 @@ public class WorkflowSimulationServiceImpl implements WorkflowSimulationService 
     }
 
     private WorkflowPathAnalysisVO.CriticalPath identifyCriticalPath(BpmnModel bpmnModel,
-                                                                   List<WorkflowPathAnalysisVO.ProcessPath> paths) {
+            List<WorkflowPathAnalysisVO.ProcessPath> paths) {
         if (paths.isEmpty()) {
             return WorkflowPathAnalysisVO.CriticalPath.builder().build();
         }
@@ -502,9 +515,12 @@ public class WorkflowSimulationServiceImpl implements WorkflowSimulationService 
             Map<String, WorkflowPathAnalysisVO.NodeAnalysis> nodeAnalysis) {
 
         return WorkflowPathAnalysisVO.PerformanceMetrics.builder()
-                .averagePathLength(paths.stream().mapToInt(WorkflowPathAnalysisVO.ProcessPath::getPathLength).average().orElse(0))
-                .shortestPathLength(paths.stream().mapToInt(WorkflowPathAnalysisVO.ProcessPath::getPathLength).min().orElse(0))
-                .longestPathLength(paths.stream().mapToInt(WorkflowPathAnalysisVO.ProcessPath::getPathLength).max().orElse(0))
+                .averagePathLength(
+                        paths.stream().mapToInt(WorkflowPathAnalysisVO.ProcessPath::getPathLength).average().orElse(0))
+                .shortestPathLength(
+                        paths.stream().mapToInt(WorkflowPathAnalysisVO.ProcessPath::getPathLength).min().orElse(0))
+                .longestPathLength(
+                        paths.stream().mapToInt(WorkflowPathAnalysisVO.ProcessPath::getPathLength).max().orElse(0))
                 .pathComplexity(calculatePathComplexity(paths))
                 .parallelismDegree(calculateParallelismDegree(nodeAnalysis))
                 .scalabilityScore(0.85)
@@ -516,7 +532,8 @@ public class WorkflowSimulationServiceImpl implements WorkflowSimulationService 
     }
 
     private double calculatePathComplexity(List<WorkflowPathAnalysisVO.ProcessPath> paths) {
-        if (paths.isEmpty()) return 0.0;
+        if (paths.isEmpty())
+            return 0.0;
         double totalComplexity = 0.0;
         for (WorkflowPathAnalysisVO.ProcessPath path : paths) {
             totalComplexity += path.getPathLength() * Math.log(path.getPathLength());
@@ -533,7 +550,8 @@ public class WorkflowSimulationServiceImpl implements WorkflowSimulationService 
 
     private int calculateBottleneckCount(Map<String, WorkflowPathAnalysisVO.NodeAnalysis> nodeAnalysis) {
         return (int) nodeAnalysis.values().stream()
-                .filter(node -> "HIGH".equals(node.getBottleneckRiskLevel()) || "CRITICAL".equals(node.getBottleneckRiskLevel()))
+                .filter(node -> "HIGH".equals(node.getBottleneckRiskLevel())
+                        || "CRITICAL".equals(node.getBottleneckRiskLevel()))
                 .count();
     }
 
@@ -556,21 +574,22 @@ public class WorkflowSimulationServiceImpl implements WorkflowSimulationService 
                         .nodeName("结束")
                         .nodeType("endEvent")
                         .estimatedTime(50L)
-                        .build()
-        );
+                        .build());
 
         return WorkflowSimulationResultVO.PathAnalysisResult.builder()
                 .possiblePaths(3)
                 .shortestPathLength(3)
                 .longestPathLength(5)
                 .averagePathLength(4.0)
-                .criticalPath(criticalPath.stream().map(WorkflowSimulationResultVO.PathNode::getNodeId).collect(Collectors.toList()))
+                .criticalPath(criticalPath.stream().map(WorkflowSimulationResultVO.PathNode::getNodeId)
+                        .collect(Collectors.toList()))
                 .allPaths(Arrays.asList())
                 .pathProbabilities(Map.of("path1", 0.5, "path2", 0.3, "path3", 0.2))
                 .build();
     }
 
-    private List<WorkflowSimulationResultVO.BottleneckAnalysis> identifyBottlenecks(ProcessDefinition processDefinition) {
+    private List<WorkflowSimulationResultVO.BottleneckAnalysis> identifyBottlenecks(
+            ProcessDefinition processDefinition) {
         return Arrays.asList(
                 WorkflowSimulationResultVO.BottleneckAnalysis.builder()
                         .nodeId("approve")
@@ -581,11 +600,11 @@ public class WorkflowSimulationServiceImpl implements WorkflowSimulationService 
                         .impactScope("流程整体")
                         .solutions(Arrays.asList("并行审批", "自动化规则", "减少审批层级"))
                         .expectedImprovement("减少50%审批时间")
-                        .build()
-        );
+                        .build());
     }
 
-    private List<WorkflowSimulationResultVO.OptimizationSuggestion> generateOptimizationSuggestions(ProcessDefinition processDefinition) {
+    private List<WorkflowSimulationResultVO.OptimizationSuggestion> generateOptimizationSuggestions(
+            ProcessDefinition processDefinition) {
         return Arrays.asList(
                 WorkflowSimulationResultVO.OptimizationSuggestion.builder()
                         .suggestionId("OPT001")
@@ -606,8 +625,7 @@ public class WorkflowSimulationServiceImpl implements WorkflowSimulationService 
                         .expectedImprovement("减少60%简单审批时间")
                         .implementationDifficulty("低")
                         .implementationSteps(Arrays.asList("识别自动化场景", "定义审批规则", "配置自动处理器", "监控效果"))
-                        .build()
-        );
+                        .build());
     }
 
     private WorkflowSimulationResultVO.ProcessTimePrediction predictExecutionTime(
@@ -623,9 +641,8 @@ public class WorkflowSimulationServiceImpl implements WorkflowSimulationService 
                 .confidenceLevel(0.85)
                 .stagePredictions(Map.of(
                         "提交", 100L,
-                        "审批", (long)(estimatedTime * 0.7),
-                        "完成", (long)(estimatedTime * 0.2)
-                ))
+                        "审批", (long) (estimatedTime * 0.7),
+                        "完成", (long) (estimatedTime * 0.2)))
                 .influencingFactors(Arrays.asList("业务复杂度", "审批层级", "系统负载"))
                 .build();
     }
@@ -651,8 +668,7 @@ public class WorkflowSimulationServiceImpl implements WorkflowSimulationService 
         return Map.of(
                 "开始", 100L,
                 "审批", 7000L,
-                "结束", 200L
-        );
+                "结束", 200L);
     }
 
     private List<String> getInfluencingFactors(Map<String, Object> businessData) {
@@ -668,21 +684,20 @@ public class WorkflowSimulationServiceImpl implements WorkflowSimulationService 
 
     private List<WorkflowSimulationResultVO.TaskAssignmentResult> simulateTaskAssignment(
             ProcessDefinition processDefinition, List<Long> candidateUsers) {
-        return candidateUsers.stream().map(userId ->
-                WorkflowSimulationResultVO.TaskAssignmentResult.builder()
-                        .taskId("task_" + userId)
-                        .taskName("审批任务")
-                        .assignedUserId(userId)
-                        .assignedUserName("用户" + userId)
-                        .estimatedCompletionTime(5000L + (long)(Math.random() * 5000))
-                        .workload(1.0 + Math.random())
-                        .build()
-        ).collect(Collectors.toList());
+        return candidateUsers.stream().map(userId -> WorkflowSimulationResultVO.TaskAssignmentResult.builder()
+                .taskId("task_" + userId)
+                .taskName("审批任务")
+                .assignedUserId(userId)
+                .assignedUserName("用户" + userId)
+                .estimatedCompletionTime(5000L + (long) (Math.random() * 5000))
+                .workload(1.0 + Math.random())
+                .build()).collect(Collectors.toList());
     }
 
     private double calculateLoadBalanceScore(List<WorkflowSimulationResultVO.TaskAssignmentResult> results,
-                                              List<Long> candidateUsers) {
-        if (results.isEmpty()) return 0.0;
+            List<Long> candidateUsers) {
+        if (results.isEmpty())
+            return 0.0;
 
         double totalWorkload = results.stream().mapToDouble(r -> r.getWorkload()).sum();
         double idealWorkload = totalWorkload / candidateUsers.size();
@@ -695,15 +710,14 @@ public class WorkflowSimulationServiceImpl implements WorkflowSimulationService 
         return 1.0 / (1.0 + variance);
     }
 
-    private List<WorkflowSimulationResultVO.RecommendedAssignment> generateRecommendedAssignments(List<Long> candidateUsers) {
-        return candidateUsers.stream().map(userId ->
-                WorkflowSimulationResultVO.RecommendedAssignment.builder()
-                        .userId(userId)
-                        .userName("用户" + userId)
-                        .reason("负载均衡")
-                        .suitabilityScore(0.8 + Math.random() * 0.2)
-                        .build()
-        ).collect(Collectors.toList());
+    private List<WorkflowSimulationResultVO.RecommendedAssignment> generateRecommendedAssignments(
+            List<Long> candidateUsers) {
+        return candidateUsers.stream().map(userId -> WorkflowSimulationResultVO.RecommendedAssignment.builder()
+                .userId(userId)
+                .userName("用户" + userId)
+                .reason("负载均衡")
+                .suitabilityScore(0.8 + Math.random() * 0.2)
+                .build()).collect(Collectors.toList());
     }
 
     private WorkflowSimulationResultVO.ProcessValidationResult validateProcess(ProcessDefinition processDefinition) {
@@ -738,7 +752,8 @@ public class WorkflowSimulationServiceImpl implements WorkflowSimulationService 
                 .build();
     }
 
-    private WorkflowSimulationResultVO.ProcessReport generateProcessReport(ProcessDefinition processDefinition, String reportType) {
+    private WorkflowSimulationResultVO.ProcessReport generateProcessReport(ProcessDefinition processDefinition,
+            String reportType) {
         return WorkflowSimulationResultVO.ProcessReport.builder()
                 .reportId(UUID.randomUUID().toString())
                 .reportType(reportType)
@@ -753,8 +768,8 @@ public class WorkflowSimulationServiceImpl implements WorkflowSimulationService 
     private String generateReportContent(ProcessDefinition processDefinition, String reportType) {
         // 简化实现：生成报告内容
         return "流程分析报告内容\n流程ID: " + processDefinition.getId() +
-               "\n流程名称: " + processDefinition.getName() +
-               "\n报告类型: " + reportType +
-               "\n生成时间: " + LocalDateTime.now();
+                "\n流程名称: " + processDefinition.getName() +
+                "\n报告类型: " + reportType +
+                "\n生成时间: " + LocalDateTime.now();
     }
 }

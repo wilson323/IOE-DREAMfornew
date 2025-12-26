@@ -4,6 +4,7 @@
 **🎯 技能定位**: IOE-DREAM智慧园区Spring Boot 3.5.8 + Jakarta EE 3.0+技术栈守护专家，确保项目完全符合Jakarta EE规范，预防编译错误和技术栈不兼容问题
 
 **⚡ 技能等级**: ★★★★★★ (顶级专家)
+**🚨 当前状态**: 项目存在编译错误，需要立即执行Jakarta EE合规修复
 **🎯 适用场景**: Jakarta EE迁移、技术栈升级、依赖管理、编译错误修复、版本兼容性检查、包结构优化
 **📊 技能覆盖**: 包名迁移 | 依赖检查 | 编译验证 | 版本兼容 | 技术栈升级 | 错误修复 | 包结构规范
 
@@ -79,10 +80,10 @@ import jakarta.crypto.Cipher;             // 包不存在！程序包jakarta.cry
 | `javax.annotation.PreDestroy` | `jakarta.annotation.PreDestroy` | 生命周期注解 | 全局生命周期管理 |
 | `javax.validation.Valid` | `jakarta.validation.Valid` | 参数验证注解 | 全局参数验证 |
 | `javax.validation.constraints.*` | `jakarta.validation.constraints.*` | 验证约束注解 | 全局数据验证 |
-| `javax.persistence.Entity` | `jakarta.persistence.Entity` | JPA实体注解 | 数据层实体定义 |
-| `javax.persistence.Table` | `jakarta.persistence.Table` | JPA表注解 | 数据层表映射 |
-| `javax.persistence.Column` | `jakarta.persistence.Column` | JPA字段注解 | 数据层字段映射 |
-| `javax.persistence.Id` | `jakarta.persistence.Id` | JPA主键注解 | 数据层主键定义 |
+| ~~`javax.persistence.Entity`~~ | **MyBatis-Plus: `@TableName`** | 实体表映射注解 | 数据层表映射 |
+| ~~`javax.persistence.Table`~~ | **MyBatis-Plus: `@TableId`** | 主键映射注解 | 数据层主键定义 |
+| ~~`javax.persistence.Column`~~ | **MyBatis-Plus: `@TableField`** | 字段映射注解 | 数据层字段映射 |
+| ~~`javax.persistence.Id`~~ | **MyBatis-Plus: `@Data`** | Lombok数据注解 | 数据层实体定义 |
 | `javax.transaction.Transactional` | `jakarta.transaction.Transactional` | 事务注解 | 全局事务管理 |
 | `javax.servlet.http.*` | `jakarta.servlet.http.*` | Servlet API | Web层接口 |
 | `javax.ejb.*` | `jakarta.ejb.*` | EJB API | 企业级组件 |
@@ -153,24 +154,24 @@ public class JakartaMigrationTool {
         "javax.validation.Constraint", "jakarta.validation.Constraint",
         "javax.validation.Payload", "jakarta.validation.Payload",
 
-        // Persistence (JPA)
-        "javax.persistence.Entity", "jakarta.persistence.Entity",
-        "javax.persistence.Table", "jakarta.persistence.Table",
-        "javax.persistence.Column", "jakarta.persistence.Column",
-        "javax.persistence.Id", "jakarta.persistence.Id",
-        "javax.persistence.GeneratedValue", "jakarta.persistence.GeneratedValue",
-        "javax.persistence.GenerationType", "jakarta.persistence.GenerationType",
-        "javax.persistence.ManyToOne", "jakarta.persistence.ManyToOne",
-        "javax.persistence.OneToMany", "jakarta.persistence.OneToMany",
-        "javax.persistence.OneToOne", "jakarta.persistence.OneToOne",
-        "javax.persistence.ManyToMany", "jakarta.persistence.ManyToMany",
-        "javax.persistence.JoinColumn", "jakarta.persistence.JoinColumn",
-        "javax.persistence.JoinTable", "jakarta.persistence.JoinTable",
-        "javax.persistence.EntityManager", "jakarta.persistence.EntityManager",
-        "javax.persistence.PersistenceContext", "jakarta.persistence.PersistenceContext",
-        "javax.persistence.Query", "jakarta.persistence.Query",
-        "javax.persistence.TypedQuery", "jakarta.persistence.TypedQuery",
-        "javax.persistence.criteria", "jakarta.persistence.criteria",
+        // Persistence (已迁移到MyBatis-Plus)
+        // 以下JPA注解已不再使用，替换为MyBatis-Plus注解
+        "javax.persistence.Entity", "@TableName(\"table_name\")",
+        "javax.persistence.Table", "@TableName(\"table_name\")",
+        "javax.persistence.Column", "@TableField(\"column_name\")",
+        "javax.persistence.Id", "@TableId(type = IdType.AUTO)",
+        "javax.persistence.GeneratedValue", "@TableId(type = IdType.AUTO)",
+        "javax.persistence.ManyToOne", "@TableField",
+        "javax.persistence.OneToMany", "@TableField",
+        "javax.persistence.OneToOne", "@TableField",
+        "javax.persistence.ManyToMany", "@TableField",
+        "javax.persistence.JoinColumn", "@TableField",
+        "javax.persistence.JoinTable", "@TableField",
+        "javax.persistence.EntityManager", "BaseMapper<T>",
+        "javax.persistence.PersistenceContext", "@Resource",
+        "javax.persistence.Query", "@Query/@Select",
+        "javax.persistence.TypedQuery", "@Query/@Select",
+        "javax.persistence.criteria", "MyBatis-Plus QueryWrapper",
 
         // Transaction
         "javax.transaction.Transactional", "jakarta.transaction.Transactional",
@@ -1179,7 +1180,8 @@ import javax.management.MBeanServer;   // JVM管理
 // ✅ 正确 - Jakarta EE规范包
 import jakarta.annotation.Resource;      // 依赖注入
 import jakarta.validation.Valid;          // 参数验证
-import jakarta.persistence.Entity;        // JPA实体
+import lombok.Data;
+import com.baomidou.mybatisplus.annotation.TableName;  // MyBatis-Plus实体
 import jakarta.transaction.Transactional;  // 事务管理
 import jakarta.servlet.http.*;           // Servlet API
 ```

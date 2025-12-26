@@ -1,13 +1,20 @@
 package net.lab1024.sa.attendance.engine.algorithm;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
 import net.lab1024.sa.attendance.engine.algorithm.impl.BacktrackAlgorithmImpl;
 import net.lab1024.sa.attendance.engine.algorithm.impl.GeneticAlgorithmImpl;
 import net.lab1024.sa.attendance.engine.algorithm.impl.GreedyAlgorithmImpl;
 import net.lab1024.sa.attendance.engine.algorithm.impl.HeuristicAlgorithmImpl;
-
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 排班算法工厂
@@ -23,13 +30,13 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ScheduleAlgorithmFactory {
 
     // 算法注册表
-    private final Map<String, AlgorithmProvider> algorithmProviders = new ConcurrentHashMap<>();
+    private final Map<String, AlgorithmProvider> algorithmProviders = new HashMap<>();
 
     // 算法实例缓存
-    private final Map<String, ScheduleAlgorithm> algorithmCache = new ConcurrentHashMap<>();
+    private final Map<String, ScheduleAlgorithm> algorithmCache = new HashMap<>();
 
     // 默认参数配置
-    private final Map<String, Map<String, Object>> defaultParameters = new ConcurrentHashMap<>();
+    private final Map<String, Map<String, Object>> defaultParameters = new HashMap<>();
 
     /**
      * 构造函数
@@ -53,7 +60,7 @@ public class ScheduleAlgorithmFactory {
      * 获取指定类型的算法实例（带参数）
      *
      * @param algorithmType 算法类型
-     * @param parameters 算法参数
+     * @param parameters    算法参数
      * @return 算法实例
      */
     public ScheduleAlgorithm getAlgorithm(String algorithmType, Map<String, Object> parameters) {
@@ -91,7 +98,7 @@ public class ScheduleAlgorithmFactory {
      * 注册算法提供者
      *
      * @param algorithmType 算法类型
-     * @param provider 算法提供者
+     * @param provider      算法提供者
      */
     public void registerAlgorithm(String algorithmType, AlgorithmProvider provider) {
         algorithmProviders.put(algorithmType, provider);
@@ -184,7 +191,7 @@ public class ScheduleAlgorithmFactory {
      * 设置默认参数
      *
      * @param algorithmType 算法类型
-     * @param parameters 参数配置
+     * @param parameters    参数配置
      */
     public void setDefaultParameters(String algorithmType, Map<String, Object> parameters) {
         defaultParameters.put(algorithmType, parameters);
@@ -197,7 +204,7 @@ public class ScheduleAlgorithmFactory {
      * @return 参数配置
      */
     public Map<String, Object> getDefaultParameters(String algorithmType) {
-        return defaultParameters.getOrDefault(algorithmType, new ConcurrentHashMap<>());
+        return defaultParameters.getOrDefault(algorithmType, new HashMap<>());
     }
 
     /**
@@ -222,14 +229,14 @@ public class ScheduleAlgorithmFactory {
      */
     private void initializeDefaultParameters() {
         // 贪心算法默认参数
-        Map<String, Object> greedyParams = new ConcurrentHashMap<>();
+        Map<String, Object> greedyParams = new HashMap<>();
         greedyParams.put("priorityStrategy", "FAIRNESS");
         greedyParams.put("maxIterations", 1000);
         greedyParams.put("timeLimit", 30000);
         defaultParameters.put("GREEDY", greedyParams);
 
         // 遗传算法默认参数
-        Map<String, Object> geneticParams = new ConcurrentHashMap<>();
+        Map<String, Object> geneticParams = new HashMap<>();
         geneticParams.put("populationSize", 100);
         geneticParams.put("maxGenerations", 500);
         geneticParams.put("crossoverRate", 0.8);
@@ -239,14 +246,14 @@ public class ScheduleAlgorithmFactory {
         defaultParameters.put("GENETIC", geneticParams);
 
         // 回溯算法默认参数
-        Map<String, Object> backtrackParams = new ConcurrentHashMap<>();
+        Map<String, Object> backtrackParams = new HashMap<>();
         backtrackParams.put("maxDepth", 10);
         backtrackParams.put("pruningStrategy", "FORWARD_CHECKING");
         backtrackParams.put("timeLimit", 45000);
         defaultParameters.put("BACKTRACK", backtrackParams);
 
         // 启发式算法默认参数
-        Map<String, Object> heuristicParams = new ConcurrentHashMap<>();
+        Map<String, Object> heuristicParams = new HashMap<>();
         heuristicParams.put("heuristicFunction", "LEAST_CONFLICTING");
         heuristicParams.put("maxIterations", 2000);
         heuristicParams.put("timeLimit", 40000);
@@ -262,7 +269,8 @@ public class ScheduleAlgorithmFactory {
             keyBuilder.append(":");
             parameters.entrySet().stream()
                     .sorted(Map.Entry.comparingByKey())
-                    .forEach(entry -> keyBuilder.append(entry.getKey()).append("=").append(entry.getValue()).append(";"));
+                    .forEach(entry -> keyBuilder.append(entry.getKey()).append("=").append(entry.getValue())
+                            .append(";"));
         }
         return keyBuilder.toString();
     }
@@ -271,7 +279,7 @@ public class ScheduleAlgorithmFactory {
      * 合并参数
      */
     private Map<String, Object> mergeParameters(String algorithmType, Map<String, Object> userParameters) {
-        Map<String, Object> merged = new ConcurrentHashMap<>(getDefaultParameters(algorithmType));
+        Map<String, Object> merged = new HashMap<>(getDefaultParameters(algorithmType));
         if (userParameters != null) {
             merged.putAll(userParameters);
         }
@@ -289,10 +297,12 @@ public class ScheduleAlgorithmFactory {
     /**
      * 算法信息类
      */
-    @lombok.Data
-    @lombok.Builder
-    @lombok.NoArgsConstructor
-    @lombok.AllArgsConstructor
+    @Getter
+    @Setter
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class AlgorithmInfo {
         private String algorithmType;
         private String algorithmName;
@@ -304,10 +314,12 @@ public class ScheduleAlgorithmFactory {
     /**
      * 缓存统计类
      */
-    @lombok.Data
-    @lombok.Builder
-    @lombok.NoArgsConstructor
-    @lombok.AllArgsConstructor
+    @Getter
+    @Setter
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class CacheStatistics {
         private int totalCached;
         private int totalProviders;

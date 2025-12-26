@@ -1,12 +1,12 @@
 package net.lab1024.sa.oa.domain.entity;
 
+import java.time.LocalDateTime;
+
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.Data;
 
-import java.time.LocalDateTime;
+import lombok.Data;
 
 /**
  * 工作流任务实体
@@ -159,30 +159,29 @@ public class WorkflowTaskEntity {
      */
     private String originalAssigneeName;
 
-    
     // --- Compatibility Methods ---
 
-    public void setTaskType(String taskType) {
+    public void setTaskType (String taskType) {
         this.nodeType = taskType;
     }
 
-    public String getTaskType() {
+    public String getTaskType () {
         return this.nodeType;
     }
 
-    public void setTaskCreateTime(LocalDateTime createTime) {
+    public void setTaskCreateTime (LocalDateTime createTime) {
         this.createTime = createTime;
     }
 
-    public LocalDateTime getTaskCreateTime() {
+    public LocalDateTime getTaskCreateTime () {
         return this.createTime;
     }
 
-    public void setCompleteTime(LocalDateTime completeTime) {
+    public void setCompleteTime (LocalDateTime completeTime) {
         this.endTime = completeTime;
     }
 
-    public LocalDateTime getCompleteTime() {
+    public LocalDateTime getCompleteTime () {
         return this.endTime;
     }
 

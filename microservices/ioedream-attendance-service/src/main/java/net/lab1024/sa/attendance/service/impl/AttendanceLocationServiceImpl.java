@@ -1,8 +1,8 @@
 package net.lab1024.sa.attendance.service.impl;
 
-import org.springframework.stereotype.Service;
-
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.stereotype.Service;
 import net.lab1024.sa.attendance.service.AttendanceLocationService;
 import net.lab1024.sa.common.dto.ResponseDTO;
 
@@ -19,8 +19,8 @@ import net.lab1024.sa.common.dto.ResponseDTO;
  * @version 1.0.0
  * @since 2025-01-30
  */
-@Slf4j
 @Service
+@Slf4j
 public class AttendanceLocationServiceImpl implements AttendanceLocationService {
 
     /**
@@ -47,3 +47,4 @@ public class AttendanceLocationServiceImpl implements AttendanceLocationService 
         return ResponseDTO.ok(true);
     }
 }
+

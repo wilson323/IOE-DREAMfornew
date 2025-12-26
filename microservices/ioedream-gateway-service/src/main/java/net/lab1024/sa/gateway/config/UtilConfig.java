@@ -1,9 +1,11 @@
 package net.lab1024.sa.gateway.config;
 
+import lombok.extern.slf4j.Slf4j;
+
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.util.AESUtil;
 
 /**
@@ -20,9 +22,10 @@ import net.lab1024.sa.common.util.AESUtil;
  * @version 1.0.0
  * @since 2025-12-08
  */
-@Slf4j
 @Configuration
+@Slf4j
 public class UtilConfig {
+
 
     /**
      * AES加密工具Bean
@@ -46,3 +49,4 @@ public class UtilConfig {
         return aesUtil;
     }
 }
+

@@ -1,8 +1,9 @@
 package net.lab1024.sa.biometric.controller;
 
+import lombok.extern.slf4j.Slf4j;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.biometric.domain.vo.FeatureVector;
 import net.lab1024.sa.biometric.service.BiometricFeatureExtractionService;
 import net.lab1024.sa.common.dto.ResponseDTO;
@@ -32,11 +33,11 @@ import jakarta.validation.constraints.NotNull;
  * @version 1.0.0
  * @since 2025-12-18
  */
-@Slf4j
 @RestController
 @RequestMapping("/api/v1/biometric/feature")
 @Tag(name = "生物特征提取", description = "生物特征提取API")
 @Validated
+@Slf4j
 public class BiometricFeatureExtractionController {
 
     @Resource

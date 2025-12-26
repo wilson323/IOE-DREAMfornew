@@ -1,0 +1,16 @@
+﻿{
+    "MigrationMapping":  {
+                             "javax.inject":  "jakarta.inject",
+                             "javax.validation":  "jakarta.validation",
+                             "javax.annotation":  "jakarta.annotation",
+                             "javax.servlet":  "jakarta.servlet",
+                             "javax.persistence":  "jakarta.persistence",
+                             "javax.transaction":  "jakarta.transaction"
+                         },
+    "Timestamp":  "2025-12-21 17:18:15",
+    "TotalViolations":  0,
+    "CheckType":  "JakartaEEViolations",
+    "Violations":  [
+
+                   ]
+}

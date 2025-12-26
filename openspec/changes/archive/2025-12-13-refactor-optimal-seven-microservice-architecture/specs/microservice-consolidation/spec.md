@@ -137,7 +137,8 @@ ioedream-common-service SHALL 整合所有公共业务功能，提供统一的 A
 - **AND** 包含但不限于：
   - jakarta.annotation.Resource
   - jakarta.validation.Valid
-  - jakarta.persistence.Entity
+  - @Data
+@TableName("table_name")
   - jakarta.servlet.http.HttpServletRequest
 
 #### Scenario: 禁止的包引用

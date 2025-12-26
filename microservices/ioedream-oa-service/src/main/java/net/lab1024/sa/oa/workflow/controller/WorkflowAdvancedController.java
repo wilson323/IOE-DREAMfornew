@@ -1,7 +1,6 @@
 package net.lab1024.sa.oa.workflow.controller;
 
 import lombok.extern.slf4j.Slf4j;
-
 /**
  * 工作流高级功能控制器
  * <p>
@@ -21,11 +20,11 @@ import lombok.extern.slf4j.Slf4j;
  * @version 1.0.0
  * @since 2025-01-16
  */
-@Slf4j
 // @RestController
 // @RequestMapping("/api/v1/workflow/advanced")
 // @Tag(name = "工作流高级功能", description = "提供流程仿真、批量操作等企业级高级功能")
 // @Validated
+@Slf4j
 public class WorkflowAdvancedController {
 
     // TODO: 待Lombok问题解决后恢复以下内容:

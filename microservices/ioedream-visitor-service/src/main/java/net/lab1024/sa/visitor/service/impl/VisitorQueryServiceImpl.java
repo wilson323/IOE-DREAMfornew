@@ -1,5 +1,7 @@
 package net.lab1024.sa.visitor.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -9,12 +11,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import net.lab1024.sa.common.util.QueryBuilder;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 import io.micrometer.observation.annotation.Observed;
 import jakarta.annotation.Resource;
-import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.visitor.dao.VisitorAppointmentDao;
@@ -38,10 +40,11 @@ import net.lab1024.sa.visitor.service.VisitorQueryService;
  * @version 1.0.0
  * @since 2025-01-30
  */
-@Slf4j
 @Service
 @Transactional(readOnly = true)
+@Slf4j
 public class VisitorQueryServiceImpl implements VisitorQueryService {
+
 
     @Resource
     private VisitorAppointmentDao visitorAppointmentDao;
@@ -81,7 +84,7 @@ public class VisitorQueryServiceImpl implements VisitorQueryService {
         // 执行分页查询
         Integer queryPageNum = pageNum != null && pageNum > 0 ? pageNum : 1;
         Integer queryPageSize = pageSize != null && pageSize > 0 ? pageSize : 20;
-        Page<VisitorAppointmentEntity> page = new Page<>(queryPageNum, queryPageSize);
+        Page<VisitorAppointmentEntity> page = new Page<VisitorAppointmentEntity>(queryPageNum, queryPageSize);
         Page<VisitorAppointmentEntity> pageResult = visitorAppointmentDao.selectPage(page, wrapper);
 
         // 转换为VO列表
@@ -90,7 +93,7 @@ public class VisitorQueryServiceImpl implements VisitorQueryService {
                 .collect(Collectors.toList());
 
         // 构建分页结果
-        PageResult<VisitorAppointmentDetailVO> result = new PageResult<>();
+        PageResult<VisitorAppointmentDetailVO> result = new PageResult<VisitorAppointmentDetailVO>();
         result.setList(voList);
         result.setTotal(pageResult.getTotal());
         result.setPageNum(queryPageNum);

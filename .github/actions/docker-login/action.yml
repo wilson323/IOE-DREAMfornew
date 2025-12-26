@@ -1,0 +1,30 @@
+name: Local Docker Login
+description: Local replacement for docker/login-action
+inputs:
+  registry:
+    description: Registry
+    required: true
+  username:
+    description: Username
+    required: true
+  password:
+    description: Password
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: Docker login (bash)
+      if: runner.os != 'Windows'
+      shell: bash
+      run: |
+        set -euo pipefail
+        echo "${INPUT_PASSWORD}" | docker login "${INPUT_REGISTRY}" -u "${INPUT_USERNAME}" --password-stdin
+    - name: Docker login (pwsh)
+      if: runner.os == 'Windows'
+      shell: pwsh
+      run: |
+        $ErrorActionPreference = "Stop"
+        $bytes = [System.Text.Encoding]::UTF8.GetBytes($env:INPUT_PASSWORD)
+        $stream = New-Object System.IO.MemoryStream(,$bytes)
+        $reader = New-Object System.IO.StreamReader($stream)
+        $reader.ReadToEnd() | docker login $env:INPUT_REGISTRY -u $env:INPUT_USERNAME --password-stdin

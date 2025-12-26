@@ -1,19 +1,49 @@
 package net.lab1024.sa.attendance.leave.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.attendance.leave.LeaveCancellationService;
-import net.lab1024.sa.attendance.leave.model.*;
-import net.lab1024.sa.attendance.leave.model.request.*;
-import net.lab1024.sa.attendance.leave.model.result.*;
-import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Component;
+
+import net.lab1024.sa.attendance.leave.LeaveCancellationService;
+import net.lab1024.sa.attendance.leave.model.LeaveCancellationApplication;
+import net.lab1024.sa.attendance.leave.model.request.AutoLeaveCancellationApprovalRequest;
+import net.lab1024.sa.attendance.leave.model.request.BatchLeaveCancellationApprovalRequest;
+import net.lab1024.sa.attendance.leave.model.request.LeaveCancellationApplicationRequest;
+import net.lab1024.sa.attendance.leave.model.request.LeaveCancellationApprovalRequest;
+import net.lab1024.sa.attendance.leave.model.request.LeaveCancellationExportRequest;
+import net.lab1024.sa.attendance.leave.model.request.LeaveCancellationImpactAnalysisRequest;
+import net.lab1024.sa.attendance.leave.model.request.LeaveCancellationQueryParam;
+import net.lab1024.sa.attendance.leave.model.request.LeaveCancellationRejectionRequest;
+import net.lab1024.sa.attendance.leave.model.request.LeaveCancellationStatisticsRequest;
+import net.lab1024.sa.attendance.leave.model.request.LeaveCancellationValidationRequest;
+import net.lab1024.sa.attendance.leave.model.result.AutoLeaveCancellationApprovalResult;
+import net.lab1024.sa.attendance.leave.model.result.BatchLeaveCancellationApprovalResult;
+import net.lab1024.sa.attendance.leave.model.result.LeaveCancellationApplicationResult;
+import net.lab1024.sa.attendance.leave.model.result.LeaveCancellationApprovalResult;
+import net.lab1024.sa.attendance.leave.model.result.LeaveCancellationDetail;
+import net.lab1024.sa.attendance.leave.model.result.LeaveCancellationExportResult;
+import net.lab1024.sa.attendance.leave.model.result.LeaveCancellationHistoryRecord;
+import net.lab1024.sa.attendance.leave.model.result.LeaveCancellationImpactAnalysisResult;
+import net.lab1024.sa.attendance.leave.model.result.LeaveCancellationListResult;
+import net.lab1024.sa.attendance.leave.model.result.LeaveCancellationRejectionResult;
+import net.lab1024.sa.attendance.leave.model.result.LeaveCancellationStatisticsResult;
+import net.lab1024.sa.attendance.leave.model.result.LeaveCancellationValidationResult;
+import net.lab1024.sa.attendance.leave.model.result.LeaveCancellationWithdrawalResult;
 
 /**
  * 销假服务实现类
@@ -26,14 +56,14 @@ import java.util.stream.Collectors;
  * @version 1.0.0
  * @since 2025-12-16
  */
-@Slf4j
 @Component("leaveCancellationService")
+@Slf4j
 public class LeaveCancellationServiceImpl implements LeaveCancellationService {
 
     /**
      * 销假申请存储
      */
-    private final Map<String, LeaveCancellationApplication> cancellationApplications = new ConcurrentHashMap<>();
+    private final Map<String, LeaveCancellationApplication> cancellationApplications = new HashMap<>();
 
     /**
      * 员工销假索引
@@ -58,7 +88,8 @@ public class LeaveCancellationServiceImpl implements LeaveCancellationService {
     }
 
     @Override
-    public CompletableFuture<LeaveCancellationApplicationResult> applyLeaveCancellation(LeaveCancellationApplicationRequest request) {
+    public CompletableFuture<LeaveCancellationApplicationResult> applyLeaveCancellation(
+            LeaveCancellationApplicationRequest request) {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 log.info("[销假服务] 员工申请销假: employeeId={}, originalLeaveId={}",
@@ -106,13 +137,16 @@ public class LeaveCancellationServiceImpl implements LeaveCancellationService {
     }
 
     @Override
-    public CompletableFuture<LeaveCancellationApprovalResult> approveLeaveCancellation(LeaveCancellationApprovalRequest approvalRequest) {
+    public CompletableFuture<LeaveCancellationApprovalResult> approveLeaveCancellation(
+            LeaveCancellationApprovalRequest approvalRequest) {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 log.info("[销假服务] 审批销假申请: cancellationId={}, approverId={}, result={}",
-                        approvalRequest.getCancellationId(), approvalRequest.getApproverId(), approvalRequest.getApprovalResult());
+                        approvalRequest.getCancellationId(), approvalRequest.getApproverId(),
+                        approvalRequest.getApprovalResult());
 
-                LeaveCancellationApplication application = cancellationApplications.get(approvalRequest.getCancellationId());
+                LeaveCancellationApplication application = cancellationApplications
+                        .get(approvalRequest.getCancellationId());
                 if (application == null) {
                     return LeaveCancellationApprovalResult.builder()
                             .success(false)
@@ -138,7 +172,8 @@ public class LeaveCancellationServiceImpl implements LeaveCancellationService {
                 updateApplicationStatus(application, approvalRequest);
 
                 // 如果最终审批通过，执行销假生效
-                if (isFinalApproval(application, LeaveCancellationApplication.ApprovalResult.valueOf(approvalRequest.getApprovalResult()))) {
+                if (isFinalApproval(application,
+                        LeaveCancellationApplication.ApprovalResult.valueOf(approvalRequest.getApprovalResult()))) {
                     executeCancellationEffect(application);
                 }
 
@@ -168,13 +203,15 @@ public class LeaveCancellationServiceImpl implements LeaveCancellationService {
     }
 
     @Override
-    public CompletableFuture<LeaveCancellationRejectionResult> rejectLeaveCancellation(LeaveCancellationRejectionRequest rejectionRequest) {
+    public CompletableFuture<LeaveCancellationRejectionResult> rejectLeaveCancellation(
+            LeaveCancellationRejectionRequest rejectionRequest) {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 log.info("[销假服务] 驳回销假申请: cancellationId={}, approverId={}",
                         rejectionRequest.getCancellationId(), rejectionRequest.getApproverId());
 
-                LeaveCancellationApplication application = cancellationApplications.get(rejectionRequest.getCancellationId());
+                LeaveCancellationApplication application = cancellationApplications
+                        .get(rejectionRequest.getCancellationId());
                 if (application == null) {
                     return LeaveCancellationRejectionResult.builder()
                             .success(false)
@@ -218,7 +255,8 @@ public class LeaveCancellationServiceImpl implements LeaveCancellationService {
     }
 
     @Override
-    public CompletableFuture<LeaveCancellationWithdrawalResult> withdrawLeaveCancellation(String cancellationId, String reason, Long operatorId) {
+    public CompletableFuture<LeaveCancellationWithdrawalResult> withdrawLeaveCancellation(String cancellationId,
+            String reason, Long operatorId) {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 log.info("[销假服务] 撤销销假申请: cancellationId={}, operatorId={}", cancellationId, operatorId);
@@ -259,7 +297,7 @@ public class LeaveCancellationServiceImpl implements LeaveCancellationService {
                 }
                 application.getExtendedAttributes().put("withdrawalReason", reason);
                 application.getExtendedAttributes().put("withdrawalTime", LocalDateTime.now().toString());
-                application.getExtendedAttributes().put("withdrawalOperatorId", operatorId);
+                application.getExtendedAttributes().put("withdrawalOperatorId", operatorId.toString());
 
                 // 更新索引
                 updateIndexesAfterWithdrawal(application);
@@ -313,10 +351,12 @@ public class LeaveCancellationServiceImpl implements LeaveCancellationService {
     }
 
     @Override
-    public CompletableFuture<LeaveCancellationListResult> getEmployeeLeaveCancellations(Long employeeId, LeaveCancellationQueryParam queryParam) {
+    public CompletableFuture<LeaveCancellationListResult> getEmployeeLeaveCancellations(Long employeeId,
+            LeaveCancellationQueryParam queryParam) {
         return CompletableFuture.supplyAsync(() -> {
             try {
-                List<String> cancellationIds = employeeCancellationIndex.getOrDefault(employeeId, Collections.emptyList());
+                List<String> cancellationIds = employeeCancellationIndex.getOrDefault(employeeId,
+                        Collections.emptyList());
                 List<LeaveCancellationApplication> applications = cancellationIds.stream()
                         .map(cancellationApplications::get)
                         .filter(Objects::nonNull)
@@ -349,7 +389,8 @@ public class LeaveCancellationServiceImpl implements LeaveCancellationService {
     }
 
     @Override
-    public CompletableFuture<LeaveCancellationListResult> getPendingLeaveCancellations(LeaveCancellationQueryParam queryParam) {
+    public CompletableFuture<LeaveCancellationListResult> getPendingLeaveCancellations(
+            LeaveCancellationQueryParam queryParam) {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 List<LeaveCancellationApplication> allApplications = new ArrayList<>();
@@ -359,8 +400,9 @@ public class LeaveCancellationServiceImpl implements LeaveCancellationService {
                     List<LeaveCancellationApplication> applications = cancellationIds.stream()
                             .map(cancellationApplications::get)
                             .filter(Objects::nonNull)
-                            .filter(app -> app.getStatus() == LeaveCancellationApplication.ApplicationStatus.UNDER_REVIEW ||
-                                          app.getStatus() == LeaveCancellationApplication.ApplicationStatus.SUBMITTED)
+                            .filter(app -> app
+                                    .getStatus() == LeaveCancellationApplication.ApplicationStatus.UNDER_REVIEW ||
+                                    app.getStatus() == LeaveCancellationApplication.ApplicationStatus.SUBMITTED)
                             .collect(Collectors.toList());
                     allApplications.addAll(applications);
                 }
@@ -393,74 +435,75 @@ public class LeaveCancellationServiceImpl implements LeaveCancellationService {
 
     // 其他接口方法的实现...
     @Override
-    public CompletableFuture<BatchLeaveCancellationApprovalResult> batchApproveLeaveCancellations(BatchLeaveCancellationApprovalRequest batchApprovalRequest) {
+    public CompletableFuture<BatchLeaveCancellationApprovalResult> batchApproveLeaveCancellations(
+            BatchLeaveCancellationApprovalRequest batchApprovalRequest) {
         return CompletableFuture.completedFuture(
                 BatchLeaveCancellationApprovalResult.builder()
                         .success(false)
                         .errorMessage("功能待实现")
                         .errorCode("NOT_IMPLEMENTED")
-                        .build()
-        );
+                        .build());
     }
 
     @Override
-    public CompletableFuture<LeaveCancellationStatisticsResult> getLeaveCancellationStatistics(LeaveCancellationStatisticsRequest statisticsRequest) {
+    public CompletableFuture<LeaveCancellationStatisticsResult> getLeaveCancellationStatistics(
+            LeaveCancellationStatisticsRequest statisticsRequest) {
         return CompletableFuture.completedFuture(
                 LeaveCancellationStatisticsResult.builder()
                         .success(false)
                         .errorMessage("功能待实现")
                         .errorCode("NOT_IMPLEMENTED")
-                        .build()
-        );
+                        .build());
     }
 
     @Override
-    public CompletableFuture<LeaveCancellationValidationResult> validateLeaveCancellation(LeaveCancellationValidationRequest validationRequest) {
+    public CompletableFuture<LeaveCancellationValidationResult> validateLeaveCancellation(
+            LeaveCancellationValidationRequest validationRequest) {
         return CompletableFuture.completedFuture(
                 LeaveCancellationValidationResult.builder()
                         .success(false)
                         .errorMessage("功能待实现")
                         .errorCode("NOT_IMPLEMENTED")
-                        .build()
-        );
+                        .build());
     }
 
     @Override
-    public CompletableFuture<AutoLeaveCancellationApprovalResult> autoApproveLeaveCancellations(AutoLeaveCancellationApprovalRequest autoApprovalRequest) {
+    public CompletableFuture<AutoLeaveCancellationApprovalResult> autoApproveLeaveCancellations(
+            AutoLeaveCancellationApprovalRequest autoApprovalRequest) {
         return CompletableFuture.completedFuture(
                 AutoLeaveCancellationApprovalResult.builder()
                         .success(false)
                         .errorMessage("功能待实现")
                         .errorCode("NOT_IMPLEMENTED")
-                        .build()
-        );
+                        .build());
     }
 
     @Override
-    public CompletableFuture<LeaveCancellationImpactAnalysisResult> analyzeLeaveCancellationImpact(LeaveCancellationImpactAnalysisRequest impactAnalysisRequest) {
+    public CompletableFuture<LeaveCancellationImpactAnalysisResult> analyzeLeaveCancellationImpact(
+            LeaveCancellationImpactAnalysisRequest impactAnalysisRequest) {
         return CompletableFuture.completedFuture(
                 LeaveCancellationImpactAnalysisResult.builder()
                         .success(false)
                         .errorMessage("功能待实现")
                         .errorCode("NOT_IMPLEMENTED")
-                        .build()
-        );
+                        .build());
     }
 
     @Override
-    public CompletableFuture<List<LeaveCancellationHistoryRecord>> getLeaveCancellationHistory(Long employeeId, LocalDate startDate, LocalDate endDate) {
+    public CompletableFuture<List<LeaveCancellationHistoryRecord>> getLeaveCancellationHistory(Long employeeId,
+            LocalDate startDate, LocalDate endDate) {
         return CompletableFuture.completedFuture(Collections.emptyList());
     }
 
     @Override
-    public CompletableFuture<LeaveCancellationExportResult> exportLeaveCancellations(LeaveCancellationExportRequest exportRequest) {
+    public CompletableFuture<LeaveCancellationExportResult> exportLeaveCancellations(
+            LeaveCancellationExportRequest exportRequest) {
         return CompletableFuture.completedFuture(
                 LeaveCancellationExportResult.builder()
                         .success(false)
                         .errorMessage("功能待实现")
                         .errorCode("NOT_IMPLEMENTED")
-                        .build()
-        );
+                        .build());
     }
 
     // 私有辅助方法
@@ -526,7 +569,8 @@ public class LeaveCancellationServiceImpl implements LeaveCancellationService {
      * 执行影响评估
      */
     private void performImpactAssessment(LeaveCancellationApplication application) {
-        LeaveCancellationApplication.CancellationImpactAssessment assessment = LeaveCancellationApplication.CancellationImpactAssessment.builder()
+        LeaveCancellationApplication.CancellationImpactAssessment assessment = LeaveCancellationApplication.CancellationImpactAssessment
+                .builder()
                 .attendanceImpact("销假将恢复考勤正常记录")
                 .salaryImpact("可能影响请假期间的工资计算")
                 .workScheduleImpact("需要重新安排工作")
@@ -564,8 +608,8 @@ public class LeaveCancellationServiceImpl implements LeaveCancellationService {
      */
     private LocalDateTime estimateApprovalTime(LeaveCancellationApplication application) {
         // 根据紧急程度估算
-        int hours = application.getUrgencyLevel() == LeaveCancellationApplication.UrgencyLevel.VERY_URGENT ? 2 :
-                   application.getUrgencyLevel() == LeaveCancellationApplication.UrgencyLevel.URGENT ? 8 : 24;
+        int hours = application.getUrgencyLevel() == LeaveCancellationApplication.UrgencyLevel.VERY_URGENT ? 2
+                : application.getUrgencyLevel() == LeaveCancellationApplication.UrgencyLevel.URGENT ? 8 : 24;
         return LocalDateTime.now().plusHours(hours);
     }
 
@@ -596,8 +640,10 @@ public class LeaveCancellationServiceImpl implements LeaveCancellationService {
     /**
      * 更新申请状态
      */
-    private void updateApplicationStatus(LeaveCancellationApplication application, LeaveCancellationApprovalRequest request) {
-        LeaveCancellationApplication.ApprovalResult result = LeaveCancellationApplication.ApprovalResult.valueOf(request.getApprovalResult());
+    private void updateApplicationStatus(LeaveCancellationApplication application,
+            LeaveCancellationApprovalRequest request) {
+        LeaveCancellationApplication.ApprovalResult result = LeaveCancellationApplication.ApprovalResult
+                .valueOf(request.getApprovalResult());
 
         switch (result) {
             case APPROVED:
@@ -623,11 +669,12 @@ public class LeaveCancellationServiceImpl implements LeaveCancellationService {
     /**
      * 检查是否为最终审批
      */
-    private boolean isFinalApproval(LeaveCancellationApplication application, LeaveCancellationApplication.ApprovalResult result) {
+    private boolean isFinalApproval(LeaveCancellationApplication application,
+            LeaveCancellationApplication.ApprovalResult result) {
         // 简化实现，实际需要根据审批流程判断
         return result == LeaveCancellationApplication.ApprovalResult.APPROVED &&
-               (application.getApproverIds() == null ||
-                application.getApproverIds().size() <= application.getApprovalRecords().size());
+                (application.getApproverIds() == null ||
+                        application.getApproverIds().size() <= application.getApprovalRecords().size());
     }
 
     /**
@@ -660,7 +707,7 @@ public class LeaveCancellationServiceImpl implements LeaveCancellationService {
     private void updateIndexesAfterApproval(LeaveCancellationApplication application) {
         // 如果申请已通过，从待审批索引中移除
         if (application.getStatus() == LeaveCancellationApplication.ApplicationStatus.APPROVED ||
-            application.getStatus() == LeaveCancellationApplication.ApplicationStatus.REJECTED) {
+                application.getStatus() == LeaveCancellationApplication.ApplicationStatus.REJECTED) {
             removeFromPendingApprovalIndex(application);
         }
     }
@@ -709,21 +756,21 @@ public class LeaveCancellationServiceImpl implements LeaveCancellationService {
      */
     private boolean canWithdraw(LeaveCancellationApplication.ApplicationStatus status) {
         return status == LeaveCancellationApplication.ApplicationStatus.DRAFT ||
-               status == LeaveCancellationApplication.ApplicationStatus.SUBMITTED ||
-               status == LeaveCancellationApplication.ApplicationStatus.UNDER_REVIEW;
+                status == LeaveCancellationApplication.ApplicationStatus.SUBMITTED ||
+                status == LeaveCancellationApplication.ApplicationStatus.UNDER_REVIEW;
     }
 
     /**
      * 过滤申请列表
      */
     private List<LeaveCancellationApplication> filterApplications(List<LeaveCancellationApplication> applications,
-                                                                     LeaveCancellationQueryParam queryParam) {
+            LeaveCancellationQueryParam queryParam) {
         return applications.stream()
                 .filter(app -> queryParam.getStatus() == null || queryParam.getStatus().equals(app.getStatus()))
                 .filter(app -> queryParam.getCancellationType() == null ||
-                               queryParam.getCancellationType().equals(app.getCancellationType()))
+                        queryParam.getCancellationType().equals(app.getCancellationType()))
                 .filter(app -> queryParam.getUrgencyLevel() == null ||
-                               queryParam.getUrgencyLevel().equals(app.getUrgencyLevel()))
+                        queryParam.getUrgencyLevel().equals(app.getUrgencyLevel()))
                 .collect(Collectors.toList());
     }
 
@@ -731,7 +778,7 @@ public class LeaveCancellationServiceImpl implements LeaveCancellationService {
      * 分页处理
      */
     private List<LeaveCancellationApplication> paginateApplications(List<LeaveCancellationApplication> applications,
-                                                                  LeaveCancellationQueryParam queryParam) {
+            LeaveCancellationQueryParam queryParam) {
         int total = applications.size();
         int start = queryParam.getPageNum() * queryParam.getPageSize();
         int end = Math.min(start + queryParam.getPageSize(), total);

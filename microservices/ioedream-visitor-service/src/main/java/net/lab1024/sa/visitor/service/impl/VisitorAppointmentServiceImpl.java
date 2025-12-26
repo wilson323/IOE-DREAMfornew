@@ -1,5 +1,7 @@
 package net.lab1024.sa.visitor.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -10,8 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 import jakarta.annotation.Resource;
 import io.github.resilience4j.retry.annotation.Retry;
 import io.micrometer.observation.annotation.Observed;
-import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.common.util.QueryBuilder;
 import net.lab1024.sa.common.exception.BusinessException;
 import net.lab1024.sa.common.workflow.constant.BusinessTypeEnum;
 import net.lab1024.sa.common.workflow.constant.WorkflowDefinitionConstants;
@@ -25,6 +27,7 @@ import net.lab1024.sa.visitor.domain.vo.VisitorAppointmentDetailVO;
 import net.lab1024.sa.visitor.service.VisitorAppointmentService;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
 import org.springframework.http.HttpMethod;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import java.util.List;
@@ -46,10 +49,11 @@ import org.springframework.util.StringUtils;
  * @version 1.0.0
  * @since 2025-01-30
  */
-@Slf4j
 @Service
 @Transactional(rollbackFor = Exception.class)
+@Slf4j
 public class VisitorAppointmentServiceImpl implements VisitorAppointmentService {
+
 
     @Resource
     private VisitorAppointmentDao visitorAppointmentDao;
@@ -103,7 +107,7 @@ public class VisitorAppointmentServiceImpl implements VisitorAppointmentService 
         // 4. 启动审批流程
         // 注意：这里使用被访人ID作为发起人，因为是被访人需要审批
         Long initiatorId = form.getVisitUserId();
-        ResponseDTO<Long> workflowResult = workflowApprovalManager.startApprovalProcess(
+        Long workflowInstanceId = workflowApprovalManager.startApprovalProcess(
                 WorkflowDefinitionConstants.VISITOR_APPOINTMENT, // 流程定义ID
                 String.valueOf(entity.getAppointmentId()), // 业务Key
                 "访客预约-" + form.getVisitorName() + "-" + form.getVisitUserName(), // 流程实例名称
@@ -113,14 +117,12 @@ public class VisitorAppointmentServiceImpl implements VisitorAppointmentService 
                 variables // 流程变量
         );
 
-        if (workflowResult == null || !workflowResult.isSuccess()) {
+        if (workflowInstanceId == null) {
             log.error("[访客预约] 启动审批流程失败，appointmentId={}", entity.getAppointmentId());
-            throw new BusinessException("启动审批流程失败: " +
-                    (workflowResult != null ? workflowResult.getMessage() : "未知错误"));
+            throw new BusinessException("启动审批流程失败");
         }
 
         // 5. 更新预约的workflowInstanceId
-        Long workflowInstanceId = workflowResult.getData();
         entity.setWorkflowInstanceId(workflowInstanceId);
         visitorAppointmentDao.updateById(entity);
 
@@ -253,11 +255,11 @@ public class VisitorAppointmentServiceImpl implements VisitorAppointmentService 
             // 通过网关调用门禁服务创建访客权限
             // 接口路径：/api/v1/access/visitor/permission/create
             // 注意：如果门禁服务未提供此接口，需要创建对应的Controller和Service方法
-            ResponseDTO<Void> response = gatewayServiceClient.callAccessService(
-                    "/api/v1/access/visitor/permission/create",
+            ResponseDTO<Void> response = gatewayServiceClient.callCommonService(
+                    "/access/api/v1/access/visitor/permission/create",
                     HttpMethod.POST,
                     permissionRequest,
-                    Void.class
+                    new TypeReference<ResponseDTO<Void>>() {}
             );
 
             if (response != null && response.isSuccess()) {
@@ -346,7 +348,7 @@ public class VisitorAppointmentServiceImpl implements VisitorAppointmentService 
                         "/api/v1/notification/send",
                         HttpMethod.POST,
                         notificationRequest,
-                        Void.class
+                        new TypeReference<ResponseDTO<Void>>() {}
                 );
 
                 if (notificationResponse != null && notificationResponse.isSuccess()) {
@@ -410,7 +412,7 @@ public class VisitorAppointmentServiceImpl implements VisitorAppointmentService 
                             "/api/v1/notification/send",
                             HttpMethod.POST,
                             notificationRequest,
-                            Void.class
+                            new TypeReference<ResponseDTO<Void>>() {}
                     );
 
                     if (notificationResponse != null && notificationResponse.isSuccess()) {
@@ -442,62 +444,47 @@ public class VisitorAppointmentServiceImpl implements VisitorAppointmentService 
         log.info("[访客预约] 分页查询预约，pageNum={}, pageSize={}, visitorName={}, hostUserId={}, startDate={}, endDate={}, status={}",
                 queryForm.getPageNum(), queryForm.getPageSize(), queryForm.getVisitorName(),
                 queryForm.getHostUserId(), queryForm.getStartDate(), queryForm.getEndDate(), queryForm.getStatus());
-
-        try {
-            // 构建查询条件
-            LambdaQueryWrapper<VisitorAppointmentEntity> wrapper = new LambdaQueryWrapper<>();
-            wrapper.eq(VisitorAppointmentEntity::getDeletedFlag, 0);
-
-            // 访客姓名筛选
-            if (StringUtils.hasText(queryForm.getVisitorName())) {
-                wrapper.like(VisitorAppointmentEntity::getVisitorName, queryForm.getVisitorName());
-            }
-
-            // 接待人ID筛选
-            if (queryForm.getHostUserId() != null) {
-                wrapper.eq(VisitorAppointmentEntity::getVisitUserId, queryForm.getHostUserId());
-            }
-
-            // 时间范围筛选
-            if (queryForm.getStartDate() != null) {
-                wrapper.ge(VisitorAppointmentEntity::getAppointmentStartTime, queryForm.getStartDate().atStartOfDay());
-            }
-            if (queryForm.getEndDate() != null) {
-                wrapper.le(VisitorAppointmentEntity::getAppointmentEndTime, queryForm.getEndDate().atTime(23, 59, 59));
-            }
-
-            // 状态筛选
-            if (StringUtils.hasText(queryForm.getStatus())) {
-                wrapper.eq(VisitorAppointmentEntity::getStatus, queryForm.getStatus());
-            }
-
-            // 排序
-            wrapper.orderByDesc(VisitorAppointmentEntity::getCreateTime);
-
-            // 执行分页查询
-            Page<VisitorAppointmentEntity> page = new Page<>(queryForm.getPageNum(), queryForm.getPageSize());
-            Page<VisitorAppointmentEntity> pageResult = visitorAppointmentDao.selectPage(page, wrapper);
-
-            // 转换为VO列表
-            List<VisitorAppointmentDetailVO> voList = pageResult.getRecords().stream()
-                    .map(this::convertToDetailVO)
-                    .collect(Collectors.toList());
-
-            // 构建分页结果
-            PageResult<VisitorAppointmentDetailVO> result = PageResult.of(
-                    voList,
-                    pageResult.getTotal(),
-                    queryForm.getPageNum(),
-                    queryForm.getPageSize()
-            );
-
-            log.info("[访客预约] 分页查询预约成功，总数={}", pageResult.getTotal());
-            return result;
-
-        } catch (Exception e) {
-            log.error("[访客预约] 分页查询预约失败", e);
-            return PageResult.of(new java.util.ArrayList<>(), 0L, queryForm.getPageNum(), queryForm.getPageSize());
+        // 预处理时间和日期参数
+        LocalDateTime startTime = null;
+        LocalDateTime endTime = null;
+        if (queryForm.getStartDate() != null) {
+            startTime = queryForm.getStartDate().atStartOfDay();
         }
+        if (queryForm.getEndDate() != null) {
+            endTime = queryForm.getEndDate().atTime(23, 59, 59);
+        }
+
+        // 构建查询条件（使用QueryBuilder）
+        LambdaQueryWrapper<VisitorAppointmentEntity> wrapper = QueryBuilder.of(VisitorAppointmentEntity.class)
+            .keyword(queryForm.getVisitorName(), VisitorAppointmentEntity::getVisitorName)
+            .eq(VisitorAppointmentEntity::getVisitUserId, queryForm.getHostUserId())
+            .ge(VisitorAppointmentEntity::getAppointmentStartTime, startTime)
+            .le(VisitorAppointmentEntity::getAppointmentEndTime, endTime)
+            .eq(VisitorAppointmentEntity::getStatus, queryForm.getStatus())
+            .eq(VisitorAppointmentEntity::getDeletedFlag, 0)
+            .orderByDesc(VisitorAppointmentEntity::getCreateTime)
+            .build();
+
+        // 执行分页查询
+        Page<VisitorAppointmentEntity> page = new Page<>(queryForm.getPageNum(), queryForm.getPageSize());
+        Page<VisitorAppointmentEntity> pageResult = visitorAppointmentDao.selectPage(page, wrapper);
+
+        // 转换为VO列表
+        List<VisitorAppointmentDetailVO> voList = pageResult.getRecords().stream()
+                .map(this::convertToDetailVO)
+                .collect(Collectors.toList());
+
+        // 构建分页结果
+        PageResult<VisitorAppointmentDetailVO> result = PageResult.of(
+                voList,
+                pageResult.getTotal(),
+                queryForm.getPageNum(),
+                queryForm.getPageSize()
+        );
+
+        log.info("[访客预约] 分页查询预约成功，总数={}", pageResult.getTotal());
+        return result;
+
     }
 
     /**
@@ -541,4 +528,5 @@ public class VisitorAppointmentServiceImpl implements VisitorAppointmentService 
         return vo;
     }
 }
+
 

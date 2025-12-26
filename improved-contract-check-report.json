@@ -1,0 +1,37 @@
+﻿{
+    "Summary":  {
+                    "Total":  19,
+                    "Errors":  0,
+                    "Warnings":  2,
+                    "Success":  17
+                },
+    "Timestamp":  "2025-12-21 21:12:06",
+    "Results":  {
+                    "Errors":  [
+
+                               ],
+                    "Warnings":  [
+                                     "⚠️ ConsumeTransaction 模型字段匹配度较低 (40%) - ConsumeTransactionEntity.java",
+                                     "⚠️ AttendanceRecordController.java 可能缺少统一错误处理"
+                                 ],
+                    "Success":  [
+                                    "✅ access-api.js 使用正确的 /api/v1/ 前缀",
+                                    "✅ attendance-api.js 使用正确的 /api/v1/ 前缀",
+                                    "✅ consume-api.js 使用正确的 /api/v1/ 前缀",
+                                    "✅ video-api.js 使用正确的 /api/v1/ 前缀",
+                                    "✅ access.js 使用正确的API前缀",
+                                    "✅ workflow.js 使用正确的API前缀",
+                                    "✅ Device 模型字段匹配良好 (80%) - DeviceEntity.java",
+                                    "✅ AttendanceRecord 模型字段匹配良好 (100%) - AttendanceRecordEntity.java",
+                                    "✅ VideoDevice 模型字段匹配良好 (80%) - VideoDeviceEntity.java",
+                                    "✅ AccessDeviceController.java 查询接口使用POST方法（推荐）",
+                                    "✅ AccessDeviceController.java 使用统一错误响应格式",
+                                    "✅ AttendanceRecordController.java 查询接口使用POST方法（推荐）",
+                                    "✅ VideoDeviceController.java 查询接口使用POST方法（推荐）",
+                                    "✅ VideoDeviceController.java 使用统一错误响应格式",
+                                    "✅ AccessDeviceQueryForm.java 包含标准分页字段",
+                                    "✅ AttendanceRecordQueryForm.java 包含标准分页字段",
+                                    "✅ VideoDeviceQueryForm.java 包含标准分页字段"
+                                ]
+                }
+}

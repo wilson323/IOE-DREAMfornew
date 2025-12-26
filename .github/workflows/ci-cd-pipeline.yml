@@ -1,4 +1,4 @@
-name: IOE-DREAM CI/CD Pipeline
+﻿name: IOE-DREAM CI/CD Pipeline
 
 on:
   push:
@@ -20,12 +20,12 @@ jobs:
 
     steps:
     - name: 检出代码
-      uses: actions/checkout@v4
+      uses: ./.github/actions/checkout
       with:
         fetch-depth: 0
 
     - name: 设置Java 17
-      uses: actions/setup-java@v4
+      uses: ./.github/actions/setup-java
       with:
         java-version: '17'
         distribution: 'temurin'
@@ -95,10 +95,10 @@ jobs:
 
     steps:
     - name: 检出代码
-      uses: actions/checkout@v4
+      uses: ./.github/actions/checkout
 
     - name: 设置Java 17
-      uses: actions/setup-java@v4
+      uses: ./.github/actions/setup-java
       with:
         java-version: '17'
         distribution: 'temurin'
@@ -135,7 +135,7 @@ jobs:
           -Dspring.cloud.nacos.discovery.server-addr=localhost:8848
 
     - name: 生成测试报告
-      uses: dorny/test-reporter@v1
+      uses: ./.github/actions/test-reporter
       if: success() || failure()
       with:
         name: 测试报告
@@ -149,7 +149,7 @@ jobs:
           -pl microservices/ioedream-common-service
 
     - name: 上传覆盖率报告
-      uses: codecov/codecov-action@v3
+      uses: ./.github/actions/codecov
       with:
         file: '**/target/site/jacoco/jacoco.xml'
         flags: unittests
@@ -163,7 +163,7 @@ jobs:
 
     steps:
     - name: 检出代码
-      uses: actions/checkout@v4
+      uses: ./.github/actions/checkout
 
     - name: 依赖漏洞扫描
       run: |
@@ -178,14 +178,14 @@ jobs:
         docker build -t ioe-dream:scan -f microservices/ioedream-common-service/Dockerfile.optimized .
 
     - name: Trivy 容器安全扫描
-      uses: aquasecurity/trivy-action@master
+      uses: ./.github/actions/trivy
       with:
         image-ref: 'ioe-dream:scan'
         format: 'sarif'
         output: 'trivy-results.sarif'
 
     - name: 上传安全扫描结果
-      uses: github/codeql-action/upload-sarif@v2
+      uses: ./.github/actions/codeql-upload-sarif
       if: always()
       with:
         sarif_file: 'trivy-results.sarif'
@@ -198,10 +198,10 @@ jobs:
 
     steps:
     - name: 检出代码
-      uses: actions/checkout@v4
+      uses: ./.github/actions/checkout
 
     - name: 设置Java 17
-      uses: actions/setup-java@v4
+      uses: ./.github/actions/setup-java
       with:
         java-version: '17'
         distribution: 'temurin'
@@ -212,7 +212,7 @@ jobs:
         ./scripts/build-all.ps1 -SkipTests
 
     - name: 构建产物归档
-      uses: actions/upload-artifact@v3
+      uses: ./.github/actions/upload-artifact
       with:
         name: build-artifacts
         path: |
@@ -244,13 +244,13 @@ jobs:
 
     steps:
     - name: 检出代码
-      uses: actions/checkout@v4
+      uses: ./.github/actions/checkout
 
     - name: 设置Docker Buildx
-      uses: docker/setup-buildx-action@v3
+      uses: ./.github/actions/docker-setup-buildx
 
     - name: 登录容器镜像仓库
-      uses: docker/login-action@v3
+      uses: ./.github/actions/docker-login
       with:
         registry: ${{ env.REGISTRY }}
         username: ${{ github.actor }}
@@ -258,7 +258,7 @@ jobs:
 
     - name: 提取元数据
       id: meta
-      uses: docker/metadata-action@v5
+      uses: ./.github/actions/docker-metadata
       with:
         images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/${{ matrix.service }}
         tags: |
@@ -269,7 +269,7 @@ jobs:
           type=semver,pattern={{major}}.{{minor}}
 
     - name: 构建并推送镜像
-      uses: docker/build-push-action@v5
+      uses: ./.github/actions/docker-build-push
       with:
         context: .
         file: ./microservices/${{ matrix.service }}/Dockerfile.optimized
@@ -471,7 +471,7 @@ jobs:
 
     steps:
     - name: 检出代码
-      uses: actions/checkout@v4
+      uses: ./.github/actions/checkout
 
     - name: 设置K6性能测试
       run: |
@@ -520,7 +520,7 @@ jobs:
         k6 run performance-test.js --out json=performance-results.json
 
     - name: 上传性能测试报告
-      uses: actions/upload-artifact@v3
+      uses: ./.github/actions/upload-artifact
       with:
         name: performance-results
         path: performance-results.json

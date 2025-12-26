@@ -1,59 +1,29 @@
 package net.lab1024.sa.consume.domain.vo;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+
 import lombok.Data;
 
 /**
- * 消费同步数据VO
+ * 移动端同步数据
  *
  * @author IOE-DREAM Team
- * @version 1.0.0
- * @since 2025-01-30
+ * @since 2025-12-22
  */
 @Data
 public class ConsumeSyncDataVO {
 
-    /**
-     * 设备ID
-     */
     private Long deviceId;
 
-    /**
-     * 同步时间戳
-     */
-    private Long syncTimestamp;
+    private List<Map<String, Object>> userList;
 
-    /**
-     * 交易数据列表
-     */
-    private List<SyncTransactionData> transactionList;
+    private List<Map<String, Object>> productList;
 
-    /**
-     * 用户数据列表
-     */
-    private List<SyncUserData> userList;
+    private List<Map<String, Object>> mealList;
 
-    /**
-     * 同步交易数据
-     */
-    @Data
-    public static class SyncTransactionData {
-        private Long transactionId;
-        private Long userId;
-        private java.math.BigDecimal amount;
-        private java.time.LocalDateTime consumeTime;
-    }
+    private List<Map<String, Object>> areaList;
 
-    /**
-     * 同步用户数据
-     */
-    @Data
-    public static class SyncUserData {
-        private Long userId;
-        private String userName;
-        private java.math.BigDecimal balance;
-    }
+    private LocalDateTime syncTime;
 }
-
-
-

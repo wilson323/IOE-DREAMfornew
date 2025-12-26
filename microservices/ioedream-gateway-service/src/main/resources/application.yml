@@ -63,7 +63,7 @@ spring:
   #   import:
   #     - "optional:nacos:ioedream-gateway-service-${spring.profiles.active}.yaml"
 
-# ==================== Nacos服务发现配置 ====================
+  # ==================== Nacos服务发现配置 ====================
   cloud:
     nacos:
       discovery:
@@ -71,7 +71,7 @@ spring:
         namespace: ${NACOS_NAMESPACE:dev}
         group: ${NACOS_GROUP:IOE-DREAM}
         username: ${NACOS_USERNAME:nacos}
-        password: ${NACOS_PASSWORD:nacos}
+        password: ${NACOS_PASSWORD:ENC(I2//JcHFpBc7vLPrYnCJNA==)}
         enabled: true
         register-enabled: true
       config:
@@ -79,9 +79,9 @@ spring:
         namespace: ${NACOS_NAMESPACE:dev}
         group: ${NACOS_GROUP:IOE-DREAM}
         username: ${NACOS_USERNAME:nacos}
-        password: ${NACOS_PASSWORD:nacos}
+        password: ${NACOS_PASSWORD:ENC(I2//JcHFpBc7vLPrYnCJNA==)}
         file-extension: yaml
-        enabled: false  # 本地开发环境禁用配置中心，使用本地配置文件
+        enabled: false # 本地开发环境禁用配置中心，使用本地配置文件
         import-check:
           enabled: false
 
@@ -94,7 +94,7 @@ spring:
           # 全局跨域配置
           globalcors:
             cors-configurations:
-              '[/**]':
+              "[/**]":
                 allowedOriginPatterns:
                   - "http://localhost:*"
                   - "http://127.0.0.1:*"
@@ -365,8 +365,8 @@ server:
 logging:
   level:
     root: ${LOG_LEVEL_ROOT:INFO}
-    '[net.lab1024.sa]': ${LOG_LEVEL_APP:DEBUG}
-    '[org.springframework.cloud.gateway]': DEBUG
+    "[net.lab1024.sa]": ${LOG_LEVEL_APP:DEBUG}
+    "[org.springframework.cloud.gateway]": DEBUG
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"
     file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"
@@ -397,9 +397,9 @@ management:
         enabled: true
   # 分布式追踪配置（Micrometer Tracing）
   tracing:
-    enabled: false  # 禁用追踪避免Zipkin连接警告
+    enabled: true # 启用分布式追踪
     sampling:
-      probability: ${SLEUTH_SAMPLER_PROBABILITY:1.0}
+      probability: ${SLEUTH_SAMPLER_PROBABILITY:0.1} # 生产环境建议10%采样率
   zipkin:
     tracing:
       endpoint: ${ZIPKIN_ENDPOINT:http://localhost:9411/api/v2/spans}

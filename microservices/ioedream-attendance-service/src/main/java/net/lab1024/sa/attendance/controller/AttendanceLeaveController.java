@@ -1,5 +1,7 @@
 package net.lab1024.sa.attendance.controller;
 
+import lombok.extern.slf4j.Slf4j;
+
 import io.micrometer.observation.annotation.Observed;
 import java.util.Map;
 
@@ -14,7 +16,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.attendance.domain.entity.AttendanceLeaveEntity;
 import net.lab1024.sa.attendance.domain.form.AttendanceLeaveForm;
@@ -34,11 +35,11 @@ import net.lab1024.sa.attendance.service.AttendanceLeaveService;
  * @version 1.0.0
  * @since 2025-01-30
  */
-@Slf4j
 @RestController
+@Slf4j
 @RequestMapping("/api/v1/attendance/leave")
 @Tag(name = "考勤请假管理")
-public class AttendanceLeaveController {
+ public class AttendanceLeaveController {
 
     @Resource
     private AttendanceLeaveService attendanceLeaveService;
@@ -80,6 +81,4 @@ public class AttendanceLeaveController {
         return ResponseDTO.ok();
     }
 }
-
-
 

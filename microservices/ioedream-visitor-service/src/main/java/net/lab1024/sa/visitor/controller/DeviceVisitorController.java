@@ -23,11 +23,11 @@ import jakarta.annotation.Resource;
  * @version 1.0.0
  * @since 2025-12-18
  */
-@Slf4j
 @RestController
+@Slf4j
 @RequestMapping("/api/v1/visitor/device")
 @Tag(name = "设备访客验证", description = "接收设备端访客验证请求")
-public class DeviceVisitorController {
+ public class DeviceVisitorController {
 
     @Resource
     private DeviceVisitorService deviceVisitorService;

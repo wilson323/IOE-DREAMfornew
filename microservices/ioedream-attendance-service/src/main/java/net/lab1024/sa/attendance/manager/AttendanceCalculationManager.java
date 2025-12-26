@@ -31,6 +31,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 @Slf4j
 public class AttendanceCalculationManager {
 
+
     private final AttendanceRecordDao attendanceRecordDao;
     private final ScheduleRecordDao scheduleRecordDao;
     private final StrategyFactory<IAttendanceRuleStrategy> strategyFactory;

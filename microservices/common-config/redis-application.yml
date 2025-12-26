@@ -262,20 +262,21 @@ management:
       enabled: true
     cache:
       enabled: true
-  metrics:
-    export:
-      prometheus:
+  prometheus:
+    metrics:
+      export:
         enabled: true
+  metrics:
     tags:
       application: ${spring.application.name}
       component: redis
     distribution:
       percentiles-histogram:
-        spring.cache: true
-        redis: true
+        "[spring.cache]": true
+        "[redis]": true
       percentiles:
-        spring.cache: 0.5,0.9,0.95,0.99
-        redis: 0.5,0.9,0.95,0.99
+        "[spring.cache]": 0.5,0.9,0.95,0.99
+        "[redis]": 0.5,0.9,0.95,0.99
 
 # ============================================================
 # Redis 日志配置

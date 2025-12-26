@@ -80,14 +80,16 @@ public class UserServiceImpl implements UserService {
 // ✅ 正确示例 (Jakarta EE 3.0+)
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
-import jakarta.persistence.Entity;
+import @Data
+@TableName("table_name");
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 
 // ❌ 严重违规 (javax已废弃)
 import javax.annotation.Resource;      // 应改为 jakarta.annotation.Resource
 import javax.validation.Valid;        // 应改为 jakarta.validation.Valid
-import javax.persistence.Entity;      // 应改为 jakarta.persistence.Entity
+import javax.persistence.Entity;      // 应改为 @Data
+@TableName("table_name")
 ```
 
 **影响范围**: 424个文件需要包名修改，影响面巨大

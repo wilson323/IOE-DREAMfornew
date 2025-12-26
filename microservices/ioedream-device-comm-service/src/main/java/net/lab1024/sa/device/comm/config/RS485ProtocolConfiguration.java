@@ -1,8 +1,9 @@
 package net.lab1024.sa.device.comm.config;
 
+import lombok.extern.slf4j.Slf4j;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.annotation.Resource;
-import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.device.comm.dao.DeviceCommLogDao;
 import net.lab1024.sa.device.comm.protocol.rs485.RS485ProtocolAdapter;
 import net.lab1024.sa.device.comm.protocol.rs485.RS485ProtocolManager;
@@ -30,13 +31,12 @@ import java.util.concurrent.Executor;
  * @version 1.0.0
  * @since 2025-12-16
  */
-@Slf4j
 @Configuration
 @EnableAsync
 @EnableScheduling
 @Schema(description = "RS485协议配置")
+@Slf4j
 public class RS485ProtocolConfiguration {
-
     @Resource
     private DeviceCommLogDao deviceCommLogDao;
 

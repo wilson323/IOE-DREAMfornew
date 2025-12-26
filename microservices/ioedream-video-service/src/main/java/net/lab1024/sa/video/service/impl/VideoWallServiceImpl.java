@@ -1,5 +1,4 @@
 package net.lab1024.sa.video.service.impl;
-
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.exception.BusinessException;
@@ -175,7 +174,7 @@ public class VideoWallServiceImpl implements VideoWallService {
             }
 
             // 逻辑删除
-            wall.setDeletedFlag(true);
+            wall.setDeletedFlag(1);
             videoWallDao.updateById(wall);
 
             log.info("[解码上墙] 删除电视墙成功: wallId={}", wallId);
@@ -471,7 +470,7 @@ public class VideoWallServiceImpl implements VideoWallService {
                 return ResponseDTO.error("PRESET_NOT_FOUND", "预案不存在");
             }
 
-            preset.setDeletedFlag(true);
+            preset.setDeletedFlag(1);
             videoWallPresetDao.updateById(preset);
 
             log.info("[解码上墙] 删除预案成功: presetId={}", presetId);
@@ -565,7 +564,7 @@ public class VideoWallServiceImpl implements VideoWallService {
                 return ResponseDTO.error("TOUR_NOT_FOUND", "轮巡不存在");
             }
 
-            tour.setDeletedFlag(true);
+            tour.setDeletedFlag(1);
             videoWallTourDao.updateById(tour);
 
             log.info("[解码上墙] 删除轮巡成功: tourId={}", tourId);
@@ -809,7 +808,7 @@ public class VideoWallServiceImpl implements VideoWallService {
             }
 
             // 逻辑删除
-            decoder.setDeletedFlag(true);
+            decoder.setDeletedFlag(1);
             videoDecoderDao.updateById(decoder);
 
             log.info("[解码上墙] 删除解码器成功: decoderId={}", decoderId);

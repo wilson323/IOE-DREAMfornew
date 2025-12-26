@@ -43,6 +43,13 @@
               <span>十六画面</span>
             </div>
           </a-menu-item>
+
+          <a-menu-item key="25">
+            <div class="layout-option">
+              <div class="layout-grid layout-25"></div>
+              <span>二十五画面</span>
+            </div>
+          </a-menu-item>
         </a-menu>
       </template>
     </a-dropdown>
@@ -69,6 +76,7 @@ const currentLayoutText = computed(() => {
     4: '四画面',
     9: '九画面',
     16: '十六画面',
+    25: '二十五画面',
   };
   return textMap[props.currentLayout] || '四画面';
 });
@@ -148,6 +156,26 @@ const handleLayoutSelect = ({ key }) => {
           #1890ff 1px,
           transparent 1px,
           transparent calc(25% - 1px)
+        );
+    }
+
+    &.layout-25 {
+      grid-template-columns: repeat(5, 1fr);
+      grid-template-rows: repeat(5, 1fr);
+      background:
+        repeating-linear-gradient(
+          0deg,
+          #1890ff,
+          #1890ff 1px,
+          transparent 1px,
+          transparent calc(20% - 1px)
+        ),
+        repeating-linear-gradient(
+          90deg,
+          #1890ff,
+          #1890ff 1px,
+          transparent 1px,
+          transparent calc(20% - 1px)
         );
     }
   }

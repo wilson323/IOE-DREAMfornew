@@ -66,6 +66,7 @@
 <script setup>
 import { reactive, ref, watch } from 'vue';
 import { message } from 'ant-design-vue';
+import dayjs from 'dayjs';
 
 const props = defineProps({
   visible: {
@@ -127,7 +128,34 @@ const handleSubmit = async () => {
   try {
     await formRef.value.validateFields();
     submitLoading.value = true;
-    message.success('Permissions granted');
+
+    // 构建批量授权请求参数
+    const grantParams = {
+      userIds: props.selectedKeys,
+      areaIds: formData.areaIds,
+      permissionType: formData.permissionType,
+      startTime: formData.dateRange && formData.dateRange[0]
+        ? dayjs(formData.dateRange[0]).format('YYYY-MM-DD 00:00:00')
+        : null,
+      endTime: formData.dateRange && formData.dateRange[1]
+        ? dayjs(formData.dateRange[1]).format('YYYY-MM-DD 23:59:59')
+        : null,
+      remark: formData.remark,
+    };
+
+    // TODO: 调用批量授权API
+    // const result = await accessApi.batchGrantPermissions(grantParams);
+    // if (result.code === 200) {
+    //   message.success(`成功为 ${props.selectedKeys.length} 个用户授权`);
+    //   emit('success');
+    //   handleCancel();
+    // } else {
+    //   message.error(result.message || '批量授权失败');
+    // }
+
+    // 模拟API调用
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    message.success(`成功为 ${props.selectedKeys.length} 个用户授权`);
     emit('success');
     handleCancel();
   } catch (error) {

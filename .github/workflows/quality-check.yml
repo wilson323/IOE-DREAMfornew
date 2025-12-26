@@ -1,0 +1,220 @@
+﻿name: IOE-DREAM 质量门禁检查
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  quality-gate:
+    runs-on: ubuntu-latest
+    name: 质量门禁检查
+
+    steps:
+    - name: Checkout 代码
+      uses: ./.github/actions/checkout
+      with:
+        fetch-depth: 0
+
+    - name: 设置 Java 环境
+      uses: ./.github/actions/setup-java
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    - name: 缓存 Maven 依赖
+      uses: ./.github/actions/cache
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-m2-
+
+    - name: 安装脚本权限
+      run: |
+        chmod +x scripts/quality-gate-check.sh
+        chmod +x scripts/continuous-monitoring.sh
+
+    - name: 运行质量门禁检查
+      run: |
+        echo "🚪 GitHub Actions 质量门禁检查"
+        echo "=================================="
+        ./scripts/quality-gate-check.sh
+
+    - name: 运行持续监控
+      run: |
+        echo "📊 GitHub Actions 持续监控"
+        echo "=============================="
+        ./scripts/continuous-monitoring.sh
+
+    - name: 编译检查
+      run: |
+        echo "🔧 Maven 编译检查"
+        echo "===================="
+        mvn clean compile -Dmaven.test.skip=true
+
+    - name: 生成质量报告
+      run: |
+        echo "📋 生成质量报告"
+        echo "=================="
+        REPORT_FILE="quality-report-$(date +%Y%m%d_%H%M%S).txt"
+
+        {
+          echo "IOE-DREAM GitHub Actions 质量报告"
+          echo "==============================="
+          echo "时间: $(date)"
+          echo "分支: $GITHUB_REF_NAME"
+          echo "提交: $GITHUB_SHA"
+          echo ""
+
+          # SLF4J 检查
+          logger_violations=$(find microservices -name "*.java" -type f -exec grep -l "LoggerFactory.getLogger" {} \; 2>/dev/null | wc -l)
+          echo "SLF4J 违规: $logger_violations 个"
+
+          # @Autowired 检查
+          autowired_violations=$(find microservices -name "*.java" -type f -exec grep -l "@Autowired" {} \; 2>/dev/null | wc -l)
+          echo "@Autowired 违规: $autowired_violations 个"
+
+          # @Repository 检查
+          repository_violations=$(find microservices -name "*.java" -type f -exec grep -l "@Repository" {} \; 2>/dev/null | wc -l)
+          echo "@Repository 违规: $repository_violations 个"
+
+          # Repository 命名检查
+          naming_violations=$(find microservices -name "*Repository.java" -type f 2>/dev/null | wc -l)
+          echo "Repository 命名违规: $naming_violations 个"
+
+          # 明文密码检查
+          plain_passwords=$(grep -r "password.*=" microservices --include="*.yml" --include="*.properties" --include="*.yaml" 2>/dev/null | grep -v "ENC(" | grep -v "\$\{" | wc -l)
+          echo "明文密码: $plain_passwords 个"
+
+          # 计算总分
+          total_violations=$((logger_violations + autowired_violations + repository_violations + naming_violations + plain_passwords))
+          quality_score=$((100 - (total_violations * 5)))
+
+          if [ $quality_score -lt 0 ]; then
+            quality_score=0
+          fi
+
+          echo ""
+          echo "总违规数: $total_violations"
+          echo "质量评分: $quality_score/100"
+          echo ""
+
+          # 质量等级
+          if [ $quality_score -ge 95 ]; then
+            echo "质量等级: A+ (优秀)"
+          elif [ $quality_score -ge 85 ]; then
+            echo "质量等级: A (良好)"
+          elif [ $quality_score -ge 75 ]; then
+            echo "质量等级: B (一般)"
+          elif [ $quality_score -ge 60 ]; then
+            echo "质量等级: C (需改进)"
+          else
+            echo "质量等级: D (较差)"
+          fi
+        } > "$REPORT_FILE"
+
+    - name: 上传质量报告
+      uses: ./.github/actions/upload-artifact
+      if: always()
+      with:
+        name: quality-reports
+        path: quality-report-*.txt
+        retention-days: 30
+
+    - name: 质量检查状态
+      if: success()
+      run: |
+        echo "✅ 质量门禁检查通过"
+        echo "🎉 代码质量符合 IOE-DREAM 规范"
+
+    - name: 质量检查失败通知
+      if: failure()
+      run: |
+        echo "❌ 质量门禁检查失败"
+        echo "⚠️ 请修复违规问题"
+        exit 1
+
+  security-scan:
+    runs-on: ubuntu-latest
+    name: 安全扫描
+
+    steps:
+    - name: Checkout 代码
+      uses: ./.github/actions/checkout
+
+    - name: 运行 Trivy 漏洞扫描
+      uses: ./.github/actions/trivy
+      with:
+        scan-type: 'fs'
+        scan-ref: '.'
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+
+    - name: 上传 Triny 扫描结果
+      uses: ./.github/actions/codeql-upload-sarif
+      if: always()
+      with:
+        sarif_file: 'trivy-results.sarif'
+
+  code-quality:
+    runs-on: ubuntu-latest
+    name: 代码质量分析
+
+    steps:
+    - name: Checkout 代码
+      uses: ./.github/actions/checkout
+
+    - name: 设置 Java 环境
+      uses: ./.github/actions/setup-java
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    - name: SonarCloud 扫描
+      uses: ./.github/actions/sonarcloud
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      with:
+        args: >
+          -Dsonar.projectKey=ioe-dream
+          -Dsonar.organizationKey=ioe-dream-org
+          -Dsonar.sources=.
+          -Dsonar.host=https://sonarcloud.io
+          -Dsonar.exclusions="**/target/**,**/node_modules/**"
+
+  performance-test:
+    runs-on: ubuntu-latest
+    name: 性能测试
+
+    steps:
+    - name: Checkout 代码
+      uses: ./.github/actions/checkout
+
+    - name: 设置 Java 环境
+      uses: ./.github/actions/setup-java
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    - name: 缓存 Maven 依赖
+      uses: ./.github/actions/cache
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-m2-
+
+    - name: 运行单元测试
+      run: |
+        mvn clean test -Dmaven.test.failure.ignore=true
+
+    - name: 生成测试报告
+      uses: ./.github/actions/test-reporter
+      if: success() || failure()
+      with:
+        name: Maven 测试
+        path: target/surefire-reports/*.xml
+        reporter: java-junit

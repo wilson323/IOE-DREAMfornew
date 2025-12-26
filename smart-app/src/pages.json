@@ -383,6 +383,114 @@
 				"enablePullDownRefresh" : false,
 				"navigationBarBackgroundColor": "#fff"
 			}
+		},
+		{
+			"path" : "pages/consume/statistics",
+			"style" :
+			{
+				"navigationBarTitleText" : "消费统计",
+				"enablePullDownRefresh" : true,
+				"navigationBarBackgroundColor": "#fff"
+			}
+		},
+		{
+			"path" : "pages/attendance/index",
+			"style" :
+			{
+				"navigationBarTitleText" : "考勤打卡",
+				"navigationStyle" : "custom",
+				"enablePullDownRefresh" : true
+			}
+		},
+		{
+			"path" : "pages/attendance/index-enhanced",
+			"style" :
+			{
+				"navigationBarTitleText" : "智能打卡",
+				"navigationStyle" : "custom",
+				"enablePullDownRefresh" : true
+			}
+		},
+		{
+			"path" : "pages/attendance/records",
+			"style" :
+			{
+				"navigationBarTitleText" : "打卡记录",
+				"enablePullDownRefresh" : true,
+				"navigationBarBackgroundColor" : "#fff"
+			}
+		},
+		{
+			"path" : "pages/attendance/leave",
+			"style" :
+			{
+				"navigationBarTitleText" : "请假申请",
+				"enablePullDownRefresh" : false,
+				"navigationBarBackgroundColor" : "#fff"
+			}
+		},
+		{
+			"path" : "pages/attendance/overtime",
+			"style" :
+			{
+				"navigationBarTitleText" : "加班申请",
+				"enablePullDownRefresh" : false,
+				"navigationBarBackgroundColor" : "#fff"
+			}
+		},
+		{
+			"path" : "pages/attendance/repair",
+			"style" :
+			{
+				"navigationBarTitleText" : "补卡申请",
+				"enablePullDownRefresh" : false,
+				"navigationBarBackgroundColor" : "#fff"
+			}
+		},
+		{
+			"path" : "pages/attendance/trip",
+			"style" :
+			{
+				"navigationBarTitleText" : "出差申请",
+				"enablePullDownRefresh" : false,
+				"navigationBarBackgroundColor" : "#fff"
+			}
+		},
+		{
+			"path" : "pages/attendance/statistics",
+			"style" :
+			{
+				"navigationBarTitleText" : "考勤统计",
+				"enablePullDownRefresh" : true,
+				"navigationBarBackgroundColor" : "#fff"
+			}
+		},
+		{
+			"path" : "pages/attendance/summary",
+			"style" :
+			{
+				"navigationBarTitleText" : "年度汇总",
+				"enablePullDownRefresh" : true,
+				"navigationBarBackgroundColor" : "#fff"
+			}
+		},
+		{
+			"path" : "pages/attendance/schedule",
+			"style" :
+			{
+				"navigationBarTitleText" : "排班管理",
+				"enablePullDownRefresh" : true,
+				"navigationBarBackgroundColor" : "#fff"
+			}
+		},
+		{
+			"path" : "pages/attendance/notification",
+			"style" :
+			{
+				"navigationBarTitleText" : "消息通知",
+				"enablePullDownRefresh" : true,
+				"navigationBarBackgroundColor" : "#fff"
+			}
 		}
 	],
 	"globalStyle": {

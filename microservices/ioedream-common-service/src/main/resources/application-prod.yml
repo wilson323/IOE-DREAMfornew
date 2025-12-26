@@ -1,4 +1,4 @@
-# ============================================================
+﻿# ============================================================
 # IOE-DREAM Common Service 生产环境配置
 #
 # @Author:    IOE-DREAM Team
@@ -16,8 +16,9 @@ server:
     mime-types: application/json,application/xml,text/html,text/xml,text/plain
   tomcat:
     uri-encoding: UTF-8
-    max-threads: 200
-    min-spare-threads: 20
+    threads:
+      max: 200
+      min-spare: 20
 
 # ==================== Spring配置 ====================
 spring:
@@ -66,22 +67,23 @@ spring:
             multi-statement-allow: true
 
   # ==================== Redis配置 ====================
-  redis:
-    host: ${REDIS_HOST:prod-redis-cluster}
-    port: ${REDIS_PORT:6379}
-    password: ${REDIS_PASSWORD:ENC(AES256:encrypted_redis_password)}
-    database: 0
-    timeout: 3000
-    lettuce:
-      pool:
-        max-active: 20
-        max-idle: 10
-        min-idle: 5
-        max-wait: 1000
-      cluster:
-        refresh:
-          adaptive: true
-          period: 30
+  data:
+    redis:
+      host: ${REDIS_HOST:prod-redis-cluster}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:ENC(AES256:encrypted_redis_password)}
+      database: 0
+      timeout: 3000
+      lettuce:
+        pool:
+          max-active: 20
+          max-idle: 10
+          min-idle: 5
+          max-wait: 1000
+        cluster:
+          refresh:
+            adaptive: true
+            period: 30
 
   # ==================== 缓存配置 ====================
   cache:
@@ -129,7 +131,6 @@ mybatis-plus:
     default-statement-timeout: 25
     default-fetch-size: 100
     safe-row-bounds-enabled: false
-    map-nested-result-maps-for-single-result: false
     local-cache-scope: session
     jdbc-type-for-null: other
     lazy-load-trigger-methods: ""
@@ -139,13 +140,11 @@ mybatis-plus:
       id-type: assign_id
       table-underline: true
       capital-mode: false
-      key-generator: com.baomidou.mybatisplus.core.incrementer.DefaultIdentifierGenerator
       logic-delete-field: deletedFlag
       logic-delete-value: 1
       logic-not-delete-value: 0
       insert-strategy: not_null
       update-strategy: not_null
-      select-strategy: not_empty
 
 # ==================== 监控配置 ====================
 management:
@@ -160,27 +159,27 @@ management:
       probes:
         enabled: true
     metrics:
-      enabled: true
+      access: read-only
     prometheus:
-      enabled: true
+      access: read-only
     env:
       show-values: when-authorized
-  metrics:
-    export:
-      prometheus:
+  prometheus:
+    metrics:
+      export:
         enabled: true
         step: 30s
     distribution:
       percentiles-histogram:
-        http.server.requests: true
+        "[http.server.requests]": true
       percentiles:
-        http.server.requests: 0.5,0.9,0.95,0.99
+        "[http.server.requests]": 0.5,0.9,0.95,0.99
     tags:
       application: ${spring.application.name}
       environment: ${spring.profiles.active}
 
-# ==================== Zipkin分布式追踪配置 ====================
-  sleuth:
+# ==================== 分布式追踪配置 ====================
+  tracing:
     zipkin:
       base-url: ${ZIPKIN_BASE_URL:http://zipkin-prod:9411}
       enabled: ${ZIPKIN_ENABLED:true}
@@ -218,8 +217,8 @@ resilience4j:
 # ==================== 日志配置 ====================
 logging:
   level:
-    net.lab1024.sa.common: INFO
-    org.springframework.security: INFO
+    "net.lab1024.sa.common": INFO
+    "org.springframework.security": INFO
   pattern:
     console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr([%X{traceId:-},%X{spanId:-}]){blue} %clr(%5p){magenta} %clr(${PID:- }){yellow} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}"
     file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{traceId:-},%X{spanId:-}] %5p ${PID:- } --- [%t] %-40.40logger{39} : %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}"
@@ -318,3 +317,4 @@ common:
     l1-cache-ttl: ${L1_CACHE_TTL:300}
     l2-cache-enabled: true
     cache-null-values: false
+

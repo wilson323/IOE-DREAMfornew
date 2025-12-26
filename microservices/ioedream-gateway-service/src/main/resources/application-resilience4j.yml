@@ -1,4 +1,4 @@
-# ============================================================
+﻿# ============================================================
 # IOE-DREAM 网关服务 Resilience4j 配置
 #
 # @Author:    IOE-DREAM Team
@@ -373,9 +373,9 @@ management:
 # ============================================================
 logging:
   level:
-    org.springframework.cloud.gateway: DEBUG
-    io.github.resilience4j: DEBUG
-    org.springframework.retry: DEBUG
+    "org.springframework.cloud.gateway": DEBUG
+    "io.github.resilience4j": DEBUG
+    "org.springframework.retry": DEBUG
   pattern:
     level: "%5p [${spring.application.name},%X{traceId},%X{spanId}]"
 
@@ -411,3 +411,4 @@ gateway:
       connect: 5000ms
       read: 30000ms
       write: 30000ms
+

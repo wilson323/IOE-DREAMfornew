@@ -1,6 +1,7 @@
 package net.lab1024.sa.video.edge.ai.inference;
 
 import java.util.Map;
+import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -17,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class LocalInferenceEngine {
 
     private final Object hardwareSpec;
-    private final Map<String, byte[]> models = new ConcurrentHashMap<>();
+    private final Map<String, byte[]> models = new HashMap<>();
     private volatile boolean initialized = false;
 
     public LocalInferenceEngine(Object hardwareSpec) {
@@ -91,4 +92,5 @@ public class LocalInferenceEngine {
         initialized = false;
     }
 }
+
 

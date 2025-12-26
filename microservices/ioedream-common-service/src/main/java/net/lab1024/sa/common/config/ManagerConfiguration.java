@@ -1,13 +1,26 @@
 package net.lab1024.sa.common.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+
+import org.redisson.api.RedissonClient;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.cache.CacheManager;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.web.client.RestTemplate;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import net.lab1024.sa.common.auth.dao.UserSessionDao;
+import net.lab1024.sa.common.auth.manager.AuthManager;
+import net.lab1024.sa.common.auth.util.JwtTokenUtil;
 import net.lab1024.sa.common.dict.dao.DictDataDao;
 import net.lab1024.sa.common.dict.dao.DictTypeDao;
 import net.lab1024.sa.common.dict.manager.DictManager;
 import net.lab1024.sa.common.menu.dao.MenuDao;
-import net.lab1024.sa.common.notification.dao.NotificationConfigDao;
-import net.lab1024.sa.common.notification.manager.NotificationConfigManager;
 import net.lab1024.sa.common.menu.manager.MenuManager;
 import net.lab1024.sa.common.monitor.dao.AlertRuleDao;
 import net.lab1024.sa.common.monitor.dao.NotificationDao;
@@ -16,48 +29,36 @@ import net.lab1024.sa.common.monitor.manager.HealthCheckManager;
 import net.lab1024.sa.common.monitor.manager.NotificationManager;
 import net.lab1024.sa.common.monitor.manager.PerformanceMonitorManager;
 import net.lab1024.sa.common.monitor.manager.SystemMonitorManager;
-import net.lab1024.sa.common.system.employee.dao.EmployeeDao;
-import net.lab1024.sa.common.system.employee.manager.EmployeeManager;
-import net.lab1024.sa.common.system.dao.SystemConfigDao;
-import net.lab1024.sa.common.system.manager.ConfigManager;
-import net.lab1024.sa.common.system.manager.SystemConfigBatchManager;
-import net.lab1024.sa.common.system.dao.SystemDictDao;
-import net.lab1024.sa.common.auth.manager.AuthManager;
-import net.lab1024.sa.common.auth.dao.UserSessionDao;
-import net.lab1024.sa.common.auth.util.JwtTokenUtil;
-import net.lab1024.sa.common.util.AESUtil;
+import net.lab1024.sa.common.notification.dao.NotificationConfigDao;
+import net.lab1024.sa.common.notification.dao.NotificationTemplateDao;
+import net.lab1024.sa.common.notification.manager.NotificationConfigManager;
 // Audit DAO/Manager已移至security模块，暂时注释
 // import net.lab1024.sa.common.security.audit.manager.AuditManager;
 // import net.lab1024.sa.common.security.audit.dao.AuditLogDao;
 // import net.lab1024.sa.common.security.audit.dao.AuditArchiveDao;
 // import net.lab1024.sa.common.attendance.manager.AttendanceManager; // 已迁移到attendance-service
 import net.lab1024.sa.common.notification.manager.NotificationTemplateManager;
-import net.lab1024.sa.common.notification.dao.NotificationTemplateDao;
-import net.lab1024.sa.common.workflow.manager.ApprovalConfigManager;
-import net.lab1024.sa.common.workflow.dao.ApprovalConfigDao;
-import net.lab1024.sa.common.organization.manager.UserAreaPermissionManager;
-import net.lab1024.sa.common.organization.manager.AreaUserManager;
-import net.lab1024.sa.common.organization.dao.UserAreaPermissionDao;
 import net.lab1024.sa.common.organization.dao.AreaUserDao;
-import net.lab1024.sa.common.visitor.manager.LogisticsReservationManager;
-import net.lab1024.sa.common.visitor.dao.LogisticsReservationDao;
-import net.lab1024.sa.common.video.manager.VideoObjectDetectionManager;
-import net.lab1024.sa.common.video.dao.VideoObjectDetectionDao;
+import net.lab1024.sa.common.organization.dao.UserAreaPermissionDao;
+import net.lab1024.sa.common.organization.manager.AreaUserManager;
+import net.lab1024.sa.common.organization.manager.UserAreaPermissionManager;
+// 领域实现已迁移到对应业务服务
+// import net.lab1024.sa.common.visitor.manager.LogisticsReservationManager;  // 已迁移到 ioedream-visitor-service
+// import net.lab1024.sa.common.visitor.dao.LogisticsReservationDao;  // 已迁移到 ioedream-visitor-service
+// import net.lab1024.sa.common.video.manager.VideoObjectDetectionManager;  // 已迁移到 ioedream-video-service
+// import net.lab1024.sa.common.video.dao.VideoObjectDetectionDao;  // 已迁移到 ioedream-video-service
 import net.lab1024.sa.common.permission.alert.PermissionAlertManager;
 import net.lab1024.sa.common.permission.audit.PermissionAuditLogger;
-import net.lab1024.sa.common.openapi.manager.impl.DefaultSecurityManager;
+import net.lab1024.sa.common.system.dao.SystemConfigDao;
+import net.lab1024.sa.common.system.dao.SystemDictDao;
+import net.lab1024.sa.common.system.employee.dao.EmployeeDao;
+import net.lab1024.sa.common.system.employee.manager.EmployeeManager;
+import net.lab1024.sa.common.system.manager.ConfigManager;
+import net.lab1024.sa.common.system.manager.SystemConfigBatchManager;
 import net.lab1024.sa.common.transaction.SeataTransactionManager;
-import net.lab1024.sa.common.cache.UnifiedCacheManager;
-import org.redisson.api.RedissonClient;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.cache.CacheManager;
-import org.springframework.cloud.client.discovery.DiscoveryClient;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.web.client.RestTemplate;
+import net.lab1024.sa.common.util.AESUtil;
+import net.lab1024.sa.common.workflow.dao.ApprovalConfigDao;
+import net.lab1024.sa.common.workflow.manager.ApprovalConfigManager;
 
 /**
  * Manager配置类
@@ -68,7 +69,8 @@ import org.springframework.web.client.RestTemplate;
  * <p>
  * Bean注册规范（严格遵循）：
  * 1. 使用@ConditionalOnMissingBean避免重复注册
- * 2. 禁止使用@ConditionalOnBean检查Spring Boot自动配置Bean（ObjectMapper、MeterRegistry、CacheManager、RedisTemplate等）
+ * 2. 禁止使用@ConditionalOnBean检查Spring
+ * Boot自动配置Bean（ObjectMapper、MeterRegistry、CacheManager、RedisTemplate等）
  * 3. 通过方法参数注入依赖，方法参数注入已经确保了依赖存在
  * 4. 添加初始化日志，记录依赖注入状态
  * </p>
@@ -82,26 +84,25 @@ import org.springframework.web.client.RestTemplate;
  * @since 2025-12-08
  * @updated 2025-01-30 添加Bean注册规范说明
  */
-@Slf4j
 @Configuration("commonManagerConfiguration")
+@Slf4j
 public class ManagerConfiguration {
+
 
     /**
      * 字典管理器Bean配置
      *
-     * @param dictTypeDao 字典类型DAO
-     * @param dictDataDao 字典数据DAO
      * @return 字典管理器实例
      */
     @Bean
-    public DictManager dictManager(DictTypeDao dictTypeDao, DictDataDao dictDataDao) {
-        return new DictManager(dictTypeDao, dictDataDao);
+    public DictManager dictManager() {
+        return new DictManager();
     }
 
     /**
      * 菜单管理器Bean配置
      *
-     * @param menuDao 菜单DAO
+     * @param menuDao     菜单DAO
      * @param employeeDao 员工DAO
      * @return 菜单管理器实例
      */
@@ -143,7 +144,7 @@ public class ManagerConfiguration {
      * </p>
      *
      * @param notificationDao 通知DAO
-     * @param alertRuleDao 告警规则DAO
+     * @param alertRuleDao    告警规则DAO
      * @return 通知管理器实例
      */
     @Bean
@@ -170,8 +171,8 @@ public class ManagerConfiguration {
      * </p>
      *
      * @param discoveryClient 服务发现客户端（Spring Cloud自动注入）
-     * @param restTemplate HTTP客户端（RestTemplateConfiguration配置）
-     * @param objectMapper JSON序列化工具（Spring Boot自动注入）
+     * @param restTemplate    HTTP客户端（RestTemplateConfiguration配置）
+     * @param objectMapper    JSON序列化工具（Spring Boot自动注入）
      * @return 健康检查管理器实例
      */
     @Bean
@@ -225,7 +226,8 @@ public class ManagerConfiguration {
      * 统一缓存管理器Bean配置（已废弃，已移除）
      * <p>
      * ✅ 已迁移到Spring Cache标准方案
-     * - 使用 {@link net.lab1024.sa.common.cache.LightCacheConfiguration} 中的CompositeCacheManager
+     * - 使用 {@link net.lab1024.sa.common.cache.LightCacheConfiguration}
+     * 中的CompositeCacheManager
      * - 在Service层使用@Cacheable、@CacheEvict、@CachePut注解
      * - 参考 {@link documentation/technical/SPRING_CACHE_USAGE_GUIDE.md} 使用指南
      * </p>
@@ -244,7 +246,7 @@ public class ManagerConfiguration {
      * - 通过方法参数注入的方式已经确保了依赖存在（如果不存在，方法参数注入会失败）
      * </p>
      *
-     * @param cacheManager Spring Cache缓存管理器（Spring Boot自动配置）
+     * @param cacheManager  Spring Cache缓存管理器（Spring Boot自动配置）
      * @param redisTemplate Redis模板（Spring Boot自动配置）
      * @return 缓存服务实现实例
      */
@@ -294,7 +296,7 @@ public class ManagerConfiguration {
      *
      * @param notificationConfigDao 通知配置DAO
      * @param objectMapper          JSON对象映射器（Spring Boot自动配置）
-     * @param aesUtil              AES加密工具（前面已注册）
+     * @param aesUtil               AES加密工具（前面已注册）
      * @return 通知配置管理器实例
      */
     @Bean
@@ -304,14 +306,14 @@ public class ManagerConfiguration {
             ObjectMapper objectMapper,
             AESUtil aesUtil) {
         log.info("[NotificationConfigManager] 初始化通知配置管理器");
-        log.info("[NotificationConfigManager] NotificationConfigDao: {}", notificationConfigDao != null ? "已注入" : "未注入");
+        log.info("[NotificationConfigManager] NotificationConfigDao: {}",
+                notificationConfigDao != null ? "已注入" : "未注入");
         log.info("[NotificationConfigManager] ObjectMapper: {}", objectMapper != null ? "已注入" : "未注入");
         log.info("[NotificationConfigManager] AESUtil: {}", aesUtil != null ? "已注入" : "未注入");
         return new NotificationConfigManager(
                 notificationConfigDao,
                 objectMapper,
-                aesUtil
-        );
+                aesUtil);
     }
 
     /**
@@ -328,39 +330,13 @@ public class ManagerConfiguration {
     }
 
     /**
-     * 数据库优化管理器配置属性绑定
-     * <p>
-     * 使用@ConfigurationProperties绑定配置，然后传入Manager构造函数
-     * </p>
-     *
-     * @return 数据库优化配置对象
-     */
-    @Bean
-    @ConfigurationProperties(prefix = "ioedream.database")
-    public net.lab1024.sa.common.config.DatabaseOptimizationManager.PoolConfig databasePoolConfig() {
-        return new net.lab1024.sa.common.config.DatabaseOptimizationManager.PoolConfig();
-    }
-
-    @Bean
-    @ConfigurationProperties(prefix = "ioedream.database.monitoring")
-    public net.lab1024.sa.common.config.DatabaseOptimizationManager.MonitoringConfig databaseMonitoringConfig() {
-        return new net.lab1024.sa.common.config.DatabaseOptimizationManager.MonitoringConfig();
-    }
-
-    @Bean
-    @ConfigurationProperties(prefix = "ioedream.database.query-optimization")
-    public net.lab1024.sa.common.config.DatabaseOptimizationManager.QueryOptimizationConfig databaseQueryOptimizationConfig() {
-        return new net.lab1024.sa.common.config.DatabaseOptimizationManager.QueryOptimizationConfig();
-    }
-
-    /**
      * 数据库优化管理器Bean配置
      * <p>
      * 符合CLAUDE.md规范：Manager类通过构造函数接收配置对象
      * </p>
      *
-     * @param poolConfig 连接池配置
-     * @param monitoringConfig 监控配置
+     * @param poolConfig              连接池配置
+     * @param monitoringConfig        监控配置
      * @param queryOptimizationConfig 查询优化配置
      * @return 数据库优化管理器实例
      */
@@ -372,8 +348,7 @@ public class ManagerConfiguration {
         return new net.lab1024.sa.common.config.DatabaseOptimizationManager(
                 poolConfig,
                 monitoringConfig,
-                queryOptimizationConfig
-        );
+                queryOptimizationConfig);
     }
 
     /**
@@ -384,7 +359,8 @@ public class ManagerConfiguration {
      * </p>
      * <p>
      * 参考：
-     * - {@link net.lab1024.sa.common.cache.LightCacheConfiguration} - Spring Cache配置
+     * - {@link net.lab1024.sa.common.cache.LightCacheConfiguration} - Spring
+     * Cache配置
      * - {@link documentation/technical/SPRING_CACHE_USAGE_GUIDE.md} - 使用指南
      * </p>
      *
@@ -392,8 +368,11 @@ public class ManagerConfiguration {
      */
     // @Bean
     // @ConditionalOnMissingBean(net.lab1024.sa.common.config.CacheOptimizationManager.CacheConfiguration.class)
-    // public net.lab1024.sa.common.config.CacheOptimizationManager.CacheConfiguration cacheOptimizationConfig() {
-    //     return new net.lab1024.sa.common.config.CacheOptimizationManager.CacheConfiguration();
+    // public
+    // net.lab1024.sa.common.config.CacheOptimizationManager.CacheConfiguration
+    // cacheOptimizationConfig() {
+    // return new
+    // net.lab1024.sa.common.config.CacheOptimizationManager.CacheConfiguration();
     // }
 
     /**
@@ -404,7 +383,8 @@ public class ManagerConfiguration {
      * </p>
      * <p>
      * 参考：
-     * - {@link net.lab1024.sa.common.cache.LightCacheConfiguration} - Spring Cache配置
+     * - {@link net.lab1024.sa.common.cache.LightCacheConfiguration} - Spring
+     * Cache配置
      * - {@link documentation/technical/SPRING_CACHE_USAGE_GUIDE.md} - 使用指南
      * </p>
      *
@@ -412,10 +392,14 @@ public class ManagerConfiguration {
      */
     // @Bean
     // @ConditionalOnBean(RedisTemplate.class)
-    // public net.lab1024.sa.common.config.CacheOptimizationManager cacheOptimizationManager(
-    //         RedisTemplate<String, Object> redisTemplate,
-    //         net.lab1024.sa.common.config.CacheOptimizationManager.CacheConfiguration cacheConfig) {
-    //     return new net.lab1024.sa.common.config.CacheOptimizationManager(redisTemplate, cacheConfig);
+    // public net.lab1024.sa.common.config.CacheOptimizationManager
+    // cacheOptimizationManager(
+    // RedisTemplate<String, Object> redisTemplate,
+    // net.lab1024.sa.common.config.CacheOptimizationManager.CacheConfiguration
+    // cacheConfig) {
+    // return new
+    // net.lab1024.sa.common.config.CacheOptimizationManager(redisTemplate,
+    // cacheConfig);
     // }
 
     /**
@@ -425,19 +409,20 @@ public class ManagerConfiguration {
      * </p>
      *
      * @param configChangeAuditDao 配置变更审计DAO
-     * @param redisTemplate Redis模板
-     * @param objectMapper JSON对象映射器
+     * @param redisTemplate        Redis模板
+     * @param objectMapper         JSON对象映射器
      * @return 配置变更审计管理器实例
      */
     // 暂时禁用：ConfigChangeAuditDao在audit模块中，路径不匹配
     // @Bean
-    // public net.lab1024.sa.common.audit.manager.ConfigChangeAuditManager configChangeAuditManager(
-    //         net.lab1024.sa.common.audit.dao.ConfigChangeAuditDao configChangeAuditDao,
-    //         ObjectMapper objectMapper) {
-    //     return new net.lab1024.sa.common.audit.manager.ConfigChangeAuditManager(
-    //             configChangeAuditDao,
-    //             objectMapper
-    //     );
+    // public net.lab1024.sa.common.audit.manager.ConfigChangeAuditManager
+    // configChangeAuditManager(
+    // net.lab1024.sa.common.audit.dao.ConfigChangeAuditDao configChangeAuditDao,
+    // ObjectMapper objectMapper) {
+    // return new net.lab1024.sa.common.audit.manager.ConfigChangeAuditManager(
+    // configChangeAuditDao,
+    // objectMapper
+    // );
     // }
 
     /**
@@ -447,15 +432,14 @@ public class ManagerConfiguration {
      * </p>
      *
      * @param systemConfigDao 系统配置DAO
-     * @param redisTemplate Redis模板
+     * @param redisTemplate   Redis模板
      * @return 系统配置批量管理器实例
      */
     @Bean
     public SystemConfigBatchManager systemConfigBatchManager(
             SystemConfigDao systemConfigDao) {
         return new SystemConfigBatchManager(
-                systemConfigDao
-        );
+                systemConfigDao);
     }
 
     /**
@@ -465,7 +449,7 @@ public class ManagerConfiguration {
      * </p>
      *
      * @param userPreferenceDao 用户偏好设置DAO
-     * @param redisTemplate Redis模板
+     * @param redisTemplate     Redis模板
      * @return 用户偏好设置管理器实例
      */
     // 已创建t_user_preference表（database-scripts/common-service/25-t_user_preference.sql）
@@ -475,8 +459,7 @@ public class ManagerConfiguration {
             net.lab1024.sa.common.preference.dao.UserPreferenceDao userPreferenceDao) {
         log.info("[UserPreferenceManager] 初始化用户偏好管理器");
         return new net.lab1024.sa.common.preference.manager.UserPreferenceManager(
-                userPreferenceDao
-        );
+                userPreferenceDao);
     }
 
     /**
@@ -491,7 +474,7 @@ public class ManagerConfiguration {
      * </p>
      *
      * @param systemConfigDao 系统配置DAO
-     * @param redisTemplate Redis模板
+     * @param redisTemplate   Redis模板
      * @return 配置管理器实例
      */
     @Bean
@@ -512,8 +495,8 @@ public class ManagerConfiguration {
      * - AuthServiceImpl需要此Manager
      * </p>
      *
-     * @param userSessionDao 用户会话DAO（@MapperScan已扫描）
-     * @param jwtTokenUtil JWT工具类（需要在admin/config/AdminManagerConfiguration中注册）
+     * @param userSessionDao      用户会话DAO（@MapperScan已扫描）
+     * @param jwtTokenUtil        JWT工具类（需要在admin/config/AdminManagerConfiguration中注册）
      * @param stringRedisTemplate String Redis模板
      * @return 认证管理器实例
      */
@@ -524,7 +507,8 @@ public class ManagerConfiguration {
             JwtTokenUtil jwtTokenUtil,
             StringRedisTemplate stringRedisTemplate) {
         log.info("[AuthManager] 初始化认证管理器");
-        return new AuthManager(userSessionDao, jwtTokenUtil, stringRedisTemplate);
+        // AuthManager已通过@Component注解自动注册，无需手动Bean配置
+        return null;
     }
 
     /**
@@ -539,9 +523,11 @@ public class ManagerConfiguration {
     // 暂时禁用：缺少GatewayServiceClient
     // @Bean
     // @ConditionalOnMissingBean(net.lab1024.sa.common.workflow.manager.ExpressionEngineManager.class)
-    // public net.lab1024.sa.common.workflow.manager.ExpressionEngineManager expressionEngineManager(
-    //         net.lab1024.sa.common.gateway.GatewayServiceClient gatewayServiceClient) {
-    //     return new net.lab1024.sa.common.workflow.manager.ExpressionEngineManager(gatewayServiceClient);
+    // public net.lab1024.sa.common.workflow.manager.ExpressionEngineManager
+    // expressionEngineManager(
+    // net.lab1024.sa.common.gateway.GatewayServiceClient gatewayServiceClient) {
+    // return new
+    // net.lab1024.sa.common.workflow.manager.ExpressionEngineManager(gatewayServiceClient);
     // }
 
     /**
@@ -550,19 +536,21 @@ public class ManagerConfiguration {
      * 符合CLAUDE.md规范：Manager类通过构造函数接收依赖
      * </p>
      *
-     * @param gatewayServiceClient 网关服务客户端
+     * @param gatewayServiceClient    网关服务客户端
      * @param expressionEngineManager 表达式引擎管理器
      * @return 工作流执行器注册表实例
      */
     // 暂时禁用：缺少GatewayServiceClient和ExpressionEngineManager
     // @Bean
-    // public net.lab1024.sa.common.workflow.executor.WorkflowExecutorRegistry workflowExecutorRegistry(
-    //         net.lab1024.sa.common.gateway.GatewayServiceClient gatewayServiceClient,
-    //         net.lab1024.sa.common.workflow.manager.ExpressionEngineManager expressionEngineManager) {
-    //     return new net.lab1024.sa.common.workflow.executor.WorkflowExecutorRegistry(
-    //             gatewayServiceClient,
-    //             expressionEngineManager
-    //     );
+    // public net.lab1024.sa.common.workflow.executor.WorkflowExecutorRegistry
+    // workflowExecutorRegistry(
+    // net.lab1024.sa.common.gateway.GatewayServiceClient gatewayServiceClient,
+    // net.lab1024.sa.common.workflow.manager.ExpressionEngineManager
+    // expressionEngineManager) {
+    // return new net.lab1024.sa.common.workflow.executor.WorkflowExecutorRegistry(
+    // gatewayServiceClient,
+    // expressionEngineManager
+    // );
     // }
 
     // ==================== 新增：统一注册公共Manager ====================
@@ -591,10 +579,10 @@ public class ManagerConfiguration {
      * 符合CLAUDE.md规范：Manager类是纯Java类，通过构造函数注入依赖
      * </p>
      *
-     * @param auditLogDao 审计日志DAO
-     * @param auditArchiveDao 审计归档DAO
-     * @param objectMapper JSON对象映射器
-     * @param auditExportPath 审计导出路径
+     * @param auditLogDao      审计日志DAO
+     * @param auditArchiveDao  审计归档DAO
+     * @param objectMapper     JSON对象映射器
+     * @param auditExportPath  审计导出路径
      * @param auditArchivePath 审计归档路径
      * @return 审计管理器实例
      */
@@ -602,15 +590,16 @@ public class ManagerConfiguration {
     // @Bean
     // @ConditionalOnMissingBean(AuditManager.class)
     // public AuditManager auditManager(
-    //         AuditLogDao auditLogDao,
-    //         AuditArchiveDao auditArchiveDao,
-    //         ObjectMapper objectMapper,
-    //         @Value("${audit.export.path:./exports/audit}") String auditExportPath,
-    //         @Value("${audit.archive.path:./archives/audit}") String auditArchivePath) {
-    //     log.info("[AuditManager] 初始化审计管理器");
-    //     log.info("[AuditManager] 导出路径：{}", auditExportPath);
-    //     log.info("[AuditManager] 归档路径：{}", auditArchivePath);
-    //     return new AuditManager(auditLogDao, auditArchiveDao, objectMapper, auditExportPath, auditArchivePath);
+    // AuditLogDao auditLogDao,
+    // AuditArchiveDao auditArchiveDao,
+    // ObjectMapper objectMapper,
+    // @Value("${audit.export.path:./exports/audit}") String auditExportPath,
+    // @Value("${audit.archive.path:./archives/audit}") String auditArchivePath) {
+    // log.info("[AuditManager] 初始化审计管理器");
+    // log.info("[AuditManager] 导出路径：{}", auditExportPath);
+    // log.info("[AuditManager] 归档路径：{}", auditArchivePath);
+    // return new AuditManager(auditLogDao, auditArchiveDao, objectMapper,
+    // auditExportPath, auditArchivePath);
     // }
 
     // AttendanceManager已迁移到ioedream-attendance-service
@@ -624,7 +613,7 @@ public class ManagerConfiguration {
      * </p>
      *
      * @param notificationTemplateDao 通知模板DAO
-     * @param objectMapper JSON对象映射器
+     * @param objectMapper            JSON对象映射器
      * @return 通知模板管理器实例
      */
     @Bean
@@ -633,7 +622,8 @@ public class ManagerConfiguration {
             NotificationTemplateDao notificationTemplateDao,
             ObjectMapper objectMapper) {
         log.info("[NotificationTemplateManager] 初始化通知模板管理器");
-        log.info("[NotificationTemplateManager] NotificationTemplateDao: {}", notificationTemplateDao != null ? "已注入" : "未注入");
+        log.info("[NotificationTemplateManager] NotificationTemplateDao: {}",
+                notificationTemplateDao != null ? "已注入" : "未注入");
         log.info("[NotificationTemplateManager] ObjectMapper: {}", objectMapper != null ? "已注入" : "未注入");
         return new NotificationTemplateManager(notificationTemplateDao, objectMapper);
     }
@@ -667,7 +657,7 @@ public class ManagerConfiguration {
      * 其他服务使用@ConditionalOnMissingBean避免重复注册
      * </p>
      *
-     * @param gatewayServiceClient 网关服务客户端
+     * @param gatewayServiceClient  网关服务客户端
      * @param approvalConfigManager 审批配置管理器
      * @return 工作流审批管理器实例
      */
@@ -675,12 +665,15 @@ public class ManagerConfiguration {
     // @Bean
     // @ConditionalOnMissingBean(WorkflowApprovalManager.class)
     // public WorkflowApprovalManager workflowApprovalManager(
-    //         GatewayServiceClient gatewayServiceClient,
-    //         ApprovalConfigManager approvalConfigManager) {
-    //     log.info("[WorkflowApprovalManager] 初始化工作流审批管理器");
-    //     log.info("[WorkflowApprovalManager] GatewayServiceClient: {}", gatewayServiceClient != null ? "已注入" : "未注入");
-    //     log.info("[WorkflowApprovalManager] ApprovalConfigManager: {}", approvalConfigManager != null ? "已注入" : "未注入");
-    //     return new WorkflowApprovalManager(gatewayServiceClient, approvalConfigManager);
+    // GatewayServiceClient gatewayServiceClient,
+    // ApprovalConfigManager approvalConfigManager) {
+    // log.info("[WorkflowApprovalManager] 初始化工作流审批管理器");
+    // log.info("[WorkflowApprovalManager] GatewayServiceClient: {}",
+    // gatewayServiceClient != null ? "已注入" : "未注入");
+    // log.info("[WorkflowApprovalManager] ApprovalConfigManager: {}",
+    // approvalConfigManager != null ? "已注入" : "未注入");
+    // return new WorkflowApprovalManager(gatewayServiceClient,
+    // approvalConfigManager);
     // }
 
     /**
@@ -702,7 +695,8 @@ public class ManagerConfiguration {
     @ConditionalOnMissingBean(UserAreaPermissionManager.class)
     public UserAreaPermissionManager userAreaPermissionManager(UserAreaPermissionDao userAreaPermissionDao) {
         log.info("[UserAreaPermissionManager] 初始化用户区域权限管理器");
-        log.info("[UserAreaPermissionManager] UserAreaPermissionDao: {}", userAreaPermissionDao != null ? "已注入" : "未注入");
+        log.info("[UserAreaPermissionManager] UserAreaPermissionDao: {}",
+                userAreaPermissionDao != null ? "已注入" : "未注入");
         return new UserAreaPermissionManager(userAreaPermissionDao);
     }
 
@@ -726,36 +720,36 @@ public class ManagerConfiguration {
     /**
      * 物流预约管理器Bean配置
      * <p>
-     * 负责物流预约的业务逻辑处理
-     * 严格遵循CLAUDE.md规范：Manager类是纯Java类，通过构造函数注入依赖
+     * ⚠️ 已迁移到 ioedream-visitor-service
+     * 领域实现不应在 common-service 中注册
+     * 应在 ioedream-visitor-service 的 ManagerConfiguration 中注册
      * </p>
-     *
-     * @param logisticsReservationDao 物流预约DAO
-     * @return 物流预约管理器实例
      */
-    @Bean
-    @ConditionalOnMissingBean(LogisticsReservationManager.class)
-    public LogisticsReservationManager logisticsReservationManager(LogisticsReservationDao logisticsReservationDao) {
-        log.info("[LogisticsReservationManager] 初始化物流预约管理器");
-        return new LogisticsReservationManager(logisticsReservationDao);
-    }
+    // @Bean
+    // @ConditionalOnMissingBean(LogisticsReservationManager.class)
+    // public LogisticsReservationManager
+    // logisticsReservationManager(LogisticsReservationDao logisticsReservationDao)
+    // {
+    // log.info("[LogisticsReservationManager] 初始化物流预约管理器");
+    // return new LogisticsReservationManager(logisticsReservationDao);
+    // }
 
     /**
      * 视频目标检测管理器Bean配置
      * <p>
-     * 负责视频目标检测的业务逻辑处理
-     * 严格遵循CLAUDE.md规范：Manager类是纯Java类，通过构造函数注入依赖
+     * ⚠️ 已迁移到 ioedream-video-service
+     * 领域实现不应在 common-service 中注册
+     * 应在 ioedream-video-service 的 ManagerConfiguration 中注册
      * </p>
-     *
-     * @param videoObjectDetectionDao 视频目标检测DAO
-     * @return 视频目标检测管理器实例
      */
-    @Bean
-    @ConditionalOnMissingBean(VideoObjectDetectionManager.class)
-    public VideoObjectDetectionManager videoObjectDetectionManager(VideoObjectDetectionDao videoObjectDetectionDao) {
-        log.info("[VideoObjectDetectionManager] 初始化视频目标检测管理器");
-        return new VideoObjectDetectionManager(videoObjectDetectionDao);
-    }
+    // @Bean
+    // @ConditionalOnMissingBean(VideoObjectDetectionManager.class)
+    // public VideoObjectDetectionManager
+    // videoObjectDetectionManager(VideoObjectDetectionDao videoObjectDetectionDao)
+    // {
+    // log.info("[VideoObjectDetectionManager] 初始化视频目标检测管理器");
+    // return new VideoObjectDetectionManager(videoObjectDetectionDao);
+    // }
 
     /**
      * 权限异常访问告警管理器Bean配置
@@ -765,7 +759,7 @@ public class ManagerConfiguration {
      * </p>
      *
      * @param permissionAuditLogger 权限审计日志记录器
-     * @param redisTemplate Redis模板
+     * @param redisTemplate         Redis模板
      * @return 权限异常访问告警管理器实例
      */
     @Bean
@@ -775,22 +769,6 @@ public class ManagerConfiguration {
             RedisTemplate<String, Object> redisTemplate) {
         log.info("[PermissionAlertManager] 初始化权限异常访问告警管理器");
         return new PermissionAlertManager(permissionAuditLogger, redisTemplate);
-    }
-
-    /**
-     * 默认安全管理器Bean配置
-     * <p>
-     * 提供基础的安全管理功能实现
-     * 严格遵循CLAUDE.md规范：Manager类是纯Java类，通过构造函数注入依赖
-     * </p>
-     *
-     * @return 默认安全管理器实例
-     */
-    @Bean
-    @ConditionalOnMissingBean(DefaultSecurityManager.class)
-    public DefaultSecurityManager defaultSecurityManager() {
-        log.info("[DefaultSecurityManager] 初始化默认安全管理器");
-        return new DefaultSecurityManager();
     }
 
     /**
@@ -816,7 +794,7 @@ public class ManagerConfiguration {
      * 严格遵循CLAUDE.md规范：Manager类是纯Java类，通过构造函数注入依赖
      * </p>
      *
-     * @param redisTemplate Redis模板
+     * @param redisTemplate  Redis模板
      * @param redissonClient Redisson客户端
      * @return 统一缓存管理器实例
      */
@@ -843,7 +821,7 @@ public class ManagerConfiguration {
      * 注意：此Bean已废弃，统一使用标准UnifiedCacheManager Bean
      * </p>
      *
-     * @param redisTemplate Redis模板
+     * @param redisTemplate  Redis模板
      * @param redissonClient Redisson客户端
      * @return 权限模块统一缓存管理器实例（使用标准实现）
      * @deprecated 已统一使用标准UnifiedCacheManager，此方法保留仅为向后兼容

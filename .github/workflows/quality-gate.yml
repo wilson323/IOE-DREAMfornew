@@ -1,0 +1,244 @@
+﻿name: 质量门禁检查
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+    inputs:
+      gate_mode:
+        description: '质量门禁模式'
+        required: false
+        default: 'check'
+        type: choice
+        options:
+          - check
+          - enforce
+
+env:
+  MAVEN_OPTS: -Xmx2048m
+
+jobs:
+  quality-gate:
+    name: 质量门禁检查
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout代码
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # 获取完整历史记录，便于检查
+
+      - name: 设置Java环境
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: 设置Node.js环境（用于前端检查）
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: 安装必要工具
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq  # JSON处理工具
+
+          # 安装ripgrep（用于快速代码搜索）
+          if ! command -v rg &> /dev/null; then
+            sudo apt-get install -y ripgrep
+          fi
+
+      - name: 授予脚本执行权限
+        run: |
+          chmod +x scripts/*.sh
+          chmod +x scripts/*.ps1
+
+      - name: 运行质量门禁检查
+        id: quality-gate
+        run: |
+          GATE_MODE="${{ github.event.inputs.gate_mode || 'check' }}"
+          echo "运行质量门禁检查，模式: $GATE_MODE"
+
+          # 运行质量门禁脚本
+          bash scripts/quality-gate-check.sh "$GATE_MODE"
+        continue-on-error: true  # 允许失败，以便收集结果
+
+      - name: 分析质量检查结果
+        id: analyze-results
+        run: |
+          # 查找最新的质量报告
+          LATEST_REPORT=$(ls -t quality-gate-report-*.json | head -1)
+
+          if [ -n "$LATEST_REPORT" ] && [ -f "$LATEST_REPORT" ]; then
+            echo "分析质量报告: $LATEST_REPORT"
+
+            # 提取关键指标
+            TOTAL_CHECKS=$(jq -r '.summary.totalChecks // 0' "$LATEST_REPORT")
+            PASSED_CHECKS=$(jq -r '.summary.passedChecks // 0' "$LATEST_REPORT")
+            FAILED_CHECKS=$(jq -r '.summary.failedChecks // 0' "$LATEST_REPORT")
+            WARNING_CHECKS=$(jq -r '.summary.warningChecks // 0' "$LATEST_REPORT")
+            OVERALL_STATUS=$(jq -r '.summary.overallStatus // "UNKNOWN"' "$LATEST_REPORT")
+            OVERALL_MESSAGE=$(jq -r '.summary.overallMessage // ""' "$LATEST_REPORT")
+
+            # 设置输出变量
+            echo "total_checks=$TOTAL_CHECKS" >> $GITHUB_OUTPUT
+            echo "passed_checks=$PASSED_CHECKS" >> $GITHUB_OUTPUT
+            echo "failed_checks=$FAILED_CHECKS" >> $GITHUB_OUTPUT
+            echo "warning_checks=$WARNING_CHECKS" >> $GITHUB_OUTPUT
+            echo "overall_status=$OVERALL_STATUS" >> $GITHUB_OUTPUT
+            echo "overall_message=$OVERALL_MESSAGE" >> $GITHUB_OUTPUT
+            echo "report_file=$LATEST_REPORT" >> $GITHUB_OUTPUT
+
+            # 输出到摘要
+            echo "## 质量门禁检查结果 🚪" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "| 指标 | 数值 |" >> $GITHUB_STEP_SUMMARY
+            echo "|------|------|" >> $GITHUB_STEP_SUMMARY
+            echo "| 📊 总检查项 | $TOTAL_CHECKS |" >> $GITHUB_STEP_SUMMARY
+            echo "| ✅ 通过检查 | $PASSED_CHECKS |" >> $GITHUB_STEP_SUMMARY
+            echo "| ❌ 失败检查 | $FAILED_CHECKS |" >> $GITHUB_STEP_SUMMARY
+            echo "| ⚠️ 警告检查 | $WARNING_CHECKS |" >> $GITHUB_STEP_SUMMARY
+            echo "| 🎯 整体状态 | $OVERALL_STATUS |" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**结果**: $OVERALL_MESSAGE" >> $GITHUB_STEP_SUMMARY
+
+            # 详细结果
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### 详细检查结果" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+
+            # 架构合规性
+            ARCH_STATUS=$(jq -r '.results.architecture.status // "SKIP"' "$LATEST_REPORT")
+            echo "1. **架构合规性**: $ARCH_STATUS" >> $GITHUB_STEP_SUMMARY
+            if [ "$ARCH_STATUS" = "FAIL" ]; then
+              ARCH_VIOLATIONS=$(jq -r '.results.architecture.violations // 0' "$LATEST_REPORT")
+              echo "   - 违规数量: $ARCH_VIOLATIONS" >> $GITHUB_STEP_SUMMARY
+            fi
+            echo "" >> $GITHUB_STEP_SUMMARY
+
+            # 技术栈版本
+            TECH_STATUS=$(jq -r '.results.techStack.status // "SKIP"' "$LATEST_REPORT")
+            echo "2. **技术栈版本**: $TECH_STATUS" >> $GITHUB_STEP_SUMMARY
+            if [ "$TECH_STATUS" != "SKIP" ]; then
+              TECH_SCORE=$(jq -r '.results.techStack.score // 0' "$LATEST_REPORT")
+              echo "   - 合规评分: $TECH_SCORE/100" >> $GITHUB_STEP_SUMMARY
+            fi
+            echo "" >> $GITHUB_STEP_SUMMARY
+
+            # 代码质量
+            CODE_STATUS=$(jq -r '.results.codeQuality.status // "SKIP"' "$LATEST_REPORT")
+            echo "3. **代码质量**: $CODE_STATUS" >> $GITHUB_STEP_SUMMARY
+            if [ "$CODE_STATUS" = "FAIL" ]; then
+              CODE_VIOLATIONS=$(jq -r '.results.codeQuality.violations // 0' "$LATEST_REPORT")
+              echo "   - 问题数量: $CODE_VIOLATIONS" >> $GITHUB_STEP_SUMMARY
+            fi
+            echo "" >> $GITHUB_STEP_SUMMARY
+
+            # 依赖结构
+            DEP_STATUS=$(jq -r '.results.dependency.status // "SKIP"' "$LATEST_REPORT")
+            echo "4. **依赖结构**: $DEP_STATUS" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+
+            # 编译检查
+            COMPILE_STATUS=$(jq -r '.results.compilation.status // "SKIP"' "$LATEST_REPORT")
+            echo "5. **编译检查**: $COMPILE_STATUS" >> $GITHUB_STEP_SUMMARY
+
+          else
+            echo "❌ 未找到质量报告文件"
+            echo "overall_status=FAIL" >> $GITHUB_OUTPUT
+            echo "overall_message=质量检查失败，未生成报告" >> $GITHUB_OUTPUT
+          fi
+
+      - name: 上传质量报告
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: quality-gate-report
+          path: |
+            quality-gate-report-*.json
+            architecture-compliance-report.md
+            tech-stack-validation-report-*.md
+          retention-days: 30
+
+      - name: 评论PR（如果是PR）
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { overall_status, overall_message, passed_checks, failed_checks, warning_checks, total_checks } = process.env;
+
+            let commentBody = `## 🚪 质量门禁检查结果
+
+            **整体状态**: ${overall_status}
+            **结果**: ${overall_message}
+
+            **检查统计**:
+            - 📊 总检查项: ${total_checks}
+            - ✅ 通过检查: ${passed_checks}
+            - ❌ 失败检查: ${failed_checks}
+            - ⚠️ 警告检查: ${warning_checks}
+            `;
+
+            // 根据状态添加不同样式
+            if (overall_status === 'FAIL') {
+              commentBody = '❌ **质量门禁检查失败**\n\n' + commentBody + '\n\n⚠️ 请在合并前修复所有失败项。';
+            } else if (overall_status === 'PASS_WITH_WARNINGS') {
+              commentBody = '⚠️ **质量门禁检查通过但有警告**\n\n' + commentBody + '\n\n💡 建议修复警告项以提高代码质量。';
+            } else {
+              commentBody = '✅ **质量门禁检查完全通过**\n\n' + commentBody + '\n\n🎉 代码质量优秀，可以合并！';
+            }
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: commentBody
+            });
+
+      - name: 质量门禁决策
+        if: steps.analyze-results.outputs.overall_status == 'FAIL'
+        run: |
+          echo "❌ 质量门禁检查失败，阻止继续执行"
+          echo "失败原因: ${{ steps.analyze-results.outputs.overall_message }}"
+          echo "请修复质量问题后重新提交"
+          exit 1
+
+  build-test:
+    name: 构建和测试
+    runs-on: ubuntu-latest
+    needs: quality-gate
+    if: needs.quality-gate.result == 'success'
+
+    steps:
+      - name: Checkout代码
+        uses: actions/checkout@v4
+
+      - name: 设置Java环境
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: 运行编译
+        run: |
+          mvn clean compile -Dmaven.test.skip=true
+
+      - name: 运行测试
+        run: |
+          mvn test
+
+      - name: 上传测试报告
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-reports
+          path: |
+            **/target/surefire-reports/
+            **/target/failsafe-reports/
+          retention-days: 30

@@ -1,0 +1,22 @@
+依赖违规检查报告
+生成时间: 2025年12月23日 20:03:22
+
+检查业务服务依赖...
+
+检查 ioedream-access-service...
+  ✅ 符合规范: 依赖 8 个细粒度模块
+
+检查 ioedream-attendance-service...
+  ✅ 符合规范: 依赖 10 个细粒度模块
+
+检查 ioedream-consume-service...
+  ✅ 符合规范: 依赖 7 个细粒度模块
+
+检查 ioedream-video-service...
+  ✅ 符合规范: 依赖 9 个细粒度模块
+
+检查 ioedream-visitor-service...
+  ✅ 符合规范: 依赖 7 个细粒度模块
+
+
+检查完成

@@ -1,259 +1,70 @@
 package net.lab1024.sa.common.system.employee.domain.vo;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.io.Serializable;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 /**
- * 员工VO
- * <p>
- * 严格遵循CLAUDE.md规范:
- * - 使用@Data注解自动生成getter/setter
- * - 使用@JsonFormat格式化时间字段
- * - 完整的字段注释
- * </p>
+ * 员工视图对象
  *
  * @author IOE-DREAM Team
- * @version 1.0.0
- * @since 2025-12-02
+ * @since 2025-12-21
  */
 @Data
-public class EmployeeVO {
+@Schema(description = "员工视图对象")
+public class EmployeeVO implements Serializable {
 
-    /**
-     * 员工ID
-     */
+    private static final long serialVersionUID = 1L;
+
+    @Schema(description = "员工ID", example = "1001")
     private Long employeeId;
 
-    /**
-     * 关联用户ID
-     */
-    private Long userId;
-
-    /**
-     * 员工工号
-     */
-    private String employeeNo;
-
-    /**
-     * 员工姓名
-     */
+    @Schema(description = "员工姓名", example = "张三")
     private String employeeName;
 
-    /**
-     * 性别
-     */
-    private Integer gender;
+    @Schema(description = "员工工号", example = "EMP001")
+    private String employeeNo;
 
-    /**
-     * 性别描述
-     */
-    private String genderDesc;
+    @Schema(description = "登录账号", example = "zhangsan")
+    private String loginName;
 
-    /**
-     * 出生日期
-     */
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDate birthDate;
-
-    /**
-     * 身份证号
-     */
-    private String idCardNo;
-
-    /**
-     * 手机号
-     */
-    private String phone;
-
-    /**
-     * 邮箱
-     */
-    private String email;
-
-    /**
-     * 部门ID
-     */
+    @Schema(description = "部门ID", example = "1001")
     private Long departmentId;
 
-    /**
-     * 部门名称
-     */
+    @Schema(description = "部门名称", example = "技术部")
     private String departmentName;
 
-    /**
-     * 职位
-     */
+    @Schema(description = "职位", example = "软件工程师")
     private String position;
 
-    /**
-     * 职级
-     */
-    private String jobLevel;
+    @Schema(description = "手机号码", example = "13800138000")
+    private String phone;
 
-    /**
-     * 直属上级ID
-     */
-    private Long supervisorId;
+    @Schema(description = "邮箱", example = "zhangsan@example.com")
+    private String email;
 
-    /**
-     * 直属上级姓名
-     */
-    private String supervisorName;
-
-    /**
-     * 入职日期
-     */
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDate hireDate;
-
-    /**
-     * 转正日期
-     */
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDate regularDate;
-
-    /**
-     * 离职日期
-     */
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDate resignDate;
-
-    /**
-     * 员工状态
-     */
+    @Schema(description = "状态", example = "1")
     private Integer status;
 
-    /**
-     * 状态描述
-     */
+    @Schema(description = "状态描述", example = "启用")
     private String statusDesc;
 
-    /**
-     * 员工类型
-     */
-    private Integer employeeType;
-
-    /**
-     * 员工类型描述
-     */
-    private String employeeTypeDesc;
-
-    /**
-     * 工作地点
-     */
-    private String workLocation;
-
-    /**
-     * 工作电话
-     */
-    private String workPhone;
-
-    /**
-     * 紧急联系人
-     */
-    private String emergencyContact;
-
-    /**
-     * 紧急联系电话
-     */
-    private String emergencyPhone;
-
-    /**
-     * 家庭住址
-     */
-    private String homeAddress;
-
-    /**
-     * 学历
-     */
-    private Integer education;
-
-    /**
-     * 毕业院校
-     */
-    private String graduateSchool;
-
-    /**
-     * 专业
-     */
-    private String major;
-
-    /**
-     * 工作经验（年）
-     */
-    private Integer workExperience;
-
-    /**
-     * 工龄（年）- 计算字段
-     */
-    private Integer workYears;
-
-    /**
-     * 技能标签
-     */
-    private String skills;
-
-    /**
-     * 合同类型
-     */
-    private Integer contractType;
-
-    /**
-     * 合同开始日期
-     */
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDate contractStartDate;
-
-    /**
-     * 合同结束日期
-     */
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDate contractEndDate;
-
-    /**
-     * 社保账号
-     */
-    private String socialSecurityNo;
-
-    /**
-     * 公积金账号
-     */
-    private String housingFundNo;
-
-    /**
-     * 银行卡号
-     */
-    private String bankCardNo;
-
-    /**
-     * 开户银行
-     */
-    private String bankName;
-
-    /**
-     * 头像URL
-     */
-    private String avatar;
-
-    /**
-     * 备注
-     */
+    @Schema(description = "备注", example = "新员工")
     private String remark;
 
-    /**
-     * 创建时间
-     */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime createTime;
+    @Schema(description = "性别", example = "1")
+    private Integer gender;
 
-    /**
-     * 更新时间
-     */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime updateTime;
+    @Schema(description = "性别描述", example = "男")
+    private String genderDesc;
+
+    @Schema(description = "员工类型", example = "1")
+    private Integer employeeType;
+
+    @Schema(description = "员工类型描述", example = "正式")
+    private String employeeTypeDesc;
+
+    @Schema(description = "工龄", example = "5")
+    private Integer workYears;
 }
-

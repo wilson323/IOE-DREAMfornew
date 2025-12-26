@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.lab1024.sa.access.dao.DeviceFirmwareDao">
+
+    <!-- 更新下载次数 -->
+    <update id="incrementDownloadCount">
+        UPDATE t_device_firmware
+        SET download_count = download_count + 1
+        WHERE firmware_id = #{firmwareId}
+    </update>
+
+    <!-- 更新升级次数 -->
+    <update id="incrementUpgradeCount">
+        UPDATE t_device_firmware
+        SET upgrade_count = upgrade_count + 1
+        WHERE firmware_id = #{firmwareId}
+    </update>
+
+    <!-- 查询可用固件列表 -->
+    <select id="selectAvailableFirmware" resultType="net.lab1024.sa.access.domain.entity.DeviceFirmwareEntity">
+        SELECT *
+        FROM t_device_firmware
+        WHERE device_type = #{deviceType}
+          AND firmware_status = 2
+          AND is_enabled = 1
+          AND deleted = 0
+        <if test="deviceModel != null and deviceModel != ''">
+            AND device_model = #{deviceModel}
+        </if>
+        ORDER BY firmware_version DESC
+    </select>
+
+</mapper>

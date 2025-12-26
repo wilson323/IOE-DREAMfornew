@@ -40,6 +40,12 @@ public class VideoRecordEntity extends BaseEntity {
     private Long deviceId;
 
     /**
+     * 通道ID
+     */
+    @TableField("channel_id")
+    private Long channelId;
+
+    /**
      * 设备编码
      */
     @TableField("device_code")
@@ -182,6 +188,12 @@ public class VideoRecordEntity extends BaseEntity {
      */
     @TableField("access_permission")
     private Integer accessPermission;
+
+    /**
+     * 是否重要标记：0-普通 1-重要
+     */
+    @TableField("important")
+    private Integer important;
 
     /**
      * 关联事件ID（如报警事件）

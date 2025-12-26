@@ -1,13 +1,14 @@
 package net.lab1024.sa.oa.workflow.config.wrapper;
 
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.Map;
+
 import org.flowable.cmmn.api.CmmnRuntimeService;
 import org.flowable.cmmn.api.runtime.CaseInstance;
 import org.flowable.cmmn.api.runtime.CaseInstanceBuilder;
 import org.flowable.cmmn.api.runtime.CaseInstanceQuery;
 import org.flowable.cmmn.api.runtime.PlanItemInstanceQuery;
-
-import java.util.Map;
 
 /**
  * CMMN运行时服务包装器
@@ -21,6 +22,7 @@ import java.util.Map;
  */
 @Slf4j
 public class FlowableCmmnRuntimeService {
+
 
     private final CmmnRuntimeService cmmnRuntimeService;
 
@@ -40,29 +42,28 @@ public class FlowableCmmnRuntimeService {
     /**
      * 启动案例实例
      *
-     * @param caseDefinitionKey 案例定义键
+     * @param caseDefinitionKey
+     *                          案例定义键
      * @return 案例实例
      */
     public CaseInstance startCaseInstance(String caseDefinitionKey) {
         log.info("[CMMN服务] 启动案例实例: key={}", caseDefinitionKey);
-        return cmmnRuntimeService.createCaseInstanceBuilder()
-                .caseDefinitionKey(caseDefinitionKey)
-                .start();
+        return cmmnRuntimeService.createCaseInstanceBuilder().caseDefinitionKey(caseDefinitionKey).start();
     }
 
     /**
      * 启动案例实例（带变量）
      *
-     * @param caseDefinitionKey 案例定义键
-     * @param variables 变量
+     * @param caseDefinitionKey
+     *                          案例定义键
+     * @param variables
+     *                          变量
      * @return 案例实例
      */
     public CaseInstance startCaseInstance(String caseDefinitionKey, Map<String, Object> variables) {
         log.info("[CMMN服务] 启动案例实例: key={}, variables={}", caseDefinitionKey, variables.keySet());
-        return cmmnRuntimeService.createCaseInstanceBuilder()
-                .caseDefinitionKey(caseDefinitionKey)
-                .variables(variables)
-                .start();
+        return cmmnRuntimeService.createCaseInstanceBuilder().caseDefinitionKey(caseDefinitionKey)
+                .variables(variables).start();
     }
 
     /**
@@ -86,7 +87,8 @@ public class FlowableCmmnRuntimeService {
     /**
      * 终止案例实例
      *
-     * @param caseInstanceId 案例实例ID
+     * @param caseInstanceId
+     *                       案例实例ID
      */
     public void terminateCaseInstance(String caseInstanceId) {
         log.info("[CMMN服务] 终止案例实例: id={}", caseInstanceId);

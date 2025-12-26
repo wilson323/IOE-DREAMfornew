@@ -1,13 +1,15 @@
 package net.lab1024.sa.oa.workflow.function;
 
-import com.googlecode.aviator.runtime.function.AbstractFunction;
-import com.googlecode.aviator.runtime.type.AviatorString;
-import com.googlecode.aviator.runtime.type.AviatorObject;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
+
+
+import com.googlecode.aviator.runtime.function.AbstractFunction;
+import com.googlecode.aviator.runtime.type.AviatorObject;
+import com.googlecode.aviator.runtime.type.AviatorString;
 
 /**
  * 格式化日期函数
@@ -22,6 +24,7 @@ import java.util.Map;
  */
 @Slf4j
 public class FormatDateFunction extends AbstractFunction {
+
 
     @Override
     public String getName() {
@@ -68,7 +71,7 @@ public class FormatDateFunction extends AbstractFunction {
 
             if (dateObj instanceof String) {
                 LocalDateTime dateTime = LocalDateTime.parse(dateObj.toString(),
-                    DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+                        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
                 return dateTime.format(formatter);
             }
 
@@ -85,6 +88,3 @@ public class FormatDateFunction extends AbstractFunction {
         }
     }
 }
-
-
-

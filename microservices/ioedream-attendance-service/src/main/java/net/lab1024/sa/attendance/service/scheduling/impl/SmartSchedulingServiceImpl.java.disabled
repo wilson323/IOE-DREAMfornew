@@ -1,0 +1,131 @@
+package net.lab1024.sa.attendance.service.scheduling.impl;
+
+import lombok.extern.slf4j.Slf4j;
+import net.lab1024.sa.attendance.manager.scheduling.SmartSchedulingManager;
+import net.lab1024.sa.attendance.solver.model.AttendanceScheduleSolution;
+import net.lab1024.sa.attendance.service.scheduling.SmartSchedulingService;
+import org.springframework.stereotype.Service;
+
+import jakarta.annotation.Resource;
+import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * 智能排班服务实现
+ *
+ * @author IOE-DREAM
+ * @since 2025-12-26
+ */
+@Slf4j
+@Service
+public class SmartSchedulingServiceImpl implements SmartSchedulingService {
+
+    @Resource
+    private SmartSchedulingManager smartSchedulingManager;
+
+    @Override
+    public Long optimizeSchedule(String planName,
+                                 LocalDate startDate,
+                                 LocalDate endDate,
+                                 Integer solverDurationSeconds) {
+        log.info("[智能排班] 开始优化排班: planName={}, startDate={}, endDate={}, duration={}s",
+                planName, startDate, endDate, solverDurationSeconds);
+
+        // 调用Manager层执行排班优化
+        Long planId = smartSchedulingManager.optimizeSchedule(
+                planName,
+                startDate,
+                endDate,
+                solverDurationSeconds != null ? solverDurationSeconds : 300
+        );
+
+        log.info("[智能排班] 排班优化完成: planId={}", planId);
+        return planId;
+    }
+
+    @Override
+    public Map<String, Object> getScheduleDetail(Long planId) {
+        log.info("[智能排班] 查询方案详情: planId={}", planId);
+
+        AttendanceScheduleSolution solution = smartSchedulingManager.getScheduleSolution(planId);
+        if (solution == null) {
+            log.warn("[智能排班] 方案不存在: planId={}", planId);
+            return null;
+        }
+
+        Map<String, Object> detail = new HashMap<>();
+        detail.put("planId", solution.getPlanId());
+        detail.put("planName", solution.getPlanName());
+        detail.put("score", solution.getScore());
+        detail.put("hardScore", solution.getScore() != null ? solution.getScore().hardScore() : 0);
+        detail.put("softScore", solution.getScore() != null ? solution.getScore().softScore() : 0);
+        detail.put("employeeCount", solution.getEmployees().size());
+        detail.put("shiftCount", solution.getShifts().size());
+        detail.put("assignmentCount", solution.getShiftAssignments().size());
+        detail.put("utilizationRate", solution.calculateUtilizationRate());
+        detail.put("completionRate", solution.calculateAssignmentCompletionRate());
+        detail.put("difficultyLevel", solution.getDifficultyLevel());
+        detail.put("statistics", solution.getSolvingStatistics());
+
+        return detail;
+    }
+
+    @Override
+    public Map<String, Object> getAssignments(Long planId) {
+        log.info("[智能排班] 查询班次分配: planId={}", planId);
+
+        AttendanceScheduleSolution solution = smartSchedulingManager.getScheduleSolution(planId);
+        if (solution == null) {
+            log.warn("[智能排班] 方案不存在: planId={}", planId);
+            return null;
+        }
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("planId", planId);
+        result.put("assignments", solution.getShiftAssignments());
+        result.put("totalAssignments", solution.getShiftAssignments().size());
+
+        // 统计已分配数量
+        long assignedCount = solution.getShiftAssignments().stream()
+                .filter(sa -> sa.getEmployee() != null)
+                .count();
+        result.put("assignedCount", assignedCount);
+        result.put("unassignedCount", solution.getShiftAssignments().size() - assignedCount);
+
+        return result;
+    }
+
+    @Override
+    public String exportSchedule(Long planId, String format) {
+        log.info("[智能排班] 导出排班计划: planId={}, format={}", planId, format);
+
+        // 调用Manager层导出排班计划
+        return smartSchedulingManager.exportSchedule(planId, format);
+    }
+
+    @Override
+    public void confirmSchedule(Long planId) {
+        log.info("[智能排班] 确认排班方案: planId={}", planId);
+
+        smartSchedulingManager.confirmSchedule(planId);
+
+        log.info("[智能排班] 方案已确认: planId={}", planId);
+    }
+
+    @Override
+    public void cancelSchedule(Long planId) {
+        log.info("[智能排班] 取消排班方案: planId={}", planId);
+
+        smartSchedulingManager.cancelSchedule(planId);
+
+        log.info("[智能排班] 方案已取消: planId={}", planId);
+    }
+
+    @Override
+    public Map<String, Object> getSolvingProgress(Long planId) {
+        log.info("[智能排班] 查询求解进度: planId={}", planId);
+
+        return smartSchedulingManager.getSolvingProgress(planId);
+    }
+}

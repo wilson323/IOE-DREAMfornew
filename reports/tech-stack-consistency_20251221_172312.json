@@ -1,0 +1,46 @@
+﻿{
+    "OverallScore":  96,
+    "Timestamp":  "2025-12-21 17:23:10",
+    "ConnectionPool":  {
+                           "Status":  "consistent",
+                           "Violations":  [
+
+                                          ],
+                           "ServicesUsingDruid":  3,
+                           "ServicesUsingHikariCP":  0
+                       },
+    "OverallStatus":  "good",
+    "CheckType":  "TechStackConsistency",
+    "JakartaEE":  {
+                      "MigratedFiles":  338,
+                      "Status":  "complete",
+                      "Violations":  [
+
+                                     ],
+                      "TotalFiles":  1417
+                  },
+    "MyBatisPlus":  {
+                        "Status":  "incomplete",
+                        "Violations":  [
+                                           {
+                                               "Issue":  "使用@Repository注解",
+                                               "Recommendation":  "应使用@Mapper注解并继承BaseMapper",
+                                               "File":  "microservices\\ioedream-access-service\\src\\main\\java\\net\\lab1024\\sa\\access\\dao\\AccessDeviceDao.java"
+                                           },
+                                           {
+                                               "Issue":  "使用@Repository注解",
+                                               "Recommendation":  "应使用@Mapper注解并继承BaseMapper",
+                                               "File":  "microservices\\microservices-common-business\\src\\main\\java\\net\\lab1024\\sa\\common\\organization\\dao\\DeviceDao.java"
+                                           }
+                                       ],
+                        "TotalFiles":  79
+                    },
+    "DependencyInjection":  {
+                                "Status":  "consistent",
+                                "UsingResource":  91,
+                                "UsingAutowired":  0,
+                                "Violations":  [
+
+                                               ]
+                            }
+}

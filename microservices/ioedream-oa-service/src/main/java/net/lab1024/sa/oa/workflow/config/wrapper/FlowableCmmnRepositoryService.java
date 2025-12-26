@@ -1,14 +1,14 @@
 package net.lab1024.sa.oa.workflow.config.wrapper;
 
 import lombok.extern.slf4j.Slf4j;
+
+import java.io.InputStream;
+
 import org.flowable.cmmn.api.CmmnRepositoryService;
 import org.flowable.cmmn.api.repository.CaseDefinition;
 import org.flowable.cmmn.api.repository.CaseDefinitionQuery;
 import org.flowable.cmmn.api.repository.CmmnDeployment;
 import org.flowable.cmmn.api.repository.CmmnDeploymentBuilder;
-
-import java.io.InputStream;
-import java.util.List;
 
 /**
  * CMMN定义服务包装器
@@ -22,6 +22,7 @@ import java.util.List;
  */
 @Slf4j
 public class FlowableCmmnRepositoryService {
+
 
     private final CmmnRepositoryService cmmnRepositoryService;
 
@@ -42,7 +43,7 @@ public class FlowableCmmnRepositoryService {
      * 部署案例定义
      *
      * @param resourceName 资源名称
-     * @param inputStream 输入流
+     * @param inputStream  输入流
      * @return 部署结果
      */
     public CmmnDeployment deploy(String resourceName, InputStream inputStream) {
@@ -75,7 +76,7 @@ public class FlowableCmmnRepositoryService {
      * 删除部署
      *
      * @param deploymentId 部署ID
-     * @param cascade 是否级联删除
+     * @param cascade      是否级联删除
      */
     public void deleteDeployment(String deploymentId, boolean cascade) {
         log.info("[CMMN服务] 删除部署: deploymentId={}, cascade={}", deploymentId, cascade);

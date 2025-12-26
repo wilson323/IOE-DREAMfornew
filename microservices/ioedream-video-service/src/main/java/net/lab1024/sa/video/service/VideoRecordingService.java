@@ -1,6 +1,6 @@
 package net.lab1024.sa.video.service;
 
-import net.lab1024.sa.common.openapi.domain.response.PageResult;
+import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.video.domain.form.VideoRecordingQueryForm;
 import net.lab1024.sa.video.domain.form.VideoRecordingSearchForm;
@@ -192,7 +192,7 @@ public interface VideoRecordingService {
      * @param remark      备注
      * @return 操作结果
      */
-    ResponseDTO<Void> markRecordingAsImportant(Long recordingId, String remark);
+    ResponseDTO<Void> markRecordingAsimportant(Long recordingId, String remark);
 
     /**
      * 取消录像重要标记
@@ -200,7 +200,7 @@ public interface VideoRecordingService {
      * @param recordingId 录像ID
      * @return 操作结果
      */
-    ResponseDTO<Void> unmarkRecordingAsImportant(Long recordingId);
+    ResponseDTO<Void> unmarkRecordingAsimportant(Long recordingId);
 
     /**
      * 获取重要录像列表
@@ -209,7 +209,7 @@ public interface VideoRecordingService {
      * @param pageSize 页大小
      * @return 录像列表
      */
-    ResponseDTO<PageResult<VideoRecordingVO>> getImportantRecordings(
+    ResponseDTO<PageResult<VideoRecordingVO>> getimportantRecordings(
             Integer pageNum,
             Integer pageSize
     );

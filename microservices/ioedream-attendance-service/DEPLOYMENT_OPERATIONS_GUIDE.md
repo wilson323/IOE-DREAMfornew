@@ -17,18 +17,21 @@
 #### 硬件要求
 
 **最低配置**:
+
 - CPU: 2核心
 - 内存: 4GB
 - 磁盘: 50GB SSD
 - 网络: 100Mbps
 
 **推荐配置**:
+
 - CPU: 4核心
 - 内存: 8GB
 - 磁盘: 100GB SSD
 - 网络: 1Gbps
 
 **生产环境**:
+
 - CPU: 8核心
 - 内存: 16GB
 - 磁盘: 200GB SSD
@@ -89,6 +92,7 @@ vim .env
 ```
 
 **环境配置示例 (.env)**:
+
 ```bash
 # 应用配置
 SPRING_PROFILES_ACTIVE=prod
@@ -745,11 +749,11 @@ data:
         "type": "graph",
         "targets": [
           {
-            "expr": "hikaricp_connections_active{job=\"attendance-service\"}",
+            "expr": "druid_connection_pool_active_count{job=\"attendance-service\"}",
             "legendFormat": "活跃连接"
           },
           {
-            "expr": "hikaricp_connections_idle{job=\"attendance-service\"}",
+            "expr": "druid_connection_pool_idle_count{job=\"attendance-service\"}",
             "legendFormat": "空闲连接"
           }
         ]
@@ -1337,6 +1341,7 @@ spec:
 ### 周期性检查清单
 
 #### 每周检查
+
 - [ ] 分析性能趋势和容量规划
 - [ ] 检查日志存储空间使用情况
 - [ ] 验证备份完整性和恢复测试
@@ -1344,6 +1349,7 @@ spec:
 - [ ] 清理过期的日志和临时文件
 
 #### 每月检查
+
 - [ ] 全面性能压力测试
 - [ ] 安全漏洞扫描和风险评估
 - [ ] 容量规划评估和扩容建议
@@ -1353,6 +1359,7 @@ spec:
 ### 紧急响应清单
 
 #### 服务不可用
+
 1. **立即响应** (5分钟内)
    - [ ] 确认故障范围和影响
    - [ ] 通知相关人员和团队
@@ -1369,6 +1376,7 @@ spec:
    - [ ] 切换到备用服务
 
 #### 性能问题
+
 1. **性能下降** (10分钟内)
    - [ ] 确认性能问题类型
    - [ ] 查看资源使用情况
@@ -1385,15 +1393,15 @@ spec:
 
 ### 技术支持团队
 
-- **运维团队**: ops-team@ioedream.com
-- **开发团队**: dev-team@ioedream.com
-- **安全团队**: security-team@ioedream.com
+- **运维团队**: <ops-team@ioedream.com>
+- **开发团队**: <dev-team@ioedream.com>
+- **安全团队**: <security-team@ioedream.com>
 
 ### 应急联系方式
 
 - **24小时值班电话**: +86-xxx-xxxx-xxxx
 - **紧急响应群**: WeChat/Slack/DingTalk
-- **故障上报平台**: https://alert.ioedream.com
+- **故障上报平台**: <https://alert.ioedream.com>
 
 ### 相关文档
 
@@ -1407,4 +1415,4 @@ spec:
 **📅 文档更新时间**: 2025年12月16日
 **📝 文档维护**: IOE-DREAM 运维团队
 **🔄 版本**: v1.0.0
-**📞 联系方式**: ops-team@ioedream.com
+**📞 联系方式**: <ops-team@ioedream.com>

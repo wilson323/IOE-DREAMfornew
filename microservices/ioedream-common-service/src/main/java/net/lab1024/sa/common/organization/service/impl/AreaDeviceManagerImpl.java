@@ -1,8 +1,10 @@
 package net.lab1024.sa.common.organization.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
+
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
 // 使用microservices-common-business中的DAO和Entity定义
 import net.lab1024.sa.common.organization.dao.AreaDeviceDao;
 import net.lab1024.sa.common.organization.entity.AreaDeviceEntity;
@@ -29,6 +31,7 @@ import java.util.Objects;
  */
 @Slf4j
 public class AreaDeviceManagerImpl {
+
 
     private final AreaDeviceDao areaDeviceDao;
     private final AreaUnifiedService areaUnifiedService;

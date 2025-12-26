@@ -1,10 +1,13 @@
 package net.lab1024.sa.common.openapi.controller;
 
+import lombok.extern.slf4j.Slf4j;
+
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import jakarta.annotation.Resource;
+import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.openapi.domain.request.*;
 import net.lab1024.sa.common.openapi.domain.response.*;
@@ -25,15 +28,16 @@ import java.util.List;
  * @version 1.0.0
  * @since 2025-12-16
  */
-@Slf4j
 @RestController
 @RequestMapping("/open/api/v1/users")
-@RequiredArgsConstructor
 @Tag(name = "开放平台用户管理API", description = "提供用户认证、用户信息查询、权限管理等功能")
 @Validated
+@Slf4j
 public class UserOpenApiController {
 
-    private final UserOpenApiService userOpenApiService;
+
+    @Resource
+    private UserOpenApiService userOpenApiService;
 
     /**
      * 用户登录认证
@@ -262,3 +266,4 @@ public class UserOpenApiController {
         return request.getRemoteAddr();
     }
 }
+

@@ -1,20 +1,34 @@
 package net.lab1024.sa.common.monitor.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.Gauge;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
 import io.micrometer.observation.annotation.Observed;
 import jakarta.annotation.Resource;
-import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.common.exception.ParamException;
 import net.lab1024.sa.common.monitor.dao.AlertDao;
 import net.lab1024.sa.common.monitor.dao.AlertRuleDao;
+import net.lab1024.sa.common.monitor.domain.constant.SecurityAlertConstants;
 import net.lab1024.sa.common.monitor.domain.entity.AlertEntity;
 import net.lab1024.sa.common.monitor.domain.entity.AlertRuleEntity;
 import net.lab1024.sa.common.monitor.domain.vo.AlertRuleVO;
@@ -22,41 +36,23 @@ import net.lab1024.sa.common.monitor.domain.vo.ServiceMetricsVO;
 import net.lab1024.sa.common.monitor.domain.vo.SystemHealthVO;
 import net.lab1024.sa.common.monitor.manager.HealthCheckManager;
 import net.lab1024.sa.common.monitor.service.MonitorService;
-import net.lab1024.sa.common.exception.BusinessException;
-import net.lab1024.sa.common.exception.ParamException;
-
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import io.micrometer.core.instrument.Counter;
-import io.micrometer.core.instrument.Gauge;
-import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.core.instrument.Timer;
-import org.springframework.data.redis.core.RedisTemplate;
-
-import java.util.concurrent.TimeUnit;
 
 /**
- * 监控服务实现类
- * 整合自ioedream-monitor-service
+ * 监控服务实现类 整合自ioedream-monitor-service
  *
- * 符合CLAUDE.md规范：
- * - 使用@Service注解
- * - 使用@Resource依赖注入
- * - 使用@Transactional事务管理
+ * 符合CLAUDE.md规范： - 使用@Service注解 - 使用@Resource依赖注入 - 使用@Transactional事务管理
  *
- * 企业级特性：
- * - 实时监控指标采集
- * - 多维度性能分析
- * - 智能告警规则
- * - 告警聚合和降噪
+ * 企业级特性： - 实时监控指标采集 - 多维度性能分析 - 智能告警规则 - 告警聚合和降噪
  *
  * @author IOE-DREAM Team
  * @version 1.0.0
  * @since 2025-12-02（整合自monitor-service）
  */
 @Service
-@Slf4j
 @Transactional(rollbackFor = Exception.class)
+@Slf4j
 public class MonitorServiceImpl implements MonitorService {
+
 
     @Resource
     private AlertDao alertDao;
@@ -153,16 +149,15 @@ public class MonitorServiceImpl implements MonitorService {
             return ResponseDTO.ok(alertRule.getId());
 
         } catch (IllegalArgumentException | ParamException e) {
-            log.warn("[创建告警规则] 参数异常，ruleName: {}, error={}",
-                    ruleVO != null ? ruleVO.getRuleName() : "未知", e.getMessage());
+            log.warn("[创建告警规则] 参数异常，ruleName: {}, error={}", ruleVO != null ? ruleVO.getRuleName() : "未知",
+                    e.getMessage());
             return ResponseDTO.error("MONITOR_ALERT_RULE_PARAM_ERROR", "创建告警规则参数错误: " + e.getMessage());
         } catch (BusinessException e) {
-            log.warn("[创建告警规则] 业务异常，ruleName: {}, error={}",
-                    ruleVO != null ? ruleVO.getRuleName() : "未知", e.getMessage());
+            log.warn("[创建告警规则] 业务异常，ruleName: {}, error={}", ruleVO != null ? ruleVO.getRuleName() : "未知",
+                    e.getMessage());
             return ResponseDTO.error(e.getCode(), e.getMessage());
         } catch (Exception e) {
-            log.error("[创建告警规则] 系统异常，ruleName: {}",
-                    ruleVO != null ? ruleVO.getRuleName() : "未知", e);
+            log.error("[创建告警规则] 系统异常，ruleName: {}", ruleVO != null ? ruleVO.getRuleName() : "未知", e);
             return ResponseDTO.error("MONITOR_ALERT_RULE_CREATE_ERROR", "创建告警规则失败，请稍后重试");
         }
     }
@@ -170,7 +165,8 @@ public class MonitorServiceImpl implements MonitorService {
     /**
      * 验证告警规则参数
      *
-     * @param ruleVO 告警规则VO
+     * @param ruleVO
+     *               告警规则VO
      * @return 验证错误信息，null表示验证通过
      */
     private String validateAlertRule(AlertRuleVO ruleVO) {
@@ -198,7 +194,7 @@ public class MonitorServiceImpl implements MonitorService {
         if (ruleVO.getConditionOperator() == null || ruleVO.getConditionOperator().trim().isEmpty()) {
             return "告警条件操作符不能为空";
         }
-        String[] validOperators = {"GT", "GTE", "LT", "LTE", "EQ", "NEQ"};
+        String[] validOperators = { "GT", "GTE", "LT", "LTE", "EQ", "NEQ" };
         boolean isValidOperator = false;
         for (String operator : validOperators) {
             if (operator.equalsIgnoreCase(ruleVO.getConditionOperator())) {
@@ -222,7 +218,7 @@ public class MonitorServiceImpl implements MonitorService {
         if (ruleVO.getAlertLevel() == null || ruleVO.getAlertLevel().trim().isEmpty()) {
             return "告警级别不能为空";
         }
-        String[] validLevels = {"INFO", "WARNING", "ERROR", "CRITICAL"};
+        String[] validLevels = { "INFO", "WARNING", "ERROR", "CRITICAL" };
         boolean isValidLevel = false;
         for (String level : validLevels) {
             if (level.equalsIgnoreCase(ruleVO.getAlertLevel())) {
@@ -255,7 +251,8 @@ public class MonitorServiceImpl implements MonitorService {
     /**
      * 检查规则名称是否已存在
      *
-     * @param ruleName 规则名称
+     * @param ruleName
+     *                 规则名称
      * @return true表示已存在，false表示不存在
      */
     private boolean isRuleNameExists(String ruleName) {
@@ -276,69 +273,153 @@ public class MonitorServiceImpl implements MonitorService {
 
     /**
      * 将AlertRuleVO转换为AlertRuleEntity
+     * <p>
+     * 注意：AlertRuleEntity只有基本字段，详细配置存储在ruleConfig JSON中
+     * </p>
      *
      * @param ruleVO 告警规则VO
      * @return 告警规则实体
      */
     private AlertRuleEntity convertVOToEntity(AlertRuleVO ruleVO) {
         AlertRuleEntity entity = new AlertRuleEntity();
+
+        // 设置基本字段
+        entity.setId(ruleVO.getId());
         entity.setRuleName(ruleVO.getRuleName());
-        entity.setRuleDescription(ruleVO.getRuleDescription());
-        entity.setMetricName(ruleVO.getMetricName());
-        entity.setMonitorType(ruleVO.getMonitorType());
-        entity.setConditionOperator(ruleVO.getConditionOperator().toUpperCase());
-        entity.setThresholdValue(ruleVO.getThresholdValue());
-        entity.setAlertLevel(ruleVO.getAlertLevel().toUpperCase());
-        entity.setApplicableServices(ruleVO.getApplicableServices());
-        entity.setApplicableEnvironments(ruleVO.getApplicableEnvironments());
-        entity.setStatus(ruleVO.getStatus());
-        entity.setDurationMinutes(ruleVO.getDurationMinutes());
-        entity.setNotificationChannels(ruleVO.getNotificationChannels());
-        entity.setNotificationUsers(ruleVO.getNotificationUsers());
-        entity.setNotificationInterval(ruleVO.getNotificationInterval());
-        entity.setSuppressionDuration(ruleVO.getSuppressionDuration());
-        entity.setRuleExpression(ruleVO.getRuleExpression());
-        entity.setPriority(ruleVO.getPriority());
-        entity.setTags(ruleVO.getTags());
+        entity.setRuleType(ruleVO.getMonitorType()); // 使用monitorType作为ruleType
+
+        // 将String类型的alertLevel转换为Integer（使用安防告警标准：P1=1, P2=2, P3=3, P4=4）
+        Integer alertLevelInt = SecurityAlertConstants.AlertLevel.fromString(ruleVO.getAlertLevel());
+        entity.setAlertLevel(alertLevelInt);
+
+        // 将List<String>类型的notificationChannels转换为String（逗号分隔）
+        String notifyChannelsStr = ruleVO.getNotificationChannels() != null
+                ? String.join(",", ruleVO.getNotificationChannels())
+                : null;
+        entity.setNotifyChannels(notifyChannelsStr);
+
+        // 将String类型的status转换为Integer（ENABLED=1, DISABLED=0）
+        Integer statusInt = ruleVO.getStatus() != null && "ENABLED".equals(ruleVO.getStatus()) ? 1 : 0;
+        entity.setStatus(statusInt);
+
+        // 将详细配置序列化到ruleConfig JSON中
+        Map<String, Object> ruleConfig = new HashMap<>();
+        ruleConfig.put("ruleDescription", ruleVO.getRuleDescription());
+        ruleConfig.put("metricName", ruleVO.getMetricName());
+        ruleConfig.put("monitorType", ruleVO.getMonitorType());
+        ruleConfig.put("conditionOperator", ruleVO.getConditionOperator());
+        ruleConfig.put("thresholdValue", ruleVO.getThresholdValue());
+        ruleConfig.put("alertLevel", ruleVO.getAlertLevel());
+        ruleConfig.put("applicableServices", ruleVO.getApplicableServices());
+        ruleConfig.put("applicableEnvironments", ruleVO.getApplicableEnvironments());
+        ruleConfig.put("durationMinutes", ruleVO.getDurationMinutes());
+        ruleConfig.put("notificationUsers", ruleVO.getNotificationUsers());
+        ruleConfig.put("notificationInterval", ruleVO.getNotificationInterval());
+        ruleConfig.put("suppressionDuration", ruleVO.getSuppressionDuration());
+        ruleConfig.put("ruleExpression", ruleVO.getRuleExpression());
+        ruleConfig.put("priority", ruleVO.getPriority());
+        ruleConfig.put("tags", ruleVO.getTags());
+
+        try {
+            // 使用Jackson ObjectMapper序列化（需要注入ObjectMapper）
+            com.fasterxml.jackson.databind.ObjectMapper objectMapper = new com.fasterxml.jackson.databind.ObjectMapper();
+            entity.setRuleConfig(objectMapper.writeValueAsString(ruleConfig));
+        } catch (Exception e) {
+            log.error("[监控服务] 序列化ruleConfig失败", e);
+            entity.setRuleConfig("{}");
+        }
+
         return entity;
     }
 
     /**
+     * 将String类型的告警级别转换为Integer（使用安防告警标准）
+     * <p>
+     * 使用SecurityAlertConstants.AlertLevel统一管理告警级别转换
+     * P1紧急=1, P2重要=2, P3普通=3, P4提示=4
+     * </p>
+     *
+     * @param alertLevel 告警级别字符串
+     * @return 告警级别整数
+     * @deprecated 使用SecurityAlertConstants.AlertLevel.fromString()替代
+     */
+    @Deprecated
+    private Integer convertAlertLevelToInteger(String alertLevel) {
+        return SecurityAlertConstants.AlertLevel.fromString(alertLevel);
+    }
+
+    /**
      * 设置默认值
+     * <p>
+     * 注意：AlertRuleEntity的详细字段存储在ruleConfig JSON中，需要解析和更新
+     * </p>
      *
      * @param alertRule 告警规则实体
      */
     private void setDefaultValues(AlertRuleEntity alertRule) {
-        // 设置默认状态
-        if (alertRule.getStatus() == null || alertRule.getStatus().trim().isEmpty()) {
-            alertRule.setStatus("ENABLED");
+        // 设置默认状态（Integer类型）
+        if (alertRule.getStatus() == null) {
+            alertRule.setStatus(1); // 1-启用 0-禁用
         }
 
-        // 设置默认优先级（根据告警级别）
-        if (alertRule.getPriority() == null) {
-            alertRule.setPriority(calculateDefaultPriority(alertRule.getAlertLevel()));
-        }
+        // 从ruleConfig JSON中读取和设置默认值
+        try {
+            com.fasterxml.jackson.databind.ObjectMapper objectMapper = new com.fasterxml.jackson.databind.ObjectMapper();
+            Map<String, Object> ruleConfig = new HashMap<>();
 
-        // 设置默认持续时间（如果未提供）
-        if (alertRule.getDurationMinutes() == null) {
-            alertRule.setDurationMinutes(5); // 默认5分钟
-        }
+            if (alertRule.getRuleConfig() != null && !alertRule.getRuleConfig().trim().isEmpty()) {
+                ruleConfig = objectMapper.readValue(alertRule.getRuleConfig(), new TypeReference<Map<String, Object>>() {});
+            }
 
-        // 设置默认通知频率（如果未提供）
-        if (alertRule.getNotificationInterval() == null) {
-            alertRule.setNotificationInterval(60); // 默认60分钟
-        }
+            // 设置默认优先级（根据告警级别）
+            if (!ruleConfig.containsKey("priority") || ruleConfig.get("priority") == null) {
+                // 将Integer类型的alertLevel转换为String（使用安防告警标准）
+                String alertLevelStr = SecurityAlertConstants.AlertLevel.toString(alertRule.getAlertLevel());
+                ruleConfig.put("priority", calculateDefaultPriority(alertLevelStr));
+            }
 
-        // 设置默认抑制时间（如果未提供）
-        if (alertRule.getSuppressionDuration() == null) {
-            alertRule.setSuppressionDuration(30); // 默认30分钟
+            // 设置默认持续时间（如果未提供）
+            if (!ruleConfig.containsKey("durationMinutes") || ruleConfig.get("durationMinutes") == null) {
+                ruleConfig.put("durationMinutes", 5); // 默认5分钟
+            }
+
+            // 设置默认通知频率（如果未提供）
+            if (!ruleConfig.containsKey("notificationInterval") || ruleConfig.get("notificationInterval") == null) {
+                ruleConfig.put("notificationInterval", 60); // 默认60分钟
+            }
+
+            // 设置默认抑制时间（如果未提供）
+            if (!ruleConfig.containsKey("suppressionDuration") || ruleConfig.get("suppressionDuration") == null) {
+                ruleConfig.put("suppressionDuration", 30); // 默认30分钟
+            }
+
+            // 将更新后的配置写回ruleConfig
+            alertRule.setRuleConfig(objectMapper.writeValueAsString(ruleConfig));
+        } catch (Exception e) {
+            log.error("[监控服务] 设置告警规则默认值失败", e);
         }
+    }
+
+    /**
+     * 将Integer类型的告警级别转换为String（使用安防告警标准）
+     * <p>
+     * 使用SecurityAlertConstants.AlertLevel统一管理告警级别转换
+     * </p>
+     *
+     * @param alertLevel 告警级别（Integer）
+     * @return 告警级别字符串（P1/P2/P3/P4）
+     * @deprecated 使用SecurityAlertConstants.AlertLevel.toString()替代
+     */
+    @Deprecated
+    private String convertAlertLevelToString(Integer alertLevel) {
+        return SecurityAlertConstants.AlertLevel.toString(alertLevel);
     }
 
     /**
      * 根据告警级别计算默认优先级
      *
-     * @param alertLevel 告警级别
+     * @param alertLevel
+     *                   告警级别
      * @return 优先级（数字越小优先级越高）
      */
     private Integer calculateDefaultPriority(String alertLevel) {
@@ -359,18 +440,18 @@ public class MonitorServiceImpl implements MonitorService {
         }
     }
 
-    @Override
     @Observed(name = "monitor.alert.trigger", contextualName = "monitor-alert-trigger")
     public void triggerAlert(String alertType, String alertMessage, Integer severity) {
         try {
             log.warn("触发告警 - 类型: {}, 消息: {}, 严重程度: {}", alertType, alertMessage, severity);
 
             AlertEntity alert = new AlertEntity();
-            alert.setAlertType(alertType);
-            alert.setAlertDescription(alertMessage);
-            alert.setAlertLevel(getSeverityLevel(severity));
-            alert.setStatus("ACTIVE");
-            alert.setAlertTime(LocalDateTime.now());
+            // 将字符串告警类型转换为整数（1-设备告警, 2-AI告警, 3-系统告警）
+            alert.setAlertType(convertAlertTypeToInteger(alertType));
+            alert.setAlertContent(alertMessage); // 使用alertContent而不是alertDescription
+            // 将严重程度转换为安防告警级别（使用SecurityAlertConstants）
+            alert.setAlertLevel(SecurityAlertConstants.AlertLevel.fromString(getSeverityLevel(severity)));
+            alert.setStatus(SecurityAlertConstants.AlertStatus.PENDING); // 使用安防告警标准状态（待处理）
             alert.setCreateTime(LocalDateTime.now());
 
             alertDao.insert(alert);
@@ -382,26 +463,22 @@ public class MonitorServiceImpl implements MonitorService {
         }
     }
 
-    @Override
     @Observed(name = "monitor.alert.history", contextualName = "monitor-alert-history")
     public ResponseDTO<List<Map<String, Object>>> getAlertHistory(Integer limit) {
         try {
             List<AlertEntity> alerts = alertDao.selectRecentAlerts(limit);
             // 转换为Map
-            List<Map<String, Object>> alertList = alerts.stream()
-                    .map(alert -> {
-                        Map<String, Object> map = new HashMap<>();
-                        map.put("id", alert.getId() != null ? alert.getId() : 0L);
-                        map.put("alertType", alert.getAlertType() != null ? alert.getAlertType() : "");
-                        map.put("alertDescription",
-                                alert.getAlertDescription() != null ? alert.getAlertDescription() : "");
-                        map.put("alertLevel", alert.getAlertLevel() != null ? alert.getAlertLevel() : "");
-                        map.put("status", alert.getStatus() != null ? alert.getStatus() : "");
-                        map.put("alertTime", alert.getAlertTime() != null ? alert.getAlertTime().toString() : "");
-                        map.put("createTime", alert.getCreateTime() != null ? alert.getCreateTime().toString() : "");
-                        return map;
-                    })
-                    .collect(Collectors.toList());
+            List<Map<String, Object>> alertList = alerts.stream().map(alert -> {
+                Map<String, Object> map = new HashMap<>();
+                map.put("id", alert.getId() != null ? alert.getId() : 0L);
+                map.put("alertType", alert.getAlertType() != null ? alert.getAlertType() : "");
+                map.put("alertDescription", alert.getAlertContent() != null ? alert.getAlertContent() : "");
+                map.put("alertLevel", alert.getAlertLevel() != null ? alert.getAlertLevel() : 0);
+                map.put("status", alert.getStatus() != null ? alert.getStatus() : 0);
+                map.put("alertTime", alert.getCreateTime() != null ? alert.getCreateTime().toString() : "");
+                map.put("createTime", alert.getCreateTime() != null ? alert.getCreateTime().toString() : "");
+                return map;
+            }).collect(Collectors.toList());
             return ResponseDTO.ok(alertList);
 
         } catch (IllegalArgumentException | ParamException e) {
@@ -413,7 +490,6 @@ public class MonitorServiceImpl implements MonitorService {
         }
     }
 
-    @Override
     @Observed(name = "monitor.metric.record", contextualName = "monitor-metric-record")
     public void recordMetric(String metricName, Double value, Map<String, String> tags) {
         try {
@@ -426,6 +502,12 @@ public class MonitorServiceImpl implements MonitorService {
         }
     }
 
+    /**
+     * 将严重程度转换为通用告警级别字符串
+     *
+     * @param severity 严重程度（1-4）
+     * @return 通用告警级别字符串
+     */
     private String getSeverityLevel(Integer severity) {
         switch (severity) {
             case 1:
@@ -442,13 +524,39 @@ public class MonitorServiceImpl implements MonitorService {
     }
 
     /**
+     * 将字符串告警类型转换为整数
+     *
+     * @param alertType 告警类型字符串
+     * @return 告警类型整数（1-设备告警, 2-AI告警, 3-系统告警）
+     */
+    private Integer convertAlertTypeToInteger(String alertType) {
+        if (alertType == null) {
+            return SecurityAlertConstants.AlertType.SYSTEM; // 默认为系统告警
+        }
+        switch (alertType.toUpperCase()) {
+            case "DEVICE":
+            case "DEVICE_ALERT":
+                return SecurityAlertConstants.AlertType.DEVICE;
+            case "AI":
+            case "AI_ALERT":
+                return SecurityAlertConstants.AlertType.AI;
+            case "SYSTEM":
+            case "SYSTEM_ALERT":
+                return SecurityAlertConstants.AlertType.SYSTEM;
+            default:
+                return SecurityAlertConstants.AlertType.SYSTEM;
+        }
+    }
+
+    /**
      * 采集服务指标（使用Micrometer直接查询）
      * <p>
-     * 替代已废弃的 MetricsCollectorManager.collectServiceMetrics
-     * 使用 Micrometer 标准 API 直接查询指标
+     * 替代已废弃的 MetricsCollectorManager.collectServiceMetrics 使用 Micrometer 标准 API
+     * 直接查询指标
      * </p>
      *
-     * @param serviceName 服务名称
+     * @param serviceName
+     *                    服务名称
      * @return 服务指标VO
      */
     private ServiceMetricsVO collectServiceMetrics(String serviceName) {
@@ -482,8 +590,7 @@ public class MonitorServiceImpl implements MonitorService {
                 storeServiceMetrics(serviceName, metrics);
             }
 
-            log.debug("服务指标采集完成，服务：{}，QPS：{}，平均响应时间：{}ms，错误率：{}",
-                    serviceName, qps, avgResponseTime, errorRate);
+            log.debug("服务指标采集完成，服务：{}，QPS：{}，平均响应时间：{}ms，错误率：{}", serviceName, qps, avgResponseTime, errorRate);
 
         } catch (IllegalArgumentException | ParamException e) {
             log.warn("[采集服务指标] 参数异常，serviceName: {}, error={}", serviceName, e.getMessage());
@@ -511,9 +618,7 @@ public class MonitorServiceImpl implements MonitorService {
      */
     private Long calculateQPS(String serviceName) {
         try {
-            Counter counter = meterRegistry.find("http.server.requests")
-                    .tag("service", serviceName)
-                    .counter();
+            Counter counter = meterRegistry.find("http.server.requests").tag("service", serviceName).counter();
 
             if (counter != null && counter.count() > 0) {
                 double count = counter.count();
@@ -538,9 +643,7 @@ public class MonitorServiceImpl implements MonitorService {
      */
     private Double calculateAvgResponseTime(String serviceName) {
         try {
-            Timer timer = meterRegistry.find("http.server.requests")
-                    .tag("service", serviceName)
-                    .timer();
+            Timer timer = meterRegistry.find("http.server.requests").tag("service", serviceName).timer();
 
             if (timer != null && timer.count() > 0) {
                 return timer.mean(TimeUnit.MILLISECONDS);
@@ -563,37 +666,29 @@ public class MonitorServiceImpl implements MonitorService {
      */
     private Double calculateErrorRate(String serviceName) {
         try {
-            Counter totalCounter = meterRegistry.find("http.server.requests")
-                    .tag("service", serviceName)
-                    .counter();
+            Counter totalCounter = meterRegistry.find("http.server.requests").tag("service", serviceName).counter();
 
             if (totalCounter == null || totalCounter.count() == 0) {
                 return 0.0;
             }
 
             double totalCount = totalCounter.count();
-            double[] errorCount = {0.0};
+            double[] errorCount = { 0.0 };
 
-            Counter error4xxCounter = meterRegistry.find("http.server.requests")
-                    .tag("service", serviceName)
-                    .tag("status", "4xx")
-                    .counter();
+            Counter error4xxCounter = meterRegistry.find("http.server.requests").tag("service", serviceName)
+                    .tag("status", "4xx").counter();
             if (error4xxCounter != null) {
                 errorCount[0] += error4xxCounter.count();
             }
 
-            Counter error5xxCounter = meterRegistry.find("http.server.requests")
-                    .tag("service", serviceName)
-                    .tag("status", "5xx")
-                    .counter();
+            Counter error5xxCounter = meterRegistry.find("http.server.requests").tag("service", serviceName)
+                    .tag("status", "5xx").counter();
             if (error5xxCounter != null) {
                 errorCount[0] += error5xxCounter.count();
             }
 
             if (errorCount[0] == 0) {
-                meterRegistry.find("http.server.requests")
-                        .tag("service", serviceName)
-                        .counters()
+                meterRegistry.find("http.server.requests").tag("service", serviceName).counters()
                         .forEach(counter -> {
                             String status = counter.getId().getTag("status");
                             if (status != null && (status.startsWith("4") || status.startsWith("5"))) {
@@ -616,9 +711,7 @@ public class MonitorServiceImpl implements MonitorService {
      */
     private Integer getActiveConnections(String serviceName) {
         try {
-            Gauge gauge = meterRegistry.find("http.server.connections.active")
-                    .tag("service", serviceName)
-                    .gauge();
+            Gauge gauge = meterRegistry.find("http.server.connections.active").tag("service", serviceName).gauge();
 
             if (gauge != null) {
                 return (int) gauge.value();
@@ -663,11 +756,12 @@ public class MonitorServiceImpl implements MonitorService {
     /**
      * 采集业务指标（使用Micrometer直接查询）
      * <p>
-     * 替代已废弃的 MetricsCollectorManager.collectBusinessMetrics
-     * 使用 Micrometer 标准 API 直接查询指标
+     * 替代已废弃的 MetricsCollectorManager.collectBusinessMetrics 使用 Micrometer 标准 API
+     * 直接查询指标
      * </p>
      *
-     * @param metricName 指标名称
+     * @param metricName
+     *                   指标名称
      * @return 业务指标数据
      */
     private Map<String, Object> collectBusinessMetrics(String metricName) {
@@ -727,13 +821,15 @@ public class MonitorServiceImpl implements MonitorService {
     /**
      * 记录指标到Micrometer和Redis
      * <p>
-     * 替代已废弃的 MetricsCollectorManager.recordMetric
-     * 使用 Micrometer 标准 API 记录指标
+     * 替代已废弃的 MetricsCollectorManager.recordMetric 使用 Micrometer 标准 API 记录指标
      * </p>
      *
-     * @param metricName 指标名称
-     * @param value      指标值
-     * @param tags       标签（用于分类和查询）
+     * @param metricName
+     *                   指标名称
+     * @param value
+     *                   指标值
+     * @param tags
+     *                   标签（用于分类和查询）
      */
     private void recordMetricToMicrometer(String metricName, Double value, Map<String, String> tags) {
         log.debug("记录指标，名称：{}，值：{}，标签：{}", metricName, value, tags);
@@ -745,9 +841,7 @@ public class MonitorServiceImpl implements MonitorService {
                 tags.forEach(builder::tag);
                 builder.register(meterRegistry).increment(value);
             } else {
-                Counter.builder(metricName)
-                        .register(meterRegistry)
-                        .increment(value);
+                Counter.builder(metricName).register(meterRegistry).increment(value);
             }
 
             // 2. 存储到Redis（可选，用于时序数据查询）

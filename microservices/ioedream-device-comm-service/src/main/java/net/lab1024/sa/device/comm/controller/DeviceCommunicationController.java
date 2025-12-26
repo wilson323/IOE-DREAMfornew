@@ -1,8 +1,9 @@
 package net.lab1024.sa.device.comm.controller;
 
+import lombok.extern.slf4j.Slf4j;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.permission.annotation.PermissionCheck;
 import net.lab1024.sa.device.comm.protocol.ProtocolAdapter;
@@ -33,7 +34,7 @@ import java.util.concurrent.Future;
 @RequestMapping("/api/v1/device-comm")
 @Tag(name = "设备通讯协议管理", description = "多厂商设备通讯协议的统一管理")
 @PermissionCheck(value = "DEVICE_COMM", description = "设备通讯管理模块权限")
-public class DeviceCommunicationController {
+ public class DeviceCommunicationController {
 
     @Resource
     private ProtocolAdapterFactory protocolAdapterFactory;

@@ -27,7 +27,7 @@ spring:
         namespace: ${NACOS_NAMESPACE:dev}
         group: ${NACOS_GROUP:IOE-DREAM}
         username: ${NACOS_USERNAME:nacos}
-        password: ${NACOS_PASSWORD:nacos}
+        password: ${NACOS_PASSWORD:ENC(I2//JcHFpBc7vLPrYnCJNA==)}
         enabled: true
         register-enabled: true
         # 服务注册元数据
@@ -45,7 +45,7 @@ spring:
         namespace: ${NACOS_NAMESPACE:dev}
         group: ${NACOS_GROUP:IOE-DREAM}
         username: ${NACOS_USERNAME:nacos}
-        password: ${NACOS_PASSWORD:nacos}
+        password: ${NACOS_PASSWORD:ENC(I2//JcHFpBc7vLPrYnCJNA==)}
         file-extension: yaml
         enabled: ${NACOS_CONFIG_ENABLED:true}
         refresh-enabled: ${NACOS_CONFIG_REFRESH_ENABLED:true}
@@ -250,15 +250,15 @@ video:
   cache:
     # 缓存配置
     live-streams:
-      ttl: ${VIDEO_LIVE_STREAMS_TTL:60}          # 1分钟
+      ttl: ${VIDEO_LIVE_STREAMS_TTL:60} # 1分钟
       max-size: ${VIDEO_LIVE_STREAMS_MAX_SIZE:100}
 
     device-status:
-      ttl: ${VIDEO_DEVICE_STATUS_TTL:30}         # 30秒
+      ttl: ${VIDEO_DEVICE_STATUS_TTL:30} # 30秒
       max-size: ${VIDEO_DEVICE_STATUS_MAX_SIZE:1000}
 
     recording-metadata:
-      ttl: ${VIDEO_RECORDING_METADATA_TTL:3600}  # 1小时
+      ttl: ${VIDEO_RECORDING_METADATA_TTL:3600} # 1小时
       max-size: ${VIDEO_RECORDING_METADATA_MAX_SIZE:5000}
 
   security:

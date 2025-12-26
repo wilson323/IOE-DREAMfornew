@@ -1,8 +1,8 @@
 package net.lab1024.sa.video.service;
 
+import lombok.extern.slf4j.Slf4j;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.scheduling.annotation.Async;
@@ -445,3 +445,4 @@ public class VideoSystemInitializationService implements ApplicationListener<App
         return report;
     }
 }
+

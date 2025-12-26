@@ -1,5 +1,7 @@
 package net.lab1024.sa.visitor.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -15,12 +17,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import jakarta.annotation.Resource;
-import lombok.extern.slf4j.Slf4j;
+import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.exception.BusinessException;
 import net.lab1024.sa.common.exception.ParamException;
 import net.lab1024.sa.common.exception.SystemException;
-import net.lab1024.sa.common.openapi.domain.response.PageResult;
 import net.lab1024.sa.visitor.dao.VisitorApprovalRecordDao;
 import net.lab1024.sa.visitor.domain.form.ApprovalDecisionForm;
 import net.lab1024.sa.visitor.domain.vo.ApprovalRecordVO;
@@ -43,9 +44,9 @@ import net.lab1024.sa.visitor.service.VisitorApprovalService;
  * @version 1.0.0
  * @since 2025-01-30
  */
-@Slf4j
 @Service
 @Transactional(rollbackFor = Exception.class)
+@Slf4j
 public class VisitorApprovalServiceImpl implements VisitorApprovalService {
 
     @Resource
@@ -84,7 +85,8 @@ public class VisitorApprovalServiceImpl implements VisitorApprovalService {
                 // 2. 检查审批权限（缓存优化）
                 Long approverId = getCurrentUserId();
                 ResponseDTO<Boolean> permissionCheck = checkApprovalPermission(appointmentId, approverId).join();
-                if (!permissionCheck.isSuccess() || !Boolean.TRUE.equals(permissionCheck.getData())) {
+                Boolean hasPermission = permissionCheck.getData();
+                if (!permissionCheck.isSuccess() || hasPermission == null || !hasPermission) {
                     log.warn("[访客审批] 无审批权限, appointmentId={}, approverId={}", appointmentId, approverId);
                     return ResponseDTO.error("NO_APPROVAL_PERMISSION", "无审批权限");
                 }
@@ -469,6 +471,9 @@ public class VisitorApprovalServiceImpl implements VisitorApprovalService {
      * 获取审批级别名称
      */
     private String getApprovalLevelName(Integer level) {
+        if (level == null) {
+            return "未知级别";
+        }
         switch (level) {
             case 1:
                 return "一级审批";
@@ -485,6 +490,9 @@ public class VisitorApprovalServiceImpl implements VisitorApprovalService {
      * 获取审批结果名称
      */
     private String getApprovalResultName(String result) {
+        if (result == null) {
+            return "未知状态";
+        }
         switch (result) {
             case "PENDING":
                 return "待审批";

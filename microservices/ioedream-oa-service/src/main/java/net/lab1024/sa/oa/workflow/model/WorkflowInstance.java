@@ -1,10 +1,10 @@
 package net.lab1024.sa.oa.workflow.model;
 
-import lombok.Data;
-import lombok.experimental.Accessors;
-
 import java.time.LocalDateTime;
 import java.util.Map;
+
+import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
  * 工作流实例
@@ -174,6 +174,3 @@ public class WorkflowInstance {
         return status == WorkflowInstanceStatus.COMPLETED || status == WorkflowInstanceStatus.TERMINATED;
     }
 }
-
-
-

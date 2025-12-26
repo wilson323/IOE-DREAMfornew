@@ -31,8 +31,8 @@ import java.awt.image.BufferedImage;
  * @version 1.0.0
  * @since 2025-01-30
  */
-@Slf4j
 @Component
+@Slf4j
 public class FaceNetModel {
 
     /**

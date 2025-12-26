@@ -181,6 +181,85 @@ export const consumeApi = {
     return getRequest('/api/consume/account/statistics', { accountKindId });
   },
 
+  // ==================== 账户类别管理 ====================
+
+  /**
+   * 创建账户类别
+   */
+  createAccountKind: (data) => {
+    return postRequest('/api/consume/account-kind/create', data);
+  },
+
+  /**
+   * 更新账户类别
+   */
+  updateAccountKind: (data) => {
+    return putRequest('/api/consume/account-kind/update', data);
+  },
+
+  /**
+   * 删除账户类别
+   */
+  deleteAccountKind: (accountKindId) => {
+    return deleteRequest(`/api/consume/account-kind/delete/${accountKindId}`);
+  },
+
+  /**
+   * 根据ID获取账户类别
+   */
+  getAccountKindById: (accountKindId) => {
+    return getRequest(`/api/consume/account-kind/getById/${accountKindId}`);
+  },
+
+  /**
+   * 分页查询账户类别列表
+   */
+  pageAccountKinds: (params) => {
+    return getRequest('/api/consume/account-kind/list', params);
+  },
+
+  /**
+   * 查询所有账户类别
+   */
+  listAllAccountKinds: () => {
+    return getRequest('/api/consume/account-kind/listAll');
+  },
+
+  /**
+   * 启用账户类别
+   */
+  enableAccountKind: (accountKindId) => {
+    return postRequest(`/api/consume/account-kind/status/enable/${accountKindId}`);
+  },
+
+  /**
+   * 禁用账户类别
+   */
+  disableAccountKind: (accountKindId) => {
+    return postRequest(`/api/consume/account-kind/status/disable/${accountKindId}`);
+  },
+
+  /**
+   * 设置默认账户类别
+   */
+  setDefaultAccountKind: (accountKindId) => {
+    return postRequest(`/api/consume/account-kind/setDefault/${accountKindId}`);
+  },
+
+  /**
+   * 获取账户类别关联的餐别列表
+   */
+  getAccountKindMealCategories: (accountKindId) => {
+    return getRequest(`/api/consume/account-kind/${accountKindId}/mealCategories`);
+  },
+
+  /**
+   * 关联餐别到账户类别
+   */
+  linkMealCategories: (accountKindId, mealCategoryIds) => {
+    return postRequest(`/api/consume/account-kind/${accountKindId}/linkMealCategories`, mealCategoryIds);
+  },
+
   // ==================== 消费交易 ====================
 
   /**

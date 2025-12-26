@@ -1,23 +1,27 @@
 package net.lab1024.sa.common.system.domain.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+import java.io.Serializable;
 
 /**
- * 配置更新DTO
- * 整合自ioedream-system-service
+ * 系统配置更新DTO
  *
  * @author IOE-DREAM Team
- * @version 1.0.0
- * @since 2025-12-02（整合自system-service）
+ * @since 2025-12-21
  */
 @Data
-public class ConfigUpdateDTO {
+@EqualsAndHashCode(callSuper = true)
+@Schema(description = "系统配置更新DTO")
+public class ConfigUpdateDTO extends ConfigCreateDTO implements Serializable {
 
-    private String configValue;
-    private String configName;
-    private String configGroup;
-    private String description;
-    private Integer status;
-    private Integer sortOrder;
+    private static final long serialVersionUID = 1L;
+
+    @Schema(description = "配置ID", required = true, example = "1001")
+    @NotNull(message = "配置ID不能为空")
+    private Long configId;
 }
 

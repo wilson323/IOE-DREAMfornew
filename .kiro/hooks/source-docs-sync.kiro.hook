@@ -1,0 +1,34 @@
+{
+  "enabled": true,
+  "name": "Source Code Documentation Sync",
+  "description": "Monitors all source files (Java, JavaScript, Vue, SQL, YAML, etc.) in the repository and automatically updates documentation in README.md and /docs folder when changes are detected",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "*.java",
+      "*.js",
+      "*.vue",
+      "*.ts",
+      "*.tsx",
+      "*.sql",
+      "*.yml",
+      "*.yaml",
+      "*.xml",
+      "*.properties",
+      "*.md",
+      "*.json",
+      "pom.xml",
+      "package.json",
+      "Dockerfile*",
+      "docker-compose*.yml",
+      "*.sh",
+      "*.ps1",
+      "*.bat"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "A source file has been modified. Please analyze the changes and update the relevant documentation:\n\n1. If Java files changed: Update API documentation, service descriptions, and architecture diagrams in /docs folder\n2. If frontend files (JS/Vue/TS) changed: Update UI documentation and component guides\n3. If configuration files (YAML/XML/properties) changed: Update deployment guides and configuration documentation\n4. If database files (SQL) changed: Update database schema documentation\n5. If build files (pom.xml/package.json) changed: Update dependency documentation and build guides\n6. If Docker files changed: Update deployment and containerization documentation\n7. If scripts changed: Update operational procedures documentation\n\nFocus on:\n- Updating README.md with high-level changes\n- Updating specific documentation in /docs folder that relates to the changed files\n- Ensuring documentation accuracy reflects the current codebase\n- Adding examples and usage instructions for new features\n- Updating architecture diagrams if service interactions changed\n\nPlease be thorough but concise, and maintain consistency with existing documentation style."
+  }
+}

@@ -213,13 +213,11 @@ Test-NetConnection -ComputerName localhost -Port 8848
 
 ---
 
-## 🔐 API 基线与兼容窗口（30 天）
+## 🔐 API 基线（无兼容窗口）
 
 - **Canonical API 前缀**：统一使用 `/api/v1`
 - **鉴权方式**：Spring Security（JWT Bearer），请求头 `Authorization: Bearer <token>`
-- **兼容窗口**：legacy 路由与 legacy 登录路径保留 30 天后下线（建议尽快迁移）
-  - legacy 登录前缀（兼容）：`/login/**`
-  - legacy 业务前缀（兼容）：`/access/**`、`/attendance/**`、`/consume/**`、`/visitor/**`、`/video/**`、`/device/**`
+- **兼容策略**：不保留 legacy 路由与 legacy 登录路径，所有调用必须使用 `/api/v1` 前缀
 
 ---
 

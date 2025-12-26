@@ -1,6 +1,7 @@
 package net.lab1024.sa.attendance.engine;
 
 import net.lab1024.sa.attendance.engine.model.*;
+import net.lab1024.sa.attendance.entity.SmartSchedulePlanEntity;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -34,7 +35,7 @@ public interface ScheduleEngine {
      * @param endDate 结束日期
      * @return 排班计划
      */
-    SchedulePlan generateSchedulePlan(Long planId, LocalDate startDate, LocalDate endDate);
+    SmartSchedulePlanEntity generateSmartSchedulePlanEntity(Long planId, LocalDate startDate, LocalDate endDate);
 
     /**
      * 验证排班冲突

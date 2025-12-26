@@ -114,16 +114,16 @@ public interface VideoAiAnalysisService {
      * @param frameData 视频帧数据
      * @return 跌倒检测结果
      */
-    BehaviorDetectionManager.FallDetectionResult detectFall(String cameraId, byte[] frameData);
-
-    /**
-     * 异常行为检测
-     *
-     * @param cameraId  摄像头ID
-     * @param frameData 视频帧数据
-     * @return 异常行为列表
-     */
-    List<BehaviorDetectionManager.AbnormalBehavior> detectAbnormalBehaviors(String cameraId, byte[] frameData);
+    // ============================================================
+    // ⚠️ 方法删除（2025-01-30）
+    // ============================================================
+    // 以下方法接口已被删除，违反边缘计算架构：
+    // - BehaviorDetectionManager.FallDetectionResult detectFall(String cameraId, byte[] frameData);
+    // - List<BehaviorDetectionManager.AbnormalBehavior> detectAbnormalBehaviors(String cameraId, byte[] frameData);
+    //
+    // 替代方案：
+    // - 参见 DeviceAIEventReceiver（待创建）
+    // ============================================================
 
     /**
      * 清理过期轨迹
@@ -1274,8 +1274,19 @@ public interface VideoAiAnalysisService {
         private boolean hasGathering;
         private List<BehaviorDetectionManager.GatheringResult> gatheringDetections;
         private boolean hasFall;
-        private List<BehaviorDetectionManager.FallDetectionResult> fallDetections;
-        private List<BehaviorDetectionManager.AbnormalBehavior> abnormalBehaviors;
+        // ============================================================
+        // ⚠️ 类型修改（2025-01-30）
+        // ============================================================
+        // 原类型：BehaviorDetectionManager.FallDetectionResult
+        // 原类型：BehaviorDetectionManager.AbnormalBehavior
+        //
+        // 问题：这些类型已被删除（违反边缘计算架构）
+        // 解决：使用 Map 存储设备上报的AI事件数据
+        //
+        // 设备端AI分析，服务器接收结构化事件
+        // ============================================================
+        private List<Map<String, Object>> fallDetections;
+        private List<Map<String, Object>> abnormalBehaviors;
 
         // getters and setters
         public boolean isHasLoitering() {
@@ -1318,19 +1329,19 @@ public interface VideoAiAnalysisService {
             this.hasFall = hasFall;
         }
 
-        public List<BehaviorDetectionManager.FallDetectionResult> getFallDetections() {
+        public List<Map<String, Object>> getFallDetections() {
             return fallDetections;
         }
 
-        public void setFallDetections(List<BehaviorDetectionManager.FallDetectionResult> fallDetections) {
+        public void setFallDetections(List<Map<String, Object>> fallDetections) {
             this.fallDetections = fallDetections;
         }
 
-        public List<BehaviorDetectionManager.AbnormalBehavior> getAbnormalBehaviors() {
+        public List<Map<String, Object>> getAbnormalBehaviors() {
             return abnormalBehaviors;
         }
 
-        public void setAbnormalBehaviors(List<BehaviorDetectionManager.AbnormalBehavior> abnormalBehaviors) {
+        public void setAbnormalBehaviors(List<Map<String, Object>> abnormalBehaviors) {
             this.abnormalBehaviors = abnormalBehaviors;
         }
     }

@@ -1,8 +1,15 @@
 package net.lab1024.sa.visitor.service;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
 
@@ -12,15 +19,15 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.exception.BusinessException;
 import net.lab1024.sa.common.workflow.manager.WorkflowApprovalManager;
 import net.lab1024.sa.visitor.dao.VisitorAppointmentDao;
-import net.lab1024.sa.visitor.entity.VisitorAppointmentEntity;
 import net.lab1024.sa.visitor.domain.form.VisitorMobileForm;
-import net.lab1024.sa.visitor.service.impl.VisitorAppointmentServiceImpl;
+import net.lab1024.sa.visitor.entity.VisitorAppointmentEntity;
 
 /**
  * VisitorAppointmentServiceImpl单元测试
@@ -45,8 +52,9 @@ class VisitorAppointmentServiceImplTest {
     @Mock
     private net.lab1024.sa.common.gateway.GatewayServiceClient gatewayServiceClient;
 
+    @Spy
     @InjectMocks
-    private VisitorAppointmentServiceImpl visitorAppointmentService;
+    private net.lab1024.sa.visitor.service.impl.VisitorAppointmentServiceImpl visitorAppointmentService;
 
     private VisitorMobileForm form;
     private VisitorAppointmentEntity appointmentEntity;
@@ -83,11 +91,10 @@ class VisitorAppointmentServiceImplTest {
             return 1;
         });
 
-        ResponseDTO<Long> workflowResponse = ResponseDTO.ok(3001L);
-        @SuppressWarnings("rawtypes")
-        net.lab1024.sa.common.dto.ResponseDTO successResponse = workflowResponse;
-        doReturn(successResponse).when(workflowApprovalManager).startApprovalProcess(
-                anyLong(), anyString(), anyString(), anyLong(), anyString(), any(), any());
+        // Mock审批流程返回审批ID
+        when(workflowApprovalManager.startApprovalProcess(
+                anyLong(), anyString(), anyString(), anyLong(), anyString(), any(), any()
+        )).thenReturn(3001L);
 
         // When
         ResponseDTO<Long> result = visitorAppointmentService.createAppointment(form);
@@ -111,11 +118,10 @@ class VisitorAppointmentServiceImplTest {
             return 1;
         });
 
-        ResponseDTO<Long> workflowResponse = ResponseDTO.error("WORKFLOW_ERROR", "审批流程启动失败");
-        @SuppressWarnings("rawtypes")
-        net.lab1024.sa.common.dto.ResponseDTO errorResponse = workflowResponse;
-        doReturn(errorResponse).when(workflowApprovalManager).startApprovalProcess(
-                anyLong(), anyString(), anyString(), anyLong(), anyString(), any(), any());
+        // Mock审批流程失败，返回null表示启动失败
+        when(workflowApprovalManager.startApprovalProcess(
+                anyLong(), anyString(), anyString(), anyLong(), anyString(), any(), any()
+        )).thenReturn(null);
 
         // When & Then
         assertThrows(BusinessException.class, () -> visitorAppointmentService.createAppointment(form));

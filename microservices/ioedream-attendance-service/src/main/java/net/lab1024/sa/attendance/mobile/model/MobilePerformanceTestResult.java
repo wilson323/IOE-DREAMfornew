@@ -51,6 +51,24 @@ public class MobilePerformanceTestResult {
     private Long throughput;
 
     /**
+     * 数据库查询时间（毫秒）
+     */
+    @Schema(description = "数据库查询时间（毫秒）", example = "50")
+    private Long dbQueryTime;
+
+    /**
+     * Redis访问时间（毫秒）
+     */
+    @Schema(description = "Redis访问时间（毫秒）", example = "10")
+    private Long redisTime;
+
+    /**
+     * 网关调用时间（毫秒）
+     */
+    @Schema(description = "网关调用时间（毫秒）", example = "30")
+    private Long gatewayTime;
+
+    /**
      * 性能指标
      */
     @Schema(description = "性能指标")

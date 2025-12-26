@@ -41,8 +41,8 @@ import java.util.Base64;
  * @version 2.0.0
  * @since 2025-01-30
  */
-@Slf4j
 @Component
+@Slf4j
 public class FaceFeatureExtractionStrategy implements IBiometricFeatureExtractionStrategy {
 
     /**
@@ -256,3 +256,4 @@ public class FaceFeatureExtractionStrategy implements IBiometricFeatureExtractio
         return 100; // 人脸识别优先级最高
     }
 }
+

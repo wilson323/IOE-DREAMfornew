@@ -57,6 +57,8 @@ import java.util.UUID;
 @Slf4j
 public class AccessVerificationManager {
 
+    // 显式添加logger声明以确保编译通过
+
     private final AntiPassbackManager antiPassbackManager;
     private final UserAreaPermissionDao userAreaPermissionDao;
     private final UserAreaPermissionManager userAreaPermissionManager;
@@ -306,7 +308,7 @@ public class AccessVerificationManager {
             }
 
             // 解析extConfig JSON
-            Map<String, Object> configMap = objectMapper.readValue(areaExt.getExtConfig(), Map.class);
+            Map<String, Object> configMap = objectMapper.readValue(areaExt.getExtConfig(), new TypeReference<Map<String, Object>>() {});
             InterlockConfig config = new InterlockConfig();
 
             // 读取互锁配置
@@ -686,7 +688,7 @@ public class AccessVerificationManager {
                     "/api/v1/organization/area-device/device/" + deviceId,
                     HttpMethod.GET,
                     null,
-                    DeviceEntity.class
+                    new TypeReference<ResponseDTO<DeviceEntity>>() {}
             );
 
             if (response != null && response.isSuccess() && response.getData() != null) {
@@ -748,7 +750,7 @@ public class AccessVerificationManager {
                     "/api/v1/organization/area-device/device/code/" + serialNumber,
                     HttpMethod.GET,
                     null,
-                    DeviceEntity.class
+                    new TypeReference<ResponseDTO<DeviceEntity>>() {}
             );
 
             if (response != null && response.isSuccess() && response.getData() != null) {
@@ -894,7 +896,7 @@ public class AccessVerificationManager {
             }
 
             // 2. 解析ext_config JSON
-            Map<String, Object> configMap = objectMapper.readValue(areaExt.getExtConfig(), Map.class);
+            Map<String, Object> configMap = objectMapper.readValue(areaExt.getExtConfig(), new TypeReference<Map<String, Object>>() {});
 
             // 3. 检查是否配置了多人验证（multiPersonRequired字段）
             if (configMap.containsKey("multiPerson")) {
@@ -1021,7 +1023,7 @@ public class AccessVerificationManager {
                 return null;
             }
 
-            Map<String, Object> configMap = objectMapper.readValue(areaExt.getExtConfig(), Map.class);
+            Map<String, Object> configMap = objectMapper.readValue(areaExt.getExtConfig(), new TypeReference<Map<String, Object>>() {});
             if (configMap.containsKey("multiPerson")) {
                 Object multiPersonObj = configMap.get("multiPerson");
                 if (multiPersonObj instanceof Map) {
@@ -1150,7 +1152,7 @@ public class AccessVerificationManager {
         }
 
         try {
-            List<Object> userIdObjs = objectMapper.readValue(userIdsJson, List.class);
+            List<Object> userIdObjs = objectMapper.readValue(userIdsJson, new TypeReference<List<Object>>() {});
             List<Long> userIds = new ArrayList<>();
             for (Object userIdObj : userIdObjs) {
                 if (userIdObj instanceof Number) {

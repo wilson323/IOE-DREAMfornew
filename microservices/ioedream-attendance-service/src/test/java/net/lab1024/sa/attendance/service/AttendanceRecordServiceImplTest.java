@@ -15,18 +15,19 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
-import net.lab1024.sa.common.openapi.domain.response.PageResult;
-import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.attendance.dao.AttendanceRecordDao;
-import net.lab1024.sa.attendance.entity.AttendanceRecordEntity;
 import net.lab1024.sa.attendance.domain.form.AttendanceRecordQueryForm;
 import net.lab1024.sa.attendance.domain.vo.AttendanceRecordStatisticsVO;
 import net.lab1024.sa.attendance.domain.vo.AttendanceRecordVO;
+import net.lab1024.sa.attendance.entity.AttendanceRecordEntity;
 import net.lab1024.sa.attendance.service.impl.AttendanceRecordServiceImpl;
+import net.lab1024.sa.common.domain.PageResult;
+import net.lab1024.sa.common.dto.ResponseDTO;
 
 /**
  * AttendanceRecordServiceImpl单元测试
@@ -46,6 +47,11 @@ class AttendanceRecordServiceImplTest {
     @Mock
     private AttendanceRecordDao attendanceRecordDao;
 
+    /**
+     * 注意：此处使用@Spy测试实现类，因为需要测试实现类的具体逻辑。
+     * 理想情况下应依赖接口，但此测试需要验证实现类的内部行为，故保留@Spy。
+     */
+    @Spy
     @InjectMocks
     private AttendanceRecordServiceImpl attendanceRecordService;
 
@@ -131,8 +137,8 @@ class AttendanceRecordServiceImplTest {
         when(attendanceRecordDao.selectList(any())).thenReturn(entities);
 
         // When
-        ResponseDTO<AttendanceRecordStatisticsVO> result =
-                attendanceRecordService.getAttendanceRecordStatistics(startDate, endDate, employeeId);
+        ResponseDTO<AttendanceRecordStatisticsVO> result = attendanceRecordService
+                .getAttendanceRecordStatistics(startDate, endDate, employeeId);
 
         // Then
         assertNotNull(result);
@@ -152,8 +158,8 @@ class AttendanceRecordServiceImplTest {
         when(attendanceRecordDao.selectList(any())).thenReturn(new ArrayList<>());
 
         // When
-        ResponseDTO<AttendanceRecordStatisticsVO> result =
-                attendanceRecordService.getAttendanceRecordStatistics(startDate, endDate, employeeId);
+        ResponseDTO<AttendanceRecordStatisticsVO> result = attendanceRecordService
+                .getAttendanceRecordStatistics(startDate, endDate, employeeId);
 
         // Then
         assertNotNull(result);
@@ -162,5 +168,3 @@ class AttendanceRecordServiceImplTest {
         verify(attendanceRecordDao, times(1)).selectList(any());
     }
 }
-
-

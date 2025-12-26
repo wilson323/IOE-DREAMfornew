@@ -62,7 +62,8 @@ private SomeService someService;
 // ✅ 使用jakarta包名
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
-import jakarta.persistence.Entity;
+import @Data
+@TableName("table_name");
 import jakarta.transaction.Transactional;
 
 // ❌ 禁止使用javax包名

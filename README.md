@@ -10,7 +10,7 @@
 
 **企业级智慧安防管理平台 | 基于设备端的多模态生物识别 + 一卡通 + 智能安防一体化解决方案**
 
-[项目文档](documentation/) | [快速开始](#-快速开始) | [架构设计](documentation/architecture/) | [API文档](documentation/api/)
+[项目文档](documentation/) | [快速开始](#-快速开始) | [架构设计](documentation/architecture/) | [API文档](documentation/api/) | [CI/运维索引](#-ci运维索引)
 
 </div>
 
@@ -32,6 +32,7 @@
 - 📹 **视频监控联动**: AI智能分析，异常检测，多系统联动,采用边缘AI计算模式
 - 🛡️ **三级等保合规**: 满足国家网络安全等级保护要求
 - 🏗️ **微服务架构**: 11个核心微服务（1个API网关 + 10个业务服务），支持高并发、高可用、水平扩展
+- 🔍 **全局代码分析**: 系统性代码质量诊断与修复体系，支持架构分析、编译错误修复、代码质量检测等8大核心功能
 
 ---
 
@@ -171,6 +172,89 @@ IOE-DREAM/
 
 ---
 
+## 🧰 CI/运维索引
+
+- 本地 Action 使用与运行环境清单：`documentation/technical/LOCAL_ACTIONS_ENV_CHECKLIST.md`
+- Runner 预装脚本清单（Windows/Linux）：`documentation/technical/RUNNER_PREINSTALL_CHECKLIST.md`
+- Runner 环境自检脚本：`scripts/runner-env-check.ps1`
+
+---
+
+## 📐 技术栈现代化升级（2025-01-30）
+
+### ✨ Jakarta EE 9+ 迁移完成
+
+**迁移状态**: ✅ 100%完成（2025-01-30）
+
+IOE-DREAM项目已完成从Java EE到Jakarta EE的全面升级，所有代码已迁移至Jakarta EE 9+规范。
+
+#### 迁移范围
+
+| Java EE 包 | Jakarta EE 包 | 迁移状态 |
+|-----------|--------------|---------|
+| `javax.annotation.*` | `jakarta.annotation.*` | ✅ 100% |
+| `javax.persistence.*` | `jakarta.persistence.*` | ✅ 100% |
+| `javax.validation.*` | `jakarta.validation.*` | ✅ 100% |
+
+#### 代码示例
+
+```java
+// ✅ 正确：使用 Jakarta EE
+import jakarta.annotation.Resource;
+import jakarta.persistence.Entity;
+import jakarta.validation.constraints.NotNull;
+
+// ❌ 禁止：使用 Java EE（已过时）
+import javax.annotation.Resource;  // ❌ 已禁止
+import javax.persistence.Entity;   // ❌ 已禁止
+```
+
+**自动化检查**: CI/CD流水线会自动检查所有代码，发现使用`javax.*`包将拒绝合并
+
+### ✨ OpenAPI 3.0 统一完成
+
+**迁移状态**: ✅ 100%完成（2025-01-30）
+
+项目已统一使用OpenAPI 3.0规范，所有Swagger注解已更新。
+
+#### 统一范围
+
+| OpenAPI 3.1 API | OpenAPI 3.0 API | 修复数量 |
+|----------------|----------------|---------|
+| `requiredMode = Schema.RequiredMode.REQUIRED` | `required = true` | 11处 |
+
+#### 代码示例
+
+```java
+// ✅ 正确：使用 OpenAPI 3.0
+@Schema(description = "用户名", required = true, example = "admin")
+private String username;
+
+// ❌ 禁止：使用 OpenAPI 3.1（不兼容）
+@Schema(description = "用户名", requiredMode = Schema.RequiredMode.REQUIRED)
+private String username;
+```
+
+**自动化检查**: CI/CD流水线会自动检查所有代码，发现使用`requiredMode`将拒绝合并
+
+### 📊 升级成果
+
+```
+✅ Jakarta EE 迁移：100%完成
+✅ OpenAPI 3.0 统一：100%完成
+✅ 微服务编译：100%成功（5/5服务）
+✅ CI/CD自动化检查：已启用
+```
+
+### 📚 相关文档
+
+- **API版本规范**: [CLAUDE.md - API版本规范](CLAUDE.md#-api版本规范-2025-01-30新增)
+- **GitHub Actions检查**: [`.github/workflows/api-version-check.yml`](.github/workflows/api-version-check.yml)
+- **Jakarta EE规范**: [Jakarta EE 9 Documentation](https://jakarta.ee/specifications/)
+- **OpenAPI规范**: [OpenAPI 3.0 Specification](https://swagger.io/specification/)
+
+---
+
 ## 🚀 快速开始
 
 > **💡 快速启动**: 
@@ -304,6 +388,96 @@ npm install
 **详细使用说明**: 
 - [启动脚本使用说明](scripts/README_START.md)
 - [开发环境启动指南](documentation/technical/DEVELOPMENT_STARTUP_GUIDE.md) ⭐ **推荐阅读**
+
+---
+
+## 🔍 全局代码分析系统
+
+IOE-DREAM 集成了系统性的代码质量诊断与修复体系，提供企业级代码质量保障：
+
+### 核心功能模块
+
+| 功能模块 | 主要职责 | 技术特点 |
+|---------|---------|---------|
+| **架构问题诊断** | 识别模块依赖关系、循环依赖检测、四层架构合规性验证 | 基于图论算法的依赖分析 |
+| **编译错误修复** | 区分真实编译错误和IDE诊断、字符编码问题检测 | 智能错误分类与优先级排序 |
+| **代码质量检测** | 注解违规检测、Lombok配置验证、代码规范检查 | 静态代码分析与质量评分 |
+| **技术迁移支持** | Jakarta EE迁移检测、包名替换、依赖兼容性验证 | 自动化迁移工具与验证 |
+| **模块拆分优化** | 公共模块职责边界分析、重构建议生成 | 模块化架构分析 |
+| **自动化修复** | 批量注解替换、编码转换、包名替换 | 安全的自动修复与回滚机制 |
+| **持续监控** | Git钩子集成、CI/CD质量检查、趋势分析 | 预防性质量保障 |
+| **效果验证** | 修复前后对比、健康度评分、ROI分析 | 量化的质量改善报告 |
+
+### CLI工具快速开始
+
+**安装**:
+```bash
+# 使用 pip 安装（推荐）
+pip install ioedream-code-analyzer
+
+# 或从源码安装
+cd ioedream-code-analyzer
+poetry install
+```
+
+**基本使用**:
+```bash
+# 分析项目
+ioedream-analyzer analyze /path/to/IOE-DREAM
+
+# 修复问题（自动创建备份）
+ioedream-analyzer fix /path/to/IOE-DREAM --auto-backup
+
+# 生成HTML报告
+ioedream-analyzer report /path/to/IOE-DREAM --format html
+
+# 查看完整帮助
+ioedream-analyzer --help
+```
+
+**开发环境设置**:
+```bash
+# 安装开发依赖
+poetry install --with dev
+
+# 安装 pre-commit 钩子
+pre-commit install
+
+# 运行测试套件
+pytest
+
+# 运行属性测试（验证15个核心正确性属性）
+pytest tests/property/
+
+# 代码格式化
+black src tests
+isort src tests
+
+# 类型检查
+mypy src
+```
+
+### 技术亮点
+
+- ✅ **系统性诊断**: 覆盖架构、编译、质量、迁移、模块等8个维度
+- ✅ **智能修复**: 支持自动化修复常见代码问题，提供安全回滚机制
+- ✅ **持续监控**: 集成Git钩子和CI/CD流水线，预防质量问题
+- ✅ **量化评估**: 提供架构健康度评分和质量改善ROI分析
+- ✅ **企业级标准**: 符合Spring Boot 3.5.8 + Jakarta EE规范要求
+- ✅ **正确性保证**: 基于15个核心正确性属性的属性测试验证
+- ✅ **高性能**: 单个微服务分析<30秒，全项目<5分钟，内存占用<2GB
+- ✅ **独立工具**: Python CLI工具，可独立安装和使用，无需Java环境
+
+### 详细文档
+
+完整的使用指南和技术文档请参考：
+- **[CLI工具README](ioedream-code-analyzer/README.md)** - 安装、使用和开发指南
+- **[系统设计文档](documentation/technical/GLOBAL_CODE_ANALYSIS_SYSTEM.md)** - 架构设计和技术规范
+- **[需求规格](.kiro/specs/global-code-analysis/requirements.md)** - 详细需求和验收标准
+- **[设计文档](.kiro/specs/global-code-analysis/design.md)** - 架构设计和实现方案
+- **[任务清单](.kiro/specs/global-code-analysis/tasks.md)** - 实施任务和里程碑
+- **[API文档](documentation/api/global-code-analysis-api.md)** - 接口规范和使用示例
+- **[专家技能](.claude/skills/global-code-analysis-expert.md)** - AI专家技能定义
 
 ---
 
@@ -482,6 +656,13 @@ IOE-DREAM采用**边缘计算优先**的架构设计，根据不同业务场景�
 - **[CLAUDE.md](CLAUDE.md)** - 项目核心指导文档（架构规范、开发规范）
 - **[项目状态](documentation/project/README_PROJECT_STATUS.md)** - 项目完成度和状态
 - **[开发规范](documentation/technical/UNIFIED_DEVELOPMENT_STANDARDS.md)** - 统一开发标准
+- **🔍 [全局代码分析系统](.kiro/specs/global-code-analysis/)** - 代码质量诊断与修复体系
+  - **[需求规格](.kiro/specs/global-code-analysis/requirements.md)** - 系统需求和验收标准
+  - **[设计文档](.kiro/specs/global-code-analysis/design.md)** - 架构设计和实现方案
+  - **[任务清单](.kiro/specs/global-code-analysis/tasks.md)** - 实施任务和里程碑
+  - **[API文档](documentation/api/global-code-analysis-api.md)** - 接口规范和使用示例
+  - **[专家技能](.claude/skills/global-code-analysis-expert.md)** - AI专家技能定义
+  - **[CLI工具](ioedream-code-analyzer/README.md)** - 独立命令行工具使用指南
 
 ### 🔍 按模块查找
 

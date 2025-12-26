@@ -1,10 +1,12 @@
 package net.lab1024.sa.common.permission.web.controller;
 
+import lombok.extern.slf4j.Slf4j;
+
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.permission.annotation.PermissionCheck;
@@ -44,7 +46,8 @@ import java.util.Set;
 @RequestMapping("/api/v1/permission-data")
 @Tag(name = "权限数据管理", description = "前后端权限数据统一接口")
 @PermissionCheck(value = "SYSTEM_PERMISSION", description = "系统权限管理模块权限")
-public class PermissionDataController {
+ public class PermissionDataController {
+
 
     @Resource
     private PermissionDataService permissionDataService;
@@ -245,3 +248,4 @@ public class PermissionDataController {
         }
     }
 }
+

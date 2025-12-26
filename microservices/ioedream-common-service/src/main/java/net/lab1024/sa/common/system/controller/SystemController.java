@@ -1,11 +1,12 @@
 package net.lab1024.sa.common.system.controller;
 
+import lombok.extern.slf4j.Slf4j;
+
 import io.micrometer.observation.annotation.Observed;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.system.domain.dto.ConfigCreateDTO;
 import net.lab1024.sa.common.system.domain.dto.ConfigUpdateDTO;
@@ -31,10 +32,10 @@ import java.util.Map;
  * @version 1.0.0
  * @since 2025-12-02（整合自system-service）
  */
-@Slf4j
 @RestController
 @RequestMapping("/api/v1/system")
 @Tag(name = "系统管理", description = "系统配置和字典相关接口")
+@Slf4j
 public class SystemController {
 
     @Resource

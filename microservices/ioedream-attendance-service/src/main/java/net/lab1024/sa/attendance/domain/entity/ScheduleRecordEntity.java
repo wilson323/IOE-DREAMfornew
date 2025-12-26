@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import net.lab1024.sa.common.entity.BaseEntity;
 
@@ -22,6 +24,8 @@ import java.time.LocalDateTime;
  * @version 1.0.0
  * @since 2025-01-30
  */
+@Getter
+@Setter
 @Data
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
@@ -85,6 +89,7 @@ public class ScheduleRecordEntity extends BaseEntity {
 
     @Schema(description = "更新人ID", example = "2002")
     private Long updateUserId;
+/**     * 工作时长（小时）- 计算字段     */    @TableField(exist = false)    private Double workDuration;
 
     // 枚举定义
     public enum ScheduleType {

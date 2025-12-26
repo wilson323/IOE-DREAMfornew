@@ -1,20 +1,76 @@
 package net.lab1024.sa.attendance.report.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.attendance.report.AttendanceReportService;
-import net.lab1024.sa.attendance.report.model.*;
-import net.lab1024.sa.attendance.report.model.request.*;
-import net.lab1024.sa.attendance.report.model.result.*;
-import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Component;
+
+import net.lab1024.sa.attendance.report.AttendanceReportService;
+import net.lab1024.sa.attendance.report.model.AttendanceSummaryReport;
+import net.lab1024.sa.attendance.report.model.DepartmentStatistics;
+import net.lab1024.sa.attendance.report.model.DepartmentStatisticsReport;
+import net.lab1024.sa.attendance.report.model.EmployeeAttendanceDetail;
+import net.lab1024.sa.attendance.report.model.EmployeeDetailReport;
+import net.lab1024.sa.attendance.report.model.EmployeeReportSummary;
+import net.lab1024.sa.attendance.report.model.OverallStatistics;
+import net.lab1024.sa.attendance.report.model.ReportTemplate;
+import net.lab1024.sa.attendance.report.model.ReportType;
+import net.lab1024.sa.attendance.report.model.request.AnnualReportRequest;
+import net.lab1024.sa.attendance.report.model.request.AnomalyAnalysisReportRequest;
+import net.lab1024.sa.attendance.report.model.request.AttendanceSummaryReportRequest;
+import net.lab1024.sa.attendance.report.model.request.BatchReportGenerationRequest;
+import net.lab1024.sa.attendance.report.model.request.DepartmentStatisticsReportRequest;
+import net.lab1024.sa.attendance.report.model.request.EmployeeDetailReportRequest;
+import net.lab1024.sa.attendance.report.model.request.MonthlyReportRequest;
+import net.lab1024.sa.attendance.report.model.request.OvertimeStatisticsReportRequest;
+import net.lab1024.sa.attendance.report.model.request.ReportCacheCleanupRequest;
+import net.lab1024.sa.attendance.report.model.request.ReportCacheStatusRequest;
+import net.lab1024.sa.attendance.report.model.request.ReportConfigurationRecommendationRequest;
+import net.lab1024.sa.attendance.report.model.request.ReportExportRequest;
+import net.lab1024.sa.attendance.report.model.request.ReportParameterValidationRequest;
+import net.lab1024.sa.attendance.report.model.request.ReportPreviewRequest;
+import net.lab1024.sa.attendance.report.model.request.ReportQueryParam;
+import net.lab1024.sa.attendance.report.model.request.ReportStatisticsRequest;
+import net.lab1024.sa.attendance.report.model.request.ReportTemplateQueryParam;
+import net.lab1024.sa.attendance.report.model.request.TrendAnalysisReportRequest;
+import net.lab1024.sa.attendance.report.model.result.AnnualReportResult;
+import net.lab1024.sa.attendance.report.model.result.AnomalyAnalysisReportResult;
+import net.lab1024.sa.attendance.report.model.result.AttendanceSummaryReportResult;
+import net.lab1024.sa.attendance.report.model.result.BatchReportGenerationResult;
+import net.lab1024.sa.attendance.report.model.result.DepartmentStatisticsReportResult;
+import net.lab1024.sa.attendance.report.model.result.EmployeeDetailReportResult;
+import net.lab1024.sa.attendance.report.model.result.MonthlyReportResult;
+import net.lab1024.sa.attendance.report.model.result.OvertimeStatisticsReportResult;
+import net.lab1024.sa.attendance.report.model.result.ReportCacheCleanupResult;
+import net.lab1024.sa.attendance.report.model.result.ReportCacheStatusResult;
+import net.lab1024.sa.attendance.report.model.result.ReportCancellationResult;
+import net.lab1024.sa.attendance.report.model.result.ReportConfigurationRecommendation;
+import net.lab1024.sa.attendance.report.model.result.ReportDetailResult;
+import net.lab1024.sa.attendance.report.model.result.ReportExportResult;
+import net.lab1024.sa.attendance.report.model.result.ReportGenerationProgress;
+import net.lab1024.sa.attendance.report.model.result.ReportListResult;
+import net.lab1024.sa.attendance.report.model.result.ReportParameterValidationResult;
+import net.lab1024.sa.attendance.report.model.result.ReportPreviewResult;
+import net.lab1024.sa.attendance.report.model.result.ReportStatisticsResult;
+import net.lab1024.sa.attendance.report.model.result.ReportTemplateDeleteResult;
+import net.lab1024.sa.attendance.report.model.result.ReportTemplateListResult;
+import net.lab1024.sa.attendance.report.model.result.ReportTemplateSaveResult;
+import net.lab1024.sa.attendance.report.model.result.TrendAnalysisReportResult;
 
 /**
  * 考勤报表服务实现类
@@ -27,18 +83,18 @@ import java.util.stream.Collectors;
  * @version 1.0.0
  * @since 2025-12-16
  */
-@Slf4j
 @Component("attendanceReportService")
+@Slf4j
 public class AttendanceReportServiceImpl implements AttendanceReportService {
 
     // 使用高效的缓存策略，限制缓存大小
-    private final Map<String, AttendanceSummaryReport> reportCache = new ConcurrentHashMap<>();
-    private final Map<String, Long> reportLastAccess = new ConcurrentHashMap<>();
+    private final Map<String, AttendanceSummaryReport> reportCache = new HashMap<>();
+    private final Map<String, Long> reportLastAccess = new HashMap<>();
     private static final int MAX_CACHE_SIZE = 1000;
     private static final long CACHE_EXPIRY_MS = 3600000; // 1小时
 
     // 使用对象池减少内存分配
-    private final ArrayDeque<Object> reusableObjects = new ArrayDeque<>(500);
+    private final ArrayDeque<Object> reusableObjects = new ArrayDeque<Object>(500);
 
     // 性能统计 - 使用原子类型
     private final AtomicLong totalReportsGenerated = new AtomicLong(0);
@@ -60,7 +116,8 @@ public class AttendanceReportServiceImpl implements AttendanceReportService {
     }
 
     @Override
-    public CompletableFuture<AttendanceSummaryReportResult> generateSummaryReport(AttendanceSummaryReportRequest request) {
+    public CompletableFuture<AttendanceSummaryReportResult> generateSummaryReport(
+            AttendanceSummaryReportRequest request) {
         return CompletableFuture.supplyAsync(() -> {
             long startTime = System.currentTimeMillis();
             totalReportsGenerated.incrementAndGet();
@@ -116,7 +173,8 @@ public class AttendanceReportServiceImpl implements AttendanceReportService {
     }
 
     @Override
-    public CompletableFuture<EmployeeDetailReportResult> generateEmployeeDetailReport(EmployeeDetailReportRequest request) {
+    public CompletableFuture<EmployeeDetailReportResult> generateEmployeeDetailReport(
+            EmployeeDetailReportRequest request) {
         return CompletableFuture.supplyAsync(() -> {
             long startTime = System.currentTimeMillis();
             totalReportsGenerated.incrementAndGet();
@@ -165,7 +223,8 @@ public class AttendanceReportServiceImpl implements AttendanceReportService {
     }
 
     @Override
-    public CompletableFuture<DepartmentStatisticsReportResult> generateDepartmentStatisticsReport(DepartmentStatisticsReportRequest request) {
+    public CompletableFuture<DepartmentStatisticsReportResult> generateDepartmentStatisticsReport(
+            DepartmentStatisticsReportRequest request) {
         return CompletableFuture.supplyAsync(() -> {
             long startTime = System.currentTimeMillis();
             totalReportsGenerated.incrementAndGet();
@@ -175,8 +234,8 @@ public class AttendanceReportServiceImpl implements AttendanceReportService {
 
                 // 并行处理多个部门
                 List<CompletableFuture<DepartmentStatistics>> futures = request.getDepartmentIds().stream()
-                        .map(deptId -> CompletableFuture.supplyAsync(() ->
-                                calculateDepartmentStatistics(deptId, request.getStartDate(), request.getEndDate()), executorService))
+                        .map(deptId -> CompletableFuture.supplyAsync(() -> calculateDepartmentStatistics(deptId,
+                                request.getStartDate(), request.getEndDate()), executorService))
                         .collect(Collectors.toList());
 
                 // 等待所有部门统计完成
@@ -226,20 +285,19 @@ public class AttendanceReportServiceImpl implements AttendanceReportService {
         Map<String, Object> baseStats = preCalculatedData.get(ReportType.DAILY);
 
         // 生成部门汇总
-        List<AttendanceSummaryReport.DepartmentSummary> departmentSummaries =
-                generateDepartmentSummaries(request.getDepartmentIds(), request.getStartDate(), request.getEndDate());
+        List<AttendanceSummaryReport.DepartmentSummary> departmentSummaries = generateDepartmentSummaries(
+                request.getDepartmentIds(), request.getStartDate(), request.getEndDate());
 
         // 生成异常统计
-        AttendanceSummaryReport.AttendanceAnomalyStatistics anomalyStatistics =
-                generateAnomalyStatistics(request.getStartDate(), request.getEndDate());
+        AttendanceSummaryReport.AttendanceAnomalyStatistics anomalyStatistics = generateAnomalyStatistics(
+                request.getStartDate(), request.getEndDate());
 
         // 生成趋势数据
-        AttendanceSummaryReport.TrendAnalysisData trendData =
-                generateTrendData(request.getStartDate(), request.getEndDate());
+        AttendanceSummaryReport.TrendAnalysisData trendData = generateTrendData(request.getStartDate(),
+                request.getEndDate());
 
         // 生成绩效指标
-        AttendanceSummaryReport.PerformanceMetrics performanceMetrics =
-                generatePerformanceMetrics(departmentSummaries);
+        AttendanceSummaryReport.PerformanceMetrics performanceMetrics = generatePerformanceMetrics(departmentSummaries);
 
         // 生成汇总数据
         SummaryCalculationResult calculationResult = calculateOverallSummary(departmentSummaries);
@@ -361,7 +419,8 @@ public class AttendanceReportServiceImpl implements AttendanceReportService {
     /**
      * 计算总体汇总
      */
-    private SummaryCalculationResult calculateOverallSummary(List<AttendanceSummaryReport.DepartmentSummary> departmentSummaries) {
+    private SummaryCalculationResult calculateOverallSummary(
+            List<AttendanceSummaryReport.DepartmentSummary> departmentSummaries) {
         int totalEmployees = 0;
         int presentEmployees = 0;
         int absentEmployees = 0;
@@ -449,7 +508,7 @@ public class AttendanceReportServiceImpl implements AttendanceReportService {
      */
     private void initializePreCalculatedData() {
         for (ReportType type : ReportType.values()) {
-            preCalculatedData.put(type, new ConcurrentHashMap<>());
+            preCalculatedData.put(type, new HashMap<>());
         }
     }
 
@@ -458,7 +517,7 @@ public class AttendanceReportServiceImpl implements AttendanceReportService {
      */
     private String generateReportId() {
         return "RPT-" + System.currentTimeMillis() + "-" +
-               UUID.randomUUID().toString().substring(0, 8);
+                UUID.randomUUID().toString().substring(0, 8);
     }
 
     // 部门汇总构建器 - 内存优化
@@ -505,36 +564,36 @@ public class AttendanceReportServiceImpl implements AttendanceReportService {
 
     // 其他接口方法的简化实现...
     @Override
-    public CompletableFuture<AnomalyAnalysisReportResult> generateAnomalyAnalysisReport(AnomalyAnalysisReportRequest request) {
+    public CompletableFuture<AnomalyAnalysisReportResult> generateAnomalyAnalysisReport(
+            AnomalyAnalysisReportRequest request) {
         return CompletableFuture.completedFuture(
                 AnomalyAnalysisReportResult.builder()
                         .success(false)
                         .errorMessage("功能待实现")
                         .errorCode("NOT_IMPLEMENTED")
-                        .build()
-        );
+                        .build());
     }
 
     @Override
-    public CompletableFuture<OvertimeStatisticsReportResult> generateOvertimeStatisticsReport(OvertimeStatisticsReportRequest request) {
+    public CompletableFuture<OvertimeStatisticsReportResult> generateOvertimeStatisticsReport(
+            OvertimeStatisticsReportRequest request) {
         return CompletableFuture.completedFuture(
                 OvertimeStatisticsReportResult.builder()
                         .success(false)
                         .errorMessage("功能待实现")
                         .errorCode("NOT_IMPLEMENTED")
-                        .build()
-        );
+                        .build());
     }
 
     @Override
-    public CompletableFuture<TrendAnalysisReportResult> generateTrendAnalysisReport(TrendAnalysisReportRequest request) {
+    public CompletableFuture<TrendAnalysisReportResult> generateTrendAnalysisReport(
+            TrendAnalysisReportRequest request) {
         return CompletableFuture.completedFuture(
                 TrendAnalysisReportResult.builder()
                         .success(false)
                         .errorMessage("功能待实现")
                         .errorCode("NOT_IMPLEMENTED")
-                        .build()
-        );
+                        .build());
     }
 
     @Override
@@ -544,8 +603,7 @@ public class AttendanceReportServiceImpl implements AttendanceReportService {
                         .success(false)
                         .errorMessage("功能待实现")
                         .errorCode("NOT_IMPLEMENTED")
-                        .build()
-        );
+                        .build());
     }
 
     @Override
@@ -555,8 +613,7 @@ public class AttendanceReportServiceImpl implements AttendanceReportService {
                         .success(false)
                         .errorMessage("功能待实现")
                         .errorCode("NOT_IMPLEMENTED")
-                        .build()
-        );
+                        .build());
     }
 
     @Override
@@ -566,8 +623,7 @@ public class AttendanceReportServiceImpl implements AttendanceReportService {
                         .success(false)
                         .errorMessage("功能待实现")
                         .errorCode("NOT_IMPLEMENTED")
-                        .build()
-        );
+                        .build());
     }
 
     @Override
@@ -577,8 +633,7 @@ public class AttendanceReportServiceImpl implements AttendanceReportService {
                         .success(false)
                         .errorMessage("功能待实现")
                         .errorCode("NOT_IMPLEMENTED")
-                        .build()
-        );
+                        .build());
     }
 
     @Override
@@ -588,8 +643,7 @@ public class AttendanceReportServiceImpl implements AttendanceReportService {
                         .success(false)
                         .errorMessage("功能待实现")
                         .errorCode("NOT_IMPLEMENTED")
-                        .build()
-        );
+                        .build());
     }
 
     @Override
@@ -599,8 +653,7 @@ public class AttendanceReportServiceImpl implements AttendanceReportService {
                         .success(false)
                         .errorMessage("功能待实现")
                         .errorCode("NOT_IMPLEMENTED")
-                        .build()
-        );
+                        .build());
     }
 
     @Override
@@ -610,8 +663,7 @@ public class AttendanceReportServiceImpl implements AttendanceReportService {
                         .success(false)
                         .errorMessage("功能待实现")
                         .errorCode("NOT_IMPLEMENTED")
-                        .build()
-        );
+                        .build());
     }
 
     @Override
@@ -621,8 +673,7 @@ public class AttendanceReportServiceImpl implements AttendanceReportService {
                         .success(false)
                         .errorMessage("功能待实现")
                         .errorCode("NOT_IMPLEMENTED")
-                        .build()
-        );
+                        .build());
     }
 
     @Override
@@ -632,8 +683,7 @@ public class AttendanceReportServiceImpl implements AttendanceReportService {
                         .success(false)
                         .errorMessage("功能待实现")
                         .errorCode("NOT_IMPLEMENTED")
-                        .build()
-        );
+                        .build());
     }
 
     @Override
@@ -643,8 +693,7 @@ public class AttendanceReportServiceImpl implements AttendanceReportService {
                         .taskId(taskId)
                         .progress(0)
                         .status("待实现")
-                        .build()
-        );
+                        .build());
     }
 
     @Override
@@ -655,8 +704,7 @@ public class AttendanceReportServiceImpl implements AttendanceReportService {
                         .success(false)
                         .message("功能待实现")
                         .errorCode("NOT_IMPLEMENTED")
-                        .build()
-        );
+                        .build());
     }
 
     @Override
@@ -668,41 +716,40 @@ public class AttendanceReportServiceImpl implements AttendanceReportService {
                         .cacheHits(totalCacheHits.get())
                         .cacheMisses(totalCacheMisses.get())
                         .cacheSize(reportCache.size())
-                        .build()
-        );
+                        .build());
     }
 
     @Override
-    public CompletableFuture<ReportParameterValidationResult> validateReportParameters(ReportParameterValidationRequest validationRequest) {
+    public CompletableFuture<ReportParameterValidationResult> validateReportParameters(
+            ReportParameterValidationRequest validationRequest) {
         return CompletableFuture.completedFuture(
                 ReportParameterValidationResult.builder()
                         .success(false)
                         .errorMessage("功能待实现")
                         .errorCode("NOT_IMPLEMENTED")
-                        .build()
-        );
+                        .build());
     }
 
     @Override
-    public CompletableFuture<ReportConfigurationRecommendation> getRecommendedConfiguration(ReportConfigurationRecommendationRequest recommendationRequest) {
+    public CompletableFuture<ReportConfigurationRecommendation> getRecommendedConfiguration(
+            ReportConfigurationRecommendationRequest recommendationRequest) {
         return CompletableFuture.completedFuture(
                 ReportConfigurationRecommendation.builder()
                         .success(false)
                         .errorMessage("功能待实现")
                         .errorCode("NOT_IMPLEMENTED")
-                        .build()
-        );
+                        .build());
     }
 
     @Override
-    public CompletableFuture<BatchReportGenerationResult> generateBatchReports(BatchReportGenerationRequest batchRequest) {
+    public CompletableFuture<BatchReportGenerationResult> generateBatchReports(
+            BatchReportGenerationRequest batchRequest) {
         return CompletableFuture.completedFuture(
                 BatchReportGenerationResult.builder()
                         .success(false)
                         .errorMessage("功能待实现")
                         .errorCode("NOT_IMPLEMENTED")
-                        .build()
-        );
+                        .build());
     }
 
     @Override
@@ -713,8 +760,7 @@ public class AttendanceReportServiceImpl implements AttendanceReportService {
                         .cacheSize(reportCache.size())
                         .maxCacheSize(MAX_CACHE_SIZE)
                         .hitRate(calculateHitRate())
-                        .build()
-        );
+                        .build());
     }
 
     @Override
@@ -724,8 +770,7 @@ public class AttendanceReportServiceImpl implements AttendanceReportService {
                         .success(true)
                         .cleanedItems(reportCache.size())
                         .message("缓存清理完成")
-                        .build()
-        );
+                        .build());
     }
 
     /**
@@ -733,7 +778,8 @@ public class AttendanceReportServiceImpl implements AttendanceReportService {
      */
     private double calculateHitRate() {
         long total = totalCacheHits.get() + totalCacheMisses.get();
-        if (total == 0) return 0.0;
+        if (total == 0)
+            return 0.0;
         return (double) totalCacheHits.get() / total * 100;
     }
 
@@ -763,7 +809,8 @@ public class AttendanceReportServiceImpl implements AttendanceReportService {
     /**
      * 计算部门统计
      */
-    private DepartmentStatistics calculateDepartmentStatistics(Long departmentId, LocalDate startDate, LocalDate endDate) {
+    private DepartmentStatistics calculateDepartmentStatistics(Long departmentId, LocalDate startDate,
+            LocalDate endDate) {
         // 简化实现
         return DepartmentStatistics.builder()
                 .departmentId(departmentId)

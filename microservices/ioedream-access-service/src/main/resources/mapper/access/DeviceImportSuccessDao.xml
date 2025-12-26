@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.lab1024.sa.access.dao.DeviceImportSuccessDao">
+
+    <!-- 结果映射 -->
+    <resultMap id="BaseResultMap" type="net.lab1024.sa.access.domain.entity.DeviceImportSuccessEntity">
+        <id column="success_id" property="successId"/>
+        <result column="batch_id" property="batchId"/>
+        <result column="device_id" property="deviceId"/>
+        <result column="row_number" property="rowNumber"/>
+        <result column="device_code" property="deviceCode"/>
+        <result column="device_name" property="deviceName"/>
+        <result column="device_type" property="deviceType"/>
+        <result column="imported_data" property="importedData"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <!-- 根据批次ID查询所有成功记录 -->
+    <select id="selectByBatchId" resultMap="BaseResultMap">
+        SELECT * FROM t_device_import_success
+        WHERE batch_id = #{batchId}
+        ORDER BY row_number ASC
+    </select>
+
+    <!-- 根据批次ID统计成功数量 -->
+    <select id="countByBatchId" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM t_device_import_success
+        WHERE batch_id = #{batchId}
+    </select>
+
+    <!-- 根据设备ID查询导入记录 -->
+    <select id="selectByDeviceId" resultMap="BaseResultMap">
+        SELECT * FROM t_device_import_success
+        WHERE device_id = #{deviceId}
+        ORDER BY create_time DESC
+    </select>
+
+    <!-- 根据设备编码查询导入记录 -->
+    <select id="selectByDeviceCode" resultMap="BaseResultMap">
+        SELECT * FROM t_device_import_success
+        WHERE device_code = #{deviceCode}
+        ORDER BY create_time DESC
+    </select>
+
+    <!-- 查询指定批次的指定行号成功记录 -->
+    <select id="selectByBatchIdAndRowNumber" resultMap="BaseResultMap">
+        SELECT * FROM t_device_import_success
+        WHERE batch_id = #{batchId}
+          AND row_number = #{rowNumber}
+        LIMIT 1
+    </select>
+
+    <!-- 批量插入成功记录 -->
+    <insert id="insertBatch">
+        INSERT INTO t_device_import_success
+        (batch_id, device_id, row_number, device_code, device_name, device_type, imported_data, create_time)
+        VALUES
+        <foreach collection="successList" item="success" separator=",">
+            (#{success.batchId}, #{success.deviceId}, #{success.rowNumber}, #{success.deviceCode},
+             #{success.deviceName}, #{success.deviceType}, #{success.importedData}, NOW())
+        </foreach>
+    </insert>
+
+    <!-- 根据批次ID删除所有成功记录 -->
+    <delete id="deleteByBatchId">
+        DELETE FROM t_device_import_success
+        WHERE batch_id = #{batchId}
+    </delete>
+
+    <!-- 检查设备编码是否在指定批次中已存在 -->
+    <select id="countByBatchIdAndDeviceCode" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM t_device_import_success
+        WHERE batch_id = #{batchId}
+          AND device_code = #{deviceCode}
+    </select>
+
+</mapper>

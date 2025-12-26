@@ -1,12 +1,13 @@
 package net.lab1024.sa.visitor.domain.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micrometer.observation.annotation.Observed;
 import jakarta.annotation.Resource;
-import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.exception.BusinessException;
 import net.lab1024.sa.common.exception.ParamException;
+import net.lab1024.sa.common.organization.entity.AreaEntity;
 import net.lab1024.sa.common.exception.SystemException;
 import net.lab1024.sa.common.organization.service.AreaUnifiedService;
 import net.lab1024.sa.visitor.domain.dao.VisitorAreaDao;
@@ -32,7 +33,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @Transactional(rollbackFor = Exception.class)
-public class VisitorAreaServiceImpl implements VisitorAreaService {
+ public class VisitorAreaServiceImpl implements VisitorAreaService {
 
     @Resource
     private VisitorAreaDao visitorAreaDao;
@@ -342,7 +343,7 @@ public class VisitorAreaServiceImpl implements VisitorAreaService {
 
         // 获取用户可访问的区域
         List<Long> accessibleAreaIds = areaUnifiedService.getUserAccessibleAreas(userId).stream()
-                .map(area -> area.getId())
+                .map(AreaEntity::getId)
                 .collect(Collectors.toList());
 
         if (accessibleAreaIds.isEmpty()) {
@@ -711,4 +712,5 @@ public class VisitorAreaServiceImpl implements VisitorAreaService {
         // 缓存清除由@CacheEvict注解自动处理
     }
 }
+
 

@@ -1,21 +1,25 @@
 package net.lab1024.sa.attendance.engine.rule.loader.impl;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.attendance.engine.rule.loader.RuleLoader;
-import net.lab1024.sa.attendance.dao.AttendanceRuleDao;
-import net.lab1024.sa.attendance.entity.AttendanceRuleEntity;
+
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import jakarta.annotation.Resource;
-import java.time.LocalDateTime;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
+import net.lab1024.sa.attendance.dao.AttendanceRuleDao;
+import net.lab1024.sa.attendance.engine.rule.loader.RuleLoader;
+import net.lab1024.sa.attendance.entity.AttendanceRuleEntity;
 
 /**
  * 规则加载器实现类
@@ -28,8 +32,8 @@ import java.util.stream.Collectors;
  * @version 1.0.0
  * @since 2025-12-16
  */
-@Slf4j
 @Component("ruleLoader")
+@Slf4j
 public class RuleLoaderImpl implements RuleLoader {
 
     @Resource
@@ -39,8 +43,8 @@ public class RuleLoaderImpl implements RuleLoader {
     private ObjectMapper objectMapper;
 
     // 规则缓存
-    private final Map<Long, AttendanceRuleEntity> ruleCache = new ConcurrentHashMap<>();
-    private final Map<String, List<Long>> categoryCache = new ConcurrentHashMap<>();
+    private final Map<Long, AttendanceRuleEntity> ruleCache = new HashMap<>();
+    private final Map<String, List<Long>> categoryCache = new HashMap<>();
 
     /**
      * 加载所有启用的规则
@@ -52,16 +56,15 @@ public class RuleLoaderImpl implements RuleLoader {
         try {
             // 从数据库查询启用的规则
             List<AttendanceRuleEntity> activeRules = attendanceRuleDao.selectList(
-                new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<AttendanceRuleEntity>()
-                    .eq(AttendanceRuleEntity::getRuleStatus, 1)
-                    .eq(AttendanceRuleEntity::getDeletedFlag, 0)
-                    .orderByAsc(AttendanceRuleEntity::getRulePriority)
-            );
+                    new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<AttendanceRuleEntity>()
+                            .eq(AttendanceRuleEntity::getRuleStatus, 1)
+                            .eq(AttendanceRuleEntity::getDeletedFlag, 0)
+                            .orderByAsc(AttendanceRuleEntity::getRulePriority));
 
             // 提取规则ID列表
             List<Long> ruleIds = activeRules.stream()
-                .map(AttendanceRuleEntity::getRuleId)
-                .collect(Collectors.toList());
+                    .map(AttendanceRuleEntity::getRuleId)
+                    .collect(Collectors.toList());
 
             // 更新缓存
             ruleCache.clear();
@@ -95,16 +98,15 @@ public class RuleLoaderImpl implements RuleLoader {
 
             // 缓存未命中，从数据库查询
             List<AttendanceRuleEntity> categoryRules = attendanceRuleDao.selectList(
-                new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<AttendanceRuleEntity>()
-                    .eq(AttendanceRuleEntity::getRuleCategory, ruleCategory)
-                    .eq(AttendanceRuleEntity::getRuleStatus, 1)
-                    .eq(AttendanceRuleEntity::getDeletedFlag, 0)
-                    .orderByAsc(AttendanceRuleEntity::getRulePriority)
-            );
+                    new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<AttendanceRuleEntity>()
+                            .eq(AttendanceRuleEntity::getRuleCategory, ruleCategory)
+                            .eq(AttendanceRuleEntity::getRuleStatus, 1)
+                            .eq(AttendanceRuleEntity::getDeletedFlag, 0)
+                            .orderByAsc(AttendanceRuleEntity::getRulePriority));
 
             List<Long> ruleIds = categoryRules.stream()
-                .map(AttendanceRuleEntity::getRuleId)
-                .collect(Collectors.toList());
+                    .map(AttendanceRuleEntity::getRuleId)
+                    .collect(Collectors.toList());
 
             // 更新缓存
             categoryCache.put(ruleCategory, ruleIds);
@@ -195,9 +197,9 @@ public class RuleLoaderImpl implements RuleLoader {
 
             // 解析动作配置JSON
             Map<String, Object> action = objectMapper.readValue(
-                rule.getRuleAction(),
-                new TypeReference<Map<String, Object>>() {}
-            );
+                    rule.getRuleAction(),
+                    new TypeReference<Map<String, Object>>() {
+                    });
 
             log.debug("[规则加载器] 规则动作加载完成: {}", ruleId);
             return action;
@@ -308,23 +310,20 @@ public class RuleLoaderImpl implements RuleLoader {
 
             // 总规则数
             long totalRules = attendanceRuleDao.selectCount(
-                new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<AttendanceRuleEntity>()
-                    .eq(AttendanceRuleEntity::getDeletedFlag, 0)
-            );
+                    new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<AttendanceRuleEntity>()
+                            .eq(AttendanceRuleEntity::getDeletedFlag, 0));
 
             // 启用规则数
             long activeRules = attendanceRuleDao.selectCount(
-                new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<AttendanceRuleEntity>()
-                    .eq(AttendanceRuleEntity::getRuleStatus, 1)
-                    .eq(AttendanceRuleEntity::getDeletedFlag, 0)
-            );
+                    new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<AttendanceRuleEntity>()
+                            .eq(AttendanceRuleEntity::getRuleStatus, 1)
+                            .eq(AttendanceRuleEntity::getDeletedFlag, 0));
 
             // 按分类统计
             List<Map<String, Object>> categoryStats = attendanceRuleDao.selectMaps(
-                new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<AttendanceRuleEntity>()
-                    .select(AttendanceRuleEntity::getRuleCategory)
-                    .groupBy(AttendanceRuleEntity::getRuleCategory)
-            );
+                    new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<AttendanceRuleEntity>()
+                            .select(AttendanceRuleEntity::getRuleCategory)
+                            .groupBy(AttendanceRuleEntity::getRuleCategory));
 
             // 缓存统计
             int cachedRules = ruleCache.size();
@@ -359,10 +358,12 @@ public class RuleLoaderImpl implements RuleLoader {
             }
 
             LocalDateTime now = LocalDateTime.now();
-            LocalDateTime effectiveTime = rule.getEffectiveStartTime() != null ?
-                LocalDateTime.parse(rule.getEffectiveStartTime()) : null;
-            LocalDateTime expireTime = rule.getEffectiveEndTime() != null ?
-                LocalDateTime.parse(rule.getEffectiveEndTime()) : null;
+            LocalDateTime effectiveTime = rule.getEffectiveStartTime() != null
+                    ? LocalDateTime.parse(rule.getEffectiveStartTime())
+                    : null;
+            LocalDateTime expireTime = rule.getEffectiveEndTime() != null
+                    ? LocalDateTime.parse(rule.getEffectiveEndTime())
+                    : null;
 
             // 检查生效时间
             if (effectiveTime != null && now.isBefore(effectiveTime)) {
@@ -418,11 +419,10 @@ public class RuleLoaderImpl implements RuleLoader {
 
         // 按分类分组
         Map<String, List<Long>> categoryMap = rules.stream()
-            .filter(rule -> StringUtils.hasText(rule.getRuleCategory()))
-            .collect(Collectors.groupingBy(
-                AttendanceRuleEntity::getRuleCategory,
-                Collectors.mapping(AttendanceRuleEntity::getRuleId, Collectors.toList())
-            ));
+                .filter(rule -> StringUtils.hasText(rule.getRuleCategory()))
+                .collect(Collectors.groupingBy(
+                        AttendanceRuleEntity::getRuleCategory,
+                        Collectors.mapping(AttendanceRuleEntity::getRuleId, Collectors.toList())));
 
         // 更新缓存
         categoryCache.putAll(categoryMap);

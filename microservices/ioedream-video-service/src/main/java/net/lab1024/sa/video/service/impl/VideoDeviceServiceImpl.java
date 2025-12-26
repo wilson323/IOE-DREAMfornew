@@ -1,30 +1,33 @@
 package net.lab1024.sa.video.service.impl;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
+import net.lab1024.sa.common.util.TypeUtils;
+import net.lab1024.sa.common.util.QueryBuilder;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.micrometer.observation.annotation.Observed;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
+import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.exception.BusinessException;
 import net.lab1024.sa.common.exception.ParamException;
 import net.lab1024.sa.common.exception.SystemException;
-import net.lab1024.sa.common.openapi.domain.response.PageResult;
 import net.lab1024.sa.common.organization.dao.DeviceDao;
 import net.lab1024.sa.common.organization.entity.DeviceEntity;
 import net.lab1024.sa.video.domain.form.VideoDeviceAddForm;
@@ -64,44 +67,27 @@ public class VideoDeviceServiceImpl implements VideoDeviceService {
     @Observed(name = "video.device.query", contextualName = "video-device-query")
     @Transactional(readOnly = true)
     public PageResult<VideoDeviceVO> queryDevices(VideoDeviceQueryForm queryForm) {
-        log.info("[视频设备] 分页查询设备，pageNum={}, pageSize={}, keyword={}, areaId={}, status={}",
-                queryForm.getPageNum(), queryForm.getPageSize(), queryForm.getKeyword(),
-                queryForm.getAreaId(), queryForm.getStatus());
-
         try {
-            // 构建查询条件
-            LambdaQueryWrapper<DeviceEntity> wrapper = new LambdaQueryWrapper<>();
-            wrapper.eq(DeviceEntity::getDeviceType, "CAMERA")
-                    .eq(DeviceEntity::getDeletedFlag, 0);
+            log.info("[视频设备] 分页查询设备，pageNum={}, pageSize={}, keyword={}, areaId={}, status={}",
+                    queryForm.getPageNum(), queryForm.getPageSize(), queryForm.getKeyword(),
+                    queryForm.getAreaId(), queryForm.getStatus());
 
-            // 关键词搜索（设备名称、设备编号）
-            if (StringUtils.hasText(queryForm.getKeyword())) {
-                wrapper.and(w -> w.like(DeviceEntity::getDeviceName, queryForm.getKeyword())
-                        .or()
-                        .like(DeviceEntity::getDeviceCode, queryForm.getKeyword()));
+            // 预处理参数
+            Long areaId = TypeUtils.parseLong(queryForm.getAreaId());
+            Integer deviceStatus = null;
+            if (queryForm.getStatus() != null && queryForm.getStatus() >= 1 && queryForm.getStatus() <= 5) {
+                deviceStatus = queryForm.getStatus();
             }
 
-            // 区域筛选
-            if (StringUtils.hasText(queryForm.getAreaId())) {
-                try {
-                    Long areaId = Long.parseLong(queryForm.getAreaId());
-                    wrapper.eq(DeviceEntity::getAreaId, areaId);
-                } catch (NumberFormatException e) {
-                    log.warn("[视频设备] 区域ID格式错误，areaId={}", queryForm.getAreaId());
-                }
-            }
-
-            // 设备状态筛选
-            if (queryForm.getStatus() != null) {
-                // 状态转换：1-在线, 2-离线, 3-故障, 4-维护, 5-停用
-                Integer deviceStatus = queryForm.getStatus();
-                if (deviceStatus >= 1 && deviceStatus <= 5) {
-                    wrapper.eq(DeviceEntity::getDeviceStatus, deviceStatus);
-                }
-            }
-
-            // 排序
-            wrapper.orderByDesc(DeviceEntity::getCreateTime);
+            // 构建查询条件（使用QueryBuilder）
+            LambdaQueryWrapper<DeviceEntity> wrapper = QueryBuilder.of(DeviceEntity.class)
+                .eq(DeviceEntity::getDeviceType, "CAMERA")
+                .keyword(queryForm.getKeyword(), DeviceEntity::getDeviceName, DeviceEntity::getDeviceCode)
+                .eq(DeviceEntity::getAreaId, areaId)
+                .eq(DeviceEntity::getDeviceStatus, deviceStatus)
+                .eq(DeviceEntity::getDeletedFlag, 0)
+                .orderByDesc(DeviceEntity::getCreateTime)
+                .build();
 
             // 执行分页查询
             Page<DeviceEntity> page = new Page<>(queryForm.getPageNum(), queryForm.getPageSize());
@@ -139,7 +125,7 @@ public class VideoDeviceServiceImpl implements VideoDeviceService {
 
     @Override
     @Transactional(readOnly = true)
-    @Cacheable(value = "video:device:detail", key = "#deviceId", unless = "#result == null || !#result.getOk()")
+    @Cacheable(value = "video:device:detail", key = "#deviceId", unless = "#result == null || !#result.isSuccess()")
     public ResponseDTO<VideoDeviceVO> getDeviceDetail(Long deviceId) {
         log.info("[视频设备] 查询设备详情，deviceId={}", deviceId);
 
@@ -156,8 +142,8 @@ public class VideoDeviceServiceImpl implements VideoDeviceService {
                 return ResponseDTO.error("DEVICE_NOT_FOUND", "设备不存在");
             }
 
-            // 验证是否为视频设备
-            if (!"CAMERA".equals(device.getDeviceType())) {
+            // 验证是否为视频设备 (deviceType: 1-摄像头)
+            if (device.getDeviceType() == null || device.getDeviceType() != 1) {
                 log.warn("[视频设备] 设备类型不匹配，deviceId={}, deviceType={}", deviceId, device.getDeviceType());
                 return ResponseDTO.error("DEVICE_TYPE_MISMATCH", "设备类型不匹配");
             }
@@ -190,21 +176,16 @@ public class VideoDeviceServiceImpl implements VideoDeviceService {
     private VideoDeviceVO convertToVO(DeviceEntity entity) {
         VideoDeviceVO vo = new VideoDeviceVO();
 
-        // 处理设备ID - DeviceEntity的deviceId是String类型，VO需要Long类型，需要进行转换
-        if (StringUtils.hasText(entity.getDeviceId())) {
-            try {
-                vo.setDeviceId(Long.parseLong(entity.getDeviceId()));
-            } catch (NumberFormatException e) {
-                log.warn("[视频设备] 设备ID转换失败: deviceId={}", entity.getDeviceId());
-                vo.setDeviceId(0L);
-            }
+        // 处理设备ID
+        if (entity.getDeviceId() != null) {
+            vo.setDeviceId(entity.getDeviceId());
         }
 
         vo.setDeviceCode(entity.getDeviceCode());
         vo.setDeviceName(entity.getDeviceName());
-        vo.setDeviceType(entity.getDeviceType());
+        vo.setDeviceType(entity.getDeviceType() != null ? entity.getDeviceType().toString() : null);
         vo.setAreaId(entity.getAreaId());
-        vo.setAreaName(entity.getAreaName());
+        // vo.setAreaName(entity.getAreaId() != null ? entity.getAreaId().toString() : null);
         vo.setDeviceIp(entity.getIpAddress());
         vo.setDevicePort(entity.getPort());
         vo.setEnabledFlag(entity.getEnabled() != null ? entity.getEnabled() : 1);
@@ -242,29 +223,25 @@ public class VideoDeviceServiceImpl implements VideoDeviceService {
         }
 
         // 设置设备子类型
-        if (StringUtils.hasText(entity.getDeviceSubType())) {
-            try {
-                vo.setDeviceSubType(Integer.parseInt(entity.getDeviceSubType()));
-                vo.setDeviceSubTypeDesc(getDeviceSubTypeDesc(vo.getDeviceSubType()));
-            } catch (NumberFormatException e) {
-                log.debug("[视频设备] 设备子类型解析失败: deviceSubType={}", entity.getDeviceSubType());
-            }
+        if (entity.getDeviceSubType() != null) {
+            vo.setDeviceSubType(entity.getDeviceSubType());
+            vo.setDeviceSubTypeDesc(getDeviceSubTypeDesc(vo.getDeviceSubType()));
         }
 
         // 设置扩展属性字段
         String extendedAttributesStr = entity.getExtendedAttributes();
-        if (StringUtils.hasText(extendedAttributesStr)) {
+        if (TypeUtils.hasText(extendedAttributesStr)) {
             try {
                 // 这里应该解析JSON格式的扩展属性
-                // 暂时设置一些基本的扩展属性
-                vo.setStreamUrl(entity.getDeviceConfig());
+                // 暂时设置一些基本的扩展属性 - 注释掉不存在的方法调用
+                // vo.setStreamUrl(entity.getDeviceConfig());
                 vo.setManufacturer(entity.getBrand());
                 vo.setModel(entity.getModel());
                 vo.setSerialNumber(entity.getSerialNumber());
-                vo.setInstallLocation(entity.getLocation());
+                // vo.setInstallLocation(entity.getLocation());
                 vo.setLastOnlineTime(entity.getLastOnlineTime());
                 vo.setLastOfflineTime(entity.getLastOfflineTime());
-                vo.setOnlineDuration(entity.getOnlineDuration());
+                // vo.setOnlineDuration(entity.getOnlineDuration());
                 vo.setRemark(entity.getRemark());
             } catch (Exception e) {
                 log.error("[视频设备] 解析扩展属性失败: extendedAttributes={}", extendedAttributesStr, e);
@@ -375,8 +352,8 @@ public class VideoDeviceServiceImpl implements VideoDeviceService {
                 return ResponseDTO.error("DEVICE_NOT_FOUND", "设备不存在");
             }
 
-            // 验证是否为视频设备
-            if (!"CAMERA".equals(device.getDeviceType())) {
+            // 验证是否为视频设备 (deviceType: 1-摄像头)
+            if (device.getDeviceType() == null || device.getDeviceType() != 1) {
                 log.warn("[视频设备] 设备类型不匹配，deviceId={}, deviceType={}",
                         updateForm.getDeviceId(), device.getDeviceType());
                 return ResponseDTO.error("DEVICE_TYPE_MISMATCH", "设备类型不匹配");
@@ -570,7 +547,7 @@ public class VideoDeviceServiceImpl implements VideoDeviceService {
 
     @Override
     @Transactional(readOnly = true)
-    @Cacheable(value = "video:device:area", key = "#areaId", unless = "#result == null || !#result.getOk() || (#result.getData() != null && #result.getData().isEmpty())")
+    @Cacheable(value = "video:device:area", key = "#areaId", unless = "#result == null || !#result.isSuccess() || (#result.getData() != null && #result.getData().isEmpty())")
     public ResponseDTO<List<VideoDeviceVO>> getDevicesByAreaId(Long areaId) {
         log.info("[视频设备] 根据区域查询设备，areaId={}", areaId);
 
@@ -597,7 +574,7 @@ public class VideoDeviceServiceImpl implements VideoDeviceService {
 
     @Override
     @Transactional(readOnly = true)
-    @Cacheable(value = "video:device:online", key = "'all'", unless = "#result == null || !#result.getOk()")
+    @Cacheable(value = "video:device:online", key = "'all'", unless = "#result == null || !#result.isSuccess()")
     public ResponseDTO<List<VideoDeviceVO>> getOnlineDevices() {
         log.info("[视频设备] 查询在线设备");
 
@@ -703,7 +680,7 @@ public class VideoDeviceServiceImpl implements VideoDeviceService {
     @Override
     @Transactional(readOnly = true)
     @Observed(name = "video.device.statistics", contextualName = "video-device-statistics")
-    @Cacheable(value = "video:device:statistics", key = "'all'", unless = "#result == null || !#result.getOk()")
+    @Cacheable(value = "video:device:statistics", key = "'all'", unless = "#result == null || !#result.isSuccess()")
     public ResponseDTO<Object> getDeviceStatistics() {
         log.info("[视频设备] 获取设备统计信息");
 
@@ -801,11 +778,10 @@ public class VideoDeviceServiceImpl implements VideoDeviceService {
             // 返回设备的扩展属性作为配置信息
             Map<String, Object> config = new HashMap<>();
             String extendedAttributesStr = device.getExtendedAttributes();
-            if (StringUtils.hasText(extendedAttributesStr)) {
+            if (TypeUtils.hasText(extendedAttributesStr)) {
                 try {
                     ObjectMapper objectMapper = new ObjectMapper();
-                    @SuppressWarnings("unchecked")
-                    Map<String, Object> parsedConfig = objectMapper.readValue(extendedAttributesStr, Map.class);
+                    Map<String, Object> parsedConfig = objectMapper.readValue(extendedAttributesStr, new TypeReference<Map<String, Object>>() {});
                     config = parsedConfig;
                 } catch (Exception e) {
                     log.warn("[视频设备] 解析扩展属性失败: deviceId={}, error={}", deviceId, e.getMessage());
@@ -853,7 +829,7 @@ public class VideoDeviceServiceImpl implements VideoDeviceService {
         DeviceEntity device = new DeviceEntity();
         device.setDeviceCode(addForm.getDeviceCode());
         device.setDeviceName(addForm.getDeviceName());
-        device.setDeviceType(addForm.getDeviceType());
+        device.setDeviceType(addForm.getDeviceType() != null ? Integer.parseInt(addForm.getDeviceType()) : null);
         device.setAreaId(addForm.getAreaId());
         device.setIpAddress(addForm.getDeviceIp());
         device.setPort(addForm.getDevicePort());
@@ -888,7 +864,7 @@ public class VideoDeviceServiceImpl implements VideoDeviceService {
      * 从更新表单更新实体
      */
     private void updateEntityFromForm(DeviceEntity device, VideoDeviceUpdateForm updateForm) {
-        if (StringUtils.hasText(updateForm.getDeviceName())) {
+        if (TypeUtils.hasText(updateForm.getDeviceName())) {
             device.setDeviceName(updateForm.getDeviceName());
         }
         if (updateForm.getDeviceSubType() != null) {
@@ -898,27 +874,27 @@ public class VideoDeviceServiceImpl implements VideoDeviceService {
         if (updateForm.getAreaId() != null) {
             device.setAreaId(updateForm.getAreaId());
         }
-        if (StringUtils.hasText(updateForm.getDeviceIp())) {
+        if (TypeUtils.hasText(updateForm.getDeviceIp())) {
             device.setIpAddress(updateForm.getDeviceIp());
         }
         if (updateForm.getDevicePort() != null) {
             device.setPort(updateForm.getDevicePort());
         }
-        if (StringUtils.hasText(updateForm.getStreamUrl())) {
+        if (TypeUtils.hasText(updateForm.getStreamUrl())) {
             // device.setExtendedAttributeValue("streamUrl", updateForm.getStreamUrl());
         }
-        if (StringUtils.hasText(updateForm.getManufacturer())) {
+        if (TypeUtils.hasText(updateForm.getManufacturer())) {
             // device.setExtendedAttributeValue("manufacturer",
             // updateForm.getManufacturer());
         }
-        if (StringUtils.hasText(updateForm.getModel())) {
+        if (TypeUtils.hasText(updateForm.getModel())) {
             // device.setExtendedAttributeValue("model", updateForm.getModel());
         }
-        if (StringUtils.hasText(updateForm.getSerialNumber())) {
+        if (TypeUtils.hasText(updateForm.getSerialNumber())) {
             // device.setExtendedAttributeValue("serialNumber",
             // updateForm.getSerialNumber());
         }
-        if (StringUtils.hasText(updateForm.getInstallLocation())) {
+        if (TypeUtils.hasText(updateForm.getInstallLocation())) {
             // device.setExtendedAttributeValue("installLocation",
             // updateForm.getInstallLocation());
         }
@@ -946,7 +922,7 @@ public class VideoDeviceServiceImpl implements VideoDeviceService {
         if (updateForm.getAiSupported() != null) {
             // device.setExtendedAttributeValue("aiSupported", updateForm.getAiSupported());
         }
-        if (StringUtils.hasText(updateForm.getResolution())) {
+        if (TypeUtils.hasText(updateForm.getResolution())) {
             // device.setExtendedAttributeValue("resolution", updateForm.getResolution());
         }
         if (updateForm.getFrameRate() != null) {
@@ -955,10 +931,14 @@ public class VideoDeviceServiceImpl implements VideoDeviceService {
         if (updateForm.getEnabledFlag() != null) {
             device.setEnabled(updateForm.getEnabledFlag());
         }
-        if (StringUtils.hasText(updateForm.getDeviceStatus())) {
-            device.setDeviceStatus(updateForm.getDeviceStatus());
+        if (updateForm.getDeviceStatus() != null) {
+            try {
+                device.setDeviceStatus(Integer.parseInt(updateForm.getDeviceStatus()));
+            } catch (NumberFormatException e) {
+                log.warn("[视频设备] 设备状态格式错误: {}", updateForm.getDeviceStatus());
+            }
         }
-        if (StringUtils.hasText(updateForm.getRemark())) {
+        if (TypeUtils.hasText(updateForm.getRemark())) {
             // device.setExtendedAttributeValue("remark", updateForm.getRemark());
         }
 

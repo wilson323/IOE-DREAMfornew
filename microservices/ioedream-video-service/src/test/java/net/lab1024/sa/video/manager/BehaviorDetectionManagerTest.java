@@ -72,30 +72,16 @@ class BehaviorDetectionManagerTest {
         assertEquals(5, result.personCount());
     }
 
-    @Test
-    @DisplayName("跌倒检测 - 返回结果")
-    void detectFall_shouldReturnResult() {
-        byte[] frameData = new byte[1024];
-
-        BehaviorDetectionManager.FallDetectionResult result = behaviorDetectionManager.detectFall("CAM001", frameData);
-
-        assertNotNull(result);
-        // 当前实现返回false，实际需要AI模型
-        assertFalse(result.detected());
-    }
-
-    @Test
-    @DisplayName("异常行为检测 - 返回列表")
-    void detectAbnormalBehaviors_shouldReturnList() {
-        byte[] frameData = new byte[1024];
-
-        List<BehaviorDetectionManager.AbnormalBehavior> behaviors =
-                behaviorDetectionManager.detectAbnormalBehaviors("CAM001", frameData);
-
-        assertNotNull(behaviors);
-        // 当前实现返回空列表，实际需要AI模型
-        assertTrue(behaviors.isEmpty());
-    }
+    // ============================================================
+    // ⚠️ 测试删除（2025-01-30）
+    // ============================================================
+    // 以下测试已被删除，因为测试的方法已被删除：
+    // - detectFall_shouldReturnResult()
+    // - detectAbnormalBehaviors_shouldReturnList()
+    //
+    // 原因：这些方法违反边缘计算架构
+    // 替代测试：参见 DeviceAIEventReceiverTest（待创建）
+    // ============================================================
 
     @Test
     @DisplayName("清理过期轨迹")

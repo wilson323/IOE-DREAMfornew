@@ -3,6 +3,7 @@ package net.lab1024.sa.video.manager;
 import java.util.List;
 
 import lombok.extern.slf4j.Slf4j;
+
 import net.lab1024.sa.video.domain.vo.VideoDeviceVO;
 
 /**
@@ -83,7 +84,7 @@ public class VideoDeviceManager {
      */
     public java.util.Map<String, Object> performHealthCheck(VideoDeviceVO device) {
         log.info("[VideoDeviceManager] 执行设备健康检查，deviceId={}",
-                device != null ? device.getDeviceId() : null);
+                (Object) (device != null ? device.getDeviceId() : null));
 
         java.util.Map<String, Object> result = new java.util.HashMap<>();
 
@@ -107,7 +108,7 @@ public class VideoDeviceManager {
      * 批量更新设备配置
      *
      * @param deviceIds 设备ID列表
-     * @param config 配置参数
+     * @param config    配置参数
      * @return 更新结果
      */
     public java.util.Map<String, Object> batchUpdateDeviceConfig(

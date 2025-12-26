@@ -1,0 +1,81 @@
+﻿name: Code Quality Check
+
+on:
+  push:
+    branches: [ main, develop, master ]
+  pull_request:
+    branches: [ main, develop, master ]
+
+jobs:
+  code-quality:
+    name: Code Quality & Test Coverage
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: ./.github/actions/checkout
+
+    - name: Setup Java
+      uses: ./.github/actions/setup-java
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+        cache: 'maven'
+
+    # GitHub Hosted Runner 已内置 pwsh（Ubuntu-latest 默认可用），无需额外安装步骤
+
+    - name: Run Tech Stack Consistency Check
+      shell: pwsh
+      continue-on-error: true
+      run: |
+        .\scripts\tech-stack-consistency-check.ps1 -CI -OutputFormat json -OutputDir reports
+      id: techstack_check
+
+    - name: Run Test Coverage Check
+      shell: pwsh
+      continue-on-error: true
+      run: |
+        .\scripts\check-test-coverage.ps1 -CI -OutputDir reports
+      id: coverage_check
+
+    - name: Run Spring Boot Config Keys Check
+      shell: pwsh
+      continue-on-error: false
+      run: |
+        .\scripts\check-spring-config-keys.ps1 -SkipBuild
+      id: config_check
+
+    - name: Run SonarQube Analysis
+      shell: pwsh
+      continue-on-error: true
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      run: |
+        if ([string]::IsNullOrWhiteSpace($env:SONAR_TOKEN) -or [string]::IsNullOrWhiteSpace($env:SONAR_HOST_URL)) {
+          Write-Host "[跳过] 未配置 SONAR_TOKEN/SONAR_HOST_URL，跳过 SonarQube 分析"
+          exit 0
+        }
+        .\scripts\sonarqube-quality-gate.ps1 -CI -OutputDir reports
+      id: sonarqube_check
+
+    - name: Upload quality reports
+      uses: ./.github/actions/upload-artifact
+      if: always()
+      with:
+        name: code-quality-reports
+        path: reports/*.json
+        retention-days: 30
+
+    - name: Generate quality summary
+      shell: pwsh
+      if: always()
+      run: |
+        Write-Host "## Code Quality Summary" >> $env:GITHUB_STEP_SUMMARY
+        Write-Host "" >> $env:GITHUB_STEP_SUMMARY
+        Write-Host "| Check | Status |" >> $env:GITHUB_STEP_SUMMARY
+        Write-Host "|-------|--------|" >> $env:GITHUB_STEP_SUMMARY
+        Write-Host "| Tech Stack Consistency | ${{ steps.techstack_check.outcome == 'success' && '✅ Pass' || '❌ Fail' }} |" >> $env:GITHUB_STEP_SUMMARY
+        Write-Host "| Test Coverage | ${{ steps.coverage_check.outcome == 'success' && '✅ Pass' || '❌ Fail' }} |" >> $env:GITHUB_STEP_SUMMARY
+        Write-Host "| Spring Boot Config Keys | ${{ steps.config_check.outcome == 'success' && '✅ Pass' || '❌ Fail' }} |" >> $env:GITHUB_STEP_SUMMARY
+        Write-Host "| SonarQube Quality Gate | ${{ steps.sonarqube_check.outcome == 'success' && '✅ Pass' || '❌ Fail' }} |" >> $env:GITHUB_STEP_SUMMARY

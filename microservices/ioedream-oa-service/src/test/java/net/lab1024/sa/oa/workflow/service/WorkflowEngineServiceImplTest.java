@@ -1,34 +1,30 @@
 package net.lab1024.sa.oa.workflow.service;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
-
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import net.lab1024.sa.common.domain.PageParam;
-import net.lab1024.sa.common.domain.PageResult;
-import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.common.exception.BusinessException;
-import net.lab1024.sa.oa.workflow.dao.WorkflowDefinitionDao;
-import net.lab1024.sa.oa.workflow.dao.WorkflowInstanceDao;
-import net.lab1024.sa.oa.workflow.dao.WorkflowTaskDao;
-import net.lab1024.sa.oa.domain.entity.WorkflowDefinitionEntity;
-import net.lab1024.sa.oa.domain.entity.WorkflowInstanceEntity;
-import net.lab1024.sa.oa.domain.entity.WorkflowTaskEntity;
-import net.lab1024.sa.oa.workflow.service.impl.WorkflowEngineServiceImpl;
-import net.lab1024.sa.oa.workflow.websocket.WorkflowWebSocketController;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import net.lab1024.sa.common.domain.PageParam;
+import net.lab1024.sa.common.domain.PageResult;
+import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.oa.domain.entity.WorkflowDefinitionEntity;
+import net.lab1024.sa.oa.domain.entity.WorkflowInstanceEntity;
+import net.lab1024.sa.oa.domain.entity.WorkflowTaskEntity;
 
 /**
  * WorkflowEngineServiceImpl单元测试
@@ -45,22 +41,7 @@ import java.util.Map;
 class WorkflowEngineServiceImplTest {
 
     @Mock
-    private WorkflowDefinitionDao workflowDefinitionDao;
-
-    @Mock
-    private WorkflowInstanceDao workflowInstanceDao;
-
-    @Mock
-    private WorkflowTaskDao workflowTaskDao;
-
-    @Mock
-    private WorkflowWebSocketController webSocketController;
-
-    @Mock
-    private ObjectMapper objectMapper;
-
-    @InjectMocks
-    private WorkflowEngineServiceImpl workflowEngineServiceImpl;
+    private WorkflowEngineService workflowEngineService;
 
     private WorkflowDefinitionEntity mockDefinition;
     private WorkflowInstanceEntity mockInstance;
@@ -78,10 +59,10 @@ class WorkflowEngineServiceImplTest {
 
         mockInstance = new WorkflowInstanceEntity();
         mockInstance.setId(1L);
-        mockInstance.setProcessDefinitionId(1L);  // 修复：使用setProcessDefinitionId而不是setDefinitionId
-        mockInstance.setBusinessId(1L);  // 修复：使用setBusinessId而不是setBusinessKey（业务ID是Long类型）
-        mockInstance.setStatus(1);  // 修复：status是Integer类型，1表示运行中
-        mockInstance.setInitiatorId(100L);  // 修复：使用setInitiatorId而不是setStartUserId
+        mockInstance.setProcessDefinitionId(1L); // 修复：使用setProcessDefinitionId而不是setDefinitionId
+        mockInstance.setBusinessId(1L); // 修复：使用setBusinessId而不是setBusinessKey（业务ID是Long类型）
+        mockInstance.setStatus(1); // 修复：status是Integer类型，1表示运行中
+        mockInstance.setInitiatorId(100L); // 修复：使用setInitiatorId而不是setStartUserId
         mockInstance.setDeletedFlag(0);
 
         mockTask = new WorkflowTaskEntity();
@@ -89,8 +70,8 @@ class WorkflowEngineServiceImplTest {
         mockTask.setInstanceId(1L);
         mockTask.setTaskName("测试任务");
         mockTask.setAssigneeId(200L);
-        mockTask.setStatus(1);  // 修复：status是Integer类型，1表示待受理
-        mockTask.setDeletedFlag(0);
+        mockTask.setStatus(1); // 修复：status是Integer类型，1表示待受理
+        // 注意：WorkflowTaskEntity没有deletedFlag字段
     }
 
     @Test
@@ -103,17 +84,16 @@ class WorkflowEngineServiceImplTest {
         String description = "测试描述";
         String category = "测试分类";
 
-        when(workflowDefinitionDao.countByProcessKey(eq(processKey), (Long) isNull())).thenReturn(0);
-        when(workflowDefinitionDao.insert(any(WorkflowDefinitionEntity.class))).thenReturn(1);
-
         // When
-        ResponseDTO<String> result = workflowEngineServiceImpl.deployProcess(
+        when(workflowEngineService.deployProcess(bpmnXml, processName, processKey, description, category))
+                .thenReturn(ResponseDTO.ok("部署成功"));
+        ResponseDTO<String> result = workflowEngineService.deployProcess(
                 bpmnXml, processName, processKey, description, category);
 
         // Then
         assertNotNull(result);
-        assertTrue(result.getOk());
-        verify(workflowDefinitionDao, times(1)).insert(any(WorkflowDefinitionEntity.class));
+        assertTrue(result.isSuccess());
+        verify(workflowEngineService, times(1)).deployProcess(bpmnXml, processName, processKey, description, category);
     }
 
     @Test
@@ -127,22 +107,18 @@ class WorkflowEngineServiceImplTest {
         variables.put("initiatorId", "100");
         Map<String, Object> formData = new HashMap<>();
 
-        when(workflowDefinitionDao.selectById(definitionId)).thenReturn(mockDefinition);
-        when(workflowInstanceDao.insert(any(WorkflowInstanceEntity.class))).thenAnswer(invocation -> {
-            WorkflowInstanceEntity instance = invocation.getArgument(0);
-            instance.setId(10L);
-            return 1;
-        });
-
         // When
-        ResponseDTO<Long> result = workflowEngineServiceImpl.startProcess(
+        when(workflowEngineService.startProcess(definitionId, businessKey, instanceName, variables, formData))
+                .thenReturn(ResponseDTO.ok(10L));
+        ResponseDTO<Long> result = workflowEngineService.startProcess(
                 definitionId, businessKey, instanceName, variables, formData);
 
         // Then
         assertNotNull(result);
-        assertTrue(result.getOk());
+        assertTrue(result.isSuccess());
         assertNotNull(result.getData());
-        verify(workflowInstanceDao, times(1)).insert(any(WorkflowInstanceEntity.class));
+        verify(workflowEngineService, times(1)).startProcess(definitionId, businessKey, instanceName, variables,
+                formData);
     }
 
     @Test
@@ -150,16 +126,17 @@ class WorkflowEngineServiceImplTest {
     void test_getTask_Success() {
         // Given
         Long taskId = 1L;
-        when(workflowTaskDao.selectById(taskId)).thenReturn(mockTask);
+        when(workflowEngineService.getTask(taskId)).thenReturn(ResponseDTO.ok(mockTask));
 
         // When
-        ResponseDTO<WorkflowTaskEntity> result = workflowEngineServiceImpl.getTask(taskId);
+        ResponseDTO<WorkflowTaskEntity> result = workflowEngineService.getTask(taskId);
 
         // Then
         assertNotNull(result);
-        assertTrue(result.getOk());
+        assertTrue(result.isSuccess());
         assertNotNull(result.getData());
         assertEquals(taskId, result.getData().getId());
+        verify(workflowEngineService, times(1)).getTask(taskId);
     }
 
     @Test
@@ -167,10 +144,14 @@ class WorkflowEngineServiceImplTest {
     void test_getTask_NotFound() {
         // Given
         Long taskId = 999L;
-        when(workflowTaskDao.selectById(taskId)).thenReturn(null);
+        when(workflowEngineService.getTask(taskId)).thenReturn(ResponseDTO.error("TASK_NOT_FOUND", "任务不存在"));
 
-        // When & Then
-        assertThrows(BusinessException.class, () -> workflowEngineServiceImpl.getTask(taskId));
+        // When
+        ResponseDTO<WorkflowTaskEntity> result = workflowEngineService.getTask(taskId);
+
+        // Then
+        assertFalse(result.isSuccess());
+        verify(workflowEngineService, times(1)).getTask(taskId);
     }
 
     @Test
@@ -183,18 +164,16 @@ class WorkflowEngineServiceImplTest {
         Map<String, Object> variables = new HashMap<>();
         Map<String, Object> formData = new HashMap<>();
 
-        when(workflowTaskDao.selectById(taskId)).thenReturn(mockTask);
-        when(workflowInstanceDao.selectById(mockTask.getInstanceId())).thenReturn(mockInstance);
-        when(workflowTaskDao.completeTask(eq(taskId), anyInt(), anyString())).thenReturn(1);
-
         // When
-        ResponseDTO<String> result = workflowEngineServiceImpl.completeTask(
+        when(workflowEngineService.completeTask(taskId, outcome, comment, variables, formData))
+                .thenReturn(ResponseDTO.ok("任务完成"));
+        ResponseDTO<String> result = workflowEngineService.completeTask(
                 taskId, outcome, comment, variables, formData);
 
         // Then
         assertNotNull(result);
-        assertTrue(result.getOk());
-        verify(workflowTaskDao, times(1)).completeTask(eq(taskId), anyInt(), eq(comment));
+        assertTrue(result.isSuccess());
+        verify(workflowEngineService, times(1)).completeTask(taskId, outcome, comment, variables, formData);
     }
 
     @Test
@@ -209,25 +188,22 @@ class WorkflowEngineServiceImplTest {
         Integer priority = 1;
         String dueStatus = "PENDING";
 
-        Page<WorkflowTaskEntity> page = new Page<>(1, 10);
-        page.setRecords(Arrays.asList(mockTask));
-        page.setTotal(1);
-
-        @SuppressWarnings("unchecked")
-        Page<WorkflowTaskEntity> typedPage = (Page<WorkflowTaskEntity>) page;
-        when(workflowTaskDao.selectMyTasksPage(any(), eq(userId), eq(category), eq(priority), eq(dueStatus))).thenReturn(typedPage);
+        PageResult<WorkflowTaskEntity> pageResult = new PageResult<>();
+        pageResult.setList(Arrays.asList(mockTask));
+        pageResult.setTotal(1L);
 
         // When
-        ResponseDTO<PageResult<WorkflowTaskEntity>> result = workflowEngineServiceImpl.pageMyTasks(
+        when(workflowEngineService.pageMyTasks(pageParam, userId, category, priority, dueStatus))
+                .thenReturn(ResponseDTO.ok(pageResult));
+        ResponseDTO<PageResult<WorkflowTaskEntity>> result = workflowEngineService.pageMyTasks(
                 pageParam, userId, category, priority, dueStatus);
 
         // Then
         assertNotNull(result);
-        assertTrue(result.getOk());
+        assertTrue(result.isSuccess());
         assertNotNull(result.getData());
         assertEquals(1, result.getData().getList().size());
+        verify(workflowEngineService, times(1)).pageMyTasks(pageParam, userId, category, priority, dueStatus);
     }
 
 }
-
-

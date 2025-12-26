@@ -1,103 +1,23 @@
 package net.lab1024.sa.consume;
 
-import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
-import org.apache.seata.spring.boot.autoconfigure.SeataAutoConfiguration;
-import org.apache.seata.spring.boot.autoconfigure.SeataCoreAutoConfiguration;
-import org.apache.seata.spring.boot.autoconfigure.SeataDataSourceAutoConfiguration;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
- * IOE-DREAM 消费管理服务启动类
- * <p>
- * 端口: 8094
- * 职责: 提供消费管理、账户管理、交易记录、消费报表等业务API
- * <p>
- * 严格遵循CLAUDE.md规范:
- * - 使用@SpringBootApplication注解
- * - 启用Nacos服务发现(@EnableDiscoveryClient)
- * - 正确配置包扫描路径（common包和consume包）
- * - 正确配置MapperScan路径（包含common模块和consume模块的DAO包）
- * </p>
- * <p>
- * 核心功能模块:
- * - 消费管理：消费记录、账户管理、交易处理
- * - 报表统计：消费报表、统计查询、数据分析
- * - 账户管理：账户余额、充值、退款、补贴
- * </p>
+ * 消费服务启动类
  *
  * @author IOE-DREAM Team
  * @version 1.0.0
  * @since 2025-01-30
  */
-@SpringBootApplication(
-    scanBasePackages = {
-        // 消费服务自身包
-        "net.lab1024.sa.consume",
-        // 核心配置（必需）
-        "net.lab1024.sa.common.config",
-        // 响应和异常处理
-        "net.lab1024.sa.common.response",
-        "net.lab1024.sa.common.exception",
-        // 工具类
-        "net.lab1024.sa.common.util",
-        // 安全认证
-        "net.lab1024.sa.common.security",
-        // 消费相关公共模块
-        "net.lab1024.sa.common.consume",
-        // 组织机构
-        "net.lab1024.sa.common.organization",
-        // RBAC权限
-        "net.lab1024.sa.common.rbac",
-        // 系统配置
-        "net.lab1024.sa.common.system"
-    },
-    exclude = {
-        HibernateJpaAutoConfiguration.class,
-        SeataAutoConfiguration.class,
-        SeataCoreAutoConfiguration.class,
-        SeataDataSourceAutoConfiguration.class
-    }
-)
-@EnableDiscoveryClient
-@MapperScan(basePackages = {
-    // Common模块DAO（18个包）
-    "net.lab1024.sa.common.auth.dao",
-    "net.lab1024.sa.common.rbac.dao",
-    "net.lab1024.sa.common.system.employee.dao",
-    "net.lab1024.sa.common.access.dao",
-    "net.lab1024.sa.common.visitor.dao",
-    "net.lab1024.sa.common.audit.dao",
-    "net.lab1024.sa.common.monitor.dao",
-    "net.lab1024.sa.common.config.dao",
-    "net.lab1024.sa.common.menu.dao",
-    "net.lab1024.sa.common.dict.dao",
-    "net.lab1024.sa.common.organization.dao",
-    "net.lab1024.sa.common.workflow.dao",
-    "net.lab1024.sa.common.system.dao",
-    "net.lab1024.sa.common.notification.dao",
-    "net.lab1024.sa.common.scheduler.dao",
-    // Consume模块DAO
-    "net.lab1024.sa.consume.dao",
-    "net.lab1024.sa.consume.consume.dao",
-    "net.lab1024.sa.consume.report.dao"
-})
+@SpringBootApplication
+@EnableFeignClients(basePackages = "net.lab1024.sa.consume.client")
+@EnableScheduling
 public class ConsumeServiceApplication {
 
-    /**
-     * 主启动方法
-     * <p>
-     * 启动IOE-DREAM消费管理服务，端口8094
-     * </p>
-     *
-     * @param args 启动参数
-     */
     public static void main(String[] args) {
         SpringApplication.run(ConsumeServiceApplication.class, args);
     }
 }
-
-
-

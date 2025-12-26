@@ -1,16 +1,17 @@
 package net.lab1024.sa.oa.workflow.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.oa.workflow.domain.form.WorkflowBatchOperationForm;
-import net.lab1024.sa.oa.workflow.domain.vo.WorkflowBatchOperationResultVO;
-import net.lab1024.sa.oa.workflow.service.WorkflowBatchOperationService;
+
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
+import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.oa.workflow.domain.form.WorkflowBatchOperationForm;
+import net.lab1024.sa.oa.workflow.domain.vo.WorkflowBatchOperationResultVO;
+import net.lab1024.sa.oa.workflow.service.WorkflowBatchOperationService;
 
 /**
  * 工作流批量操作服务实现 - 企业级实现版本
@@ -23,9 +24,9 @@ import java.util.concurrent.CompletableFuture;
  * @version 2.0.0 - Flowable 7.2.0 迁移版
  * @since 2025-01-30
  */
-@Slf4j
 @Service
 @Transactional(rollbackFor = Exception.class)
+@Slf4j
 public class WorkflowBatchOperationServiceImpl implements WorkflowBatchOperationService {
 
     @Override
@@ -34,8 +35,7 @@ public class WorkflowBatchOperationServiceImpl implements WorkflowBatchOperation
         log.info("[批量操作] 批量启动流程: form={}", batchForm);
         // TODO: 实现批量启动流程逻辑
         return CompletableFuture.completedFuture(
-            ResponseDTO.error("NOT_IMPLEMENTED", "批量启动流程功能待实现")
-        );
+                ResponseDTO.error("NOT_IMPLEMENTED", "批量启动流程功能待实现"));
     }
 
     @Override
@@ -44,8 +44,7 @@ public class WorkflowBatchOperationServiceImpl implements WorkflowBatchOperation
         log.info("[批量操作] 批量完成任务: form={}", batchForm);
         // TODO: 实现批量完成任务逻辑
         return CompletableFuture.completedFuture(
-            ResponseDTO.error("NOT_IMPLEMENTED", "批量完成任务功能待实现")
-        );
+                ResponseDTO.error("NOT_IMPLEMENTED", "批量完成任务功能待实现"));
     }
 
     @Override
@@ -54,8 +53,7 @@ public class WorkflowBatchOperationServiceImpl implements WorkflowBatchOperation
         log.info("[批量操作] 批量审批任务: form={}", batchForm);
         // TODO: 实现批量审批任务逻辑
         return CompletableFuture.completedFuture(
-            ResponseDTO.error("NOT_IMPLEMENTED", "批量审批任务功能待实现")
-        );
+                ResponseDTO.error("NOT_IMPLEMENTED", "批量审批任务功能待实现"));
     }
 
     @Override
@@ -64,8 +62,7 @@ public class WorkflowBatchOperationServiceImpl implements WorkflowBatchOperation
         log.info("[批量操作] 批量拒绝任务: form={}", batchForm);
         // TODO: 实现批量拒绝任务逻辑
         return CompletableFuture.completedFuture(
-            ResponseDTO.error("NOT_IMPLEMENTED", "批量拒绝任务功能待实现")
-        );
+                ResponseDTO.error("NOT_IMPLEMENTED", "批量拒绝任务功能待实现"));
     }
 
     @Override
@@ -74,8 +71,7 @@ public class WorkflowBatchOperationServiceImpl implements WorkflowBatchOperation
         log.info("[批量操作] 批量分配任务: form={}", batchForm);
         // TODO: 实现批量分配任务逻辑
         return CompletableFuture.completedFuture(
-            ResponseDTO.error("NOT_IMPLEMENTED", "批量分配任务功能待实现")
-        );
+                ResponseDTO.error("NOT_IMPLEMENTED", "批量分配任务功能待实现"));
     }
 
     @Override
@@ -84,8 +80,7 @@ public class WorkflowBatchOperationServiceImpl implements WorkflowBatchOperation
         log.info("[批量操作] 批量撤销流程: form={}", batchForm);
         // TODO: 实现批量撤销流程逻辑
         return CompletableFuture.completedFuture(
-            ResponseDTO.error("NOT_IMPLEMENTED", "批量撤销流程功能待实现")
-        );
+                ResponseDTO.error("NOT_IMPLEMENTED", "批量撤销流程功能待实现"));
     }
 
     @Override
@@ -94,8 +89,7 @@ public class WorkflowBatchOperationServiceImpl implements WorkflowBatchOperation
         log.info("[批量操作] 批量挂起流程: form={}", batchForm);
         // TODO: 实现批量挂起流程逻辑
         return CompletableFuture.completedFuture(
-            ResponseDTO.error("NOT_IMPLEMENTED", "批量挂起流程功能待实现")
-        );
+                ResponseDTO.error("NOT_IMPLEMENTED", "批量挂起流程功能待实现"));
     }
 
     @Override
@@ -104,8 +98,7 @@ public class WorkflowBatchOperationServiceImpl implements WorkflowBatchOperation
         log.info("[批量操作] 批量激活流程: form={}", batchForm);
         // TODO: 实现批量激活流程逻辑
         return CompletableFuture.completedFuture(
-            ResponseDTO.error("NOT_IMPLEMENTED", "批量激活流程功能待实现")
-        );
+                ResponseDTO.error("NOT_IMPLEMENTED", "批量激活流程功能待实现"));
     }
 
     @Override
@@ -114,8 +107,7 @@ public class WorkflowBatchOperationServiceImpl implements WorkflowBatchOperation
         log.info("[批量操作] 批量删除流程: form={}", batchForm);
         // TODO: 实现批量删除流程逻辑
         return CompletableFuture.completedFuture(
-            ResponseDTO.error("NOT_IMPLEMENTED", "批量删除流程功能待实现")
-        );
+                ResponseDTO.error("NOT_IMPLEMENTED", "批量删除流程功能待实现"));
     }
 
     @Override
@@ -124,8 +116,7 @@ public class WorkflowBatchOperationServiceImpl implements WorkflowBatchOperation
         log.info("[批量操作] 批量设置流程变量: form={}", batchForm);
         // TODO: 实现批量设置流程变量逻辑
         return CompletableFuture.completedFuture(
-            ResponseDTO.error("NOT_IMPLEMENTED", "批量设置流程变量功能待实现")
-        );
+                ResponseDTO.error("NOT_IMPLEMENTED", "批量设置流程变量功能待实现"));
     }
 
     @Override
@@ -134,8 +125,7 @@ public class WorkflowBatchOperationServiceImpl implements WorkflowBatchOperation
         log.info("[批量操作] 批量添加评论: form={}", batchForm);
         // TODO: 实现批量添加评论逻辑
         return CompletableFuture.completedFuture(
-            ResponseDTO.error("NOT_IMPLEMENTED", "批量添加评论功能待实现")
-        );
+                ResponseDTO.error("NOT_IMPLEMENTED", "批量添加评论功能待实现"));
     }
 
     @Override
@@ -144,8 +134,7 @@ public class WorkflowBatchOperationServiceImpl implements WorkflowBatchOperation
         log.info("[批量操作] 批量添加附件: form={}", batchForm);
         // TODO: 实现批量添加附件逻辑
         return CompletableFuture.completedFuture(
-            ResponseDTO.error("NOT_IMPLEMENTED", "批量添加附件功能待实现")
-        );
+                ResponseDTO.error("NOT_IMPLEMENTED", "批量添加附件功能待实现"));
     }
 
     @Override
@@ -167,8 +156,7 @@ public class WorkflowBatchOperationServiceImpl implements WorkflowBatchOperation
         log.info("[批量操作] 重试失败的批量操作: batchId={}", batchId);
         // TODO: 实现重试失败的批量操作逻辑
         return CompletableFuture.completedFuture(
-            ResponseDTO.error("NOT_IMPLEMENTED", "重试失败的批量操作功能待实现")
-        );
+                ResponseDTO.error("NOT_IMPLEMENTED", "重试失败的批量操作功能待实现"));
     }
 
     @Override

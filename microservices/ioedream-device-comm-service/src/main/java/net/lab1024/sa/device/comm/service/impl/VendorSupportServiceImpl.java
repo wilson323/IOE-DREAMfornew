@@ -1,14 +1,16 @@
 package net.lab1024.sa.device.comm.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.device.comm.service.VendorSupportService;
-import net.lab1024.sa.device.comm.vendor.DeviceVendorSupportManager;
+
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.annotation.Resource;
-import java.util.List;
-import java.util.Map;
+import net.lab1024.sa.device.comm.service.VendorSupportService;
+import net.lab1024.sa.device.comm.vendor.DeviceVendorSupportManager;
 
 /**
  * 厂商设备支持服务实现
@@ -24,9 +26,9 @@ import java.util.Map;
  * @version 1.0.0
  * @since 2025-01-30
  */
-@Slf4j
 @Service
 @Transactional(rollbackFor = Exception.class)
+@Slf4j
 public class VendorSupportServiceImpl implements VendorSupportService {
 
     @Resource
@@ -87,7 +89,8 @@ public class VendorSupportServiceImpl implements VendorSupportService {
     }
 
     @Override
-    public Map<String, Boolean> batchRegisterVendorDevices(Map<String, List<DeviceVendorSupportManager.DeviceInfo>> vendorDevices) {
+    public Map<String, Boolean> batchRegisterVendorDevices(
+            Map<String, List<DeviceVendorSupportManager.DeviceInfo>> vendorDevices) {
         log.info("[厂商支持服务] 批量注册厂商设备: 厂商数={}", vendorDevices.size());
         return deviceVendorSupportManager.batchRegisterVendorDevices(vendorDevices);
     }

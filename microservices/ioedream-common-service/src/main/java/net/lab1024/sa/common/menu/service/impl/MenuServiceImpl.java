@@ -1,17 +1,22 @@
 package net.lab1024.sa.common.menu.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import io.micrometer.observation.annotation.Observed;
 import jakarta.annotation.Resource;
-import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.menu.dao.MenuDao;
 import net.lab1024.sa.common.menu.entity.MenuEntity;
 import net.lab1024.sa.common.menu.service.MenuService;
 import net.lab1024.sa.common.system.employee.dao.EmployeeDao;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * 菜单服务实现类
@@ -19,10 +24,11 @@ import java.util.stream.Collectors;
  * @author IOE-DREAM Team
  * @since 2025-12-08
  */
-@Slf4j
 @Service
 @Transactional(rollbackFor = Exception.class)
+@Slf4j
 public class MenuServiceImpl implements MenuService {
+
 
     @Resource
     private MenuDao menuDao;
@@ -192,7 +198,6 @@ public class MenuServiceImpl implements MenuService {
         return menuTree;
     }
 
-    @Override
     @Observed(name = "menu.getMenuStatistics", contextualName = "menu-get-statistics")
     public Map<String, Object> getMenuStatistics() {
         log.debug("[菜单服务] 获取菜单统计信息");

@@ -57,6 +57,7 @@
 | `jvm_cpu_usage` | CPU使用率 | > 80% | 🟡 Warning |
 
 **Prometheus查询示例**:
+
 ```promql
 # JVM内存使用率
 (jvm_memory_used_bytes{job="attendance-service"} / jvm_memory_max_bytes{job="attendance-service"}) * 100
@@ -79,6 +80,7 @@ rate(process_cpu_seconds_total{job="attendance-service"}[5m]) * 100
 | `http_requests_4xx_rate` | 4xx错误率 | > 5% | 🟡 Warning |
 
 **Prometheus查询示例**:
+
 ```promql
 # 请求QPS
 rate(http_requests_total{job="attendance-service"}[5m])
@@ -103,6 +105,7 @@ rate(http_requests_total{job="attendance-service",status=~"5.."}[5m]) / rate(htt
 | `attendance_concurrent_users` | 并发用户数 | > 1000 | 🟡 Warning |
 
 **Prometheus查询示例**:
+
 ```promql
 # 打卡速率
 rate(attendance_clock_in_total{job="attendance-service"}[5m])
@@ -293,9 +296,9 @@ groups:
 groups:
 - name: database.rules
   rules:
-  # 数据库连接池使用率过高
+  # 数据库连接池使用率过高（Druid连接池）
   - alert: HighDatabaseConnectionUsage
-    expr: (hikaricp_connections_active{instance="mysql"} / hikaricp_connections_max{instance="mysql"}) * 100 > 80
+    expr: (druid_connection_pool_active_count{instance="mysql"} / druid_connection_pool_max_active{instance="mysql"}) * 100 > 80
     for: 2m
     labels:
       severity: warning
@@ -692,11 +695,11 @@ receivers:
             "legendFormat": "活跃连接"
           },
           {
-            "expr": "hikaricp_connections_idle{job=\"attendance-service\"}",
+            "expr": "druid_connection_pool_idle_count{job=\"attendance-service\"}",
             "legendFormat": "空闲连接"
           },
           {
-            "expr": "hikaricp_connections_max{job=\"attendance-service\"}",
+            "expr": "druid_connection_pool_max_active{job=\"attendance-service\"}",
             "legendFormat": "最大连接"
           }
         ],
@@ -991,6 +994,7 @@ datasources:
 ### 1. 服务不可用故障
 
 #### 故障现象
+
 - 服务健康检查失败
 - 无法访问API接口
 - 5xx错误率激增
@@ -998,23 +1002,27 @@ datasources:
 #### 排查步骤
 
 1. **检查Pod状态**
+
 ```bash
 kubectl get pods -n ioedream-attendance
 kubectl describe pod <pod-name> -n ioedream-attendance
 ```
 
 2. **查看服务日志**
+
 ```bash
 kubectl logs -f deployment/attendance-service -n ioedream-attendance --tail=100
 ```
 
 3. **检查资源使用**
+
 ```bash
 kubectl top pods -n ioedream-attendance
 kubectl describe pod <pod-name> -n ioedream-attendance | grep -A 10 "Events:"
 ```
 
 4. **验证网络连通性**
+
 ```bash
 kubectl exec -it deployment/attendance-service -n ioedream-attendance -- curl http://localhost:8091/actuator/health
 ```
@@ -1022,6 +1030,7 @@ kubectl exec -it deployment/attendance-service -n ioedream-attendance -- curl ht
 ### 2. 高内存使用故障
 
 #### 故障现象
+
 - 内存使用率超过85%
 - OutOfMemoryError
 - 服务响应缓慢
@@ -1029,22 +1038,26 @@ kubectl exec -it deployment/attendance-service -n ioedream-attendance -- curl ht
 #### 排查步骤
 
 1. **检查JVM内存指标**
+
 ```bash
 curl http://localhost:8091/actuator/metrics | grep jvm_memory
 ```
 
 2. **分析内存堆栈**
+
 ```bash
 jmap -histo:live,format=b <pid> > memory_dump.txt
 jstack <pid> > thread_dump.txt
 ```
 
 3. **查看垃圾回收情况**
+
 ```bash
 curl http://localhost:8091/actuator/metrics | grep jvm_gc
 ```
 
 4. **调整JVM参数**
+
 ```bash
 # 增加堆内存
 -Xms2g -Xmx4g -XX:NewRatio=1.2
@@ -1056,6 +1069,7 @@ curl http://localhost:8091/actuator/metrics | grep jvm_gc
 ### 3. 数据库连接问题
 
 #### 故障现象
+
 - 数据库连接池耗尽
 - 查询响应超时
 - 连接建立失败
@@ -1063,21 +1077,25 @@ curl http://localhost:8091/actuator/metrics | grep jvm_gc
 #### 排查步骤
 
 1. **检查连接池状态**
+
 ```bash
 curl http://localhost:8091/actuator/health | jq .components.db
 ```
 
 2. **验证数据库连接**
+
 ```bash
 kubectl exec -it deployment/mysql -n ioedream-database -- mysql -u root -p -e "SHOW PROCESSLIST;"
 ```
 
 3. **检查慢查询**
+
 ```bash
 kubectl exec -it deployment/mysql -n ioedream-database -- mysql -u root -p -e "SHOW SLOW QUERY LOG;"
 ```
 
 4. **优化连接池配置**
+
 ```yaml
 spring:
   datasource:
@@ -1092,6 +1110,7 @@ spring:
 ### 4. 缓存问题
 
 #### 故障现象
+
 - 缓存命中率低
 - Redis连接超时
 - 缓存数据不一致
@@ -1099,17 +1118,20 @@ spring:
 #### 排查步骤
 
 1. **检查Redis状态**
+
 ```bash
 kubectl exec -it deployment/redis -n ioedream-cache -- redis-cli ping
 kubectl exec -it deployment/redis -n ioedream-cache -- redis-cli info
 ```
 
 2. **查看缓存指标**
+
 ```bash
 kubectl exec -it deployment/redis -n ioedream-cache -- redis-cli info stats
 ```
 
 3. **分析缓存使用**
+
 ```bash
 kubectl exec -it deployment/redis -n ioedream-cache -- redis-cli keys "*" | wc -l
 ```
@@ -1121,12 +1143,14 @@ kubectl exec -it deployment/redis -n ioedream-cache -- redis-cli keys "*" | wc -
 ### 日常监控检查
 
 #### 每小时检查
+
 - [ ] 检查服务健康状态
 - [ ] 查看关键指标是否正常
 - [ ] 验证告警是否正常触发
 - [ ] 确认通知渠道是否正常
 
 #### 每日检查
+
 - [ ] 检查系统整体性能指标
 - [ ] 分析日志错误和异常
 - [ ] 检查磁盘空间使用情况
@@ -1134,6 +1158,7 @@ kubectl exec -it deployment/redis -n ioedream-cache -- redis-cli keys "*" | wc -
 - [ ] 检查监控告警规则有效性
 
 #### 每周检查
+
 - [ ] 分析性能趋势和容量规划
 - [ ] 优化监控告警规则
 - [ ] 检查仪表板配置和展示
@@ -1141,6 +1166,7 @@ kubectl exec -it deployment/redis -n ioedream-cache -- redis-cli keys "*" | wc -
 - [ ] 更新监控文档和运维手册
 
 #### 每月检查
+
 - [ ] 全面评估监控系统性能
 - [ ] 优化监控指标和告警阈值
 - [ ] 检查监控存储容量规划
@@ -1150,6 +1176,7 @@ kubectl exec -it deployment/redis -n ioedream-cache -- redis-cli keys "*" | wc -
 ### 告警处理流程
 
 #### P0级告警（关键）
+
 1. **立即响应** (5分钟内)
    - 确认告警严重程度
    - 通知相关负责人和团队
@@ -1166,6 +1193,7 @@ kubectl exec -it deployment/redis -n ioedream-cache -- redis-cli keys "*" | wc -
    - 更新运维文档
 
 #### P1级告警（重要）
+
 1. **及时响应** (30分钟内)
    - 分析告警影响范围
    - 确定处理优先级
@@ -1188,11 +1216,13 @@ kubectl exec -it deployment/redis -n ioedream-cache -- redis-cli keys "*" | wc -
 ### 1. 指标设计原则
 
 #### 关键指标选择
+
 - **业务指标**: 关注核心业务流程
 - **技术指标**: 关注系统性能和稳定性
 - **用户体验指标**: 关注响应时间和可用性
 
 #### 指标命名规范
+
 - 使用清晰的指标名称
 - 包含必要的标签信息
 - 遵循统一命名约定
@@ -1200,11 +1230,13 @@ kubectl exec -it deployment/redis -n ioedream-cache -- redis-cli keys "*" | wc -
 ### 2. 告警规则优化
 
 #### 告警阈值设置
+
 - 基于历史数据统计
 - 考虑业务影响范围
 - 避免告警风暴
 
 #### 告警分级策略
+
 - **Critical**: 系统不可用，影响核心业务
 - **Warning**: 性能下降，影响用户体验
 - **Info**: 信息提示，关注系统状态
@@ -1212,12 +1244,14 @@ kubectl exec -it deployment/redis -n ioedream-cache -- redis-cli keys "*" | wc -
 ### 3. 仪表板设计
 
 #### 可视化设计原则
+
 - 突出重要指标
 - 合理布局展示
 - 提供对比分析
 - 支持下钻分析
 
 #### 用户体验优化
+
 - 响应式设计
 - 快速加载优化
 - 交互式操作
@@ -1229,17 +1263,17 @@ kubectl exec -it deployment/redis -n ioedream-cache -- redis-cli keys "*" | wc -
 
 ### 技术支持团队
 
-- **监控团队**: monitoring-team@ioedream.com
-- **运维团队**: ops-team@ioedream.com
-- **开发团队**: dev-team@ioedream.com
-- **SRE团队**: sre-team@ioedream.com
+- **监控团队**: <monitoring-team@ioedream.com>
+- **运维团队**: <ops-team@ioedream.com>
+- **开发团队**: <dev-team@ioedream.com>
+- **SRE团队**: <sre-team@ioedream.com>
 
 ### 应急联系方式
 
 - **24小时值班**: +86-xxx-xxxx-xxxx
 - **紧急响应群**: WeChat/DingTalk/Slack
-- **故障上报平台**: https://alert.ioedream.com
-- **知识库**: https://kb.ioedream.com/monitoring
+- **故障上报平台**: <https://alert.ioedream.com>
+- **知识库**: <https://kb.ioedream.com/monitoring>
 
 ### 相关文档
 
@@ -1253,4 +1287,4 @@ kubectl exec -it deployment/redis -n ioedream-cache -- redis-cli keys "*" | wc -
 **📅 文档更新时间**: 2025年12月16日
 **📝 文档维护**: IOE-DREAM 监控团队
 **🔄 版本**: v1.0.0
-**📞 联系方式**: monitoring-team@ioedream.com
+**📞 联系方式**: <monitoring-team@ioedream.com>

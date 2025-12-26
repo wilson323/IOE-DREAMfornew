@@ -1,9 +1,7 @@
 import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
-
 @Data
-@Slf4j
 public class LombokTest {
+    private static final Logger log = LoggerFactory.getLogger(LombokTest.class);
     private Long id;
     private String name;
 

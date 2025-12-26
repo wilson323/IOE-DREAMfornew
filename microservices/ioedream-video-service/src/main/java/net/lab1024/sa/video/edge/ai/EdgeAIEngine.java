@@ -1,18 +1,20 @@
 package net.lab1024.sa.video.edge.ai;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 import lombok.extern.slf4j.Slf4j;
+
 import net.lab1024.sa.video.edge.EdgeConfig;
+import net.lab1024.sa.video.edge.ai.inference.LocalInferenceEngine;
+import net.lab1024.sa.video.edge.ai.model.ModelInfo;
 import net.lab1024.sa.video.edge.model.EdgeDevice;
 import net.lab1024.sa.video.edge.model.HardwareSpec;
 import net.lab1024.sa.video.edge.model.InferenceRequest;
 import net.lab1024.sa.video.edge.model.InferenceResult;
-import net.lab1024.sa.video.edge.ai.model.ModelInfo;
-import net.lab1024.sa.video.edge.ai.inference.LocalInferenceEngine;
 
 /**
  * 边缘AI引擎
@@ -279,7 +281,7 @@ public class EdgeAIEngine {
      * @return 所有模型信息
      */
     public Map<String, ModelInfo> getAllModels() {
-        return new ConcurrentHashMap<>(loadedModels);
+        return new HashMap<>(loadedModels);
     }
 
     /**

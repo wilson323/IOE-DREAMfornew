@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.lab1024.sa.consume.dao.OfflineConsumeRecordDao">
+
+    <!-- 查询用户待同步记录 -->
+    <select id="selectPendingRecordsByUserId" resultType="net.lab1024.sa.consume.entity.OfflineConsumeRecordEntity">
+        SELECT * FROM t_offline_consume_record
+        WHERE user_id = #{userId}
+          AND sync_status = 0
+          AND retry_count &lt; 3
+        ORDER BY created_at ASC
+    </select>
+
+    <!-- 查询待同步记录列表 -->
+    <select id="selectPendingRecords" resultType="net.lab1024.sa.consume.entity.OfflineConsumeRecordEntity">
+        SELECT * FROM t_offline_consume_record
+        WHERE sync_status = 0
+          AND retry_count &lt; 3
+        ORDER BY created_at ASC
+        <if test="limit != null">
+            LIMIT #{limit}
+        </if>
+    </select>
+
+    <!-- 查询未解决冲突记录 -->
+    <select id="selectUnresolvedConflicts" resultType="net.lab1024.sa.consume.entity.OfflineConsumeRecordEntity">
+        SELECT * FROM t_offline_consume_record
+        WHERE conflict_type IS NOT NULL
+          AND resolved = 0
+        ORDER BY created_at DESC
+        <if test="limit != null">
+            LIMIT #{limit}
+        </if>
+    </select>
+
+    <!-- 查询用户在指定时间范围内的消费记录 -->
+    <select id="selectByUserIdAndTimeRange" resultType="net.lab1024.sa.consume.entity.OfflineConsumeRecordEntity">
+        SELECT * FROM t_offline_consume_record
+        WHERE user_id = #{userId}
+          AND consume_time BETWEEN #{startTime} AND #{endTime}
+        ORDER BY consume_time ASC
+    </select>
+
+    <!-- 统计用户今日离线消费次数 -->
+    <select id="countTodayOfflineConsumes" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM t_offline_consume_record
+        WHERE user_id = #{userId}
+          AND DATE(consume_time) = CURDATE()
+    </select>
+
+    <!-- 统计用户今日离线消费总额 -->
+    <select id="sumTodayOfflineAmount" resultType="java.math.BigDecimal">
+        SELECT COALESCE(SUM(amount), 0) FROM t_offline_consume_record
+        WHERE user_id = #{userId}
+          AND DATE(consume_time) = CURDATE()
+          AND sync_status = 2
+    </select>
+
+</mapper>

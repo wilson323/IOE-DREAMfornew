@@ -1,5 +1,7 @@
 package net.lab1024.sa.common.system.employee.controller;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.List;
 
 import org.springframework.validation.annotation.Validated;
@@ -19,7 +21,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.system.employee.domain.dto.EmployeeAddDTO;
@@ -42,11 +43,11 @@ import net.lab1024.sa.common.system.employee.service.EmployeeService;
  * @version 1.0.0
  * @since 2025-12-02
  */
-@Slf4j
 @RestController
 @RequestMapping("/api/v1/system/employee")
 @Tag(name = "员工管理", description = "员工信息管理相关接口")
 @Validated
+@Slf4j
 public class EmployeeController {
 
     @Resource
@@ -124,4 +125,5 @@ public class EmployeeController {
         return result ? ResponseDTO.okMsg("状态更新成功") : ResponseDTO.error("状态更新失败");
     }
 }
+
 

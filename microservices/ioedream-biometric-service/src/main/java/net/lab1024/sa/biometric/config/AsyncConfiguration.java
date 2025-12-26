@@ -22,10 +22,11 @@ import java.util.concurrent.ThreadPoolExecutor;
  * @version 1.0.0
  * @since 2025-12-18
  */
-@Slf4j
 @Configuration
 @EnableAsync
+@Slf4j
 public class AsyncConfiguration {
+
 
     /**
      * 权限同步线程池

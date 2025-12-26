@@ -4,8 +4,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -19,10 +21,9 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.domain.PageParam;
+import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.common.openapi.domain.response.PageResult;
 import net.lab1024.sa.video.domain.form.VideoBehaviorAnalysisForm;
 import net.lab1024.sa.video.domain.form.VideoBehaviorPatternForm;
 import net.lab1024.sa.video.domain.vo.VideoBehaviorVO;
@@ -46,9 +47,9 @@ public class VideoBehaviorController {
     // ==================== 行为检测记录管理 ====================
 
     @Operation(summary = "查询行为检测记录")
-    @PostMapping("/queryPage")
+    @GetMapping("/queryPage")
     public ResponseDTO<PageResult<VideoBehaviorVO>> queryBehaviorPage(
-            @Valid @RequestBody VideoBehaviorAnalysisForm form) {
+            @Valid @ModelAttribute VideoBehaviorAnalysisForm form) {
         PageResult<VideoBehaviorVO> result = videoBehaviorService.queryBehaviorPage(form);
         return ResponseDTO.ok(result);
     }
@@ -199,9 +200,9 @@ public class VideoBehaviorController {
     }
 
     @Operation(summary = "查询行为模式列表")
-    @PostMapping("/pattern/queryPage")
+    @GetMapping("/pattern/queryPage")
     public ResponseDTO<PageResult<VideoBehaviorPatternForm>> queryBehaviorPatternPage(
-            @Valid @RequestBody VideoBehaviorPatternForm form,
+            @Valid @ModelAttribute VideoBehaviorPatternForm form,
             PageParam pageParam) {
         return videoBehaviorService.queryBehaviorPatternPage(form, pageParam);
     }
@@ -429,9 +430,9 @@ public class VideoBehaviorController {
     }
 
     @Operation(summary = "获取行为告警列表")
-    @PostMapping("/alarms/queryPage")
+    @GetMapping("/alarms/queryPage")
     public ResponseDTO<PageResult<VideoBehaviorVO>> getBehaviorAlarms(
-            @Valid @RequestBody VideoBehaviorAnalysisForm form,
+            @Valid @ModelAttribute VideoBehaviorAnalysisForm form,
             PageParam pageParam) {
         return videoBehaviorService.getBehaviorAlarms(form, pageParam);
     }

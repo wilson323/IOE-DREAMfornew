@@ -1,13 +1,15 @@
 package net.lab1024.sa.attendance.decorator.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.attendance.decorator.IPunchExecutor;
-import net.lab1024.sa.attendance.decorator.PunchDecorator;
+
+import java.time.Duration;
+
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import jakarta.annotation.Resource;
-import java.time.Duration;
+import net.lab1024.sa.attendance.decorator.IPunchExecutor;
+import net.lab1024.sa.attendance.decorator.PunchDecorator;
 
 /**
  * 防作弊装饰器
@@ -20,8 +22,8 @@ import java.time.Duration;
  * @version 1.0.0
  * @since 2025-12-18
  */
-@Slf4j
 @Component
+@Slf4j
 public class AntiCheatingDecorator extends PunchDecorator {
 
     @Resource
@@ -37,7 +39,7 @@ public class AntiCheatingDecorator extends PunchDecorator {
     }
 
     @Override
-    public PunchResult execute(MobilePunchRequest request) {
+    public IPunchExecutor.PunchResult execute(IPunchExecutor.MobilePunchRequest request) {
         // 防作弊检测: 同一用户短时间内多次打卡
         String lockKey = "punch:lock:" + request.getUserId();
         Boolean lockAcquired = redisTemplate.opsForValue()
@@ -45,7 +47,7 @@ public class AntiCheatingDecorator extends PunchDecorator {
 
         if (Boolean.FALSE.equals(lockAcquired)) {
             log.warn("[防作弊装饰器] 打卡过于频繁, userId={}", request.getUserId());
-            return PunchResult.failed("打卡过于频繁,请稍后再试");
+            return IPunchExecutor.PunchResult.failed("打卡过于频繁,请稍后再试");
         }
 
         try {

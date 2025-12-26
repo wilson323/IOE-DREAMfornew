@@ -1,0 +1,287 @@
+package net.lab1024.sa.common.security.aspect;
+
+import lombok.extern.slf4j.Slf4j;
+import net.lab1024.sa.common.export.annotation.Masked;
+import net.lab1024.sa.common.util.DataMaskingUtil;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.springframework.stereotype.Component;
+
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+/**
+ * API响应数据脱敏切面
+ * <p>
+ * 功能：自动扫描Controller返回值中的@Masked注解字段并脱敏
+ * </p>
+ * <p>
+ * 使用方式：在VO类的字段上添加@Masked注解即可自动脱敏
+ * </p>
+ * <pre>
+ * &#64;Data
+ * public class UserVO {
+ *
+ *     &#64;Masked(Masked.MaskType.PHONE)
+ *     private String phone;
+ *
+ *     &#64;Masked(Masked.MaskType.ID_CARD)
+ *     private String idCard;
+ * }
+ *
+ * &#64;RestController
+ * public class UserController {
+ *
+ *     &#64;GetMapping("/{id}")
+ *     public ResponseDTO<UserVO> getUser(@PathVariable Long id) {
+ *         // 返回的UserVO中的phone和idCard会自动脱敏
+ *         return ResponseDTO.ok(userVO);
+ *     }
+ * }
+ * </pre>
+ *
+ * @author IOE-DREAM Team
+ * @version 1.0.0
+ * @since 2025-12-26
+ */
+@Slf4j
+@Aspect
+@Component
+public class ResponseDataMaskingAspect {
+
+    /**
+     * 环绕通知：拦截所有Controller方法返回值
+     */
+    @Around("@within(org.springframework.web.bind.annotation.RestController)")
+    public Object maskResponseData(ProceedingJoinPoint joinPoint) throws Throwable {
+        long startTime = System.currentTimeMillis();
+
+        // 执行原方法
+        Object result = joinPoint.proceed();
+
+        // 脱敏处理
+        if (result != null) {
+            try {
+                Object maskedResult = maskObject(result);
+                long duration = System.currentTimeMillis() - startTime;
+
+                if (maskedResult != result) {
+                    log.debug("[API脱敏] 响应数据已脱敏: method={}, duration={}ms",
+                            joinPoint.getSignature().getName(), duration);
+                }
+
+                return maskedResult;
+            } catch (Exception e) {
+                log.warn("[API脱敏] 脱敏失败，返回原始数据: method={}, error={}",
+                        joinPoint.getSignature().getName(), e.getMessage());
+                return result; // 脱敏失败时返回原数据
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * 递归脱敏对象
+     *
+     * @param obj 待脱敏对象
+     * @return 脱敏后的对象
+     */
+    private Object maskObject(Object obj) {
+        if (obj == null) {
+            return null;
+        }
+
+        // 处理ResponseDTO包装类
+        if (isResponseDTO(obj)) {
+            return maskResponseDTO(obj);
+        }
+
+        // 处理集合
+        if (obj instanceof Collection) {
+            return maskCollection((Collection<?>) obj);
+        }
+
+        // 处理普通对象
+        return maskSingleObject(obj);
+    }
+
+    /**
+     * 脱敏ResponseDTO包装类
+     */
+    private Object maskResponseDTO(Object responseDTO) {
+        try {
+            // 获取data字段
+            Field dataField = responseDTO.getClass().getDeclaredField("data");
+            dataField.setAccessible(true);
+            Object data = dataField.get(responseDTO);
+
+            if (data == null) {
+                return responseDTO;
+            }
+
+            // 脱敏data
+            Object maskedData = maskObject(data);
+
+            // 创建新ResponseDTO对象（避免修改原对象）
+            Object maskedResponseDTO = responseDTO.getClass().getDeclaredConstructor().newInstance();
+            copyFields(responseDTO, maskedResponseDTO, "data");
+            dataField.setAccessible(true);
+            dataField.set(maskedResponseDTO, maskedData);
+
+            return maskedResponseDTO;
+        } catch (Exception e) {
+            log.warn("[API脱敏] ResponseDTO脱敏失败: error={}", e.getMessage());
+            return responseDTO;
+        }
+    }
+
+    /**
+     * 脱敏集合
+     */
+    private Collection<?> maskCollection(Collection<?> collection) {
+        List<Object> maskedList = new ArrayList<>(collection.size());
+
+        for (Object item : collection) {
+            Object maskedItem = maskSingleObject(item);
+            maskedList.add(maskedItem);
+        }
+
+        return maskedList;
+    }
+
+    /**
+     * 脱敏单个对象
+     */
+    private Object maskSingleObject(Object obj) {
+        if (obj == null || isPrimitiveOrWrapper(obj.getClass()) || obj instanceof String) {
+            return obj;
+        }
+
+        try {
+            // 创建新对象
+            Object maskedObj = obj.getClass().getDeclaredConstructor().newInstance();
+
+            // 遍历所有字段
+            Field[] fields = obj.getClass().getDeclaredFields();
+            for (Field field : fields) {
+                field.setAccessible(true);
+
+                Object value = field.get(obj);
+                if (value == null) {
+                    continue;
+                }
+
+                // 检查是否有@Masked注解
+                Masked masked = field.getAnnotation(Masked.class);
+                if (masked != null && value instanceof String) {
+                    // 脱敏字符串字段
+                    String maskedValue = maskFieldValue((String) value, masked.value());
+                    field.set(maskedObj, maskedValue);
+                } else if (!isPrimitiveOrWrapper(field.getType())) {
+                    // 递归脱敏嵌套对象
+                    Object maskedValue = maskObject(value);
+                    field.set(maskedObj, maskedValue);
+                } else {
+                    // 直接复制原始值
+                    field.set(maskedObj, value);
+                }
+            }
+
+            return maskedObj;
+        } catch (Exception e) {
+            log.warn("[API脱敏] 对象脱敏失败: class={}, error={}",
+                    obj.getClass().getSimpleName(), e.getMessage());
+            return obj; // 脱敏失败时返回原对象
+        }
+    }
+
+    /**
+     * 脱敏字段值
+     */
+    private String maskFieldValue(String value, Masked.MaskType maskType) {
+        if (value == null || value.isEmpty()) {
+            return value;
+        }
+
+        try {
+            switch (maskType) {
+                case PHONE:
+                    return DataMaskingUtil.maskPhone(value);
+                case FIXED_PHONE:
+                    return DataMaskingUtil.maskFixedPhone(value);
+                case ID_CARD:
+                    return DataMaskingUtil.maskIdCard(value);
+                case BANK_CARD:
+                    return DataMaskingUtil.maskBankCard(value);
+                case EMAIL:
+                    return DataMaskingUtil.maskEmail(value);
+                case CHINESE_NAME:
+                    return DataMaskingUtil.maskChineseName(value);
+                case LICENSE_PLATE:
+                    return DataMaskingUtil.maskLicensePlate(value);
+                case IP_ADDRESS:
+                    return DataMaskingUtil.maskIpAddress(value);
+                case ADDRESS:
+                    return DataMaskingUtil.maskAddress(value);
+                case PASSWORD:
+                    return DataMaskingUtil.maskPassword(value);
+                default:
+                    return DataMaskingUtil.maskDefault(value);
+            }
+        } catch (Exception e) {
+            log.warn("[API脱敏] 字段脱敏异常: type={}, value={}, error={}", maskType, value, e.getMessage());
+            return value;
+        }
+    }
+
+    /**
+     * 复制字段（排除指定字段）
+     */
+    private void copyFields(Object source, Object target, String... excludeFields) throws Exception {
+        Field[] fields = source.getClass().getDeclaredFields();
+        for (Field field : fields) {
+            // 跳过排除字段
+            if (excludeFields != null) {
+                for (String excludeField : excludeFields) {
+                    if (field.getName().equals(excludeField)) {
+                        continue;
+                    }
+                }
+            }
+
+            field.setAccessible(true);
+            Object value = field.get(source);
+            field.set(target, value);
+        }
+    }
+
+    /**
+     * 判断是否为ResponseDTO类
+     */
+    private boolean isResponseDTO(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        return obj.getClass().getName().contains("ResponseDTO");
+    }
+
+    /**
+     * 判断是否为基本类型或包装类
+     */
+    private boolean isPrimitiveOrWrapper(Class<?> clazz) {
+        return clazz.isPrimitive() ||
+                clazz == String.class ||
+                clazz == Integer.class ||
+                clazz == Long.class ||
+                clazz == Double.class ||
+                clazz == Float.class ||
+                clazz == Boolean.class ||
+                clazz == Short.class ||
+                clazz == Byte.class ||
+                clazz == Character.class;
+    }
+}

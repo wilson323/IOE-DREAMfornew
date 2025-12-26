@@ -1,5 +1,7 @@
 package net.lab1024.sa.attendance.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -10,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import io.github.resilience4j.retry.annotation.Retry;
 import io.micrometer.observation.annotation.Observed;
 import jakarta.annotation.Resource;
-import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.exception.BusinessException;
 import net.lab1024.sa.common.exception.ParamException;
@@ -22,11 +23,11 @@ import net.lab1024.sa.attendance.dao.AttendanceOvertimeDao;
 import net.lab1024.sa.attendance.domain.entity.AttendanceOvertimeEntity;
 import net.lab1024.sa.attendance.domain.form.AttendanceOvertimeForm;
 import net.lab1024.sa.attendance.service.AttendanceOvertimeService;
-
-@Slf4j
 @Service
 @Transactional(rollbackFor = Exception.class)
+@Slf4j
 public class AttendanceOvertimeServiceImpl implements AttendanceOvertimeService {
+
 
     @Resource
     private AttendanceOvertimeDao attendanceOvertimeDao;
@@ -72,7 +73,7 @@ public class AttendanceOvertimeServiceImpl implements AttendanceOvertimeService 
         Map<String, Object> variables = new HashMap<>();
         variables.put("overtimeHours", form.getOvertimeHours());
 
-        ResponseDTO<Long> workflowResult = workflowApprovalManager.startApprovalProcess(
+        Long workflowInstanceId = workflowApprovalManager.startApprovalProcess(
                 WorkflowDefinitionConstants.ATTENDANCE_OVERTIME,
                 entity.getOvertimeNo(),
                 "加班申请-" + entity.getOvertimeNo(),
@@ -82,13 +83,11 @@ public class AttendanceOvertimeServiceImpl implements AttendanceOvertimeService 
                 variables
         );
 
-        if (workflowResult == null || !workflowResult.isSuccess()) {
+        if (workflowInstanceId == null) {
             log.error("[加班申请] 启动审批流程失败，overtimeNo={}", entity.getOvertimeNo());
-            throw new BusinessException("启动审批流程失败: " +
-                    (workflowResult != null ? workflowResult.getMessage() : "未知错误"));
+            throw new BusinessException("启动审批流程失败");
         }
 
-        Long workflowInstanceId = workflowResult.getData();
         entity.setWorkflowInstanceId(workflowInstanceId);
         attendanceOvertimeDao.updateById(entity);
 
@@ -182,6 +181,5 @@ public class AttendanceOvertimeServiceImpl implements AttendanceOvertimeService 
         return "OT" + System.currentTimeMillis();
     }
 }
-
 
 

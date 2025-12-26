@@ -1,5 +1,7 @@
 package net.lab1024.sa.attendance.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -13,25 +15,24 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
-import io.github.resilience4j.retry.annotation.Retry;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
+import io.github.resilience4j.retry.annotation.Retry;
 import io.micrometer.core.annotation.Counted;
 import io.micrometer.core.annotation.Timed;
 import io.micrometer.observation.annotation.Observed;
 import jakarta.annotation.Resource;
-import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.common.openapi.domain.response.PageResult;
-import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.common.exception.BusinessException;
-import net.lab1024.sa.common.exception.SystemException;
-import net.lab1024.sa.common.exception.ParamException;
 import net.lab1024.sa.attendance.dao.AttendanceRecordDao;
-import net.lab1024.sa.attendance.entity.AttendanceRecordEntity;
 import net.lab1024.sa.attendance.domain.form.AttendanceRecordAddForm;
 import net.lab1024.sa.attendance.domain.form.AttendanceRecordQueryForm;
 import net.lab1024.sa.attendance.domain.vo.AttendanceRecordStatisticsVO;
 import net.lab1024.sa.attendance.domain.vo.AttendanceRecordVO;
+import net.lab1024.sa.attendance.entity.AttendanceRecordEntity;
 import net.lab1024.sa.attendance.service.AttendanceRecordService;
+import net.lab1024.sa.common.domain.PageResult;
+import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.common.exception.ParamException;
+import net.lab1024.sa.common.exception.SystemException;
 
 /**
  * 考勤记录服务实现类
@@ -48,10 +49,11 @@ import net.lab1024.sa.attendance.service.AttendanceRecordService;
  * @version 1.0.0
  * @since 2025-01-30
  */
-@Slf4j
 @Service
 @Transactional(rollbackFor = Exception.class)
+@Slf4j
 public class AttendanceRecordServiceImpl implements AttendanceRecordService {
+
 
     @Resource
     private AttendanceRecordDao attendanceRecordDao;
@@ -139,7 +141,7 @@ public class AttendanceRecordServiceImpl implements AttendanceRecordService {
     @Override
     @Observed(name = "attendance.record.getStatistics", contextualName = "attendance-record-get-statistics")
     @Transactional(readOnly = true)
-    @Cacheable(value = "attendance:record:statistics", key = "#startDate + ':' + #endDate + ':' + (#employeeId != null ? #employeeId : 'all')", unless = "#result == null || !#result.getOk()")
+    @Cacheable(value = "attendance:record:statistics", key = "#startDate + ':' + #endDate + ':' + (#employeeId != null ? #employeeId : 'all')", unless = "#result == null || !#result.isSuccess()")
     public ResponseDTO<AttendanceRecordStatisticsVO> getAttendanceRecordStatistics(
             LocalDate startDate, LocalDate endDate, Long employeeId) {
         log.info("[考勤记录] 获取考勤记录统计，startDate={}, endDate={}, employeeId={}",
@@ -361,6 +363,3 @@ public class AttendanceRecordServiceImpl implements AttendanceRecordService {
         return ResponseDTO.error("CREATE_ATTENDANCE_RECORD_DEGRADED", "系统繁忙，请稍后重试");
     }
 }
-
-
-

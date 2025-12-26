@@ -2,6 +2,8 @@ package net.lab1024.sa.attendance.domain.vo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -17,6 +19,8 @@ import java.time.LocalDateTime;
  * @version 1.0.0
  * @since 2025-12-18
  */
+@Getter
+@Setter
 @Data
 @Schema(description = "考勤结果视图对象")
 public class AttendanceResultVO {

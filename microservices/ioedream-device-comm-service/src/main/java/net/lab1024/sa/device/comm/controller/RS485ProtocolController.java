@@ -1,12 +1,13 @@
 package net.lab1024.sa.device.comm.controller;
 
+import lombok.extern.slf4j.Slf4j;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.device.comm.protocol.rs485.*;
 import net.lab1024.sa.device.comm.service.RS485ProtocolService;
@@ -42,7 +43,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/v1/rs485")
 @Tag(name = "RS485协议管理", description = "RS485工业设备协议管理接口")
-public class RS485ProtocolController {
+ public class RS485ProtocolController {
 
     @Resource
     private RS485ProtocolService rs485ProtocolService;

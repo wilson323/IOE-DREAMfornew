@@ -1,5 +1,7 @@
 package net.lab1024.sa.attendance.controller;
 
+import lombok.extern.slf4j.Slf4j;
+
 import io.micrometer.observation.annotation.Observed;
 import java.util.Map;
 
@@ -14,17 +16,15 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.attendance.entity.AttendanceShiftEntity;
 import net.lab1024.sa.attendance.domain.form.AttendanceShiftForm;
 import net.lab1024.sa.attendance.service.AttendanceShiftService;
-
-@Slf4j
 @RestController
+@Slf4j
 @RequestMapping("/api/v1/attendance/shift")
 @Tag(name = "考勤调班管理")
-public class AttendanceShiftController {
+ public class AttendanceShiftController {
 
     @Resource
     private AttendanceShiftService attendanceShiftService;
@@ -52,6 +52,4 @@ public class AttendanceShiftController {
         return ResponseDTO.ok();
     }
 }
-
-
 

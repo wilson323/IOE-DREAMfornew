@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.lab1024.sa.video.dao.VideoMapHotspotDao">
+
+    <!-- 查询地图的所有热点 -->
+    <select id="selectByMapImageId" resultType="net.lab1024.sa.video.entity.VideoMapHotspotEntity">
+        SELECT * FROM t_video_map_hotspot
+        WHERE map_image_id = #{mapImageId}
+          AND deleted_flag = 0
+        ORDER BY hotspot_type, hotspot_name
+    </select>
+
+    <!-- 查询显示状态的热点 -->
+    <select id="selectVisibleHotspots" resultType="net.lab1024.sa.video.entity.VideoMapHotspotEntity">
+        SELECT * FROM t_video_map_hotspot
+        WHERE map_image_id = #{mapImageId}
+          AND display_status = 1
+          AND deleted_flag = 0
+        ORDER BY hotspot_type, hotspot_name
+    </select>
+
+    <!-- 查询设备关联热点 -->
+    <select id="selectByDeviceId" resultType="net.lab1024.sa.video.entity.VideoMapHotspotEntity">
+        SELECT * FROM t_video_map_hotspot
+        WHERE device_id = #{deviceId}
+          AND deleted_flag = 0
+        LIMIT 1
+    </select>
+
+    <!-- 查询类型热点 -->
+    <select id="selectByType" resultType="net.lab1024.sa.video.entity.VideoMapHotspotEntity">
+        SELECT * FROM t_video_map_hotspot
+        WHERE map_image_id = #{mapImageId}
+          AND hotspot_type = #{hotspotType}
+          AND deleted_flag = 0
+          AND display_status = 1
+        ORDER BY hotspot_name
+    </select>
+
+    <!-- 查询范围内热点 -->
+    <select id="selectWithinBounds" resultType="net.lab1024.sa.video.entity.VideoMapHotspotEntity">
+        SELECT * FROM t_video_map_hotspot
+        WHERE map_image_id = #{mapImageId}
+          AND x_coordinate BETWEEN #{minX} AND #{maxX}
+          AND y_coordinate BETWEEN #{minY} AND #{maxY}
+          AND deleted_flag = 0
+          AND display_status = 1
+        ORDER BY x_coordinate, y_coordinate
+    </select>
+
+</mapper>

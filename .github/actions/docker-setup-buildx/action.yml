@@ -1,0 +1,30 @@
+name: Local Docker Setup Buildx
+description: Local replacement for docker/setup-buildx-action
+runs:
+  using: composite
+  steps:
+    - name: Setup buildx (bash)
+      if: runner.os != 'Windows'
+      shell: bash
+      run: |
+        set -euo pipefail
+        docker buildx version
+        if ! docker buildx ls | grep -q "localbuilder"; then
+          docker buildx create --name localbuilder --use
+        else
+          docker buildx use localbuilder
+        fi
+        docker buildx inspect --bootstrap
+    - name: Setup buildx (pwsh)
+      if: runner.os == 'Windows'
+      shell: pwsh
+      run: |
+        $ErrorActionPreference = "Stop"
+        docker buildx version
+        $list = docker buildx ls
+        if ($list -notmatch "localbuilder") {
+          docker buildx create --name localbuilder --use
+        } else {
+          docker buildx use localbuilder
+        }
+        docker buildx inspect --bootstrap

@@ -1,4 +1,4 @@
-# ============================================================
+﻿# ============================================================
 # IOE-DREAM Visitor Service 配置文件
 #
 # @Author:    IOE-DREAM Team
@@ -17,12 +17,12 @@ spring:
     name: ioedream-visitor-service
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:dev}
-  # Spring Boot 2.4+ 要求显式声明配置导入
-  # 升级到Spring Cloud Alibaba 2025.0.0.0后，使用optional前缀允许配置中心可选
-  # dataId格式：${spring.application.name}-${spring.profiles.active}.${file-extension}
+  # 引入统一配置文件
   config:
     import:
-      - "optional:ENC(AES256:K9L0M1N2O3P4Q5R6S7T8U9V0W1X2Y3Z):ioedream-visitor-service-docker.yaml"  # 2025.0.0.0版本需要显式指定dataId
+      - "classpath:common-config/cache-application.yml"
+      - "classpath:common-config/database-application.yml"
+      - "classpath:common-config/resilience4j-application.yml"
 
 # ==================== Nacos服务发现配置 ====================
   cloud:
@@ -50,16 +50,9 @@ spring:
 
   # ==================== 数据源配置 ====================
   datasource:
-    type: com.alibaba.druid.pool.DruidDataSource
-    driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://${MYSQL_HOST:127.0.0.1}:${MYSQL_PORT:3306}/${MYSQL_DATABASE:ioedream}?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
     username: ${MYSQL_USERNAME:ENC(AES256:M1N2O3P4Q5R6S7T8U9V0W1X2Y3Z4A5B)}
     password: ${MYSQL_PASSWORD:ENC(AES256:G6K7X8J9M0N1O2P3Q4R5S6T7U8V9W0X)}
-    druid:
-      initial-size: 5
-      min-idle: 5
-      max-active: 20
-      max-wait: 60000
 
   # ==================== Redis配置 ====================
   data:
@@ -122,7 +115,7 @@ mybatis-plus:
 logging:
   level:
     root: INFO
-    net.lab1024.sa: DEBUG
+    "net.lab1024.sa": DEBUG
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"
     file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"
@@ -149,3 +142,4 @@ management:
   zipkin:
     tracing:
       endpoint: ${ZIPKIN_ENDPOINT:http://localhost:9411/api/v2/spans}
+

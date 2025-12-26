@@ -1,0 +1,76 @@
+package net.lab1024.sa.common.logging;
+
+import ch.qos.logback.classic.pattern.MessageConverter;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import net.lab1024.sa.common.util.DataMaskingUtil;
+
+/**
+ * 日志脱敏转换器
+ * <p>
+ * 功能：自动脱敏日志中的敏感信息（手机号、身份证号、邮箱等）
+ * </p>
+ * <p>
+ * 使用方式：在logback-spring.xml中配置
+ * </p>
+ * <pre>
+ * &lt;conversionRule conversionWord="maskedMsg"
+ *     converterClass="net.lab1024.sa.common.logging.DataMaskingConverter"/&gt;
+ *
+ * &lt;pattern&gt;%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %maskedMsg%n&lt;/pattern&gt;
+ * </pre>
+ *
+ * @author IOE-DREAM Team
+ * @version 1.0.0
+ * @since 2025-12-26
+ */
+public class DataMaskingConverter extends MessageConverter {
+
+    /**
+     * 是否启用脱敏（可通过系统属性控制）
+     */
+    private boolean enableMasking = true;
+
+    /**
+     * 转换日志消息（自动脱敏）
+     *
+     * @param event 日志事件
+     * @return 脱敏后的日志消息
+     */
+    @Override
+    public String convert(ILoggingEvent event) {
+        String originalMessage = super.convert(event);
+
+        if (!enableMasking || originalMessage == null || originalMessage.isEmpty()) {
+            return originalMessage;
+        }
+
+        try {
+            // 使用DataMaskingUtil进行批量日志脱敏
+            return DataMaskingUtil.maskLog(originalMessage);
+        } catch (Exception e) {
+            // 脱敏失败时返回原始消息，避免影响日志记录
+            return originalMessage;
+        }
+    }
+
+    /**
+     * 设置是否启用脱敏
+     * <p>
+     * 可在logback配置中通过属性控制
+     * </p>
+     *
+     * @param enableMasking true-启用脱敏，false-不脱敏
+     */
+    public void setEnableMasking(boolean enableMasking) {
+        this.enableMasking = enableMasking;
+    }
+
+    /**
+     * 获取脱敏启用状态
+     *
+     * @return true-启用脱敏，false-不脱敏
+     */
+    public boolean isEnableMasking() {
+        return enableMasking;
+    }
+}

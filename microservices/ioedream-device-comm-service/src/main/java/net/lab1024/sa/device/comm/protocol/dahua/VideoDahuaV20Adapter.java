@@ -1,7 +1,8 @@
 package net.lab1024.sa.device.comm.protocol.dahua;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.extern.slf4j.Slf4j;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import net.lab1024.sa.device.comm.protocol.ProtocolAdapter;
 import net.lab1024.sa.device.comm.protocol.domain.DeviceMessage;
 import net.lab1024.sa.device.comm.protocol.domain.DeviceResponse;
@@ -26,8 +27,8 @@ import java.util.Map;
  * @version 1.0.0
  * @since 2025-12-16
  */
-@Slf4j
 @Schema(description = "大华视频协议V2.0适配器")
+@Slf4j
 public class VideoDahuaV20Adapter implements ProtocolAdapter {
 
     private static final String PROTOCOL_TYPE = "DAHUA_VIDEO_V2_0";
@@ -795,3 +796,4 @@ public class VideoDahuaV20Adapter implements ProtocolAdapter {
         return response;
     }
 }
+

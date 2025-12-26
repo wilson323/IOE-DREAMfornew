@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import net.lab1024.sa.common.util.QueryBuilder;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fasterxml.jackson.core.type.TypeReference;
 
@@ -37,7 +38,7 @@ import net.lab1024.sa.common.organization.entity.AreaDeviceEntity;
 import net.lab1024.sa.common.organization.entity.AreaEntity;
 import net.lab1024.sa.common.organization.entity.DeviceEntity;
 import net.lab1024.sa.common.organization.entity.UserAreaPermissionEntity;
-import net.lab1024.sa.common.security.entity.UserEntity;
+import net.lab1024.sa.common.organization.entity.UserEntity;
 import net.lab1024.sa.common.dto.ResponseDTO;
 
 /**
@@ -166,7 +167,7 @@ public class AccessAreaServiceImpl implements AccessAreaService {
                     "/api/v1/organization/area/" + areaId,
                     HttpMethod.GET,
                     null,
-                    AreaEntity.class
+                    new TypeReference<ResponseDTO<AreaEntity>>() {}
             );
 
             if (areaResponse == null || !areaResponse.isSuccess() || areaResponse.getData() == null) {
@@ -334,7 +335,7 @@ public class AccessAreaServiceImpl implements AccessAreaService {
                     "/api/v1/organization/area/" + areaId,
                     HttpMethod.GET,
                     null,
-                    AreaEntity.class
+                    new TypeReference<ResponseDTO<AreaEntity>>() {}
             );
 
             if (areaResponse != null && areaResponse.isSuccess() && areaResponse.getData() != null) {
@@ -360,7 +361,7 @@ public class AccessAreaServiceImpl implements AccessAreaService {
                                     "/api/v1/organization/user/" + permission.getUserId(),
                                     HttpMethod.GET,
                                     null,
-                                    UserEntity.class
+                                    new TypeReference<ResponseDTO<UserEntity>>() {}
                             );
 
                     if (userResponse != null && userResponse.isSuccess() && userResponse.getData() != null) {
@@ -400,7 +401,7 @@ public class AccessAreaServiceImpl implements AccessAreaService {
                                     "/api/v1/organization/user/" + permission.getUserId(),
                                     HttpMethod.GET,
                                     null,
-                                    UserEntity.class
+                                    new TypeReference<ResponseDTO<UserEntity>>() {}
                             );
 
                     if (userResponse != null && userResponse.isSuccess() && userResponse.getData() != null) {
@@ -542,7 +543,7 @@ public class AccessAreaServiceImpl implements AccessAreaService {
                     "/api/v1/organization/area/" + areaId,
                     HttpMethod.GET,
                     null,
-                    AreaEntity.class
+                    new TypeReference<ResponseDTO<AreaEntity>>() {}
             );
 
             if (areaResponse != null && areaResponse.isSuccess() && areaResponse.getData() != null) {
@@ -621,11 +622,13 @@ public class AccessAreaServiceImpl implements AccessAreaService {
             if (areaResponse != null && areaResponse.isSuccess() && areaResponse.getData() != null) {
                 AreaEntity area = areaResponse.getData();
                 capacityMonitor.setCapacity(area.getCapacity());
-                capacityMonitor.setCurrentCount(area.getCurrentCount());
+                // TODO: 需要实时统计当前人数，暂时设置为0
+            // TODO: 需要实时统计当前人数，暂时设置为0
+            capacityMonitor.setCurrentCount(0);
 
                 if (area.getCapacity() != null && area.getCapacity() > 0) {
-                    double usageRate = (double) (area.getCurrentCount() != null ? area.getCurrentCount() : 0)
-                            / area.getCapacity() * 100;
+                    // TODO: 需要实时统计当前人数，暂时设置为0
+                    double usageRate = 0.0;
                     capacityMonitor.setUsageRate(usageRate);
                     capacityMonitor.setIsOverLimit(usageRate >= 100);
 
@@ -676,19 +679,19 @@ public class AccessAreaServiceImpl implements AccessAreaService {
         BeanUtils.copyProperties(area, vo);
 
         // 设置区域类型名称
-        vo.setAreaTypeName(getAreaTypeName(area.getAreaType()));
+        vo.setAreaTypeName(getAreaTypeName(area.getAreaType() != null ? Integer.parseInt(area.getAreaType().toString()) : null));
 
         // 设置区域状态名称
-        vo.setAreaStatusName(getAreaStatusName(area.getAreaStatus()));
+        vo.setAreaStatusName(getAreaStatusName(area.getStatus()));
 
         // 查询父区域名称
-        if (area.getParentAreaId() != null) {
+        if (area.getParentId() != null) {
             try {
                 ResponseDTO<AreaEntity> parentAreaResponse = gatewayServiceClient.callCommonService(
-                        "/api/v1/organization/area/" + area.getParentAreaId(),
+                        "/api/v1/organization/area/" + area.getParentId(),
                         HttpMethod.GET,
                         null,
-                        AreaEntity.class
+                        new TypeReference<ResponseDTO<AreaEntity>>() {}
                 );
 
                 if (parentAreaResponse != null && parentAreaResponse.isSuccess()
@@ -697,7 +700,7 @@ public class AccessAreaServiceImpl implements AccessAreaService {
                 }
             } catch (Exception e) {
                 log.debug("[区域管理] 查询父区域信息失败: parentAreaId={}, error={}",
-                        area.getParentAreaId(), e.getMessage());
+                        area.getParentId(), e.getMessage());
             }
         }
 
@@ -752,7 +755,7 @@ public class AccessAreaServiceImpl implements AccessAreaService {
         vo.setUserId(permission.getUserId());
         vo.setAreaId(areaId);
         vo.setPermissionId(permission.getId());
-        vo.setPermissionType(permission.getPermissionType());
+        vo.setPermissionType(String.valueOf(permission.getPermissionType()));
         vo.setPermissionTypeName("ALWAYS".equals(permission.getPermissionType()) ? "永久权限" : "限时权限");
         vo.setStartTime(permission.getStartTime());
         vo.setEndTime(permission.getEndTime());
@@ -777,7 +780,7 @@ public class AccessAreaServiceImpl implements AccessAreaService {
                             "/api/v1/organization/user/" + permission.getUserId(),
                             HttpMethod.GET,
                             null,
-                            UserEntity.class
+                            new TypeReference<ResponseDTO<UserEntity>>() {}
                     );
 
             if (userResponse != null && userResponse.isSuccess() && userResponse.getData() != null) {
@@ -800,7 +803,7 @@ public class AccessAreaServiceImpl implements AccessAreaService {
                     "/api/v1/organization/area/" + areaId,
                     HttpMethod.GET,
                     null,
-                    AreaEntity.class
+                    new TypeReference<ResponseDTO<AreaEntity>>() {}
             );
 
             if (areaResponse != null && areaResponse.isSuccess() && areaResponse.getData() != null) {
@@ -885,7 +888,7 @@ public class AccessAreaServiceImpl implements AccessAreaService {
                                 "/api/v1/organization/user/" + record.getUserId(),
                                 HttpMethod.GET,
                                 null,
-                                UserEntity.class
+                                new TypeReference<ResponseDTO<UserEntity>>() {}
                         );
 
                 if (userResponse != null && userResponse.isSuccess() && userResponse.getData() != null) {

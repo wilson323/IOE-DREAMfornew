@@ -44,6 +44,12 @@ public class AttendanceRecordAddForm {
     private Long userId;
 
     /**
+     * 班次ID（可选，用于跨天班次计算考勤日期）
+     */
+    @Schema(description = "班次ID（可选，用于跨天班次计算考勤日期）", example = "1")
+    private Long shiftId;
+
+    /**
      * 打卡时间（时间戳或LocalDateTime）
      */
     @Schema(description = "打卡时间（时间戳或LocalDateTime）", example = "2025-01-30T08:00:00")

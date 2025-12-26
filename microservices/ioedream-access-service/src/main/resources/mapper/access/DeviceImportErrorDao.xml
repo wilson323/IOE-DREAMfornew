@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.lab1024.sa.access.dao.DeviceImportErrorDao">
+
+    <!-- 结果映射 -->
+    <resultMap id="BaseResultMap" type="net.lab1024.sa.access.domain.entity.DeviceImportErrorEntity">
+        <id column="error_id" property="errorId"/>
+        <result column="batch_id" property="batchId"/>
+        <result column="row_number" property="rowNumber"/>
+        <result column="raw_data" property="rawData"/>
+        <result column="error_code" property="errorCode"/>
+        <result column="error_message" property="errorMessage"/>
+        <result column="error_field" property="errorField"/>
+        <result column="validation_errors" property="validationErrors"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <!-- 根据批次ID查询所有错误记录 -->
+    <select id="selectByBatchId" resultMap="BaseResultMap">
+        SELECT * FROM t_device_import_error
+        WHERE batch_id = #{batchId}
+        ORDER BY row_number ASC
+    </select>
+
+    <!-- 根据批次ID统计错误数量 -->
+    <select id="countByBatchId" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM t_device_import_error
+        WHERE batch_id = #{batchId}
+    </select>
+
+    <!-- 根据错误码统计错误数量 -->
+    <select id="countByErrorCode" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM t_device_import_error
+        WHERE error_code = #{errorCode}
+    </select>
+
+    <!-- 查询指定批次的指定行号错误 -->
+    <select id="selectByBatchIdAndRowNumber" resultMap="BaseResultMap">
+        SELECT * FROM t_device_import_error
+        WHERE batch_id = #{batchId}
+          AND row_number = #{rowNumber}
+        LIMIT 1
+    </select>
+
+    <!-- 批量插入错误记录 -->
+    <insert id="insertBatch">
+        INSERT INTO t_device_import_error
+        (batch_id, row_number, raw_data, error_code, error_message, error_field, validation_errors, create_time)
+        VALUES
+        <foreach collection="errorList" item="error" separator=",">
+            (#{error.batchId}, #{error.rowNumber}, #{error.rawData}, #{error.errorCode},
+             #{error.errorMessage}, #{error.errorField}, #{error.validationErrors}, NOW())
+        </foreach>
+    </insert>
+
+    <!-- 根据批次ID删除所有错误记录 -->
+    <delete id="deleteByBatchId">
+        DELETE FROM t_device_import_error
+        WHERE batch_id = #{batchId}
+    </delete>
+
+</mapper>

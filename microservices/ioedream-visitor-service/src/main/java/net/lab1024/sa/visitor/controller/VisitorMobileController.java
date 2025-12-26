@@ -1,9 +1,9 @@
 package net.lab1024.sa.visitor.controller;
 
-import jakarta.annotation.Resource;
-import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 
+import jakarta.annotation.Resource;
+import jakarta.validation.Valid;
 import java.util.Map;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -48,11 +48,11 @@ import org.springframework.web.multipart.MultipartFile;
  * @version 1.0.0
  * @since 2025-01-30
  */
-@Slf4j
 @RestController
+@Slf4j
 @RequestMapping("/api/v1/mobile/visitor")
 @Tag(name = "移动端访客管理", description = "移动端访客预约、签到、查询等API")
-public class VisitorMobileController {
+ public class VisitorMobileController {
 
     @Resource
     private VisitorService visitorService;
@@ -484,4 +484,3 @@ public class VisitorMobileController {
         }
     }
 }
-

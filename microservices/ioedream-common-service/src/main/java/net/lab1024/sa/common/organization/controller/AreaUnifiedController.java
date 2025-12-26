@@ -1,8 +1,9 @@
 package net.lab1024.sa.common.organization.controller;
 
+import lombok.extern.slf4j.Slf4j;
+
 import io.micrometer.observation.annotation.Observed;
 import jakarta.annotation.Resource;
-import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.organization.entity.AreaEntity;
 import net.lab1024.sa.common.organization.service.AreaUnifiedService;
@@ -23,10 +24,10 @@ import java.util.Set;
  * @version 1.0.0
  * @since 2025-12-14
  */
-@Slf4j
 @RestController
 @Validated
 @RequestMapping("/api/v1/area/unified")
+@Slf4j
 public class AreaUnifiedController {
 
     @Resource

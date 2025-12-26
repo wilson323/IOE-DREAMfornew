@@ -1,5 +1,7 @@
 package net.lab1024.sa.attendance.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -10,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import jakarta.annotation.Resource;
 import io.github.resilience4j.retry.annotation.Retry;
 import io.micrometer.observation.annotation.Observed;
-import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.exception.BusinessException;
 import net.lab1024.sa.common.exception.ParamException;
@@ -22,11 +23,11 @@ import net.lab1024.sa.attendance.dao.AttendanceTravelDao;
 import net.lab1024.sa.attendance.domain.entity.AttendanceTravelEntity;
 import net.lab1024.sa.attendance.domain.form.AttendanceTravelForm;
 import net.lab1024.sa.attendance.service.AttendanceTravelService;
-
-@Slf4j
 @Service
 @Transactional(rollbackFor = Exception.class)
+@Slf4j
 public class AttendanceTravelServiceImpl implements AttendanceTravelService {
+
 
     @Resource
     private AttendanceTravelDao attendanceTravelDao;
@@ -74,7 +75,7 @@ public class AttendanceTravelServiceImpl implements AttendanceTravelService {
         Map<String, Object> variables = new HashMap<>();
         variables.put("estimatedCost", form.getEstimatedCost());
 
-        ResponseDTO<Long> workflowResult = workflowApprovalManager.startApprovalProcess(
+        Long workflowInstanceId = workflowApprovalManager.startApprovalProcess(
                 WorkflowDefinitionConstants.ATTENDANCE_TRAVEL,
                 entity.getTravelNo(),
                 "出差申请-" + entity.getTravelNo(),
@@ -84,13 +85,11 @@ public class AttendanceTravelServiceImpl implements AttendanceTravelService {
                 variables
         );
 
-        if (workflowResult == null || !workflowResult.isSuccess()) {
+        if (workflowInstanceId == null) {
             log.error("[出差申请] 启动审批流程失败，travelNo={}", entity.getTravelNo());
-            throw new BusinessException("启动审批流程失败: " +
-                    (workflowResult != null ? workflowResult.getMessage() : "未知错误"));
+            throw new BusinessException("启动审批流程失败");
         }
 
-        Long workflowInstanceId = workflowResult.getData();
         entity.setWorkflowInstanceId(workflowInstanceId);
         attendanceTravelDao.updateById(entity);
 
@@ -183,6 +182,5 @@ public class AttendanceTravelServiceImpl implements AttendanceTravelService {
         return "TR" + System.currentTimeMillis();
     }
 }
-
 
 

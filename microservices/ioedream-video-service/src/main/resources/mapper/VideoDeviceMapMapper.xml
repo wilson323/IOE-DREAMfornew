@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.lab1024.sa.video.dao.VideoDeviceMapDao">
+
+    <!-- 查询地图的所有设备 -->
+    <select id="selectByMapImageId" resultType="net.lab1024.sa.video.entity.VideoDeviceMapEntity">
+        SELECT * FROM t_video_device_map
+        WHERE map_image_id = #{mapImageId}
+          AND deleted_flag = 0
+          AND display_status != 0
+        ORDER BY device_name
+    </select>
+
+    <!-- 查询区域的所有设备 -->
+    <select id="selectByAreaId" resultType="net.lab1024.sa.video.entity.VideoDeviceMapEntity">
+        SELECT * FROM t_video_device_map
+        WHERE area_id = #{areaId}
+          AND deleted_flag = 0
+          AND display_status != 0
+        ORDER BY floor_level, device_name
+    </select>
+
+    <!-- 查询楼层设备 -->
+    <select id="selectByFloorLevel" resultType="net.lab1024.sa.video.entity.VideoDeviceMapEntity">
+        SELECT * FROM t_video_device_map
+        WHERE area_id = #{areaId}
+          AND floor_level = #{floorLevel}
+          AND deleted_flag = 0
+          AND display_status != 0
+        ORDER BY device_name
+    </select>
+
+    <!-- 查询显示状态的设备 -->
+    <select id="selectByDisplayStatus" resultType="net.lab1024.sa.video.entity.VideoDeviceMapEntity">
+        SELECT * FROM t_video_device_map
+        WHERE display_status = #{displayStatus}
+          AND deleted_flag = 0
+        ORDER BY area_id, floor_level, device_name
+    </select>
+
+    <!-- 查询范围内的设备 -->
+    <select id="selectWithinBounds" resultType="net.lab1024.sa.video.entity.VideoDeviceMapEntity">
+        SELECT * FROM t_video_device_map
+        WHERE map_image_id = #{mapImageId}
+          AND x_coordinate BETWEEN #{minX} AND #{maxX}
+          AND y_coordinate BETWEEN #{minY} AND #{maxY}
+          AND deleted_flag = 0
+          AND display_status = 1
+        ORDER BY x_coordinate, y_coordinate
+    </select>
+
+    <!-- 查询附近设备 -->
+    <select id="selectNearbyDevices" resultType="net.lab1024.sa.video.entity.VideoDeviceMapEntity">
+        SELECT * FROM t_video_device_map
+        WHERE map_image_id = #{mapImageId}
+          AND deleted_flag = 0
+          AND display_status = 1
+          AND SQRT(POW(x_coordinate - #{xCoordinate}, 2) + POW(y_coordinate - #{yCoordinate}, 2)) &lt;= #{radius}
+        ORDER BY SQRT(POW(x_coordinate - #{xCoordinate}, 2) + POW(y_coordinate - #{yCoordinate}, 2))
+    </select>
+
+</mapper>

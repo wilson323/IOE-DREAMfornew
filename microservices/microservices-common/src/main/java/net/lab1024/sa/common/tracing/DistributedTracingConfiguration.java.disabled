@@ -1,0 +1,94 @@
+package net.lab1024.sa.common.tracing;
+
+import brave.Tracer;
+import brave.propagation.Propagator;
+import io.micrometer.tracing.Tracer;
+import io.micrometer.tracing.propagation.Propagator;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.actuate.autoconfigure.tracing.MicrometerTracingProperties;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
+
+/**
+ * IOE-DREAM 分布式追踪配置
+ * <p>
+ * 基于Spring Cloud Sleuth和Micrometer Tracing的分布式追踪系统
+ * 提供完整的链路追踪、性能监控和故障诊断能力
+ * </p>
+ * <p>
+ * 追踪特性：
+ * - 自动生成Trace ID和Span ID
+ * - 服务间调用链路追踪
+ * - 业务操作自定义埋点
+ * - 性能指标集成
+ * - 链路信息日志集成
+ * </p>
+ *
+ * @author IOE-DREAM架构团队
+ * @version 1.0.0
+ * @since 2025-12-20
+ */
+@Slf4j
+@Configuration
+@EnableAspectJAutoProxy
+@ConditionalOnClass(name = {"brave.Tracer", "io.micrometer.tracing.Tracer"})
+@ConditionalOnProperty(name = "management.tracing.enabled", havingValue = "true", matchIfMissing = true)
+public class DistributedTracingConfiguration {
+
+    /**
+     * 配置分布式追踪器
+     * <p>
+     * 基于Micrometer Tracing的现代化追踪实现
+     * 支持多种后端：Zipkin、Jaeger、OpenTelemetry等
+     * </p>
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public TracingUtils tracingUtils(Tracer tracer, Propagator propagator) {
+        log.info("[分布式追踪] 初始化TracingUtils，Tracer实现: {}", tracer.getClass().getSimpleName());
+        return new TracingUtils(tracer, propagator);
+    }
+
+    /**
+     * 配置链路追踪拦截器
+     * <p>
+     * 自动为Controller和Service层添加追踪埋点
+     * </p>
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public TracingInterceptor tracingInterceptor(Tracer tracer) {
+        log.info("[分布式追踪] 初始化TracingInterceptor");
+        return new TracingInterceptor(tracer);
+    }
+
+    /**
+     * 配置异步任务追踪
+     * <p>
+     * 为线程池任务自动传递追踪上下文
+     * </p>
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public TraceableExecutorService traceableExecutorService(Tracer tracer) {
+        log.info("[分布式追踪] 初始化TraceableExecutorService");
+        return new TraceableExecutorService(tracer);
+    }
+
+    /**
+     * 配置MDC集成
+     * <p>
+     * 将追踪信息集成到MDC，便于日志分析
+     * </p>
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public TraceableMdcIntegration traceableMdcIntegration(Tracer tracer) {
+        log.info("[分布式追踪] 初始化TraceableMdcIntegration");
+        return new TraceableMdcIntegration(tracer);
+    }
+}

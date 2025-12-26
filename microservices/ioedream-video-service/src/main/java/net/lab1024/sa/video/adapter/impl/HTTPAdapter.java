@@ -1,9 +1,10 @@
 package net.lab1024.sa.video.adapter.impl;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.common.organization.entity.DeviceEntity;
+import net.lab1024.sa.common.gateway.domain.response.DeviceResponse;
+import net.lab1024.sa.common.util.TypeUtils;
 import net.lab1024.sa.video.adapter.IVideoStreamAdapter;
 import net.lab1024.sa.video.domain.vo.VideoStream;
 
@@ -27,14 +28,14 @@ public class HTTPAdapter implements IVideoStreamAdapter {
     }
 
     @Override
-    public VideoStream createStream(DeviceEntity device) {
+    public VideoStream createStream(DeviceResponse device) {
         // HTTP流URL构建
         String httpUrl = buildHTTPUrl(device);
 
         log.debug("[HTTP适配器] 创建HTTP视频流, deviceId={}, url={}", device.getDeviceId(), httpUrl);
 
-        return VideoStream.builder().deviceId(device.getDeviceId()).streamUrl(httpUrl).protocol("HTTP")
-                .streamId("HTTP_" + device.getDeviceId() + "_" + System.currentTimeMillis()).width(1920) // 默认分辨率
+        return VideoStream.builder().deviceId(TypeUtils.toString(device.getDeviceId())).streamUrl(httpUrl).protocol("HTTP")
+                .streamId("HTTP_" + TypeUtils.toString(device.getDeviceId()) + "_" + System.currentTimeMillis()).width(1920) // 默认分辨率
                 .height(1080).frameRate(25) // 默认帧率
                 .bitrate(2048) // 默认码率
                 .build();
@@ -58,12 +59,12 @@ public class HTTPAdapter implements IVideoStreamAdapter {
      *               设备实体
      * @return HTTP URL
      */
-    private String buildHTTPUrl(DeviceEntity device) {
+    private String buildHTTPUrl(DeviceResponse device) {
         // TODO: 根据设备类型和配置构建HTTP URL
         // 示例：http://ip:port/video/stream.m3u8
-        String ip = device.getDeviceIp() != null ? device.getDeviceIp() : "127.0.0.1";
-        Integer port = device.getDevicePort() != null ? device.getDevicePort() : 80;
+        String ip = device.getIpAddress() != null ? device.getIpAddress() : "127.0.0.1";
+        Integer port = device.getPort() != null ? device.getPort() : 80;
 
-        return String.format("http://%s:%d/video/%s/stream.m3u8", ip, port, device.getDeviceId());
+        return String.format("http://%s:%d/video/%s/stream.m3u8", ip, port, TypeUtils.toString(device.getDeviceId()));
     }
 }

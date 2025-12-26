@@ -1,0 +1,2294 @@
+﻿[
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/AccountControllerTest.java",
+        "startLineNumber":  42,
+        "startColumn":  13,
+        "message":  "AccountController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/AccountControllerTest.java",
+        "startLineNumber":  68,
+        "startColumn":  36,
+        "message":  "AccountController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/AccountControllerTest.java",
+        "startLineNumber":  72,
+        "startColumn":  27,
+        "message":  "The method getOk() is undefined for the type ResponseDTO\u003cLong\u003e"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/AccountControllerTest.java",
+        "startLineNumber":  89,
+        "startColumn":  36,
+        "message":  "AccountController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/AccountControllerTest.java",
+        "startLineNumber":  92,
+        "startColumn":  28,
+        "message":  "The method getOk() is undefined for the type ResponseDTO\u003cLong\u003e"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/AccountControllerTest.java",
+        "startLineNumber":  104,
+        "startColumn":  39,
+        "message":  "AccountController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/AccountControllerTest.java",
+        "startLineNumber":  108,
+        "startColumn":  27,
+        "message":  "The method getOk() is undefined for the type ResponseDTO\u003cBoolean\u003e"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/AccountControllerTest.java",
+        "startLineNumber":  121,
+        "startColumn":  39,
+        "message":  "AccountController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/AccountControllerTest.java",
+        "startLineNumber":  125,
+        "startColumn":  28,
+        "message":  "The method getOk() is undefined for the type ResponseDTO\u003cBoolean\u003e"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/AccountControllerTest.java",
+        "startLineNumber":  138,
+        "startColumn":  39,
+        "message":  "AccountController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/AccountControllerTest.java",
+        "startLineNumber":  142,
+        "startColumn":  27,
+        "message":  "The method getOk() is undefined for the type ResponseDTO\u003cBoolean\u003e"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/AccountControllerTest.java",
+        "startLineNumber":  156,
+        "startColumn":  39,
+        "message":  "AccountController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/AccountControllerTest.java",
+        "startLineNumber":  160,
+        "startColumn":  28,
+        "message":  "The method getOk() is undefined for the type ResponseDTO\u003cBoolean\u003e"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/AccountControllerTest.java",
+        "startLineNumber":  177,
+        "startColumn":  45,
+        "message":  "AccountController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/AccountControllerTest.java",
+        "startLineNumber":  196,
+        "startColumn":  45,
+        "message":  "AccountController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/AccountControllerTest.java",
+        "startLineNumber":  220,
+        "startColumn":  57,
+        "message":  "AccountController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/AccountControllerTest.java",
+        "startLineNumber":  237,
+        "startColumn":  13,
+        "message":  "AccountController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/AccountControllerTest.java",
+        "startLineNumber":  246,
+        "startColumn":  13,
+        "message":  "AccountController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/AccountControllerTest.java",
+        "startLineNumber":  254,
+        "startColumn":  39,
+        "message":  "AccountController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/AccountControllerTest.java",
+        "startLineNumber":  258,
+        "startColumn":  28,
+        "message":  "The method getOk() is undefined for the type ResponseDTO\u003cBoolean\u003e"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/AccountControllerTest.java",
+        "startLineNumber":  265,
+        "startColumn":  45,
+        "message":  "AccountController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ConsumeAccountControllerTest.java",
+        "startLineNumber":  43,
+        "startColumn":  13,
+        "message":  "ConsumeAccountController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ConsumeAccountControllerTest.java",
+        "startLineNumber":  71,
+        "startColumn":  48,
+        "message":  "ConsumeAccountController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ConsumeAccountControllerTest.java",
+        "startLineNumber":  92,
+        "startColumn":  41,
+        "message":  "ConsumeAccountController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ConsumeAccountControllerTest.java",
+        "startLineNumber":  107,
+        "startColumn":  13,
+        "message":  "ConsumeAccountController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ConsumeAccountControllerTest.java",
+        "startLineNumber":  125,
+        "startColumn":  51,
+        "message":  "ConsumeAccountController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ConsumeAccountControllerTest.java",
+        "startLineNumber":  129,
+        "startColumn":  27,
+        "message":  "The method getOk() is undefined for the type ResponseDTO\u003cMap\u003cString,Object\u003e\u003e"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ConsumeAccountControllerTest.java",
+        "startLineNumber":  147,
+        "startColumn":  41,
+        "message":  "ConsumeAccountController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ConsumeAccountControllerTest.java",
+        "startLineNumber":  171,
+        "startColumn":  38,
+        "message":  "ConsumeAccountController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ConsumeAccountControllerTest.java",
+        "startLineNumber":  175,
+        "startColumn":  27,
+        "message":  "The method getOk() is undefined for the type ResponseDTO\u003cString\u003e"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ConsumeAccountControllerTest.java",
+        "startLineNumber":  190,
+        "startColumn":  38,
+        "message":  "ConsumeAccountController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ConsumeAccountControllerTest.java",
+        "startLineNumber":  194,
+        "startColumn":  27,
+        "message":  "The method getOk() is undefined for the type ResponseDTO\u003cString\u003e"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ConsumeAccountControllerTest.java",
+        "startLineNumber":  207,
+        "startColumn":  38,
+        "message":  "ConsumeAccountController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ConsumeAccountControllerTest.java",
+        "startLineNumber":  211,
+        "startColumn":  28,
+        "message":  "The method getOk() is undefined for the type ResponseDTO\u003cString\u003e"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ConsumeAccountControllerTest.java",
+        "startLineNumber":  222,
+        "startColumn":  13,
+        "message":  "ConsumeAccountController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ConsumeAccountControllerTest.java",
+        "startLineNumber":  236,
+        "startColumn":  48,
+        "message":  "ConsumeAccountController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ConsumeAccountControllerTest.java",
+        "startLineNumber":  249,
+        "startColumn":  13,
+        "message":  "ConsumeAccountController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ConsumeAccountControllerTest.java",
+        "startLineNumber":  259,
+        "startColumn":  13,
+        "message":  "ConsumeAccountController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ConsumeControllerTest.java",
+        "startLineNumber":  41,
+        "startColumn":  13,
+        "message":  "ConsumeController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ConsumeControllerTest.java",
+        "startLineNumber":  70,
+        "startColumn":  58,
+        "message":  "ConsumeController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ConsumeControllerTest.java",
+        "startLineNumber":  93,
+        "startColumn":  58,
+        "message":  "ConsumeController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ConsumeControllerTest.java",
+        "startLineNumber":  106,
+        "startColumn":  58,
+        "message":  "ConsumeController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ConsumeControllerTest.java",
+        "startLineNumber":  128,
+        "startColumn":  58,
+        "message":  "ConsumeController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ConsumeControllerTest.java",
+        "startLineNumber":  146,
+        "startColumn":  58,
+        "message":  "ConsumeController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ConsumeControllerTest.java",
+        "startLineNumber":  161,
+        "startColumn":  13,
+        "message":  "ConsumeController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ConsumeControllerTest.java",
+        "startLineNumber":  169,
+        "startColumn":  58,
+        "message":  "ConsumeController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ConsumeMobileControllerTest.java",
+        "startLineNumber":  63,
+        "startColumn":  17,
+        "message":  "ConsumeMobileController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ConsumeMobileControllerTest.java",
+        "startLineNumber":  80,
+        "startColumn":  59,
+        "message":  "ConsumeMobileController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ConsumeRefundControllerTest.java",
+        "startLineNumber":  42,
+        "startColumn":  13,
+        "message":  "ConsumeRefundController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ConsumeRefundControllerTest.java",
+        "startLineNumber":  64,
+        "startColumn":  36,
+        "message":  "ConsumeRefundController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ConsumeRefundControllerTest.java",
+        "startLineNumber":  68,
+        "startColumn":  27,
+        "message":  "The method getOk() is undefined for the type ResponseDTO\u003cLong\u003e"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ConsumeRefundControllerTest.java",
+        "startLineNumber":  84,
+        "startColumn":  13,
+        "message":  "ConsumeRefundController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ConsumeRefundControllerTest.java",
+        "startLineNumber":  103,
+        "startColumn":  36,
+        "message":  "ConsumeRefundController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ConsumeRefundControllerTest.java",
+        "startLineNumber":  107,
+        "startColumn":  27,
+        "message":  "The method getOk() is undefined for the type ResponseDTO\u003cLong\u003e"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ConsumeRefundControllerTest.java",
+        "startLineNumber":  119,
+        "startColumn":  13,
+        "message":  "ConsumeRefundController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ConsumeRefundControllerTest.java",
+        "startLineNumber":  136,
+        "startColumn":  46,
+        "message":  "ConsumeRefundController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ConsumeRefundControllerTest.java",
+        "startLineNumber":  152,
+        "startColumn":  13,
+        "message":  "ConsumeRefundController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ConsumeRefundControllerTest.java",
+        "startLineNumber":  170,
+        "startColumn":  58,
+        "message":  "ConsumeRefundController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ConsumeRefundControllerTest.java",
+        "startLineNumber":  191,
+        "startColumn":  38,
+        "message":  "ConsumeRefundController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ConsumeRefundControllerTest.java",
+        "startLineNumber":  195,
+        "startColumn":  27,
+        "message":  "The method getOk() is undefined for the type ResponseDTO\u003cString\u003e"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ConsumeRefundControllerTest.java",
+        "startLineNumber":  210,
+        "startColumn":  38,
+        "message":  "ConsumeRefundController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ConsumeRefundControllerTest.java",
+        "startLineNumber":  214,
+        "startColumn":  27,
+        "message":  "The method getOk() is undefined for the type ResponseDTO\u003cString\u003e"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ConsumeRefundControllerTest.java",
+        "startLineNumber":  230,
+        "startColumn":  38,
+        "message":  "ConsumeRefundController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ConsumeRefundControllerTest.java",
+        "startLineNumber":  234,
+        "startColumn":  27,
+        "message":  "The method getOk() is undefined for the type ResponseDTO\u003cString\u003e"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ConsumeRefundControllerTest.java",
+        "startLineNumber":  248,
+        "startColumn":  38,
+        "message":  "ConsumeRefundController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ConsumeRefundControllerTest.java",
+        "startLineNumber":  252,
+        "startColumn":  27,
+        "message":  "The method getOk() is undefined for the type ResponseDTO\u003cString\u003e"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ConsumeRefundControllerTest.java",
+        "startLineNumber":  262,
+        "startColumn":  13,
+        "message":  "ConsumeRefundController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/MobileConsumeControllerTest.java",
+        "startLineNumber":  79,
+        "startColumn":  13,
+        "message":  "MobileConsumeController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/MobileConsumeControllerTest.java",
+        "startLineNumber":  87,
+        "startColumn":  51,
+        "message":  "MobileConsumeController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/PaymentControllerTest.java",
+        "startLineNumber":  56,
+        "startColumn":  13,
+        "message":  "PaymentController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/PaymentControllerTest.java",
+        "startLineNumber":  92,
+        "startColumn":  51,
+        "message":  "PaymentController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/PaymentControllerTest.java",
+        "startLineNumber":  96,
+        "startColumn":  27,
+        "message":  "The method getOk() is undefined for the type ResponseDTO\u003cMap\u003cString,Object\u003e\u003e"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/PaymentControllerTest.java",
+        "startLineNumber":  115,
+        "startColumn":  51,
+        "message":  "PaymentController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/PaymentControllerTest.java",
+        "startLineNumber":  128,
+        "startColumn":  51,
+        "message":  "PaymentController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/PaymentControllerTest.java",
+        "startLineNumber":  132,
+        "startColumn":  28,
+        "message":  "The method getOk() is undefined for the type ResponseDTO\u003cMap\u003cString,Object\u003e\u003e"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/PaymentControllerTest.java",
+        "startLineNumber":  149,
+        "startColumn":  51,
+        "message":  "PaymentController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/PaymentControllerTest.java",
+        "startLineNumber":  153,
+        "startColumn":  27,
+        "message":  "The method getOk() is undefined for the type ResponseDTO\u003cMap\u003cString,Object\u003e\u003e"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/PaymentControllerTest.java",
+        "startLineNumber":  168,
+        "startColumn":  51,
+        "message":  "PaymentController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/PaymentControllerTest.java",
+        "startLineNumber":  172,
+        "startColumn":  28,
+        "message":  "The method getOk() is undefined for the type ResponseDTO\u003cMap\u003cString,Object\u003e\u003e"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/PaymentControllerTest.java",
+        "startLineNumber":  192,
+        "startColumn":  51,
+        "message":  "PaymentController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/PaymentControllerTest.java",
+        "startLineNumber":  196,
+        "startColumn":  27,
+        "message":  "The method getOk() is undefined for the type ResponseDTO\u003cMap\u003cString,Object\u003e\u003e"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/PaymentControllerTest.java",
+        "startLineNumber":  206,
+        "startColumn":  51,
+        "message":  "PaymentController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/PaymentControllerTest.java",
+        "startLineNumber":  208,
+        "startColumn":  28,
+        "message":  "The method getOk() is undefined for the type ResponseDTO\u003cMap\u003cString,Object\u003e\u003e"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/PaymentControllerTest.java",
+        "startLineNumber":  217,
+        "startColumn":  51,
+        "message":  "PaymentController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/PaymentControllerTest.java",
+        "startLineNumber":  219,
+        "startColumn":  28,
+        "message":  "The method getOk() is undefined for the type ResponseDTO\u003cMap\u003cString,Object\u003e\u003e"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/PaymentControllerTest.java",
+        "startLineNumber":  236,
+        "startColumn":  51,
+        "message":  "PaymentController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/PaymentControllerTest.java",
+        "startLineNumber":  240,
+        "startColumn":  27,
+        "message":  "The method getOk() is undefined for the type ResponseDTO\u003cMap\u003cString,Object\u003e\u003e"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/PaymentControllerTest.java",
+        "startLineNumber":  250,
+        "startColumn":  51,
+        "message":  "PaymentController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/PaymentControllerTest.java",
+        "startLineNumber":  252,
+        "startColumn":  28,
+        "message":  "The method getOk() is undefined for the type ResponseDTO\u003cMap\u003cString,Object\u003e\u003e"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/PaymentControllerTest.java",
+        "startLineNumber":  270,
+        "startColumn":  51,
+        "message":  "PaymentController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/PaymentControllerTest.java",
+        "startLineNumber":  274,
+        "startColumn":  27,
+        "message":  "The method getOk() is undefined for the type ResponseDTO\u003cPaymentRecordEntity\u003e"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/PaymentControllerTest.java",
+        "startLineNumber":  288,
+        "startColumn":  51,
+        "message":  "PaymentController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/PaymentControllerTest.java",
+        "startLineNumber":  314,
+        "startColumn":  51,
+        "message":  "PaymentController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/PaymentControllerTest.java",
+        "startLineNumber":  318,
+        "startColumn":  27,
+        "message":  "The method getOk() is undefined for the type ResponseDTO\u003cMap\u003cString,Object\u003e\u003e"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/PaymentControllerTest.java",
+        "startLineNumber":  328,
+        "startColumn":  51,
+        "message":  "PaymentController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/PaymentControllerTest.java",
+        "startLineNumber":  330,
+        "startColumn":  28,
+        "message":  "The method getOk() is undefined for the type ResponseDTO\u003cMap\u003cString,Object\u003e\u003e"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ReconciliationControllerTest.java",
+        "startLineNumber":  38,
+        "startColumn":  13,
+        "message":  "ReconciliationController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ReconciliationControllerTest.java",
+        "startLineNumber":  55,
+        "startColumn":  13,
+        "message":  "ReconciliationController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ReconciliationControllerTest.java",
+        "startLineNumber":  76,
+        "startColumn":  13,
+        "message":  "ReconciliationController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ReconciliationControllerTest.java",
+        "startLineNumber":  95,
+        "startColumn":  13,
+        "message":  "ReconciliationController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ReconciliationControllerTest.java",
+        "startLineNumber":  117,
+        "startColumn":  13,
+        "message":  "ReconciliationController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ReconciliationControllerTest.java",
+        "startLineNumber":  137,
+        "startColumn":  13,
+        "message":  "ReconciliationController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ReconciliationControllerTest.java",
+        "startLineNumber":  169,
+        "startColumn":  13,
+        "message":  "ReconciliationController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ReconciliationControllerTest.java",
+        "startLineNumber":  195,
+        "startColumn":  13,
+        "message":  "ReconciliationController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/RefundApplicationControllerTest.java",
+        "startLineNumber":  41,
+        "startColumn":  13,
+        "message":  "RefundApplicationController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/RefundApplicationControllerTest.java",
+        "startLineNumber":  67,
+        "startColumn":  55,
+        "message":  "RefundApplicationController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/RefundApplicationControllerTest.java",
+        "startLineNumber":  88,
+        "startColumn":  13,
+        "message":  "RefundApplicationController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/RefundApplicationControllerTest.java",
+        "startLineNumber":  97,
+        "startColumn":  13,
+        "message":  "RefundApplicationController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/RefundApplicationControllerTest.java",
+        "startLineNumber":  116,
+        "startColumn":  36,
+        "message":  "RefundApplicationController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/RefundApplicationControllerTest.java",
+        "startLineNumber":  120,
+        "startColumn":  27,
+        "message":  "The method getOk() is undefined for the type ResponseDTO\u003cVoid\u003e"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/RefundApplicationControllerTest.java",
+        "startLineNumber":  136,
+        "startColumn":  13,
+        "message":  "RefundApplicationController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/RefundApplicationControllerTest.java",
+        "startLineNumber":  148,
+        "startColumn":  13,
+        "message":  "RefundApplicationController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/RefundApplicationControllerTest.java",
+        "startLineNumber":  161,
+        "startColumn":  36,
+        "message":  "RefundApplicationController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ReimbursementApplicationControllerTest.java",
+        "startLineNumber":  31,
+        "startColumn":  13,
+        "message":  "ReimbursementApplicationController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ReimbursementApplicationControllerTest.java",
+        "startLineNumber":  45,
+        "startColumn":  23,
+        "message":  "ReimbursementApplicationController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ReportControllerTest.java",
+        "startLineNumber":  40,
+        "startColumn":  13,
+        "message":  "ReportController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ReportControllerTest.java",
+        "startLineNumber":  67,
+        "startColumn":  51,
+        "message":  "ReportController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ReportControllerTest.java",
+        "startLineNumber":  71,
+        "startColumn":  27,
+        "message":  "The method getOk() is undefined for the type ResponseDTO\u003cMap\u003cString,Object\u003e\u003e"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ReportControllerTest.java",
+        "startLineNumber":  88,
+        "startColumn":  51,
+        "message":  "ReportController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ReportControllerTest.java",
+        "startLineNumber":  92,
+        "startColumn":  27,
+        "message":  "The method getOk() is undefined for the type ResponseDTO\u003cMap\u003cString,Object\u003e\u003e"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ReportControllerTest.java",
+        "startLineNumber":  105,
+        "startColumn":  51,
+        "message":  "ReportController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ReportControllerTest.java",
+        "startLineNumber":  109,
+        "startColumn":  28,
+        "message":  "The method getOk() is undefined for the type ResponseDTO\u003cMap\u003cString,Object\u003e\u003e"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ReportControllerTest.java",
+        "startLineNumber":  128,
+        "startColumn":  38,
+        "message":  "ReportController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ReportControllerTest.java",
+        "startLineNumber":  132,
+        "startColumn":  27,
+        "message":  "The method getOk() is undefined for the type ResponseDTO\u003cString\u003e"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ReportControllerTest.java",
+        "startLineNumber":  150,
+        "startColumn":  38,
+        "message":  "ReportController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ReportControllerTest.java",
+        "startLineNumber":  154,
+        "startColumn":  27,
+        "message":  "The method getOk() is undefined for the type ResponseDTO\u003cString\u003e"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ReportControllerTest.java",
+        "startLineNumber":  171,
+        "startColumn":  38,
+        "message":  "ReportController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ReportControllerTest.java",
+        "startLineNumber":  173,
+        "startColumn":  27,
+        "message":  "The method getOk() is undefined for the type ResponseDTO\u003cString\u003e"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ReportControllerTest.java",
+        "startLineNumber":  189,
+        "startColumn":  33,
+        "message":  "ReportController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ReportControllerTest.java",
+        "startLineNumber":  193,
+        "startColumn":  27,
+        "message":  "The method getOk() is undefined for the type ResponseDTO\u003ccapture#2-of ?\u003e"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ReportControllerTest.java",
+        "startLineNumber":  219,
+        "startColumn":  51,
+        "message":  "ReportController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ReportControllerTest.java",
+        "startLineNumber":  224,
+        "startColumn":  27,
+        "message":  "The method getOk() is undefined for the type ResponseDTO\u003cMap\u003cString,Object\u003e\u003e"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ReportControllerTest.java",
+        "startLineNumber":  248,
+        "startColumn":  51,
+        "message":  "ReportController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/controller/ReportControllerTest.java",
+        "startLineNumber":  253,
+        "startColumn":  27,
+        "message":  "The method getOk() is undefined for the type ResponseDTO\u003cMap\u003cString,Object\u003e\u003e"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/AccountServiceImplTest.java",
+        "startLineNumber":  23,
+        "startColumn":  8,
+        "message":  "The import net.lab1024.sa.consume.service.impl.AccountServiceImpl cannot be resolved"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/AccountServiceImplTest.java",
+        "startLineNumber":  46,
+        "startColumn":  13,
+        "message":  "AccountServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/AccountServiceImplTest.java",
+        "startLineNumber":  80,
+        "startColumn":  26,
+        "message":  "AccountServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/AccountServiceImplTest.java",
+        "startLineNumber":  97,
+        "startColumn":  13,
+        "message":  "AccountServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/AccountServiceImplTest.java",
+        "startLineNumber":  116,
+        "startColumn":  26,
+        "message":  "AccountServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/AccountServiceImplTest.java",
+        "startLineNumber":  135,
+        "startColumn":  13,
+        "message":  "AccountServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/AccountServiceImplTest.java",
+        "startLineNumber":  149,
+        "startColumn":  32,
+        "message":  "AccountServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/AccountServiceImplTest.java",
+        "startLineNumber":  166,
+        "startColumn":  53,
+        "message":  "AccountServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/AccountServiceImplTest.java",
+        "startLineNumber":  180,
+        "startColumn":  26,
+        "message":  "AccountServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/AccountServiceImplTest.java",
+        "startLineNumber":  197,
+        "startColumn":  26,
+        "message":  "AccountServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeAccountServiceImplTest.java",
+        "startLineNumber":  28,
+        "startColumn":  8,
+        "message":  "The import net.lab1024.sa.consume.service.impl.ConsumeAccountServiceImpl cannot be resolved"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeAccountServiceImplTest.java",
+        "startLineNumber":  49,
+        "startColumn":  13,
+        "message":  "ConsumeAccountServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeAccountServiceImplTest.java",
+        "startLineNumber":  70,
+        "startColumn":  28,
+        "message":  "ConsumeAccountServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeAccountServiceImplTest.java",
+        "startLineNumber":  87,
+        "startColumn":  28,
+        "message":  "ConsumeAccountServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeAccountServiceImplTest.java",
+        "startLineNumber":  107,
+        "startColumn":  41,
+        "message":  "ConsumeAccountServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeAccountServiceImplTest.java",
+        "startLineNumber":  125,
+        "startColumn":  13,
+        "message":  "ConsumeAccountServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeAccountServiceImplTest.java",
+        "startLineNumber":  143,
+        "startColumn":  41,
+        "message":  "ConsumeAccountServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeAccountServiceImplTest.java",
+        "startLineNumber":  161,
+        "startColumn":  13,
+        "message":  "ConsumeAccountServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeAccountServiceImplTest.java",
+        "startLineNumber":  175,
+        "startColumn":  36,
+        "message":  "ConsumeAccountServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeAccountServiceImplTest.java",
+        "startLineNumber":  178,
+        "startColumn":  27,
+        "message":  "The method getOk() is undefined for the type ResponseDTO\u003cVoid\u003e"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeAccountServiceImplTest.java",
+        "startLineNumber":  189,
+        "startColumn":  36,
+        "message":  "ConsumeAccountServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeAccountServiceImplTest.java",
+        "startLineNumber":  192,
+        "startColumn":  27,
+        "message":  "The method getOk() is undefined for the type ResponseDTO\u003cVoid\u003e"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeAccountServiceImplTest.java",
+        "startLineNumber":  204,
+        "startColumn":  36,
+        "message":  "ConsumeAccountServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeAccountServiceImplTest.java",
+        "startLineNumber":  207,
+        "startColumn":  27,
+        "message":  "The method getOk() is undefined for the type ResponseDTO\u003cVoid\u003e"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeAccountServiceImplTest.java",
+        "startLineNumber":  218,
+        "startColumn":  36,
+        "message":  "ConsumeAccountServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeAccountServiceImplTest.java",
+        "startLineNumber":  221,
+        "startColumn":  27,
+        "message":  "The method getOk() is undefined for the type ResponseDTO\u003cVoid\u003e"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeAccountServiceImplTest.java",
+        "startLineNumber":  233,
+        "startColumn":  26,
+        "message":  "ConsumeAccountServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeAccountServiceImplTest.java",
+        "startLineNumber":  247,
+        "startColumn":  26,
+        "message":  "ConsumeAccountServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeAccountServiceImplTest.java",
+        "startLineNumber":  263,
+        "startColumn":  26,
+        "message":  "ConsumeAccountServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeAccountServiceImplTest.java",
+        "startLineNumber":  278,
+        "startColumn":  26,
+        "message":  "ConsumeAccountServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeAccountServiceImplTest.java",
+        "startLineNumber":  293,
+        "startColumn":  48,
+        "message":  "ConsumeAccountServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeAccountServiceImplTest.java",
+        "startLineNumber":  308,
+        "startColumn":  26,
+        "message":  "ConsumeAccountServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeAccountServiceImplTest.java",
+        "startLineNumber":  323,
+        "startColumn":  26,
+        "message":  "ConsumeAccountServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeAccountServiceImplTest.java",
+        "startLineNumber":  343,
+        "startColumn":  26,
+        "message":  "ConsumeAccountServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeAccountServiceImplTest.java",
+        "startLineNumber":  363,
+        "startColumn":  26,
+        "message":  "ConsumeAccountServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeAccountServiceImplTest.java",
+        "startLineNumber":  383,
+        "startColumn":  38,
+        "message":  "ConsumeAccountServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeAccountServiceImplTest.java",
+        "startLineNumber":  401,
+        "startColumn":  38,
+        "message":  "ConsumeAccountServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeAccountServiceImplTest.java",
+        "startLineNumber":  420,
+        "startColumn":  42,
+        "message":  "ConsumeAccountServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeAccountServiceImplTest.java",
+        "startLineNumber":  423,
+        "startColumn":  27,
+        "message":  "The method getOk() is undefined for the type ResponseDTO\u003cBigDecimal\u003e"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeAccountServiceImplTest.java",
+        "startLineNumber":  438,
+        "startColumn":  13,
+        "message":  "ConsumeAccountServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeAccountServiceImplTest.java",
+        "startLineNumber":  451,
+        "startColumn":  26,
+        "message":  "ConsumeAccountServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeAccountServiceImplTest.java",
+        "startLineNumber":  466,
+        "startColumn":  26,
+        "message":  "ConsumeAccountServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeAreaCacheServiceImplTest.java",
+        "startLineNumber":  15,
+        "startColumn":  8,
+        "message":  "The import net.lab1024.sa.consume.service.impl.ConsumeAreaCacheServiceImpl cannot be resolved"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeAreaCacheServiceImplTest.java",
+        "startLineNumber":  35,
+        "startColumn":  13,
+        "message":  "ConsumeAreaCacheServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeAreaCacheServiceImplTest.java",
+        "startLineNumber":  51,
+        "startColumn":  26,
+        "message":  "ConsumeAreaCacheServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeAreaCacheServiceImplTest.java",
+        "startLineNumber":  67,
+        "startColumn":  26,
+        "message":  "ConsumeAreaCacheServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeAreaCacheServiceImplTest.java",
+        "startLineNumber":  82,
+        "startColumn":  9,
+        "message":  "ConsumeAreaCacheServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeAreaCacheServiceImplTest.java",
+        "startLineNumber":  96,
+        "startColumn":  9,
+        "message":  "ConsumeAreaCacheServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeMobileServiceImplTest.java",
+        "startLineNumber":  39,
+        "startColumn":  8,
+        "message":  "The import net.lab1024.sa.consume.service.impl.ConsumeMobileServiceImpl cannot be resolved"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeMobileServiceImplTest.java",
+        "startLineNumber":  67,
+        "startColumn":  13,
+        "message":  "ConsumeMobileServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeMobileServiceImplTest.java",
+        "startLineNumber":  82,
+        "startColumn":  13,
+        "message":  "ConsumeMobileServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeMobileServiceImplTest.java",
+        "startLineNumber":  94,
+        "startColumn":  13,
+        "message":  "ConsumeMobileServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeMobileServiceImplTest.java",
+        "startLineNumber":  106,
+        "startColumn":  13,
+        "message":  "ConsumeMobileServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeMobileServiceImplTest.java",
+        "startLineNumber":  118,
+        "startColumn":  13,
+        "message":  "ConsumeMobileServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeMobileServiceImplTest.java",
+        "startLineNumber":  127,
+        "startColumn":  13,
+        "message":  "ConsumeMobileServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeMobileServiceImplTest.java",
+        "startLineNumber":  136,
+        "startColumn":  13,
+        "message":  "ConsumeMobileServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeMobileServiceImplTest.java",
+        "startLineNumber":  145,
+        "startColumn":  13,
+        "message":  "ConsumeMobileServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeMobileServiceImplTest.java",
+        "startLineNumber":  154,
+        "startColumn":  13,
+        "message":  "ConsumeMobileServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeMobileServiceImplTest.java",
+        "startLineNumber":  163,
+        "startColumn":  13,
+        "message":  "ConsumeMobileServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeMobileServiceImplTest.java",
+        "startLineNumber":  175,
+        "startColumn":  13,
+        "message":  "ConsumeMobileServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeMobileServiceImplTest.java",
+        "startLineNumber":  184,
+        "startColumn":  13,
+        "message":  "ConsumeMobileServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeMobileServiceImplTest.java",
+        "startLineNumber":  196,
+        "startColumn":  13,
+        "message":  "ConsumeMobileServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeMobileServiceImplTest.java",
+        "startLineNumber":  224,
+        "startColumn":  43,
+        "message":  "ConsumeMobileServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeMobileServiceImplTest.java",
+        "startLineNumber":  243,
+        "startColumn":  13,
+        "message":  "ConsumeMobileServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeMobileServiceImplTest.java",
+        "startLineNumber":  256,
+        "startColumn":  43,
+        "message":  "ConsumeMobileServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeMobileServiceImplTest.java",
+        "startLineNumber":  296,
+        "startColumn":  37,
+        "message":  "ConsumeMobileServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeMobileServiceImplTest.java",
+        "startLineNumber":  315,
+        "startColumn":  13,
+        "message":  "ConsumeMobileServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeMobileServiceImplTest.java",
+        "startLineNumber":  325,
+        "startColumn":  13,
+        "message":  "ConsumeMobileServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeMobileServiceImplTest.java",
+        "startLineNumber":  334,
+        "startColumn":  13,
+        "message":  "ConsumeMobileServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeRefundServiceImplTest.java",
+        "startLineNumber":  34,
+        "startColumn":  8,
+        "message":  "The import net.lab1024.sa.consume.service.impl.ConsumeRefundServiceImpl cannot be resolved"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeRefundServiceImplTest.java",
+        "startLineNumber":  66,
+        "startColumn":  13,
+        "message":  "ConsumeRefundServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeRefundServiceImplTest.java",
+        "startLineNumber":  116,
+        "startColumn":  23,
+        "message":  "ConsumeRefundServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeRefundServiceImplTest.java",
+        "startLineNumber":  133,
+        "startColumn":  13,
+        "message":  "ConsumeRefundServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeRefundServiceImplTest.java",
+        "startLineNumber":  148,
+        "startColumn":  13,
+        "message":  "ConsumeRefundServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeRefundServiceImplTest.java",
+        "startLineNumber":  163,
+        "startColumn":  13,
+        "message":  "ConsumeRefundServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeRefundServiceImplTest.java",
+        "startLineNumber":  178,
+        "startColumn":  33,
+        "message":  "ConsumeRefundServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeRefundServiceImplTest.java",
+        "startLineNumber":  194,
+        "startColumn":  13,
+        "message":  "ConsumeRefundServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeRefundServiceImplTest.java",
+        "startLineNumber":  279,
+        "startColumn":  53,
+        "message":  "ConsumeRefundServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeRefundServiceImplTest.java",
+        "startLineNumber":  334,
+        "startColumn":  13,
+        "message":  "ConsumeRefundServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeRefundServiceImplTest.java",
+        "startLineNumber":  344,
+        "startColumn":  38,
+        "message":  "ConsumeRefundServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeReportServiceImplTest.java",
+        "startLineNumber":  22,
+        "startColumn":  8,
+        "message":  "The import net.lab1024.sa.consume.service.impl.ConsumeReportServiceImpl cannot be resolved"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeReportServiceImplTest.java",
+        "startLineNumber":  42,
+        "startColumn":  13,
+        "message":  "ConsumeReportServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeReportServiceImplTest.java",
+        "startLineNumber":  68,
+        "startColumn":  51,
+        "message":  "ConsumeReportServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeReportServiceImplTest.java",
+        "startLineNumber":  71,
+        "startColumn":  27,
+        "message":  "The method getOk() is undefined for the type ResponseDTO\u003cMap\u003cString,Object\u003e\u003e"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeReportServiceImplTest.java",
+        "startLineNumber":  88,
+        "startColumn":  38,
+        "message":  "ConsumeReportServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeReportServiceImplTest.java",
+        "startLineNumber":  91,
+        "startColumn":  27,
+        "message":  "The method getOk() is undefined for the type ResponseDTO\u003cString\u003e"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeReportServiceImplTest.java",
+        "startLineNumber":  109,
+        "startColumn":  33,
+        "message":  "ConsumeReportServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeReportServiceImplTest.java",
+        "startLineNumber":  112,
+        "startColumn":  27,
+        "message":  "The method getOk() is undefined for the type ResponseDTO\u003ccapture#1-of ?\u003e"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeReportServiceImplTest.java",
+        "startLineNumber":  131,
+        "startColumn":  13,
+        "message":  "ConsumeReportServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeReportServiceImplTest.java",
+        "startLineNumber":  134,
+        "startColumn":  27,
+        "message":  "The method getOk() is undefined for the type ResponseDTO\u003cMap\u003cString,Object\u003e\u003e"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeServiceImplTest.java",
+        "startLineNumber":  40,
+        "startColumn":  8,
+        "message":  "The import net.lab1024.sa.consume.service.impl.ConsumeServiceImpl cannot be resolved"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeServiceImplTest.java",
+        "startLineNumber":  73,
+        "startColumn":  13,
+        "message":  "ConsumeServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeServiceImplTest.java",
+        "startLineNumber":  105,
+        "startColumn":  45,
+        "message":  "ConsumeServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeServiceImplTest.java",
+        "startLineNumber":  121,
+        "startColumn":  45,
+        "message":  "ConsumeServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeServiceImplTest.java",
+        "startLineNumber":  143,
+        "startColumn":  45,
+        "message":  "ConsumeServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeServiceImplTest.java",
+        "startLineNumber":  159,
+        "startColumn":  45,
+        "message":  "ConsumeServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeServiceImplTest.java",
+        "startLineNumber":  184,
+        "startColumn":  57,
+        "message":  "ConsumeServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeServiceImplTest.java",
+        "startLineNumber":  205,
+        "startColumn":  34,
+        "message":  "ConsumeServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeServiceImplTest.java",
+        "startLineNumber":  223,
+        "startColumn":  44,
+        "message":  "ConsumeServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeServiceImplTest.java",
+        "startLineNumber":  244,
+        "startColumn":  46,
+        "message":  "ConsumeServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeVisualizationServiceImplTest.java",
+        "startLineNumber":  29,
+        "startColumn":  8,
+        "message":  "The import net.lab1024.sa.consume.service.impl.ConsumeVisualizationServiceImpl cannot be resolved"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeVisualizationServiceImplTest.java",
+        "startLineNumber":  55,
+        "startColumn":  13,
+        "message":  "ConsumeVisualizationServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeVisualizationServiceImplTest.java",
+        "startLineNumber":  100,
+        "startColumn":  51,
+        "message":  "ConsumeVisualizationServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeVisualizationServiceImplTest.java",
+        "startLineNumber":  115,
+        "startColumn":  46,
+        "message":  "ConsumeVisualizationServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeVisualizationServiceImplTest.java",
+        "startLineNumber":  130,
+        "startColumn":  48,
+        "message":  "ConsumeVisualizationServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeVisualizationServiceImplTest.java",
+        "startLineNumber":  145,
+        "startColumn":  51,
+        "message":  "ConsumeVisualizationServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeVisualizationServiceImplTest.java",
+        "startLineNumber":  161,
+        "startColumn":  13,
+        "message":  "ConsumeVisualizationServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/ConsumeVisualizationServiceImplTest.java",
+        "startLineNumber":  177,
+        "startColumn":  13,
+        "message":  "ConsumeVisualizationServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/impl/refund/RefundApplicationServiceImplTest.java",
+        "startLineNumber":  61,
+        "startColumn":  13,
+        "message":  "RefundApplicationServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/impl/refund/RefundApplicationServiceImplTest.java",
+        "startLineNumber":  121,
+        "startColumn":  42,
+        "message":  "RefundApplicationServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/impl/refund/RefundApplicationServiceImplTest.java",
+        "startLineNumber":  148,
+        "startColumn":  13,
+        "message":  "RefundApplicationServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/impl/refund/RefundApplicationServiceImplTest.java",
+        "startLineNumber":  173,
+        "startColumn":  9,
+        "message":  "RefundApplicationServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/impl/refund/RefundApplicationServiceImplTest.java",
+        "startLineNumber":  194,
+        "startColumn":  9,
+        "message":  "RefundApplicationServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/impl/refund/RefundApplicationServiceImplTest.java",
+        "startLineNumber":  213,
+        "startColumn":  9,
+        "message":  "RefundApplicationServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImplTest.java",
+        "startLineNumber":  50,
+        "startColumn":  13,
+        "message":  "ReimbursementApplicationServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImplTest.java",
+        "startLineNumber":  93,
+        "startColumn":  49,
+        "message":  "ReimbursementApplicationServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImplTest.java",
+        "startLineNumber":  120,
+        "startColumn":  13,
+        "message":  "ReimbursementApplicationServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImplTest.java",
+        "startLineNumber":  134,
+        "startColumn":  13,
+        "message":  "ReimbursementApplicationServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImplTest.java",
+        "startLineNumber":  156,
+        "startColumn":  9,
+        "message":  "ReimbursementApplicationServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImplTest.java",
+        "startLineNumber":  176,
+        "startColumn":  9,
+        "message":  "ReimbursementApplicationServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/impl/reimbursement/ReimbursementApplicationServiceImplTest.java",
+        "startLineNumber":  195,
+        "startColumn":  9,
+        "message":  "ReimbursementApplicationServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/payment/impl/PaymentRecordServiceImplTest.java",
+        "startLineNumber":  50,
+        "startColumn":  13,
+        "message":  "PaymentRecordServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/payment/impl/PaymentRecordServiceImplTest.java",
+        "startLineNumber":  85,
+        "startColumn":  38,
+        "message":  "PaymentRecordServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/payment/impl/PaymentRecordServiceImplTest.java",
+        "startLineNumber":  101,
+        "startColumn":  38,
+        "message":  "PaymentRecordServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/payment/impl/PaymentRecordServiceImplTest.java",
+        "startLineNumber":  133,
+        "startColumn":  38,
+        "message":  "PaymentRecordServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/payment/impl/PaymentRecordServiceImplTest.java",
+        "startLineNumber":  152,
+        "startColumn":  26,
+        "message":  "PaymentRecordServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/payment/impl/PaymentRecordServiceImplTest.java",
+        "startLineNumber":  170,
+        "startColumn":  26,
+        "message":  "PaymentRecordServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/payment/impl/PaymentRecordServiceImplTest.java",
+        "startLineNumber":  188,
+        "startColumn":  9,
+        "message":  "PaymentRecordServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/payment/impl/PaymentRecordServiceImplTest.java",
+        "startLineNumber":  205,
+        "startColumn":  45,
+        "message":  "PaymentRecordServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/PaymentServiceBoundaryTest.java",
+        "startLineNumber":  15,
+        "startColumn":  8,
+        "message":  "The import net.lab1024.sa.consume.service.impl.PaymentServiceImpl cannot be resolved"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/PaymentServiceBoundaryTest.java",
+        "startLineNumber":  37,
+        "startColumn":  9,
+        "message":  "PaymentServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/PaymentServiceBoundaryTest.java",
+        "startLineNumber":  37,
+        "startColumn":  49,
+        "message":  "PaymentServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/PaymentServiceBoundaryTest.java",
+        "startLineNumber":  58,
+        "startColumn":  9,
+        "message":  "PaymentServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/PaymentServiceBoundaryTest.java",
+        "startLineNumber":  58,
+        "startColumn":  49,
+        "message":  "PaymentServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/PaymentServiceBoundaryTest.java",
+        "startLineNumber":  79,
+        "startColumn":  9,
+        "message":  "PaymentServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/PaymentServiceBoundaryTest.java",
+        "startLineNumber":  79,
+        "startColumn":  49,
+        "message":  "PaymentServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/PaymentServiceTest.java",
+        "startLineNumber":  27,
+        "startColumn":  8,
+        "message":  "The import net.lab1024.sa.consume.service.impl.PaymentServiceImpl cannot be resolved"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/PaymentServiceTest.java",
+        "startLineNumber":  66,
+        "startColumn":  13,
+        "message":  "PaymentServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/PaymentServiceTest.java",
+        "startLineNumber":  93,
+        "startColumn":  38,
+        "message":  "PaymentServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/PaymentServiceTest.java",
+        "startLineNumber":  122,
+        "startColumn":  38,
+        "message":  "PaymentServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/PaymentServiceTest.java",
+        "startLineNumber":  149,
+        "startColumn":  38,
+        "message":  "PaymentServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/PaymentServiceTest.java",
+        "startLineNumber":  175,
+        "startColumn":  38,
+        "message":  "PaymentServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/PaymentServiceTest.java",
+        "startLineNumber":  207,
+        "startColumn":  38,
+        "message":  "PaymentServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/PaymentServiceTest.java",
+        "startLineNumber":  242,
+        "startColumn":  38,
+        "message":  "PaymentServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/PaymentServiceTest.java",
+        "startLineNumber":  267,
+        "startColumn":  38,
+        "message":  "PaymentServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/PaymentServiceTest.java",
+        "startLineNumber":  290,
+        "startColumn":  38,
+        "message":  "PaymentServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/PaymentServiceTest.java",
+        "startLineNumber":  312,
+        "startColumn":  38,
+        "message":  "PaymentServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/PaymentServiceTest.java",
+        "startLineNumber":  325,
+        "startColumn":  38,
+        "message":  "PaymentServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-consume-service/src/test/java/net/lab1024/sa/consume/service/PaymentServiceTest.java",
+        "startLineNumber":  337,
+        "startColumn":  38,
+        "message":  "PaymentServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/cache/ProtocolCacheServiceImplTest.java",
+        "startLineNumber":  39,
+        "startColumn":  13,
+        "message":  "ProtocolCacheServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/cache/ProtocolCacheServiceImplTest.java",
+        "startLineNumber":  70,
+        "startColumn":  31,
+        "message":  "ProtocolCacheServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/cache/ProtocolCacheServiceImplTest.java",
+        "startLineNumber":  83,
+        "startColumn":  31,
+        "message":  "ProtocolCacheServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/cache/ProtocolCacheServiceImplTest.java",
+        "startLineNumber":  105,
+        "startColumn":  31,
+        "message":  "ProtocolCacheServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/cache/ProtocolCacheServiceImplTest.java",
+        "startLineNumber":  127,
+        "startColumn":  31,
+        "message":  "ProtocolCacheServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/cache/ProtocolCacheServiceImplTest.java",
+        "startLineNumber":  139,
+        "startColumn":  31,
+        "message":  "ProtocolCacheServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/cache/ProtocolCacheServiceImplTest.java",
+        "startLineNumber":  150,
+        "startColumn":  31,
+        "message":  "ProtocolCacheServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/cache/ProtocolCacheServiceImplTest.java",
+        "startLineNumber":  161,
+        "startColumn":  9,
+        "message":  "ProtocolCacheServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/cache/ProtocolCacheServiceImplTest.java",
+        "startLineNumber":  172,
+        "startColumn":  31,
+        "message":  "ProtocolCacheServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/cache/ProtocolCacheServiceImplTest.java",
+        "startLineNumber":  183,
+        "startColumn":  9,
+        "message":  "ProtocolCacheServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/cache/ProtocolCacheServiceImplTest.java",
+        "startLineNumber":  194,
+        "startColumn":  9,
+        "message":  "ProtocolCacheServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/cache/ProtocolCacheServiceImplTest.java",
+        "startLineNumber":  205,
+        "startColumn":  9,
+        "message":  "ProtocolCacheServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/cache/ProtocolCacheServiceImplTest.java",
+        "startLineNumber":  216,
+        "startColumn":  9,
+        "message":  "ProtocolCacheServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/controller/BiometricControllerTest.java",
+        "startLineNumber":  49,
+        "startColumn":  13,
+        "message":  "BiometricController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/controller/BiometricControllerTest.java",
+        "startLineNumber":  56,
+        "startColumn":  51,
+        "message":  "BiometricController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/controller/BiometricControllerTest.java",
+        "startLineNumber":  69,
+        "startColumn":  9,
+        "message":  "BiometricController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/controller/BiometricControllerTest.java",
+        "startLineNumber":  69,
+        "startColumn":  68,
+        "message":  "BiometricController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/controller/BiometricControllerTest.java",
+        "startLineNumber":  103,
+        "startColumn":  9,
+        "message":  "BiometricController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/controller/BiometricControllerTest.java",
+        "startLineNumber":  103,
+        "startColumn":  66,
+        "message":  "BiometricController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/controller/BiometricControllerTest.java",
+        "startLineNumber":  139,
+        "startColumn":  9,
+        "message":  "BiometricController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/controller/BiometricControllerTest.java",
+        "startLineNumber":  139,
+        "startColumn":  65,
+        "message":  "BiometricController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/controller/BiometricControllerTest.java",
+        "startLineNumber":  291,
+        "startColumn":  9,
+        "message":  "BiometricController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/controller/BiometricControllerTest.java",
+        "startLineNumber":  291,
+        "startColumn":  68,
+        "message":  "BiometricController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/controller/BiometricControllerTest.java",
+        "startLineNumber":  338,
+        "startColumn":  9,
+        "message":  "BiometricController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/controller/BiometricControllerTest.java",
+        "startLineNumber":  338,
+        "startColumn":  68,
+        "message":  "BiometricController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/controller/BiometricControllerTest.java",
+        "startLineNumber":  354,
+        "startColumn":  9,
+        "message":  "BiometricController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/controller/BiometricControllerTest.java",
+        "startLineNumber":  354,
+        "startColumn":  66,
+        "message":  "BiometricController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/controller/BiometricControllerTest.java",
+        "startLineNumber":  370,
+        "startColumn":  9,
+        "message":  "BiometricController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/controller/BiometricControllerTest.java",
+        "startLineNumber":  370,
+        "startColumn":  76,
+        "message":  "BiometricController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/controller/BiometricControllerTest.java",
+        "startLineNumber":  397,
+        "startColumn":  9,
+        "message":  "BiometricController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/controller/BiometricControllerTest.java",
+        "startLineNumber":  397,
+        "startColumn":  72,
+        "message":  "BiometricController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/controller/BiometricIntegrationControllerTest.java",
+        "startLineNumber":  22,
+        "startColumn":  8,
+        "message":  "The import net.lab1024.sa.devicecomm.controller.BiometricIntegrationController cannot be resolved"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/controller/BiometricIntegrationControllerTest.java",
+        "startLineNumber":  23,
+        "startColumn":  8,
+        "message":  "The import net.lab1024.sa.devicecomm.controller.BiometricIntegrationController cannot be resolved"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/controller/BiometricIntegrationControllerTest.java",
+        "startLineNumber":  24,
+        "startColumn":  8,
+        "message":  "The import net.lab1024.sa.devicecomm.controller.BiometricIntegrationController cannot be resolved"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/controller/BiometricIntegrationControllerTest.java",
+        "startLineNumber":  25,
+        "startColumn":  8,
+        "message":  "The import net.lab1024.sa.devicecomm.controller.BiometricIntegrationController cannot be resolved"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/controller/BiometricIntegrationControllerTest.java",
+        "startLineNumber":  26,
+        "startColumn":  8,
+        "message":  "The import net.lab1024.sa.devicecomm.controller.BiometricIntegrationController cannot be resolved"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/controller/BiometricIntegrationControllerTest.java",
+        "startLineNumber":  27,
+        "startColumn":  8,
+        "message":  "The import net.lab1024.sa.devicecomm.controller.BiometricIntegrationController cannot be resolved"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/controller/BiometricIntegrationControllerTest.java",
+        "startLineNumber":  48,
+        "startColumn":  13,
+        "message":  "BiometricIntegrationController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/controller/BiometricIntegrationControllerTest.java",
+        "startLineNumber":  78,
+        "startColumn":  17,
+        "message":  "BiometricIntegrationController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/controller/BiometricIntegrationControllerTest.java",
+        "startLineNumber":  105,
+        "startColumn":  17,
+        "message":  "BiometricIntegrationController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/controller/BiometricIntegrationControllerTest.java",
+        "startLineNumber":  129,
+        "startColumn":  17,
+        "message":  "BiometricIntegrationController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/controller/BiometricIntegrationControllerTest.java",
+        "startLineNumber":  153,
+        "startColumn":  17,
+        "message":  "BiometricIntegrationController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/controller/BiometricIntegrationControllerTest.java",
+        "startLineNumber":  184,
+        "startColumn":  17,
+        "message":  "BiometricIntegrationController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/controller/BiometricIntegrationControllerTest.java",
+        "startLineNumber":  211,
+        "startColumn":  17,
+        "message":  "BiometricIntegrationController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/controller/BiometricIntegrationControllerTest.java",
+        "startLineNumber":  242,
+        "startColumn":  17,
+        "message":  "BiometricIntegrationController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/controller/BiometricIntegrationControllerTest.java",
+        "startLineNumber":  269,
+        "startColumn":  17,
+        "message":  "BiometricIntegrationController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/controller/BiometricIntegrationControllerTest.java",
+        "startLineNumber":  300,
+        "startColumn":  17,
+        "message":  "BiometricIntegrationController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/controller/BiometricIntegrationControllerTest.java",
+        "startLineNumber":  327,
+        "startColumn":  17,
+        "message":  "BiometricIntegrationController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/controller/BiometricIntegrationControllerTest.java",
+        "startLineNumber":  547,
+        "startColumn":  40,
+        "message":  "BiometricIntegrationController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/controller/DeviceSyncControllerTest.java",
+        "startLineNumber":  38,
+        "startColumn":  13,
+        "message":  "DeviceSyncController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/controller/DeviceSyncControllerTest.java",
+        "startLineNumber":  61,
+        "startColumn":  53,
+        "message":  "DeviceSyncController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/controller/DeviceSyncControllerTest.java",
+        "startLineNumber":  79,
+        "startColumn":  53,
+        "message":  "DeviceSyncController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/controller/DeviceSyncControllerTest.java",
+        "startLineNumber":  100,
+        "startColumn":  53,
+        "message":  "DeviceSyncController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/controller/DeviceSyncControllerTest.java",
+        "startLineNumber":  119,
+        "startColumn":  46,
+        "message":  "DeviceSyncController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/controller/DeviceSyncControllerTest.java",
+        "startLineNumber":  144,
+        "startColumn":  53,
+        "message":  "DeviceSyncController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/controller/DeviceSyncControllerTest.java",
+        "startLineNumber":  165,
+        "startColumn":  53,
+        "message":  "DeviceSyncController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/controller/DeviceSyncControllerTest.java",
+        "startLineNumber":  186,
+        "startColumn":  53,
+        "message":  "DeviceSyncController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/controller/DeviceSyncControllerTest.java",
+        "startLineNumber":  209,
+        "startColumn":  53,
+        "message":  "DeviceSyncController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/controller/DeviceSyncControllerTest.java",
+        "startLineNumber":  226,
+        "startColumn":  53,
+        "message":  "DeviceSyncController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/controller/ProtocolControllerTest.java",
+        "startLineNumber":  50,
+        "startColumn":  13,
+        "message":  "ProtocolController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/controller/ProtocolControllerTest.java",
+        "startLineNumber":  55,
+        "startColumn":  38,
+        "message":  "ProtocolController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/controller/ProtocolControllerTest.java",
+        "startLineNumber":  72,
+        "startColumn":  40,
+        "message":  "ProtocolController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/controller/ProtocolControllerTest.java",
+        "startLineNumber":  94,
+        "startColumn":  40,
+        "message":  "ProtocolController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/controller/ProtocolControllerTest.java",
+        "startLineNumber":  116,
+        "startColumn":  40,
+        "message":  "ProtocolController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/controller/ProtocolControllerTest.java",
+        "startLineNumber":  139,
+        "startColumn":  40,
+        "message":  "ProtocolController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/controller/ProtocolControllerTest.java",
+        "startLineNumber":  167,
+        "startColumn":  40,
+        "message":  "ProtocolController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/controller/ProtocolControllerTest.java",
+        "startLineNumber":  196,
+        "startColumn":  40,
+        "message":  "ProtocolController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/controller/ProtocolControllerTest.java",
+        "startLineNumber":  216,
+        "startColumn":  40,
+        "message":  "ProtocolController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-device-comm-service/src/test/java/net/lab1024/sa/devicecomm/controller/ProtocolControllerTest.java",
+        "startLineNumber":  236,
+        "startColumn":  40,
+        "message":  "ProtocolController cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-visitor-service/src/test/java/net/lab1024/sa/visitor/service/VisitorAppointmentServiceImplTest.java",
+        "startLineNumber":  23,
+        "startColumn":  8,
+        "message":  "The import net.lab1024.sa.visitor.service.impl.VisitorAppointmentServiceImpl cannot be resolved"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-visitor-service/src/test/java/net/lab1024/sa/visitor/service/VisitorAppointmentServiceImplTest.java",
+        "startLineNumber":  49,
+        "startColumn":  13,
+        "message":  "VisitorAppointmentServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-visitor-service/src/test/java/net/lab1024/sa/visitor/service/VisitorAppointmentServiceImplTest.java",
+        "startLineNumber":  93,
+        "startColumn":  36,
+        "message":  "VisitorAppointmentServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-visitor-service/src/test/java/net/lab1024/sa/visitor/service/VisitorAppointmentServiceImplTest.java",
+        "startLineNumber":  121,
+        "startColumn":  53,
+        "message":  "VisitorAppointmentServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-visitor-service/src/test/java/net/lab1024/sa/visitor/service/VisitorCheckInServiceImplTest.java",
+        "startLineNumber":  22,
+        "startColumn":  8,
+        "message":  "The import net.lab1024.sa.visitor.service.impl.VisitorCheckInServiceImpl cannot be resolved"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-visitor-service/src/test/java/net/lab1024/sa/visitor/service/VisitorCheckInServiceImplTest.java",
+        "startLineNumber":  42,
+        "startColumn":  13,
+        "message":  "VisitorCheckInServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-visitor-service/src/test/java/net/lab1024/sa/visitor/service/VisitorCheckInServiceImplTest.java",
+        "startLineNumber":  67,
+        "startColumn":  36,
+        "message":  "VisitorCheckInServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-visitor-service/src/test/java/net/lab1024/sa/visitor/service/VisitorCheckInServiceImplTest.java",
+        "startLineNumber":  70,
+        "startColumn":  27,
+        "message":  "The method getOk() is undefined for the type ResponseDTO\u003cVoid\u003e"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-visitor-service/src/test/java/net/lab1024/sa/visitor/service/VisitorCheckInServiceImplTest.java",
+        "startLineNumber":  80,
+        "startColumn":  13,
+        "message":  "VisitorCheckInServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-visitor-service/src/test/java/net/lab1024/sa/visitor/service/VisitorCheckInServiceImplTest.java",
+        "startLineNumber":  95,
+        "startColumn":  13,
+        "message":  "VisitorCheckInServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-visitor-service/src/test/java/net/lab1024/sa/visitor/service/VisitorCheckInServiceImplTest.java",
+        "startLineNumber":  111,
+        "startColumn":  13,
+        "message":  "VisitorCheckInServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-visitor-service/src/test/java/net/lab1024/sa/visitor/service/VisitorCheckInServiceImplTest.java",
+        "startLineNumber":  127,
+        "startColumn":  13,
+        "message":  "VisitorCheckInServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-visitor-service/src/test/java/net/lab1024/sa/visitor/service/VisitorCheckInServiceImplTest.java",
+        "startLineNumber":  143,
+        "startColumn":  36,
+        "message":  "VisitorCheckInServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-visitor-service/src/test/java/net/lab1024/sa/visitor/service/VisitorCheckInServiceImplTest.java",
+        "startLineNumber":  146,
+        "startColumn":  27,
+        "message":  "The method getOk() is undefined for the type ResponseDTO\u003cVoid\u003e"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-visitor-service/src/test/java/net/lab1024/sa/visitor/service/VisitorCheckInServiceImplTest.java",
+        "startLineNumber":  160,
+        "startColumn":  13,
+        "message":  "VisitorCheckInServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-visitor-service/src/test/java/net/lab1024/sa/visitor/service/VisitorCheckInServiceImplTest.java",
+        "startLineNumber":  177,
+        "startColumn":  13,
+        "message":  "VisitorCheckInServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-visitor-service/src/test/java/net/lab1024/sa/visitor/service/VisitorServiceImplTest.java",
+        "startLineNumber":  22,
+        "startColumn":  8,
+        "message":  "The import net.lab1024.sa.visitor.service.impl.VisitorServiceImpl cannot be resolved"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-visitor-service/src/test/java/net/lab1024/sa/visitor/service/VisitorServiceImplTest.java",
+        "startLineNumber":  42,
+        "startColumn":  13,
+        "message":  "VisitorServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-visitor-service/src/test/java/net/lab1024/sa/visitor/service/VisitorServiceImplTest.java",
+        "startLineNumber":  69,
+        "startColumn":  33,
+        "message":  "VisitorServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-visitor-service/src/test/java/net/lab1024/sa/visitor/service/VisitorServiceImplTest.java",
+        "startLineNumber":  72,
+        "startColumn":  27,
+        "message":  "The method getOk() is undefined for the type ResponseDTO\u003ccapture#1-of ?\u003e"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-visitor-service/src/test/java/net/lab1024/sa/visitor/service/VisitorServiceImplTest.java",
+        "startLineNumber":  82,
+        "startColumn":  13,
+        "message":  "VisitorServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-visitor-service/src/test/java/net/lab1024/sa/visitor/service/VisitorServiceImplTest.java",
+        "startLineNumber":  97,
+        "startColumn":  13,
+        "message":  "VisitorServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-visitor-service/src/test/java/net/lab1024/sa/visitor/service/VisitorStatisticsServiceImplTest.java",
+        "startLineNumber":  21,
+        "startColumn":  8,
+        "message":  "The import net.lab1024.sa.visitor.service.impl.VisitorStatisticsServiceImpl cannot be resolved"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-visitor-service/src/test/java/net/lab1024/sa/visitor/service/VisitorStatisticsServiceImplTest.java",
+        "startLineNumber":  42,
+        "startColumn":  13,
+        "message":  "VisitorStatisticsServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-visitor-service/src/test/java/net/lab1024/sa/visitor/service/VisitorStatisticsServiceImplTest.java",
+        "startLineNumber":  56,
+        "startColumn":  51,
+        "message":  "VisitorStatisticsServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-visitor-service/src/test/java/net/lab1024/sa/visitor/service/VisitorStatisticsServiceImplTest.java",
+        "startLineNumber":  59,
+        "startColumn":  27,
+        "message":  "The method getOk() is undefined for the type ResponseDTO\u003cMap\u003cString,Object\u003e\u003e"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-visitor-service/src/test/java/net/lab1024/sa/visitor/service/VisitorStatisticsServiceImplTest.java",
+        "startLineNumber":  75,
+        "startColumn":  13,
+        "message":  "VisitorStatisticsServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-visitor-service/src/test/java/net/lab1024/sa/visitor/service/VisitorStatisticsServiceImplTest.java",
+        "startLineNumber":  78,
+        "startColumn":  27,
+        "message":  "The method getOk() is undefined for the type ResponseDTO\u003cMap\u003cString,Object\u003e\u003e"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-visitor-service/src/test/java/net/lab1024/sa/visitor/service/VisitorStatisticsServiceImplTest.java",
+        "startLineNumber":  89,
+        "startColumn":  13,
+        "message":  "VisitorStatisticsServiceImpl cannot be resolved to a type"
+    },
+    {
+        "resource":  "/D:/IOE-DREAM/microservices/ioedream-visitor-service/src/test/java/net/lab1024/sa/visitor/service/VisitorStatisticsServiceImplTest.java",
+        "startLineNumber":  98,
+        "startColumn":  13,
+        "message":  "VisitorStatisticsServiceImpl cannot be resolved to a type"
+    }
+]

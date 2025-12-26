@@ -1,4 +1,4 @@
-# ============================================================
+﻿# ============================================================
 # IOE-DREAM Visitor Service 生产环境配置
 #
 # @Author:    IOE-DREAM Team
@@ -16,8 +16,9 @@ server:
     mime-types: application/json,application/xml,text/html,text/xml,text/plain
   tomcat:
     uri-encoding: UTF-8
-    max-threads: 200
-    min-spare-threads: 25
+    threads:
+      max: 200
+      min-spare: 25
     accept-count: 150
 
 # ==================== Spring配置 ====================
@@ -77,7 +78,7 @@ spring:
   cache:
     type: redis
     redis:
-      time-to-live: 900000  # 15分钟
+      time-to-live: 900000 # 15分钟
       cache-null-values: false
       key-prefix: visitor_cache_
 
@@ -125,15 +126,15 @@ management:
         step: 30s
     distribution:
       percentiles-histogram:
-        http.server.requests: true
+        "[http.server.requests]": true
       percentiles:
-        http.server.requests: 0.5,0.9,0.95,0.99
+        "[http.server.requests]": 0.5,0.9,0.95,0.99
     tags:
       application: ${spring.application.name}
       environment: ${spring.profiles.active}
 
-# ==================== Zipkin分布式追踪配置 ====================
-  sleuth:
+  # ==================== 分布式追踪配置 ====================
+  tracing:
     zipkin:
       base-url: ${ZIPKIN_BASE_URL:http://zipkin-prod:9411}
       enabled: ${ZIPKIN_ENABLED:true}
@@ -162,7 +163,7 @@ resilience4j:
 # ==================== 日志配置 ====================
 logging:
   level:
-    net.lab1024.sa.visitor: INFO
+    "net.lab1024.sa.visitor": INFO
   pattern:
     console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr([%X{traceId:-},%X{spanId:-}]){blue} %clr(%5p){magenta} %clr(${PID:- }){yellow} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}"
 
@@ -436,23 +437,23 @@ visitor:
   cache:
     # 缓存配置
     visitor-information:
-      ttl: ${VISITOR_INFO_TTL:1800}           # 30分钟
+      ttl: ${VISITOR_INFO_TTL:1800} # 30分钟
       max-size: ${VISITOR_INFO_MAX_SIZE:10000}
 
     appointment-status:
-      ttl: ${VISITOR_APPOINTMENT_TTL:600}      # 10分钟
+      ttl: ${VISITOR_APPOINTMENT_TTL:600} # 10分钟
       max-size: ${VISITOR_APPOINTMENT_MAX_SIZE:5000}
 
     access-credentials:
-      ttl: ${VISITOR_CREDENTIALS_TTL:900}      # 15分钟
+      ttl: ${VISITOR_CREDENTIALS_TTL:900} # 15分钟
       max-size: ${VISITOR_CREDENTIALS_MAX_SIZE:20000}
 
     host-information:
-      ttl: ${HOST_INFO_TTL:3600}                # 1小时
+      ttl: ${HOST_INFO_TTL:3600} # 1小时
       max-size: ${HOST_INFO_MAX_SIZE:5000}
 
     blacklist-cache:
-      ttl: ${BLACKLIST_CACHE_TTL:3600}          # 1小时
+      ttl: ${BLACKLIST_CACHE_TTL:3600} # 1小时
       max-size: ${BLACKLIST_CACHE_MAX_SIZE:1000}
 
   reporting:
@@ -523,3 +524,4 @@ visitor:
       target-response-time: ${TARGET_RESPONSE_TIME:2000}
       slow-query-threshold: ${SLOW_QUERY_THRESHOLD:1000}
       performance-monitoring: ${PERFORMANCE_MONITORING_ENABLED:true}
+

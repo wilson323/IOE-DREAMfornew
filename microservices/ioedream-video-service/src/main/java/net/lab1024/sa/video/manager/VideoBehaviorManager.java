@@ -484,3 +484,4 @@ public class VideoBehaviorManager {
         return recommendations;
     }
 }
+

@@ -1,0 +1,277 @@
+# IOE-DREAM Maven构建质量Hook
+# 在Maven构建阶段进行系统性质量检查
+
+hook {
+  name: "Maven构建质量检查器"
+  description: "在Maven构建过程中执行全面的质量门禁检查，确保代码符合企业级标准"
+  priority: "P0"
+
+  # 触发条件
+  triggers {
+    build_phases {
+      phases: ["compile", "test", "package", "install"]
+      maven_goals: ["clean", "compile", "test", "package", "install", "verify"]
+    }
+
+    file_patterns {
+      # Maven配置文件变更
+      include: ["**/pom.xml"]
+      # Java代码变更
+      include: ["**/*.java"]
+      # 测试文件变更
+      include: ["**/*Test.java", "**/*Tests.java"]
+      # 资源文件变更
+      include: ["**/src/main/resources/**"]
+    }
+  }
+
+  # 执行阶段
+  stages {
+    pre-compile: {
+      name: "预编译质量检查"
+      commands: [
+        "echo \"🔍 Pre-Compile: 质量预检查\"",
+        "",
+        "# 检查Java文件编码（无BOM）",
+        "echo \"检查文件编码格式...\"",
+        "BOM_FILES=$(find . -name \"*.java\" -exec file {} \\; | grep -c \"UTF-8 Unicode (with BOM)\" || echo 0)",
+        "if [ \"$BOM_FILES\" -gt 0 ]; then",
+        "  echo \"❌ 发现UTF-8 BOM文件，请移除BOM字符\"",
+        "  find . -name \"*.java\" -exec file {} \\; | grep \"UTF-8 Unicode (with BOM)\" || true",
+        "  exit 1",
+        "fi",
+        "",
+        "# 检查包名规范",
+        "echo \"检查包名规范...\"",
+        "PACKAGE_VIOLATIONS=$(find . -name \"*.java\" -exec grep -l \"^package.*com\\.\" {} \\; 2>/dev/null | wc -l || echo 0)",
+        "if [ \"$PACKAGE_VIOLATIONS\" -gt 0 ]; then",
+        "  echo \"❌ 发现包名以com开头，应使用net.lab1024.sa\"",
+        "  find . -name \"*.java\" -exec grep -H \"^package.*com\\.\" {} + 2>/dev/null || true",
+        "  exit 1",
+        "fi",
+        "",
+        "# 检查注解违规使用",
+        "echo \"检查注解违规使用...\"",
+        "AUTOWIRED_COUNT=$(find . -name \"*.java\" -exec grep -l \"@Autowired\" {} \\; 2>/dev/null | wc -l || echo 0)",
+        "if [ \"$AUTOWIRED_COUNT\" -gt 0 ]; then",
+        "  echo \"❌ 发现@Autowired违规使用，必须使用@Resource替代\"",
+        "  echo \"违规文件数量: $AUTOWIRED_COUNT\"",
+        "  exit 1",
+        "fi",
+        "",
+        "REPOSITORY_COUNT=$(find . -name \"*.java\" -exec grep -l \"@Repository\" {} \\; 2>/dev/null | wc -l || echo 0)",
+        "if [ \"$REPOSITORY_COUNT\" -gt 0 ]; then",
+        "  echo \"❌ 发现@Repository违规使用，必须使用@Mapper替代\"",
+        "  echo \"违规文件数量: $REPOSITORY_COUNT\"",
+        "  exit 1",
+        "fi",
+        "",
+        "echo \"✅ Pre-Compile质量检查通过\""
+      ]
+    }
+
+    compile: {
+      name: "编译阶段质量检查"
+      commands: [
+        "echo \"🔨 Compile: 编译质量检查\"",
+        "",
+        "# 执行Maven编译",
+        "echo \"执行Maven编译...\"",
+        "mvn clean compile -q",
+        "COMPILE_RESULT=$?",
+        "",
+        "if [ $COMPILE_RESULT -ne 0 ]; then",
+        "  echo \"❌ Maven编译失败\"",
+        "  echo \"请检查：\"",
+        "  echo \"1. 依赖是否正确配置\"",
+        "  echo \"2. Java语法是否正确\"",
+        "  echo \"3. 类路径是否完整\"",
+        "  echo \"4. 使用/call-skills compilation-error-fixer进行编译异常修复\"",
+        "  exit 1",
+        "fi",
+        "",
+        "# 检查编译产物",
+        "echo \"检查编译产物...\"",
+        "if [ ! -d \"target\" ]; then",
+        "  echo \"❌ 未找到target目录，编译可能失败\"",
+        "  exit 1",
+        "fi",
+        "",
+        "# 检查class文件数量",
+        "CLASS_COUNT=$(find target -name \"*.class\" 2>/dev/null | wc -l || echo 0)",
+        "echo \"编译生成class文件数量: $CLASS_COUNT\"",
+        "if [ \"$CLASS_COUNT\" -eq 0 ]; then",
+        "  echo \"⚠️ 警告：未生成class文件，请检查编译配置\"",
+        "fi",
+        "",
+        "echo \"✅ Compile编译质量检查通过\""
+      ]
+    }
+
+    test: {
+      name: "测试阶段质量检查"
+      commands: [
+        "echo \"🧪 Test: 测试质量检查\"",
+        "",
+        "# 执行单元测试",
+        "echo \"执行单元测试...\"",
+        "mvn test -q",
+        "TEST_RESULT=$?",
+        "",
+        "if [ $TEST_RESULT -ne 0 ]; then",
+        "  echo \"❌ 单元测试失败\"",
+        "  echo \"请检查：\"",
+        "  echo \"1. 测试用例是否正确编写\"",
+        "  echo \"2. 测试数据是否完整\"",
+        "  echo \"3. 测试环境是否正确配置\"",
+        "  exit 1",
+        "fi",
+        "",
+        "# 检查测试覆盖率",
+        "echo \"检查测试覆盖率...\"",
+        "if command -v mvn >/dev/null 2>&1; then",
+        "  # 如果有JaCoCo插件，检查覆盖率报告",
+        "  if grep -q \"jacoco-maven-plugin\" pom.xml 2>/dev/null; then",
+        "    echo \"生成测试覆盖率报告...\"",
+        "    mvn jacoco:report -q",
+        "    if [ -f \"target/site/jacoco/index.html\" ]; then",
+        "      echo \"✅ 测试覆盖率报告已生成\"",
+        "    fi",
+        "  fi",
+        "fi",
+        "",
+        "# 检查测试结果文件",
+        "if [ -d \"target/surefire-reports\" ]; then",
+        "  TEST_REPORTS=$(find target/surefire-reports -name \"*.xml\" 2>/dev/null | wc -l || echo 0)",
+        "  echo \"测试报告文件数量: $TEST_REPORTS\"",
+        "fi",
+        "",
+        "echo \"✅ Test测试质量检查通过\""
+      ]
+    }
+
+    package: {
+      name: "打包阶段质量检查"
+      commands: [
+        "echo "📦 Package: 打包质量检查\"",
+        "",
+        "# 执行Maven打包",
+        "echo \"执行Maven打包...\"",
+        "mvn package -DskipTests -q",
+        "PACKAGE_RESULT=$?",
+        "",
+        "if [ $PACKAGE_RESULT -ne 0 ]; then",
+        "  echo \"❌ Maven打包失败\"",
+        "  echo \"请检查：\"",
+        "  echo \"1. 资源文件是否正确配置",
+        "  echo \"2. 打包配置是否正确",
+        "  echo \"3. 依赖是否完整",
+        "  exit 1",
+        "fi",
+        "",
+        "# 检查打包产物",
+        "echo \"检查打包产物...\"",
+        "JAR_COUNT=$(find target -name \"*.jar\" 2>/dev/null | wc -l || echo 0)",
+        "echo \"生成JAR文件数量: $JAR_COUNT\"",
+        "",
+        "if [ \"$JAR_COUNT\" -eq 0 ]; then",
+        "  echo \"❌ 未生成JAR文件，打包失败\"",
+        "  exit 1",
+        "fi",
+        "",
+        "# 检查JAR文件大小",
+        "for jar in target/*.jar; do",
+        "  if [ -f \"$jar\" ]; then",
+        "    SIZE=$(stat -c%s \"$jar\" 2>/dev/null || stat -f%z \"$jar\" 2>/dev/null || echo 0)",
+        "    echo \"JAR文件: $(basename $jar), 大小: $SIZE bytes\"",
+        "    if [ \"$SIZE\" -lt 1000 ]; then",
+        "      echo \"⚠️ 警告：JAR文件过小，可能打包不完整\"",
+        "    fi",
+        "  fi",
+        "done",
+        "",
+        "echo \"✅ Package打包质量检查通过\""
+      ]
+    }
+
+    install: {
+      name: "安装阶段质量检查"
+      commands: [
+        "echo "🏗️ Install: 安装质量检查\"",
+        "",
+        "# 执行Maven安装到本地仓库",
+        "echo \"执行Maven安装...\"",
+        "mvn install -DskipTests -q",
+        "INSTALL_RESULT=$?",
+        "",
+        "if [ $INSTALL_RESULT -ne 0 ]; then",
+        "  echo \"❌ Maven安装失败\"",
+        "  echo \"请检查：\"",
+        "  echo \"1. 本地Maven仓库权限\",
+        "  echo \"2. 网络连接是否正常\",
+        "  echo \"3. Maven配置是否正确\",
+        "  exit 1",
+        "fi",
+        "",
+        "# 验证安装结果",
+        "echo \"验证本地仓库安装...\"",
+        "if [ -f \"pom.xml\" ]; then",
+        "  # 获取artifact信息",
+        "  GROUP_ID=$(grep -o '<groupId>[^<]*' pom.xml | head -1 | sed 's/<groupId>//' 2>/dev/null || echo \"\")",
+        "  ARTIFACT_ID=$(grep -o '<artifactId>[^<]*' pom.xml | head -1 | sed 's/<artifactId>//' 2>/dev/null || echo \"\")",
+        "  VERSION=$(grep -o '<version>[^<]*' pom.xml | head -1 | sed 's/<version>//' 2>/dev/null || echo \"\")",
+        "  ",
+        "  if [ ! -z \"$GROUP_ID\" ] && [ ! -z \"$ARTIFACT_ID\" ] && [ ! -z \"$VERSION\" ]; then",
+        "    LOCAL_JAR_PATH=\"$HOME/.m2/repository/${GROUP_ID//./}/$ARTIFACT_ID/$VERSION/$ARTIFACT_ID-$VERSION.jar\"",
+        "    if [ -f \"$LOCAL_JAR_PATH\" ]; then",
+        "      echo \"✅ JAR文件已成功安装到本地仓库\"",
+        "      echo \"路径: $LOCAL_JAR_PATH\"",
+        "    else",
+        "      echo \"❌ JAR文件未在本地仓库中找到\"",
+        "      echo \"预期路径: $LOCAL_JAR_PATH\"",
+        "    fi",
+        "  fi",
+        "fi",
+        "",
+        "echo \"✅ Install安装质量检查通过\""
+      ]
+    }
+  }
+
+  # 成功消息
+  success {
+    message: "✅ Maven构建质量检查全部通过！🚀"
+    details: [
+      "- 预编译检查: 编码规范、包名规范、注解合规",
+      "- 编译检查: Maven编译成功、产物完整",
+      "- 测试检查: 单元测试通过、覆盖率达标",
+      "- 打包检查: JAR文件生成、大小正常",
+      "- 安装检查: 本地仓库安装成功"
+    ]
+  }
+
+  # 失败消息和建议
+  failure {
+    message: "❌ Maven构建质量检查失败！请修复后重试"
+    suggestions: [
+      "1. 移除UTF-8 BOM字符",
+      "2. 修正包名为net.lab1024.sa格式",
+      "3. 使用@Resource替代@Autowired",
+      "4. 使用@Mapper替代@Repository",
+      "5. 检查Maven依赖配置",
+      "6. 修复编译错误",
+      "7. 确保测试用例通过",
+      "8. 使用/call-skills compilation-error-fixer进行编译异常修复",
+      "9. 使用/call-skills global-dependency-manager进行依赖管理"
+    ]
+    blocking: true
+  }
+
+  # 输出配置
+  output {
+    verbose: true
+    color: true
+    log_file: ".kiro/logs/maven-build-quality-$(date +%Y%m%d-%H%M%S).log"
+    metrics: true
+  }
+}

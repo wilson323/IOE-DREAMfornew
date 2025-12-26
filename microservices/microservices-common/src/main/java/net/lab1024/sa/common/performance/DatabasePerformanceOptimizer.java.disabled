@@ -1,0 +1,584 @@
+package net.lab1024.sa.common.performance;
+
+import lombok.extern.slf4j.Slf4j;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
+
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
+
+/**
+ * IOE-DREAM 数据库性能优化器
+ * <p>
+ * 企业级数据库查询性能优化和监控组件
+ * 提供查询性能分析、慢查询检测、索引优化建议等功能
+ * 纯Java类设计，通过构造函数注入依赖
+ * </p>
+ * <p>
+ * 优化特性：
+ * - 慢查询监控和分析
+ * - 查询性能统计
+ * - 索引使用分析
+ * - 连接池监控
+ * - SQL执行计划分析
+ * </p>
+ *
+ * @author IOE-DREAM架构团队
+ * @version 1.0.0
+ * @since 2025-12-20
+ */
+@Slf4j
+public class DatabasePerformanceOptimizer {
+
+    private final DataSource dataSource;
+    private final MeterRegistry meterRegistry;
+
+    // 查询性能统计
+    private final ConcurrentHashMap<String, QueryMetrics> queryMetrics = new ConcurrentHashMap<>();
+    private final AtomicLong totalQueries = new AtomicLong(0);
+    private final AtomicLong slowQueries = new AtomicLong(0);
+
+    // 性能监控指标
+    private final Timer queryExecutionTimer;
+    private final Timer slowQueryTimer;
+
+    // 慢查询阈值（毫秒）
+    private volatile long slowQueryThreshold = 1000;
+
+    /**
+     * 构造函数
+     *
+     * @param dataSource 数据源
+     * @param meterRegistry 指标注册器
+     */
+    public DatabasePerformanceOptimizer(DataSource dataSource, MeterRegistry meterRegistry) {
+        this.dataSource = dataSource;
+        this.meterRegistry = meterRegistry;
+
+        // 初始化监控指标
+        this.queryExecutionTimer = Timer.builder("database.query.execution")
+                .description("数据库查询执行时间")
+                .tag("application", getApplicationName())
+                .register(meterRegistry);
+
+        this.slowQueryTimer = Timer.builder("database.slow.query")
+                .description("慢查询执行时间")
+                .tag("application", getApplicationName())
+                .register(meterRegistry);
+
+        log.info("DatabasePerformanceOptimizer初始化完成，慢查询阈值: {}ms", slowQueryThreshold);
+    }
+
+    /**
+     * 执行查询并记录性能指标
+     *
+     * @param sql SQL语句
+     * @param parameters 参数
+     * @param queryCallback 查询回调
+     * @return 查询结果
+     */
+    public <T> T executeQuery(String sql, Object[] parameters, QueryCallback<T> queryCallback) {
+        long startTime = System.currentTimeMillis();
+        Timer.Sample sample = Timer.start(meterRegistry);
+
+        try {
+            T result = queryCallback.execute(sql, parameters);
+
+            long executionTime = System.currentTimeMillis() - startTime;
+            recordQueryMetrics(sql, executionTime, true);
+
+            return result;
+
+        } catch (Exception e) {
+            long executionTime = System.currentTimeMillis() - startTime;
+            recordQueryMetrics(sql, executionTime, false);
+
+            log.error("[数据库性能] 查询执行失败: sql={}, 耗时={}ms, error={}",
+                     sql, executionTime, e.getMessage());
+            throw new RuntimeException(e);
+        } finally {
+            sample.stop(queryExecutionTimer);
+        }
+    }
+
+    /**
+     * 记录查询性能指标
+     *
+     * @param sql SQL语句
+     * @param executionTime 执行时间
+     * @param success 是否成功
+     */
+    private void recordQueryMetrics(String sql, long executionTime, boolean success) {
+        totalQueries.incrementAndGet();
+
+        // 提取SQL类型
+        String sqlType = extractSqlType(sql);
+        String normalizedSql = normalizeSql(sql);
+
+        // 更新查询统计
+        QueryMetrics metrics = queryMetrics.computeIfAbsent(normalizedSql, k -> new QueryMetrics());
+        metrics.recordQuery(executionTime, success);
+
+        // 记录慢查询
+        if (executionTime > slowQueryThreshold) {
+            slowQueries.incrementAndGet();
+            recordSlowQuery(sql, executionTime);
+
+            slowQueryTimer.record(executionTime, java.util.concurrent.TimeUnit.MILLISECONDS);
+        }
+
+        // 记录Micrometer指标
+        meterRegistry.counter("database.query.count",
+            io.micrometer.core.instrument.Tag.of("type", sqlType),
+            io.micrometer.core.instrument.Tag.of("success", String.valueOf(success))
+        ).increment();
+
+        meterRegistry.timer("database.query.specific.duration",
+            io.micrometer.core.instrument.Tag.of("type", sqlType)
+        ).record(executionTime, java.util.concurrent.TimeUnit.MILLISECONDS);
+
+        if (log.isDebugEnabled()) {
+            log.debug("[数据库性能] 查询完成: type={}, 耗时={}ms, success={}",
+                     sqlType, executionTime, success);
+        }
+    }
+
+    /**
+     * 记录慢查询
+     *
+     * @param sql SQL语句
+     * @param executionTime 执行时间
+     */
+    private void recordSlowQuery(String sql, long executionTime) {
+        log.warn("[慢查询] sql={}, 耗时={}ms, 阈值={}ms",
+                sql, executionTime, slowQueryThreshold);
+
+        // 记录慢查询指标
+        meterRegistry.counter("database.slow.query.count").increment();
+
+        // 如果是特别慢的查询，记录详细信息
+        if (executionTime > slowQueryThreshold * 5) {
+            log.error("[极慢查询] sql={}, 耗时={}ms, 建议优化", sql, executionTime);
+
+            // 记录极慢查询指标
+            meterRegistry.counter("database.very.slow.query.count").increment();
+        }
+    }
+
+    /**
+     * 分析SQL执行计划
+     *
+     * @param sql SQL语句
+     * @return 执行计划分析结果
+     */
+    public ExecutionPlanAnalysis analyzeExecutionPlan(String sql) {
+        String explainSql = "EXPLAIN " + sql;
+
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(explainSql)) {
+
+            long startTime = System.currentTimeMillis();
+            ResultSet resultSet = statement.executeQuery();
+            long analysisTime = System.currentTimeMillis() - startTime;
+
+            ExecutionPlanAnalysis analysis = new ExecutionPlanAnalysis();
+            analysis.setSql(sql);
+            analysis.setAnalysisTime(analysisTime);
+            analysis.setAnalyzeTime(System.currentTimeMillis());
+
+            // 解析执行计划
+            while (resultSet.next()) {
+                String plan = resultSet.getString("QUERY_PLAN");
+                if (plan != null) {
+                    analysis.addExecutionPlan(plan);
+
+                    // 检查是否使用了索引
+                    if (!plan.contains("INDEX") && !plan.contains("index")) {
+                        analysis.addSuggestion("考虑添加索引以提升查询性能");
+                    }
+
+                    // 检查是否有全表扫描
+                    if (plan.contains("TABLE ACCESS FULL") || plan.contains("ALL")) {
+                        analysis.addWarning("检测到全表扫描，可能影响性能");
+                    }
+                }
+            }
+
+            log.info("[执行计划分析] sql={}, 耗时={}ms, 建议数={}",
+                     sql, analysisTime, analysis.getSuggestions().size());
+
+            return analysis;
+
+        } catch (SQLException e) {
+            log.error("[执行计划分析失败] sql={}, error={}", sql, e.getMessage());
+            return ExecutionPlanAnalysis.error(sql, e.getMessage());
+        }
+    }
+
+    /**
+     * 获取查询性能统计
+     *
+     * @param sql SQL语句
+     * @return 查询统计信息
+     */
+    public QueryStatistics getQueryStatistics(String sql) {
+        String normalizedSql = normalizeSql(sql);
+        QueryMetrics metrics = queryMetrics.get(normalizedSql);
+
+        if (metrics == null) {
+            return QueryStatistics.empty();
+        }
+
+        return QueryStatistics.builder()
+                .sql(sql)
+                .totalExecutions(metrics.getTotalExecutions())
+                .successfulExecutions(metrics.getSuccessfulExecutions())
+                .failedExecutions(metrics.getFailedExecutions())
+                .averageExecutionTime(metrics.getAverageExecutionTime())
+                .minExecutionTime(metrics.getMinExecutionTime())
+                .maxExecutionTime(metrics.getMaxExecutionTime())
+                .lastExecutionTime(metrics.getLastExecutionTime())
+                .successRate(metrics.getSuccessRate())
+                .isSlowQuery(metrics.isSlowQuery(slowQueryThreshold))
+                .build();
+    }
+
+    /**
+     * 获取数据库性能报告
+     *
+     * @return 性能报告
+     */
+    public DatabasePerformanceReport getPerformanceReport() {
+        return DatabasePerformanceReport.builder()
+                .totalQueries(totalQueries.get())
+                .slowQueries(slowQueries.get())
+                .slowQueryRate(getSlowQueryRate())
+                .uniqueQueries(queryMetrics.size())
+                .averageQueryTime(getAverageQueryTime())
+                .topSlowQueries(getTopSlowQueries())
+                .recommendations(generateRecommendations())
+                .build();
+    }
+
+    /**
+     * 清理查询统计缓存
+     */
+    public void clearQueryMetrics() {
+        queryMetrics.clear();
+        totalQueries.set(0);
+        slowQueries.set(0);
+        log.info("[数据库性能] 查询统计缓存已清理");
+    }
+
+    // ==================== 私有辅助方法 ====================
+
+    /**
+     * 提取SQL类型
+     */
+    private String extractSqlType(String sql) {
+        if (sql == null) {
+            return "UNKNOWN";
+        }
+
+        String upperSql = sql.trim().toUpperCase();
+        if (upperSql.startsWith("SELECT")) {
+            return "SELECT";
+        } else if (upperSql.startsWith("INSERT")) {
+            return "INSERT";
+        } else if (upperSql.startsWith("UPDATE")) {
+            return "UPDATE";
+        } else if (upperSql.startsWith("DELETE")) {
+            return "DELETE";
+        } else {
+            return "OTHER";
+        }
+    }
+
+    /**
+     * 标准化SQL语句（移除参数和格式化）
+     */
+    private String normalizeSql(String sql) {
+        if (sql == null) {
+            return "";
+        }
+
+        // 移除参数值，保留参数占位符
+        String normalized = sql.replaceAll("'[^']*'", "?");
+        normalized = normalized.replaceAll("\\b\\d+\\b", "?");
+
+        // 移除多余空白
+        normalized = normalized.replaceAll("\\s+", " ").trim();
+
+        return normalized;
+    }
+
+    /**
+     * 获取慢查询率
+     */
+    private double getSlowQueryRate() {
+        long total = totalQueries.get();
+        return total > 0 ? (double) slowQueries.get() / total * 100 : 0;
+    }
+
+    /**
+     * 获取平均查询时间
+     */
+    private double getAverageQueryTime() {
+        long total = totalQueries.get();
+        if (total == 0) {
+            return 0;
+        }
+
+        return queryMetrics.values().stream()
+                .mapToLong(QueryMetrics::getTotalExecutionTime)
+                .sum() / (double) total;
+    }
+
+    /**
+     * 获取最慢的查询
+     */
+    private java.util.List<String> getTopSlowQueries() {
+        return queryMetrics.entrySet().stream()
+                .sorted((e1, e2) -> Long.compare(e2.getValue().getAverageExecutionTime(),
+                                               e1.getValue().getAverageExecutionTime()))
+                .limit(10)
+                .map(entry -> String.format("%s (%dms)",
+                        entry.getKey().substring(0, Math.min(100, entry.getKey().length())),
+                        entry.getValue().getAverageExecutionTime()))
+                .collect(java.util.stream.Collectors.toList());
+    }
+
+    /**
+     * 生成优化建议
+     */
+    private java.util.List<String> generateRecommendations() {
+        java.util.List<String> recommendations = new java.util.ArrayList<>();
+
+        double slowQueryRate = getSlowQueryRate();
+        if (slowQueryRate > 10) {
+            recommendations.add(String.format("慢查询率过高(%.2f%%)，建议优化SQL语句或添加索引", slowQueryRate));
+        }
+
+        if (totalQueries.get() > 1000 && queryMetrics.size() < 50) {
+            recommendations.add("查询模式单一，建议检查是否存在N+1查询问题");
+        }
+
+        return recommendations;
+    }
+
+    /**
+     * 获取应用名称
+     */
+    private volatile String applicationName = null;
+
+    private String getApplicationName() {
+        if (applicationName == null) {
+            synchronized (this) {
+                if (applicationName == null) {
+                    applicationName = System.getProperty("spring.application.name", "unknown");
+                }
+            }
+        }
+        return applicationName;
+    }
+
+    // ==================== 内部类定义 ====================
+
+    /**
+     * 查询回调接口
+     */
+    @FunctionalInterface
+    public interface QueryCallback<T> {
+        T execute(String sql, Object[] parameters) throws Exception;
+    }
+
+    /**
+     * 查询指标（线程安全）
+     */
+    private static class QueryMetrics {
+        private final AtomicLong totalExecutions = new AtomicLong(0);
+        private final AtomicLong successfulExecutions = new AtomicLong(0);
+        private final AtomicLong failedExecutions = new AtomicLong(0);
+        private final AtomicLong totalExecutionTime = new AtomicLong(0);
+        private volatile long minExecutionTime = Long.MAX_VALUE;
+        private volatile long maxExecutionTime = 0;
+        private volatile long lastExecutionTime = 0;
+
+        public synchronized void recordQuery(long executionTime, boolean success) {
+            totalExecutions.incrementAndGet();
+
+            if (success) {
+                successfulExecutions.incrementAndGet();
+            } else {
+                failedExecutions.incrementAndGet();
+            }
+
+            totalExecutionTime.addAndGet(executionTime);
+            lastExecutionTime = System.currentTimeMillis();
+
+            if (executionTime < minExecutionTime) {
+                minExecutionTime = executionTime;
+            }
+            if (executionTime > maxExecutionTime) {
+                maxExecutionTime = executionTime;
+            }
+        }
+
+        public long getTotalExecutions() {
+            return totalExecutions.get();
+        }
+
+        public long getSuccessfulExecutions() {
+            return successfulExecutions.get();
+        }
+
+        public long getFailedExecutions() {
+            return failedExecutions.get();
+        }
+
+        public long getTotalExecutionTime() {
+            return totalExecutionTime.get();
+        }
+
+        public long getAverageExecutionTime() {
+            long total = totalExecutions.get();
+            return total > 0 ? totalExecutionTime.get() / total : 0;
+        }
+
+        public long getMinExecutionTime() {
+            return minExecutionTime == Long.MAX_VALUE ? 0 : minExecutionTime;
+        }
+
+        public long getMaxExecutionTime() {
+            return maxExecutionTime;
+        }
+
+        public long getLastExecutionTime() {
+            return lastExecutionTime;
+        }
+
+        public double getSuccessRate() {
+            long total = totalExecutions.get();
+            return total > 0 ? (double) successfulExecutions.get() / total * 100 : 0;
+        }
+
+        public boolean isSlowQuery(long threshold) {
+            return getAverageExecutionTime() > threshold;
+        }
+    }
+
+    /**
+     * 执行计划分析结果
+     */
+    @lombok.Data
+    @lombok.Builder
+    public static class ExecutionPlanAnalysis {
+        private String sql;
+        private long analysisTime;
+        private long analyzeTime;
+        private java.util.List<String> executionPlans = new java.util.ArrayList<>();
+        private java.util.List<String> suggestions = new java.util.ArrayList<>();
+        private java.util.List<String> warnings = new java.util.ArrayList<>();
+        private boolean success = true;
+        private String errorMessage;
+
+        public void addExecutionPlan(String plan) {
+            executionPlans.add(plan);
+        }
+
+        public void addSuggestion(String suggestion) {
+            suggestions.add(suggestion);
+        }
+
+        public void addWarning(String warning) {
+            warnings.add(warning);
+        }
+
+        public static ExecutionPlanAnalysis error(String sql, String errorMessage) {
+            ExecutionPlanAnalysis analysis = new ExecutionPlanAnalysis();
+            analysis.setSql(sql);
+            analysis.setSuccess(false);
+            analysis.setErrorMessage(errorMessage);
+            analysis.setAnalyzeTime(System.currentTimeMillis());
+            return analysis;
+        }
+    }
+
+    /**
+     * 查询统计信息
+     */
+    @lombok.Data
+    @lombok.Builder
+    public static class QueryStatistics {
+        private String sql;
+        private long totalExecutions;
+        private long successfulExecutions;
+        private long failedExecutions;
+        private long averageExecutionTime;
+        private long minExecutionTime;
+        private long maxExecutionTime;
+        private long lastExecutionTime;
+        private double successRate;
+        private boolean isSlowQuery;
+
+        public static QueryStatistics empty() {
+            return QueryStatistics.builder()
+                    .totalExecutions(0)
+                    .successfulExecutions(0)
+                    .failedExecutions(0)
+                    .averageExecutionTime(0)
+                    .minExecutionTime(0)
+                    .maxExecutionTime(0)
+                    .lastExecutionTime(0)
+                    .successRate(0)
+                    .isSlowQuery(false)
+                    .build();
+        }
+    }
+
+    /**
+     * 数据库性能报告
+     */
+    @lombok.Data
+    @lombok.Builder
+    public static class DatabasePerformanceReport {
+        private long totalQueries;
+        private long slowQueries;
+        private double slowQueryRate;
+        private int uniqueQueries;
+        private double averageQueryTime;
+        private java.util.List<String> topSlowQueries;
+        private java.util.List<String> recommendations;
+        private long reportTime = System.currentTimeMillis();
+
+        public boolean isHealthy() {
+            return slowQueryRate < 10 && averageQueryTime < 500;
+        }
+
+        public String getHealthStatus() {
+            if (isHealthy()) {
+                return "健康";
+            } else if (slowQueryRate < 20) {
+                return "警告";
+            } else {
+                return "需要优化";
+            }
+        }
+    }
+
+    // ==================== Getter/Setter ====================
+
+    public long getSlowQueryThreshold() {
+        return slowQueryThreshold;
+    }
+
+    public void setSlowQueryThreshold(long slowQueryThreshold) {
+        this.slowQueryThreshold = slowQueryThreshold;
+        log.info("[数据库性能] 慢查询阈值更新为: {}ms", slowQueryThreshold);
+    }
+}

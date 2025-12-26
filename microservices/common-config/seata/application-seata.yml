@@ -1,4 +1,4 @@
-# ============================================================
+﻿# ============================================================
 # IOE-DREAM 分布式事务配置 - Seata 2.0.0
 # 统一企业级分布式事务解决方案
 # ============================================================
@@ -20,7 +20,7 @@ seata:
       namespace: ${NACOS_NAMESPACE:dev}
       group: ${NACOS_GROUP:IOE-DREAM}
       username: ${NACOS_USERNAME:nacos}
-      password: ${NACOS_PASSWORD:nacos}
+      password: ${NACOS_PASSWORD:ENC(I2//JcHFpBc7vLPrYnCJNA==)}
 
   # Seata注册中心配置
   registry:
@@ -30,7 +30,7 @@ seata:
       namespace: ${NACOS_NAMESPACE:dev}
       group: ${NACOS_GROUP:IOE-DREAM}
       username: ${NACOS_USERNAME:nacos}
-      password: ${NACOS_PASSWORD:nacos}
+      password: ${NACOS_PASSWORD:ENC(I2//JcHFpBc7vLPrYnCJNA==)}
       cluster: default
 
 # ==================== Spring事务配置 ====================
@@ -55,8 +55,8 @@ spring:
 logging:
   level:
     io.seata: INFO
-    com.alibaba.cloud.seata: INFO
-    org.springframework.transaction: DEBUG
+    "com.alibaba.cloud.seata": INFO
+    "org.springframework.transaction": DEBUG
   pattern:
       console: "[%d{yyyy-MM-dd HH:mm:ss}] [%X{traceId:-},%X{spanId:-}] [%thread] %-5level %logger{36} - %msg%n"
 
@@ -89,3 +89,4 @@ business:
       - "/api/v1/consume/transaction/execute"
       - "/api/v1/access/permission/grant"
       - "/api/v1/visitor/registration/create"
+

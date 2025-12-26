@@ -375,3 +375,4 @@ package net.lab1024.sa.common.storage;
 public interface FileStorageArchitectureDoc {
     // 此接口仅用于存放架构说明文档,不包含任何方法
 }
+

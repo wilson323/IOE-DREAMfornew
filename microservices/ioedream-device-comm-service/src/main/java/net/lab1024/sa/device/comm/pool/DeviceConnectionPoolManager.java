@@ -191,3 +191,4 @@ public class DeviceConnectionPoolManager {
         private int minIdle;
     }
 }
+

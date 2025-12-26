@@ -2,7 +2,6 @@ package net.lab1024.sa.common.config;
 
 import io.micrometer.core.instrument.MeterRegistry;
 // 暂时移除Prometheus支持，后续可单独配置
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.actuate.autoconfigure.metrics.MeterRegistryCustomizer;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -21,7 +20,6 @@ import org.springframework.context.annotation.Import;
  * @author IOE-DREAM Team
  * @since 2025-12-08
  */
-@Slf4j
 @Configuration
 @ConditionalOnProperty(name = "monitoring.enabled", havingValue = "true", matchIfMissing = true)
 @EnableConfigurationProperties({MonitoringProperties.class})
@@ -48,7 +46,7 @@ public class MonitoringAutoConfiguration {
      * Prometheus支持暂时禁用，可后续单独配置
      */
     // @Bean
-    // @ConditionalOnProperty(name = "management.metrics.export.prometheus.enabled", havingValue = "true")
+    // @ConditionalOnProperty(name = "management.prometheus.metrics.export.enabled", havingValue = "true")
     // public PrometheusMeterRegistry prometheusMeterRegistry() {
     //     // Prometheus配置暂时禁用
     // }

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.lab1024.sa.attendance.dao.RuleTestHistoryDao">
+
+    <!-- 查询规则测试历史列表 -->
+    <select id="queryHistoryList" resultType="net.lab1024.sa.attendance.entity.RuleTestHistoryEntity">
+        SELECT
+            history_id,
+            test_id,
+            rule_id,
+            rule_name,
+            rule_condition,
+            rule_action,
+            test_result,
+            result_message,
+            condition_matched,
+            execution_time,
+            executed_actions,
+            execution_logs,
+            error_message,
+            test_input_data,
+            test_output_data,
+            test_scenario,
+            test_user_id,
+            test_user_name,
+            test_timestamp,
+            create_time
+        FROM t_attendance_rule_test_history
+        <where>
+            <if test="ruleId != null">
+                AND rule_id = #{ruleId}
+            </if>
+            <if test="testUserId != null">
+                AND test_user_id = #{testUserId}
+            </if>
+            <if test="testResult != null and testResult != ''">
+                AND test_result = #{testResult}
+            </if>
+            <if test="startTime != null">
+                AND test_timestamp &gt;= #{startTime}
+            </if>
+            <if test="endTime != null">
+                AND test_timestamp &lt;= #{endTime}
+            </if>
+        </where>
+        ORDER BY test_timestamp DESC, create_time DESC
+    </select>
+
+    <!-- 统计规则测试次数 -->
+    <select id="countByRuleId" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM t_attendance_rule_test_history
+        WHERE rule_id = #{ruleId}
+    </select>
+
+    <!-- 查询最近的测试历史 -->
+    <select id="queryRecentHistory" resultType="net.lab1024.sa.attendance.entity.RuleTestHistoryEntity">
+        SELECT
+            history_id,
+            test_id,
+            rule_id,
+            rule_name,
+            rule_condition,
+            rule_action,
+            test_result,
+            result_message,
+            condition_matched,
+            execution_time,
+            executed_actions,
+            execution_logs,
+            error_message,
+            test_input_data,
+            test_output_data,
+            test_scenario,
+            test_user_id,
+            test_user_name,
+            test_timestamp,
+            create_time
+        FROM t_attendance_rule_test_history
+        ORDER BY test_timestamp DESC
+        <if test="limit != null">
+            LIMIT #{limit}
+        </if>
+    </select>
+
+    <!-- 删除过期的测试历史 -->
+    <delete id="deleteExpiredHistory">
+        DELETE FROM t_attendance_rule_test_history
+        WHERE test_timestamp &lt; #{beforeTime}
+    </delete>
+
+</mapper>

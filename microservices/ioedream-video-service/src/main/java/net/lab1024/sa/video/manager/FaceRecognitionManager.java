@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import lombok.extern.slf4j.Slf4j;
+
 import net.lab1024.sa.video.sdk.AiSdkProvider;
 import net.lab1024.sa.video.sdk.FaceDetectionResult;
 
@@ -65,7 +66,7 @@ public class FaceRecognitionManager {
             FaceDetectionResult detectionResult = aiSdkProvider.detectFaces(imageData);
 
             if (detectionResult == null || !detectionResult.isSuccess() ||
-                detectionResult.getFaces() == null) {
+                    detectionResult.getFaces() == null) {
                 log.warn("[人脸识别] 人脸检测失败或未检测到人脸");
                 return List.of();
             }
@@ -74,13 +75,12 @@ public class FaceRecognitionManager {
             List<FaceDetectResult> results = new ArrayList<>();
             for (FaceDetectionResult.FaceInfo faceInfo : detectionResult.getFaces()) {
                 FaceDetectResult result = new FaceDetectResult(
-                    faceInfo.getX(),
-                    faceInfo.getY(),
-                    faceInfo.getWidth(),
-                    faceInfo.getHeight(),
-                    faceInfo.getConfidence(),
-                    faceInfo.getFaceImage()
-                );
+                        faceInfo.getX(),
+                        faceInfo.getY(),
+                        faceInfo.getWidth(),
+                        faceInfo.getHeight(),
+                        faceInfo.getConfidence(),
+                        faceInfo.getFaceImage());
                 results.add(result);
             }
 
@@ -211,7 +211,7 @@ public class FaceRecognitionManager {
      * 4. 按相似度降序排序返回
      * </p>
      *
-     * @param feature 待搜索的人脸特征
+     * @param feature   待搜索的人脸特征
      * @param threshold 相似度阈值
      * @return 匹配结果列表
      */
@@ -262,7 +262,7 @@ public class FaceRecognitionManager {
      * 3. 持久化到数据库（通过GatewayServiceClient调用公共服务）
      * </p>
      *
-     * @param userId 用户ID
+     * @param userId    用户ID
      * @param faceImage 人脸图像
      * @return 是否成功
      */
@@ -354,7 +354,7 @@ public class FaceRecognitionManager {
             boolean inBlacklist = maxSimilarity >= blacklistThreshold;
             if (inBlacklist) {
                 log.warn("[人脸识别] 检测到黑名单匹配，blacklistId={}, similarity={}",
-                    matchedBlacklistId, maxSimilarity);
+                        matchedBlacklistId, maxSimilarity);
             } else {
                 log.debug("[人脸识别] 黑名单比对完成，未匹配，maxSimilarity={}", maxSimilarity);
             }
@@ -371,22 +371,22 @@ public class FaceRecognitionManager {
      */
     public record FaceDetectResult(
             int x, int y, int width, int height,
-            double confidence, byte[] faceImage
-    ) {}
+            double confidence, byte[] faceImage) {
+    }
 
     /**
      * 人脸匹配结果
      */
     public record FaceMatchResult(
             Long userId, String userName,
-            double similarity
-    ) {}
+            double similarity) {
+    }
 
     /**
      * 黑名单检查结果
      */
     public record BlacklistCheckResult(
             boolean inBlacklist, Long blacklistId,
-            double similarity
-    ) {}
+            double similarity) {
+    }
 }

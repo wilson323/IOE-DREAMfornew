@@ -1,0 +1,61 @@
+name: Local Codecov
+description: Local replacement for codecov/codecov-action
+inputs:
+  file:
+    description: Coverage file
+    required: true
+  flags:
+    description: Flags
+    required: false
+  name:
+    description: Report name
+    required: false
+runs:
+  using: composite
+  steps:
+    - name: Collect coverage file (bash)
+      if: runner.os != 'Windows'
+      shell: bash
+      run: |
+        set -euo pipefail
+        FILE="${INPUT_FILE:-}"
+        NAME="${INPUT_NAME:-coverage}"
+        DEST="artifacts/coverage/${NAME}"
+        mkdir -p "$DEST"
+        shopt -s nullglob globstar
+        if [ -z "$FILE" ]; then
+          echo "No coverage file specified"
+          exit 0
+        fi
+        matches=( $FILE )
+        if [ ${#matches[@]} -eq 0 ]; then
+          echo "Coverage file not found: $FILE"
+          exit 0
+        fi
+        for m in "${matches[@]}"; do
+          cp -R "$m" "$DEST/"
+        done
+        echo "Coverage files copied to $DEST"
+    - name: Collect coverage file (pwsh)
+      if: runner.os == 'Windows'
+      shell: pwsh
+      run: |
+        $ErrorActionPreference = "Stop"
+        $file = $env:INPUT_FILE
+        $name = $env:INPUT_NAME
+        if ([string]::IsNullOrWhiteSpace($name)) { $name = "coverage" }
+        $dest = Join-Path -Path "artifacts/coverage" -ChildPath $name
+        New-Item -ItemType Directory -Path $dest -Force | Out-Null
+        if ([string]::IsNullOrWhiteSpace($file)) {
+          Write-Host "No coverage file specified"
+          exit 0
+        }
+        $items = Get-ChildItem -Path $file -ErrorAction SilentlyContinue
+        if ($null -eq $items) {
+          Write-Host "Coverage file not found: $file"
+          exit 0
+        }
+        foreach ($item in $items) {
+          Copy-Item -Path $item.FullName -Destination $dest -Recurse -Force
+        }
+        Write-Host "Coverage files copied to $dest"

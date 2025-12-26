@@ -1,10 +1,10 @@
 package net.lab1024.sa.oa.workflow.model;
 
-import lombok.Data;
-import lombok.experimental.Accessors;
-
 import java.util.List;
 import java.util.Map;
+
+import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
  * 工作流节点
@@ -109,6 +109,3 @@ public class WorkflowNode {
         private Integer height = 80;
     }
 }
-
-
-

@@ -1,0 +1,76 @@
+package net.lab1024.sa.attendance.service.scheduling;
+
+import net.lab1024.sa.attendance.solver.model.AttendanceScheduleSolution;
+
+import java.time.LocalDate;
+import java.util.Map;
+
+/**
+ * 智能排班服务接口
+ *
+ * @author IOE-DREAM
+ * @since 2025-12-26
+ */
+public interface SmartSchedulingService {
+
+    /**
+     * 执行智能排班优化
+     *
+     * @param planName 方案名称
+     * @param startDate 开始日期
+     * @param endDate 结束日期
+     * @param solverDurationSeconds 求解时长(秒)
+     * @return 排班方案ID
+     */
+    Long optimizeSchedule(String planName,
+                        LocalDate startDate,
+                        LocalDate endDate,
+                        Integer solverDurationSeconds);
+
+    /**
+     * 获取排班方案详情
+     *
+     * @param planId 方案ID
+     * @return 方案详情
+     */
+    Map<String, Object> getScheduleDetail(Long planId);
+
+    /**
+     * 获取排班结果列表
+     *
+     * @param planId 方案ID
+     * @return 班次分配列表
+     */
+    Map<String, Object> getAssignments(Long planId);
+
+    /**
+     * 导出排班计划
+     *
+     * @param planId 方案ID
+     * @param format 导出格式 (ical/excel/json)
+     * @return 导出文件内容
+     */
+    String exportSchedule(Long planId, String format);
+
+    /**
+     * 确认排班方案
+     *
+     * @param planId 方案ID
+     */
+    void confirmSchedule(Long planId);
+
+    /**
+     * 取消排班方案
+     *
+     * @param planId 方案ID
+     */
+    void cancelSchedule(Long planId);
+
+    /**
+     * 获取方案求解进度
+     *
+     * @param planId 方案ID
+     * @return 求解进度信息
+     */
+    Map<String, Object> getSolvingProgress(Long planId);
+}

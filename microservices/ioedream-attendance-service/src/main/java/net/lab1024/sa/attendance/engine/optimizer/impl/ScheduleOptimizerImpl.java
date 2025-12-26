@@ -1,16 +1,37 @@
 package net.lab1024.sa.attendance.engine.optimizer.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.attendance.engine.model.ScheduleData;
-import net.lab1024.sa.attendance.engine.model.ScheduleRecord;
-import net.lab1024.sa.attendance.engine.optimizer.*;
-import net.lab1024.sa.attendance.engine.optimizer.model.*;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
+
+
+import net.lab1024.sa.attendance.engine.model.ScheduleData;
+import net.lab1024.sa.attendance.engine.model.ScheduleRecord;
+import net.lab1024.sa.attendance.engine.optimizer.OptimizationGoal;
+import net.lab1024.sa.attendance.engine.optimizer.OptimizationResult;
+import net.lab1024.sa.attendance.engine.optimizer.ScheduleOptimizer;
+import net.lab1024.sa.attendance.engine.optimizer.model.BudgetConstraint;
+import net.lab1024.sa.attendance.engine.optimizer.model.CostOptimizationResult;
+import net.lab1024.sa.attendance.engine.optimizer.model.CoverageOptimizationResult;
+import net.lab1024.sa.attendance.engine.optimizer.model.CoverageTargets;
+import net.lab1024.sa.attendance.engine.optimizer.model.EmployeePreference;
+import net.lab1024.sa.attendance.engine.optimizer.model.LocalOptimizationResult;
+import net.lab1024.sa.attendance.engine.optimizer.model.MultiObjectiveGoals;
+import net.lab1024.sa.attendance.engine.optimizer.model.MultiObjectiveOptimizationResult;
+import net.lab1024.sa.attendance.engine.optimizer.model.OptimizationEvaluation;
+import net.lab1024.sa.attendance.engine.optimizer.model.OptimizationScope;
+import net.lab1024.sa.attendance.engine.optimizer.model.OptimizationStatistics;
+import net.lab1024.sa.attendance.engine.optimizer.model.OptimizationSuggestion;
+import net.lab1024.sa.attendance.engine.optimizer.model.SatisfactionOptimizationResult;
+import net.lab1024.sa.attendance.engine.optimizer.model.WorkloadOptimizationResult;
 
 /**
  * 排班优化器实现类
@@ -26,16 +47,18 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ScheduleOptimizerImpl implements ScheduleOptimizer {
 
+
     // 优化配置
     private static final int MAX_OPTIMIZATION_ITERATIONS = 1000;
     private static final double MIN_IMPROVEMENT_THRESHOLD = 0.01;
     private static final int MAX_LOCAL_SEARCH_ATTEMPTS = 50;
 
     // 优化统计
-    private final Map<String, Integer> optimizationStatistics = new ConcurrentHashMap<>();
+    private final Map<String, Integer> optimizationStatistics = new HashMap<>();
 
     @Override
-    public OptimizationResult optimizeSchedule(List<ScheduleRecord> scheduleRecords, ScheduleData scheduleData, List<OptimizationGoal> optimizationGoals) {
+    public OptimizationResult optimizeSchedule(List<ScheduleRecord> scheduleRecords, ScheduleData scheduleData,
+            List<OptimizationGoal> optimizationGoals) {
         log.info("[排班优化] 开始优化排班，记录数量: {}，优化目标: {}", scheduleRecords.size(), optimizationGoals.size());
 
         LocalDateTime startTime = LocalDateTime.now();
@@ -70,7 +93,8 @@ public class ScheduleOptimizerImpl implements ScheduleOptimizer {
 
             if (multiObjectiveResult.isOptimizationSuccessful()) {
                 result.setOptimizedRecords(createSnapshots(multiObjectiveResult.getOptimizedRecords()));
-                result.setModifications(createModifications(scheduleRecords, multiObjectiveResult.getOptimizedRecords()));
+                result.setModifications(
+                        createModifications(scheduleRecords, multiObjectiveResult.getOptimizedRecords()));
                 // 类型转换：从Map<String, Object>到Map<String, Double>
                 Map<String, Double> afterMetrics = new HashMap<>();
                 for (Map.Entry<String, Object> entry : multiObjectiveResult.getOptimizedMetrics().entrySet()) {
@@ -113,12 +137,12 @@ public class ScheduleOptimizerImpl implements ScheduleOptimizer {
 
             // 7. 确定最终状态
             result.setOptimizationSuccessful(result.getOverallImprovementScore() > 0);
-            result.setStatus(result.getOptimizationSuccessful() ?
-                    OptimizationResult.OptimizationStatus.COMPLETED :
-                    OptimizationResult.OptimizationStatus.FAILED);
+            result.setStatus(result.getOptimizationSuccessful() ? OptimizationResult.OptimizationStatus.COMPLETED
+                    : OptimizationResult.OptimizationStatus.FAILED);
 
             log.info("[排班优化] 优化完成，成功: {}，改进评分: {:.2f}，耗时: {}ms",
-                    result.getOptimizationSuccessful(), result.getOverallImprovementScore(), result.getOptimizationDuration());
+                    result.getOptimizationSuccessful(), result.getOverallImprovementScore(),
+                    result.getOptimizationDuration());
 
             return result;
 
@@ -132,7 +156,8 @@ public class ScheduleOptimizerImpl implements ScheduleOptimizer {
     }
 
     @Override
-    public WorkloadOptimizationResult optimizeWorkloadBalance(List<ScheduleRecord> scheduleRecords, ScheduleData scheduleData) {
+    public WorkloadOptimizationResult optimizeWorkloadBalance(List<ScheduleRecord> scheduleRecords,
+            ScheduleData scheduleData) {
         log.debug("[排班优化] 优化工作负载均衡");
 
         WorkloadOptimizationResult result = WorkloadOptimizationResult.builder()
@@ -175,7 +200,8 @@ public class ScheduleOptimizerImpl implements ScheduleOptimizer {
     }
 
     @Override
-    public CostOptimizationResult optimizeCost(List<ScheduleRecord> scheduleRecords, ScheduleData scheduleData, BudgetConstraint budgetConstraint) {
+    public CostOptimizationResult optimizeCost(List<ScheduleRecord> scheduleRecords, ScheduleData scheduleData,
+            BudgetConstraint budgetConstraint) {
         log.debug("[排班优化] 优化成本，预算约束: {}", budgetConstraint.getMaxBudget());
 
         CostOptimizationResult result = CostOptimizationResult.builder()
@@ -219,7 +245,8 @@ public class ScheduleOptimizerImpl implements ScheduleOptimizer {
     }
 
     @Override
-    public SatisfactionOptimizationResult optimizeSatisfaction(List<ScheduleRecord> scheduleRecords, ScheduleData scheduleData, Map<Long, EmployeePreference> employeePreferences) {
+    public SatisfactionOptimizationResult optimizeSatisfaction(List<ScheduleRecord> scheduleRecords,
+            ScheduleData scheduleData, Map<Long, EmployeePreference> employeePreferences) {
         log.debug("[排班优化] 优化员工满意度，员工数量: {}", employeePreferences.size());
 
         SatisfactionOptimizationResult result = SatisfactionOptimizationResult.builder()
@@ -256,7 +283,8 @@ public class ScheduleOptimizerImpl implements ScheduleOptimizer {
     }
 
     @Override
-    public CoverageOptimizationResult optimizeCoverage(List<ScheduleRecord> scheduleRecords, ScheduleData scheduleData, CoverageTargets coverageTargets) {
+    public CoverageOptimizationResult optimizeCoverage(List<ScheduleRecord> scheduleRecords, ScheduleData scheduleData,
+            CoverageTargets coverageTargets) {
         log.debug("[排班优化] 优化班次覆盖率");
 
         CoverageOptimizationResult result = CoverageOptimizationResult.builder()
@@ -274,7 +302,8 @@ public class ScheduleOptimizerImpl implements ScheduleOptimizer {
                     scheduleRecords, scheduleData, coverageTargets);
 
             // 3. 计算优化后覆盖率
-            Map<String, Double> optimizedCoverage = calculateCoverageRates(optimizedRecords, scheduleData, coverageTargets);
+            Map<String, Double> optimizedCoverage = calculateCoverageRates(optimizedRecords, scheduleData,
+                    coverageTargets);
 
             result.setOptimizedRecords(optimizedRecords);
             result.setOptimizedCoverageRates(optimizedCoverage);
@@ -293,7 +322,8 @@ public class ScheduleOptimizerImpl implements ScheduleOptimizer {
     }
 
     @Override
-    public MultiObjectiveOptimizationResult optimizeMultiObjective(List<ScheduleRecord> scheduleRecords, ScheduleData scheduleData, MultiObjectiveGoals multiObjectiveGoals) {
+    public MultiObjectiveOptimizationResult optimizeMultiObjective(List<ScheduleRecord> scheduleRecords,
+            ScheduleData scheduleData, MultiObjectiveGoals multiObjectiveGoals) {
         log.debug("[排班优化] 执行多目标优化，目标数量: {}", multiObjectiveGoals.getGoals().size());
 
         MultiObjectiveOptimizationResult result = MultiObjectiveOptimizationResult.builder()
@@ -304,7 +334,8 @@ public class ScheduleOptimizerImpl implements ScheduleOptimizer {
 
         try {
             // 1. 计算当前目标值
-            Map<String, Double> currentObjectives = calculateObjectiveValues(scheduleRecords, scheduleData, multiObjectiveGoals.getGoals());
+            Map<String, Double> currentObjectives = calculateObjectiveValues(scheduleRecords, scheduleData,
+                    multiObjectiveGoals.getGoals());
             result.setCurrentObjectives(currentObjectives);
 
             // 2. 执行多目标优化算法（简化的NSGA-II实现）
@@ -318,7 +349,8 @@ public class ScheduleOptimizerImpl implements ScheduleOptimizer {
             result.setOptimizedRecords(bestSolution);
 
             // 4. 计算优化后的目标值
-            Map<String, Double> optimizedObjectives = calculateObjectiveValues(bestSolution, scheduleData, multiObjectiveGoals.getGoals());
+            Map<String, Double> optimizedObjectives = calculateObjectiveValues(bestSolution, scheduleData,
+                    multiObjectiveGoals.getGoals());
             result.setOptimizedObjectives(optimizedObjectives);
 
             // 5. 计算目标达成情况
@@ -327,7 +359,8 @@ public class ScheduleOptimizerImpl implements ScheduleOptimizer {
             result.setGoalAchievements(achievements);
 
             // 6. 计算综合改进评分
-            double overallImprovement = calculateOverallImprovement(currentObjectives, optimizedObjectives, multiObjectiveGoals.getWeights());
+            double overallImprovement = calculateOverallImprovement(currentObjectives, optimizedObjectives,
+                    multiObjectiveGoals.getWeights());
             result.setOverallImprovementScore(overallImprovement);
 
             result.setOptimizationSuccessful(overallImprovement > MIN_IMPROVEMENT_THRESHOLD);
@@ -344,7 +377,8 @@ public class ScheduleOptimizerImpl implements ScheduleOptimizer {
     }
 
     @Override
-    public LocalOptimizationResult optimizeLocal(List<ScheduleRecord> scheduleRecords, ScheduleData scheduleData, OptimizationScope optimizationScope) {
+    public LocalOptimizationResult optimizeLocal(List<ScheduleRecord> scheduleRecords, ScheduleData scheduleData,
+            OptimizationScope optimizationScope) {
         log.debug("[排班优化] 执行局部优化");
 
         LocalOptimizationResult result = LocalOptimizationResult.builder()
@@ -358,11 +392,13 @@ public class ScheduleOptimizerImpl implements ScheduleOptimizer {
             result.setScopeRecords(scopeRecords);
 
             // 2. 在指定范围内执行优化
-            List<ScheduleRecord> optimizedScopeRecords = optimizeWithinScope(scopeRecords, scheduleData, optimizationScope);
+            List<ScheduleRecord> optimizedScopeRecords = optimizeWithinScope(scopeRecords, scheduleData,
+                    optimizationScope);
             result.setOptimizedScopeRecords(optimizedScopeRecords);
 
             // 3. 合并优化结果
-            List<ScheduleRecord> finalRecords = mergeOptimizationResults(scheduleRecords, optimizedScopeRecords, optimizationScope);
+            List<ScheduleRecord> finalRecords = mergeOptimizationResults(scheduleRecords, optimizedScopeRecords,
+                    optimizationScope);
             result.setFinalRecords(finalRecords);
 
             // 4. 计算局部改进
@@ -383,7 +419,8 @@ public class ScheduleOptimizerImpl implements ScheduleOptimizer {
     }
 
     @Override
-    public OptimizationEvaluation evaluateOptimization(List<ScheduleRecord> originalSchedule, List<ScheduleRecord> optimizedSchedule, ScheduleData scheduleData) {
+    public OptimizationEvaluation evaluateOptimization(List<ScheduleRecord> originalSchedule,
+            List<ScheduleRecord> optimizedSchedule, ScheduleData scheduleData) {
         log.debug("[排班优化] 评估优化效果");
 
         OptimizationEvaluation evaluation = OptimizationEvaluation.builder()
@@ -403,14 +440,16 @@ public class ScheduleOptimizerImpl implements ScheduleOptimizer {
             Map<String, Double> improvements = new HashMap<>();
             for (String metric : originalMetrics.keySet()) {
                 if (optimizedMetrics.containsKey(metric)) {
-                    double improvement = (optimizedMetrics.get(metric) - originalMetrics.get(metric)) / originalMetrics.get(metric) * 100;
+                    double improvement = (optimizedMetrics.get(metric) - originalMetrics.get(metric))
+                            / originalMetrics.get(metric) * 100;
                     improvements.put(metric, improvement);
                 }
             }
             evaluation.setImprovementRates(improvements);
 
             // 3. 综合评估
-            double overallImprovement = improvements.values().stream().mapToDouble(Double::doubleValue).average().orElse(0.0);
+            double overallImprovement = improvements.values().stream().mapToDouble(Double::doubleValue).average()
+                    .orElse(0.0);
             evaluation.setOverallImprovementScore(overallImprovement);
 
             evaluation.setEvaluationSuccessful(true);
@@ -460,8 +499,9 @@ public class ScheduleOptimizerImpl implements ScheduleOptimizer {
             statistics.setAverageImprovementScore(totalImprovementScore / scoreCount);
         }
 
-        statistics.setSuccessRate(optimizationResults.size() > 0 ?
-                (double) statistics.getSuccessfulOptimizations() / optimizationResults.size() * 100 : 0.0);
+        statistics.setSuccessRate(optimizationResults.size() > 0
+                ? (double) statistics.getSuccessfulOptimizations() / optimizationResults.size() * 100
+                : 0.0);
 
         return statistics;
     }
@@ -479,13 +519,14 @@ public class ScheduleOptimizerImpl implements ScheduleOptimizer {
 
         // 验证优化质量
         if (optimizationResult.getOptimizationQualityScore() != null &&
-            optimizationResult.getOptimizationQualityScore() < 50.0) {
+                optimizationResult.getOptimizationQualityScore() < 50.0) {
             return false;
         }
 
         // 验证数据一致性
         if (optimizationResult.getOptimizationSuccessful() &&
-            (optimizationResult.getOptimizedRecords() == null || optimizationResult.getOptimizedRecords().isEmpty())) {
+                (optimizationResult.getOptimizedRecords() == null
+                        || optimizationResult.getOptimizedRecords().isEmpty())) {
             return false;
         }
 
@@ -493,7 +534,8 @@ public class ScheduleOptimizerImpl implements ScheduleOptimizer {
     }
 
     @Override
-    public List<OptimizationSuggestion> getOptimizationSuggestions(List<ScheduleRecord> scheduleRecords, ScheduleData scheduleData) {
+    public List<OptimizationSuggestion> getOptimizationSuggestions(List<ScheduleRecord> scheduleRecords,
+            ScheduleData scheduleData) {
         List<OptimizationSuggestion> suggestions = new ArrayList<>();
 
         try {
@@ -513,7 +555,7 @@ public class ScheduleOptimizerImpl implements ScheduleOptimizer {
             }
 
             if (metrics.containsKey("total_cost") && metrics.containsKey("budget") &&
-                metrics.get("total_cost") > metrics.get("budget")) {
+                    metrics.get("total_cost") > metrics.get("budget")) {
                 suggestions.add(OptimizationSuggestion.builder()
                         .suggestionId(UUID.randomUUID().toString())
                         .suggestionType("COST_OPTIMIZATION")
@@ -553,8 +595,8 @@ public class ScheduleOptimizerImpl implements ScheduleOptimizer {
                         .recordId(record.getRecordId())
                         .employeeId(record.getEmployeeId())
                         .shiftId(record.getShiftId())
-                        .startTime(record.getStartTime())
-                        .endTime(record.getEndTime())
+                        .workStartTime(record.getWorkStartTime())
+                        .workEndTime(record.getWorkEndTime())
                         .workLocation(record.getWorkLocation())
                         .workType(null)
                         .attributes(record.getAttributes())
@@ -565,7 +607,8 @@ public class ScheduleOptimizerImpl implements ScheduleOptimizer {
     /**
      * 计算排班指标
      */
-    private Map<String, Double> calculateScheduleMetrics(List<ScheduleRecord> scheduleRecords, ScheduleData scheduleData) {
+    private Map<String, Double> calculateScheduleMetrics(List<ScheduleRecord> scheduleRecords,
+            ScheduleData scheduleData) {
         Map<String, Double> metrics = new HashMap<>();
 
         // 基础指标
@@ -576,7 +619,8 @@ public class ScheduleOptimizerImpl implements ScheduleOptimizer {
         // 工作负载指标
         Map<Long, Double> workloadDistribution = calculateWorkloadDistribution(scheduleRecords);
         if (!workloadDistribution.isEmpty()) {
-            double avgWorkload = workloadDistribution.values().stream().mapToDouble(Double::doubleValue).average().orElse(0.0);
+            double avgWorkload = workloadDistribution.values().stream().mapToDouble(Double::doubleValue).average()
+                    .orElse(0.0);
             double stdDev = calculateStandardDeviation(new ArrayList<>(workloadDistribution.values()));
             metrics.put("avg_workload", avgWorkload);
             metrics.put("workload_std_dev", stdDev);
@@ -596,12 +640,11 @@ public class ScheduleOptimizerImpl implements ScheduleOptimizer {
                 .collect(Collectors.groupingBy(
                         ScheduleRecord::getEmployeeId,
                         Collectors.summingDouble(record -> {
-                            if (record.getStartTime() != null && record.getEndTime() != null) {
-                                return ChronoUnit.HOURS.between(record.getStartTime(), record.getEndTime());
+                            if (record.getWorkStartTime() != null && record.getWorkEndTime() != null) {
+                                return ChronoUnit.HOURS.between(record.getWorkStartTime(), record.getWorkEndTime());
                             }
                             return 0.0;
-                        })
-                ));
+                        })));
     }
 
     /**
@@ -627,8 +670,8 @@ public class ScheduleOptimizerImpl implements ScheduleOptimizer {
         return scheduleRecords.stream()
                 .mapToDouble(record -> {
                     // 简化实现：假设每小时成本为50元
-                    if (record.getStartTime() != null && record.getEndTime() != null) {
-                        return ChronoUnit.HOURS.between(record.getStartTime(), record.getEndTime()) * 50.0;
+                    if (record.getWorkStartTime() != null && record.getWorkEndTime() != null) {
+                        return ChronoUnit.HOURS.between(record.getWorkStartTime(), record.getWorkEndTime()) * 50.0;
                     }
                     return 0.0;
                 })
@@ -647,7 +690,8 @@ public class ScheduleOptimizerImpl implements ScheduleOptimizer {
     /**
      * 在预算内优化成本
      */
-    private List<ScheduleRecord> optimizeCostWithinBudget(List<ScheduleRecord> scheduleRecords, ScheduleData scheduleData, BudgetConstraint budgetConstraint) {
+    private List<ScheduleRecord> optimizeCostWithinBudget(List<ScheduleRecord> scheduleRecords,
+            ScheduleData scheduleData, BudgetConstraint budgetConstraint) {
         // 简化实现：返回原始记录
         // TODO: 实现具体的成本优化算法
         return new ArrayList<>(scheduleRecords);
@@ -656,7 +700,8 @@ public class ScheduleOptimizerImpl implements ScheduleOptimizer {
     /**
      * 优化员工满意度
      */
-    private List<ScheduleRecord> optimizeForSatisfaction(List<ScheduleRecord> scheduleRecords, ScheduleData scheduleData, Map<Long, EmployeePreference> employeePreferences) {
+    private List<ScheduleRecord> optimizeForSatisfaction(List<ScheduleRecord> scheduleRecords,
+            ScheduleData scheduleData, Map<Long, EmployeePreference> employeePreferences) {
         // 简化实现：返回原始记录
         // TODO: 实现具体的满意度优化算法
         return new ArrayList<>(scheduleRecords);
@@ -665,7 +710,8 @@ public class ScheduleOptimizerImpl implements ScheduleOptimizer {
     /**
      * 优化覆盖率
      */
-    private List<ScheduleRecord> optimizeForCoverage(List<ScheduleRecord> scheduleRecords, ScheduleData scheduleData, CoverageTargets coverageTargets) {
+    private List<ScheduleRecord> optimizeForCoverage(List<ScheduleRecord> scheduleRecords, ScheduleData scheduleData,
+            CoverageTargets coverageTargets) {
         // 简化实现：返回原始记录
         // TODO: 实现具体的覆盖率优化算法
         return new ArrayList<>(scheduleRecords);
@@ -674,7 +720,8 @@ public class ScheduleOptimizerImpl implements ScheduleOptimizer {
     /**
      * 计算目标值
      */
-    private Map<String, Double> calculateObjectiveValues(List<ScheduleRecord> scheduleRecords, ScheduleData scheduleData, List<OptimizationGoal> goals) {
+    private Map<String, Double> calculateObjectiveValues(List<ScheduleRecord> scheduleRecords,
+            ScheduleData scheduleData, List<OptimizationGoal> goals) {
         Map<String, Double> values = new HashMap<>();
         Map<String, Double> metrics = calculateScheduleMetrics(scheduleRecords, scheduleData);
 
@@ -698,7 +745,8 @@ public class ScheduleOptimizerImpl implements ScheduleOptimizer {
     /**
      * 查找Pareto前沿
      */
-    private List<List<ScheduleRecord>> findParetoFront(List<ScheduleRecord> scheduleRecords, ScheduleData scheduleData, MultiObjectiveGoals multiObjectiveGoals) {
+    private List<List<ScheduleRecord>> findParetoFront(List<ScheduleRecord> scheduleRecords, ScheduleData scheduleData,
+            MultiObjectiveGoals multiObjectiveGoals) {
         // 简化实现：返回原始记录
         // TODO: 实现完整的NSGA-II算法
         return Collections.singletonList(new ArrayList<>(scheduleRecords));
@@ -707,7 +755,8 @@ public class ScheduleOptimizerImpl implements ScheduleOptimizer {
     /**
      * 选择最优解决方案
      */
-    private List<ScheduleRecord> selectBestSolution(List<List<ScheduleRecord>> paretoFront, Map<String, Double> weights) {
+    private List<ScheduleRecord> selectBestSolution(List<List<ScheduleRecord>> paretoFront,
+            Map<String, Double> weights) {
         // 简化实现：返回第一个解决方案
         return paretoFront.isEmpty() ? new ArrayList<>() : paretoFront.get(0);
     }
@@ -727,7 +776,8 @@ public class ScheduleOptimizerImpl implements ScheduleOptimizer {
             double optimizedValue = optimizedObjectives.getOrDefault(goal.getType(), 0.0);
             double targetValue = goal.getTargetValue();
 
-            double achievementRate = Math.abs((optimizedValue - targetValue) / Math.abs(targetValue - currentValue)) * 100;
+            double achievementRate = Math.abs((optimizedValue - targetValue) / Math.abs(targetValue - currentValue))
+                    * 100;
             boolean isAchieved = Math.abs(optimizedValue - targetValue) <= goal.getTolerance();
 
             achievements.put(goal.getType(), OptimizationResult.GoalAchievement.builder()
@@ -746,7 +796,8 @@ public class ScheduleOptimizerImpl implements ScheduleOptimizer {
     /**
      * 计算综合改进评分
      */
-    private double calculateOverallImprovement(Map<String, Double> currentObjectives, Map<String, Double> optimizedObjectives, Map<String, Double> weights) {
+    private double calculateOverallImprovement(Map<String, Double> currentObjectives,
+            Map<String, Double> optimizedObjectives, Map<String, Double> weights) {
         double totalImprovement = 0.0;
         double totalWeight = 0.0;
 
@@ -774,8 +825,7 @@ public class ScheduleOptimizerImpl implements ScheduleOptimizer {
                 .collect(Collectors.toMap(
                         OptimizationGoal::getType,
                         OptimizationGoal::getWeight,
-                        (existing, replacement) -> existing + replacement
-                ));
+                        (existing, replacement) -> existing + replacement));
     }
 
     /**
@@ -875,7 +925,8 @@ public class ScheduleOptimizerImpl implements ScheduleOptimizer {
     /**
      * 计算平均满意度
      */
-    private double calculateAverageSatisfaction(List<ScheduleRecord> scheduleRecords, Map<Long, EmployeePreference> employeePreferences) {
+    private double calculateAverageSatisfaction(List<ScheduleRecord> scheduleRecords,
+            Map<Long, EmployeePreference> employeePreferences) {
         // 简化实现：返回默认值
         // TODO: 实现具体的满意度计算逻辑
         return 75.0;
@@ -884,7 +935,8 @@ public class ScheduleOptimizerImpl implements ScheduleOptimizer {
     /**
      * 计算覆盖率
      */
-    private Map<String, Double> calculateCoverageRates(List<ScheduleRecord> scheduleRecords, ScheduleData scheduleData, CoverageTargets coverageTargets) {
+    private Map<String, Double> calculateCoverageRates(List<ScheduleRecord> scheduleRecords, ScheduleData scheduleData,
+            CoverageTargets coverageTargets) {
         // 简化实现：返回默认覆盖率
         // TODO: 实现具体的覆盖率计算逻辑
         Map<String, Double> coverage = new HashMap<>();
@@ -895,7 +947,8 @@ public class ScheduleOptimizerImpl implements ScheduleOptimizer {
     /**
      * 计算覆盖率改进
      */
-    private double calculateCoverageImprovement(Map<String, Double> currentCoverage, Map<String, Double> optimizedCoverage) {
+    private double calculateCoverageImprovement(Map<String, Double> currentCoverage,
+            Map<String, Double> optimizedCoverage) {
         double currentOverall = currentCoverage.getOrDefault("overall", 0.0);
         double optimizedOverall = optimizedCoverage.getOrDefault("overall", 0.0);
         return optimizedOverall - currentOverall;
@@ -904,7 +957,8 @@ public class ScheduleOptimizerImpl implements ScheduleOptimizer {
     /**
      * 根据优化范围筛选记录
      */
-    private List<ScheduleRecord> filterRecordsByScope(List<ScheduleRecord> scheduleRecords, OptimizationScope optimizationScope) {
+    private List<ScheduleRecord> filterRecordsByScope(List<ScheduleRecord> scheduleRecords,
+            OptimizationScope optimizationScope) {
         // 简化实现：返回所有记录
         // TODO: 实现具体的范围筛选逻辑
         return new ArrayList<>(scheduleRecords);
@@ -913,7 +967,8 @@ public class ScheduleOptimizerImpl implements ScheduleOptimizer {
     /**
      * 在指定范围内优化
      */
-    private List<ScheduleRecord> optimizeWithinScope(List<ScheduleRecord> scopeRecords, ScheduleData scheduleData, OptimizationScope optimizationScope) {
+    private List<ScheduleRecord> optimizeWithinScope(List<ScheduleRecord> scopeRecords, ScheduleData scheduleData,
+            OptimizationScope optimizationScope) {
         // 简化实现：返回原始记录
         // TODO: 实现具体的范围内优化逻辑
         return new ArrayList<>(scopeRecords);
@@ -922,7 +977,8 @@ public class ScheduleOptimizerImpl implements ScheduleOptimizer {
     /**
      * 合并优化结果
      */
-    private List<ScheduleRecord> mergeOptimizationResults(List<ScheduleRecord> originalRecords, List<ScheduleRecord> optimizedScopeRecords, OptimizationScope optimizationScope) {
+    private List<ScheduleRecord> mergeOptimizationResults(List<ScheduleRecord> originalRecords,
+            List<ScheduleRecord> optimizedScopeRecords, OptimizationScope optimizationScope) {
         // 简化实现：返回优化后的记录
         return new ArrayList<>(optimizedScopeRecords);
     }
@@ -930,7 +986,8 @@ public class ScheduleOptimizerImpl implements ScheduleOptimizer {
     /**
      * 计算局部改进
      */
-    private double calculateLocalImprovement(List<ScheduleRecord> scopeRecords, List<ScheduleRecord> optimizedScopeRecords) {
+    private double calculateLocalImprovement(List<ScheduleRecord> scopeRecords,
+            List<ScheduleRecord> optimizedScopeRecords) {
         // 简化实现：返回默认改进率
         // TODO: 实现具体的局部改进计算逻辑
         return 5.0;

@@ -1,0 +1,161 @@
+package net.lab1024.sa.common.openapi.manager.impl;
+
+import net.lab1024.sa.common.openapi.domain.request.UserExtendedInfoRequest;
+import net.lab1024.sa.common.openapi.manager.SecurityManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * 默认安全管理器实现
+ * <p>
+ * 提供基础的安全管理功能实现
+ * 实际项目中应替换为完整的权限管理实现
+ * </p>
+ *
+ * <p>
+ * 严格遵循CLAUDE.md规范：
+ * - Manager类是纯Java类，不使用Spring注解
+ * - 通过构造函数注入依赖
+ * - 在配置类中注册为Spring Bean
+ * </p>
+ *
+ * @author IOE-DREAM架构团队
+ * @version 1.0.0
+ * @since 2025-12-20
+ * @updated 2025-12-20 移除Lombok依赖，使用标准SLF4J Logger
+ */
+public class DefaultSecurityManager implements SecurityManager {
+
+    private static final Logger log = LoggerFactory.getLogger(DefaultSecurityManager.class);
+
+    /**
+     * 构造函数
+     */
+    public DefaultSecurityManager() {
+        log.info("[安全管理器] 默认安全管理器已初始化");
+    }
+
+    /**
+     * 验证用户权限
+     */
+    @Override
+    public boolean validatePermission(Long userId, String permission) {
+        // 默认实现：允许所有权限
+        // 实际项目中应根据用户角色和权限表进行验证
+        log.debug("[权限验证] 用户ID: {}, 权限: {} - 默认允许", userId, permission);
+        return true;
+    }
+
+    /**
+     * 验证用户角色
+     */
+    @Override
+    public boolean validateRole(Long userId, String role) {
+        // 默认实现：允许所有角色
+        // 实际项目中应根据用户角色表进行验证
+        log.debug("[角色验证] 用户ID: {}, 角色: {} - 默认允许", userId, role);
+        return true;
+    }
+
+    /**
+     * 获取用户权限列表
+     */
+    @Override
+    public List<String> getUserPermissions(Long userId) {
+        // 默认实现：返回空权限列表
+        // 实际项目中应查询用户权限表
+        List<String> permissions = new ArrayList<>();
+        log.debug("[权限查询] 用户ID: {} - 返回默认权限列表", userId);
+        return permissions;
+    }
+
+    /**
+     * 获取用户角色列表
+     */
+    @Override
+    public List<String> getUserRoles(Long userId) {
+        // 默认实现：返回空角色列表
+        // 实际项目中应查询用户角色表
+        List<String> roles = new ArrayList<>();
+        log.debug("[角色查询] 用户ID: {} - 返回默认角色列表", userId);
+        return roles;
+    }
+
+    /**
+     * 检查用户是否为管理员
+     */
+    @Override
+    public boolean isAdmin(Long userId) {
+        // 默认实现：非管理员
+        // 实际项目中应根据用户角色表判断
+        log.debug("[管理员检查] 用户ID: {} - 默认非管理员", userId);
+        return false;
+    }
+
+    /**
+     * 验证用户数据访问权限
+     */
+    @Override
+    public boolean validateDataAccess(Long userId, String dataType, Long dataId) {
+        // 默认实现：允许所有数据访问
+        // 实际项目中应根据数据权限规则进行验证
+        log.debug("[数据权限] 用户ID: {}, 数据类型: {}, 数据ID: {} - 默认允许", userId, dataType, dataId);
+        return true;
+    }
+
+    /**
+     * 验证用户扩展信息
+     */
+    @Override
+    public boolean validateExtendedUserInfo(Long userId, UserExtendedInfoRequest extendedInfo) {
+        if (extendedInfo == null) {
+            log.warn("[扩展信息验证] 用户ID: {}, 扩展信息为空", userId);
+            return false;
+        }
+
+        // 基础验证
+        if (extendedInfo.getBirthDate() != null && extendedInfo.getBirthDate().isAfter(LocalDate.now())) {
+            log.warn("[扩展信息验证] 用户ID: {}, 生日不能是未来日期", userId);
+            return false;
+        }
+
+        log.debug("[扩展信息验证] 用户ID: {} - 验证通过", userId);
+        return true;
+    }
+
+    /**
+     * 获取用户安全等级
+     */
+    @Override
+    public int getUserSecurityLevel(Long userId) {
+        // 默认实现：返回最低安全等级
+        // 实际项目中应根据用户角色、权限等信息计算安全等级
+        int securityLevel = 1;
+        log.debug("[安全等级] 用户ID: {} - 返回默认安全等级: {}", userId, securityLevel);
+        return securityLevel;
+    }
+
+    /**
+     * 检查用户会话是否有效
+     */
+    @Override
+    public boolean isSessionValid(Long userId, String sessionId) {
+        // 默认实现：始终有效
+        // 实际项目中应检查会话表或Redis中的会话状态
+        log.debug("[会话验证] 用户ID: {}, 会话ID: {} - 默认有效", userId, sessionId);
+        return true;
+    }
+
+    /**
+     * 记录安全操作日志
+     */
+    @Override
+    public void logSecurityOperation(Long userId, String operation, String resource, String result) {
+        log.info("[安全操作] 用户ID: {}, 操作: {}, 资源: {}, 结果: {}", userId, operation, resource, result);
+        // 实际项目中应将日志存储到数据库或日志文件
+    }
+}

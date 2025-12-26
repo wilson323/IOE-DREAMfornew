@@ -1,0 +1,265 @@
+package net.lab1024.sa.attendance.manager.prediction;
+
+import lombok.extern.slf4j.Slf4j;
+import net.lab1024.sa.attendance.dao.AttendanceRecordDao;
+import net.lab1024.sa.attendance.entity.AttendanceRecordEntity;
+import org.springframework.stereotype.Component;
+
+import jakarta.annotation.Resource;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+
+/**
+ * 特征工程管理器 - 提取和转换特征
+ *
+ * @author IOE-DREAM
+ * @since 2025-12-26
+ */
+@Slf4j
+@Component
+public class FeatureEngineeringManager {
+
+    @Resource
+    private AttendanceRecordDao attendanceRecordDao;
+
+    /**
+     * 提取特征向量（15维特征）
+     */
+    public double[] extractFeatures(Long employeeId, LocalDateTime checkInTime) {
+        double[] features = new double[15];
+
+        // 时间特征 (5维)
+        features[0] = checkInTime.getDayOfWeek().getValue();           // 星期 (1-7)
+        features[1] = checkInTime.getMonthValue();                      // 月份 (1-12)
+        features[2] = isWorkDay(checkInTime) ? 1.0 : 0.0;             // 是否工作日
+        features[3] = isHoliday(checkInTime.toLocalDate()) ? 1.0 : 0.0; // 是否节假日
+        features[4] = getShiftType(checkInTime.toLocalTime());          // 班次类型 (1-早班, 2-午班, 3-夜班)
+
+        // 统计特征 (7维)
+        features[5] = calculateAverageAttendance(employeeId, 7);       // 7天平均出勤
+        features[6] = calculateStandardDeviation(employeeId, 30);      // 30天标准差
+        features[7] = calculateTrend(employeeId, 14);                  // 14天趋势
+        features[8] = calculateLateRate(employeeId, 30);               // 30天迟到率
+        features[9] = calculateEarlyLeaveRate(employeeId, 30);         // 30天早退率
+        features[10] = calculateAbsenceRate(employeeId, 30);           // 30天缺勤率
+        features[11] = calculateOvertimeFrequency(employeeId, 30);      // 30天加班频率
+
+        // 行为特征 (2维)
+        features[12] = calculateComplianceScore(employeeId, 30);        // 30天合规分数
+        features[13] = calculateWorkStabilityIndex(employeeId, 30);     // 工作稳定性指数
+
+        // 天气特征 (1维，可选)
+        features[14] = getWeatherScore(checkInTime.toLocalDate());      // 天气影响分数
+
+        return features;
+    }
+
+    // ============================================================
+    // 时间特征
+    // ============================================================
+
+    /**
+     * 判断是否工作日
+     */
+    private boolean isWorkDay(LocalDateTime dateTime) {
+        DayOfWeek dayOfWeek = dateTime.getDayOfWeek();
+        return dayOfWeek != DayOfWeek.SATURDAY && dayOfWeek != DayOfWeek.SUNDAY;
+    }
+
+    /**
+     * 判断是否节假日（简化实现）
+     */
+    private boolean isHoliday(LocalDate date) {
+        // TODO: 实现完整的节假日判断逻辑
+        return false;
+    }
+
+    /**
+     * 获取班次类型
+     */
+    private int getShiftType(java.time.LocalTime time) {
+        int hour = time.getHour();
+        if (hour >= 6 && hour < 12) {
+            return 1; // 早班
+        } else if (hour >= 12 && hour < 18) {
+            return 2; // 午班
+        } else {
+            return 3; // 夜班
+        }
+    }
+
+    // ============================================================
+    // 统计特征
+    // ============================================================
+
+    /**
+     * 计算平均出勤率
+     */
+    private double calculateAverageAttendance(Long employeeId, int days) {
+        LocalDate endDate = LocalDate.now();
+        LocalDate startDate = endDate.minusDays(days);
+
+        List<AttendanceRecordEntity> records = attendanceRecordDao.selectList(
+                new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<AttendanceRecordEntity>()
+                        .eq(AttendanceRecordEntity::getEmployeeId, employeeId)
+                        .ge(AttendanceRecordEntity::getCheckInTime, startDate.atStartOfDay())
+                        .le(AttendanceRecordEntity::getCheckInTime, endDate.atTime(23, 59))
+        );
+
+        if (records.isEmpty()) {
+            return 0.0;
+        }
+
+        return records.stream()
+                .mapToDouble(record -> record.getWorkHours() != null ? record.getWorkHours().doubleValue() : 0.0)
+                .average()
+                .orElse(0.0);
+    }
+
+    /**
+     * 计算标准差
+     */
+    private double calculateStandardDeviation(Long employeeId, int days) {
+        LocalDate endDate = LocalDate.now();
+        LocalDate startDate = endDate.minusDays(days);
+
+        List<AttendanceRecordEntity> records = attendanceRecordDao.selectList(
+                new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<AttendanceRecordEntity>()
+                        .eq(AttendanceRecordEntity::getEmployeeId, employeeId)
+                        .ge(AttendanceRecordEntity::getCheckInTime, startDate.atStartOfDay())
+                        .le(AttendanceRecordEntity::getCheckInTime, endDate.atTime(23, 59))
+        );
+
+        if (records.size() < 2) {
+            return 0.0;
+        }
+
+        double mean = records.stream()
+                .mapToDouble(record -> record.getWorkHours() != null ? record.getWorkHours().doubleValue() : 0.0)
+                .average()
+                .orElse(0.0);
+
+        double variance = records.stream()
+                .mapToDouble(record -> {
+                    double value = record.getWorkHours() != null ? record.getWorkHours().doubleValue() : 0.0;
+                    return Math.pow(value - mean, 2);
+                })
+                .average()
+                .orElse(0.0);
+
+        return Math.sqrt(variance);
+    }
+
+    /**
+     * 计算趋势（线性回归斜率）
+     */
+    private double calculateTrend(Long employeeId, int days) {
+        // 简化实现：返回过去N天的工作小时变化趋势
+        // TODO: 实现完整的线性回归
+        return 0.0;
+    }
+
+    /**
+     * 计算迟到率
+     */
+    private double calculateLateRate(Long employeeId, int days) {
+        LocalDate endDate = LocalDate.now();
+        LocalDate startDate = endDate.minusDays(days);
+
+        long totalCount = attendanceRecordDao.selectCount(
+                new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<AttendanceRecordEntity>()
+                        .eq(AttendanceRecordEntity::getEmployeeId, employeeId)
+                        .ge(AttendanceRecordEntity::getCheckInTime, startDate.atStartOfDay())
+                        .le(AttendanceRecordEntity::getCheckInTime, endDate.atTime(23, 59))
+        );
+
+        if (totalCount == 0) {
+            return 0.0;
+        }
+
+        long lateCount = attendanceRecordDao.selectCount(
+                new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<AttendanceRecordEntity>()
+                        .eq(AttendanceRecordEntity::getEmployeeId, employeeId)
+                        .eq(AttendanceRecordEntity::getIsLate, 1)
+                        .ge(AttendanceRecordEntity::getCheckInTime, startDate.atStartOfDay())
+                        .le(AttendanceRecordEntity::getCheckInTime, endDate.atTime(23, 59))
+        );
+
+        return (double) lateCount / totalCount * 100.0;
+    }
+
+    /**
+     * 计算早退率
+     */
+    private double calculateEarlyLeaveRate(Long employeeId, int days) {
+        LocalDate endDate = LocalDate.now();
+        LocalDate startDate = endDate.minusDays(days);
+
+        long totalCount = attendanceRecordDao.selectCount(
+                new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<AttendanceRecordEntity>()
+                        .eq(AttendanceRecordEntity::getEmployeeId, employeeId)
+                        .ge(AttendanceRecordEntity::getCheckInTime, startDate.atStartOfDay())
+                        .le(AttendanceRecordEntity::getCheckInTime, endDate.atTime(23, 59))
+        );
+
+        if (totalCount == 0) {
+            return 0.0;
+        }
+
+        long earlyLeaveCount = attendanceRecordDao.selectCount(
+                new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<AttendanceRecordEntity>()
+                        .eq(AttendanceRecordEntity::getEmployeeId, employeeId)
+                        .eq(AttendanceRecordEntity::getIsEarlyLeave, 1)
+                        .ge(AttendanceRecordEntity::getCheckInTime, startDate.atStartOfDay())
+                        .le(AttendanceRecordEntity::getCheckInTime, endDate.atTime(23, 59))
+        );
+
+        return (double) earlyLeaveCount / totalCount * 100.0;
+    }
+
+    /**
+     * 计算缺勤率
+     */
+    private double calculateAbsenceRate(Long employeeId, int days) {
+        // 简化实现
+        return 0.0;
+    }
+
+    /**
+     * 计算加班频率
+     */
+    private double calculateOvertimeFrequency(Long employeeId, int days) {
+        // 简化实现
+        return 0.0;
+    }
+
+    /**
+     * 计算合规分数
+     */
+    private double calculateComplianceScore(Long employeeId, int days) {
+        double lateRate = calculateLateRate(employeeId, days);
+        double earlyLeaveRate = calculateEarlyLeaveRate(employeeId, days);
+        return 100.0 - lateRate - earlyLeaveRate;
+    }
+
+    /**
+     * 计算工作稳定性指数
+     */
+    private double calculateWorkStabilityIndex(Long employeeId, int days) {
+        double stdDev = calculateStandardDeviation(employeeId, days);
+        // 标准差越小，稳定性越高
+        return Math.max(0, 100.0 - stdDev * 10);
+    }
+
+    /**
+     * 获取天气影响分数
+     */
+    private double getWeatherScore(LocalDate date) {
+        // 简化实现：返回中性值
+        return 0.5;
+    }
+}

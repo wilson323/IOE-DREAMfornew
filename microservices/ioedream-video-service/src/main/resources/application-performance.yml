@@ -1,4 +1,4 @@
-# ============================================================
+﻿# ============================================================
 # IOE-DREAM Video Service - Spring Boot 3.5.8 配置
 # 视频监控服务 - 企业级生产环境配置
 #
@@ -132,9 +132,9 @@ management:
 logging:
   level:
     root: INFO
-    net.lab1024.sa.video: DEBUG
-    org.springframework.web: INFO
-    com.alibaba.druid: INFO
+    "net.lab1024.sa.video": DEBUG
+    "org.springframework.web": INFO
+    "com.alibaba.druid": INFO
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
     file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"

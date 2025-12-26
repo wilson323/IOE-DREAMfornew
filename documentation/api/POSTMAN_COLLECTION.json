@@ -1,0 +1,1170 @@
+{
+  "info": {
+    "name": "IOE-DREAM API Collection",
+    "description": "IOE-DREAM智能管理系统API接口集合，包含门禁、考勤、消费、视频监控等完整功能模块",
+    "version": "2.0.0",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "description": "API基础地址"
+    },
+    {
+      "key": "jwtToken",
+      "value": "",
+      "description": "JWT认证Token"
+    },
+    {
+      "key": "contentType",
+      "value": "application/json",
+      "description": "内容类型"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "Authorization",
+        "value": "Bearer {{jwtToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "exec": [
+          "// 自动设置认证头\nif (pm.collectionVariables.get('jwtToken')) {\n    pm.request.headers.add({\n        key: 'Authorization',\n        value: 'Bearer ' + pm.collectionVariables.get('jwtToken')\n    });\n}\n\n// 设置内容类型\nif (!pm.request.headers.has('Content-Type')) {\n    pm.request.headers.add({\n        key: 'Content-Type',\n        value: pm.collectionVariables.get('contentType')\n    });\n}"
+        ],
+        "type": "text/javascript"
+      }
+    }
+  ],
+  "item": [
+    {
+      "name": "认证授权",
+      "item": [
+        {
+          "name": "用户登录",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"admin123\",\n  \"captcha\": \"1234\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "login"]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"登录成功\", function() {\n    pm.response.to.have.status(200);\n    const jsonData = pm.response.json();\n    pm.expect(jsonData.code).to.eql(200);\n    pm.expect(jsonData.data).to.have.property('token');\n    pm.expect(jsonData.data).to.have.property('refreshToken');\n    \n    // 保存token到集合变量\n    pm.collectionVariables.set('jwtToken', jsonData.data.token);\n});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "刷新Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"your_refresh_token_here\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/refresh",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "refresh"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "用户登出",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/logout",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "logout"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "用户管理",
+      "item": [
+        {
+          "name": "查询用户列表",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/users/query?pageNum=1&pageSize=20&username=&status=",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "users", "query"],
+              "query": [
+                {
+                  "key": "pageNum",
+                  "value": "1"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "20"
+                },
+                {
+                  "key": "username",
+                  "value": ""
+                },
+                {
+                  "key": "status",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "获取用户详情",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/users/{{userId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "users", "{{userId}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "创建用户",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"newuser\",\n  \"realName\": \"新用户\",\n  \"email\": \"newuser@example.com\",\n  \"phone\": \"13800138000\",\n  \"gender\": 1,\n  \"deptId\": 100,\n  \"status\": 1,\n  \"roleIds\": [2, 3]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/users/add",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "users", "add"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "更新用户",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"realName\": \"更新姓名\",\n  \"email\": \"updated@example.com\",\n  \"phone\": \"13900139000\",\n  \"gender\": 1,\n  \"deptId\": 101,\n  \"status\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/users/{{userId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "users", "{{userId}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "删除用户",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/users/{{userId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "users", "{{userId}}"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "门禁管理",
+      "item": [
+        {
+          "name": "查询门禁设备",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/access/devices/query?pageNum=1&pageSize=20&deviceName=&deviceType=&status=",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "access", "devices", "query"],
+              "query": [
+                {
+                  "key": "pageNum",
+                  "value": "1"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "20"
+                },
+                {
+                  "key": "deviceName",
+                  "value": ""
+                },
+                {
+                  "key": "deviceType",
+                  "value": ""
+                },
+                {
+                  "key": "status",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "获取设备详情",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/access/devices/{{deviceId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "access", "devices", "{{deviceId}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "门禁验证",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": 1001,\n  \"deviceId\": \"DEV001\",\n  \"authType\": \"BIOMETRIC\",\n  \"authData\": \"biometric_data_here\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/access/verification",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "access", "verification"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "查询门禁记录",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/access/records/query?pageNum=1&pageSize=20&startDate=&endDate=&userId=&deviceId=",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "access", "records", "query"],
+              "query": [
+                {
+                  "key": "pageNum",
+                  "value": "1"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "20"
+                },
+                {
+                  "key": "startDate",
+                  "value": ""
+                },
+                {
+                  "key": "endDate",
+                  "value": ""
+                },
+                {
+                  "key": "userId",
+                  "value": ""
+                },
+                {
+                  "key": "deviceId",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "人脸识别验证",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": 1001,\n  \"faceImage\": \"base64_face_image_data\",\n  \"deviceId\": \"CAM001\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/access/biometric/face-verify",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "access", "biometric", "face-verify"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "考勤管理",
+      "item": [
+        {
+          "name": "考勤打卡",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": 1001,\n  \"deviceId\": \"ATT001\",\n  \"location\": \"A栋办公室\",\n  \"attendanceType\": \"CLOCK_IN\",\n  \"photo\": \"base64_photo_data\",\n  \"gpsLocation\": {\n    \"latitude\": 39.9042,\n    \"longitude\": 116.4074\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/attendance/records/clock",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "attendance", "records", "clock"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "查询考勤记录",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/attendance/records/query?pageNum=1&pageSize=20&startDate=&endDate=&userId=&attendanceType=",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "attendance", "records", "query"],
+              "query": [
+                {
+                  "key": "pageNum",
+                  "value": "1"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "20"
+                },
+                {
+                  "key": "startDate",
+                  "value": ""
+                },
+                {
+                  "key": "endDate",
+                  "value": ""
+                },
+                {
+                  "key": "userId",
+                  "value": ""
+                },
+                {
+                  "key": "attendanceType",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "考勤统计",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/attendance/statistics?startDate=&endDate=&userId=&deptId=",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "attendance", "statistics"],
+              "query": [
+                {
+                  "key": "startDate",
+                  "value": ""
+                },
+                {
+                  "key": "endDate",
+                  "value": ""
+                },
+                {
+                  "key": "userId",
+                  "value": ""
+                },
+                {
+                  "key": "deptId",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "排班查询",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/attendance/schedules/query?pageNum=1&pageSize=20&userId=&startDate=&endDate=&shiftId=",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "attendance", "schedules", "query"],
+              "query": [
+                {
+                  "key": "pageNum",
+                  "value": "1"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "20"
+                },
+                {
+                  "key": "userId",
+                  "value": ""
+                },
+                {
+                  "key": "startDate",
+                  "value": ""
+                },
+                {
+                  "key": "endDate",
+                  "value": ""
+                },
+                {
+                  "key": "shiftId",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "智能排班",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"startDate\": \"2025-12-21\",\n  \"endDate\": \"2025-12-31\",\n  \"userIds\": [1001, 1002, 1003],\n  \"shiftRules\": {\n    \"workHours\": 8,\n    \"restDays\": 2,\n    \"maxConsecutiveDays\": 5\n  },\n  \"optimizationGoals\": [\"FAIRNESS\", \"EFFICIENCY\"]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/attendance/scheduling/smart",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "attendance", "scheduling", "smart"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "消费管理",
+      "item": [
+        {
+          "name": "查询消费账户",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/consume/accounts/query?pageNum=1&pageSize=20&username=&status=",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "consume", "accounts", "query"],
+              "query": [
+                {
+                  "key": "pageNum",
+                  "value": "1"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "20"
+                },
+                {
+                  "key": "username",
+                  "value": ""
+                },
+                {
+                  "key": "status",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "账户余额查询",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/consume/accounts/{{accountId}}/balance",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "consume", "accounts", "{{accountId}}", "balance"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "账户充值",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 100.00,\n  \"rechargeWay\": \"WECHAT\",\n  \"transactionNo\": \"TXN202512210001\",\n  \"operator\": \"管理员\",\n  \"remark\": \"月度补贴\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/consume/accounts/{{accountId}}/recharge",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "consume", "accounts", "{{accountId}}", "recharge"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "查询消费记录",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/consume/records/query?pageNum=1&pageSize=20&userId=&startDate=&endDate=&merchantId=",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "consume", "records", "query"],
+              "query": [
+                {
+                  "key": "pageNum",
+                  "value": "1"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "20"
+                },
+                {
+                  "key": "userId",
+                  "value": ""
+                },
+                {
+                  "key": "startDate",
+                  "value": ""
+                },
+                {
+                  "key": "endDate",
+                  "value": ""
+                },
+                {
+                  "key": "merchantId",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "创建消费记录",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"accountId\": 1001,\n  \"userId\": 1001,\n  \"deviceId\": \"POS001\",\n  \"merchantId\": 2001,\n  \"amount\": 25.50,\n  \"consumeType\": \"MEAL\",\n  \"paymentMethod\": \"BALANCE\",\n  \"consumeLocation\": \"一楼餐厅\",\n  \"remark\": \"午餐\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/consume/records/add",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "consume", "records", "add"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "查询商户列表",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/consume/merchants/query?pageNum=1&pageSize=20&merchantName=&status=&areaId=",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "consume", "merchants", "query"],
+              "query": [
+                {
+                  "key": "pageNum",
+                  "value": "1"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "20"
+                },
+                {
+                  "key": "merchantName",
+                  "value": ""
+                },
+                {
+                  "key": "status",
+                  "value": ""
+                },
+                {
+                  "key": "areaId",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "创建商户",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"merchantName\": \"一楼餐厅\",\n  \"merchantCode\": \"MERCHANT001\",\n  \"merchantType\": \"RESTAURANT\",\n  \"areaId\": 1001,\n  \"managerName\": \"李经理\",\n  \"contactPhone\": \"13800138000\",\n  \"businessStartHour\": \"07:00\",\n  \"businessEndHour\": \"21:00\",\n  \"settlementMethod\": \"DAILY\",\n  \"commissionRate\": 0.02\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/consume/merchants/add",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "consume", "merchants", "add"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "申请退款",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"consumeRecordId\": 1001,\n  \"accountId\": 1001,\n  \"userId\": 1001,\n  \"refundAmount\": 25.50,\n  \"refundReason\": \"菜品质量问题\",\n  \"refundType\": \"FULL\",\n  \"applicant\": \"张三\",\n  \"contactPhone\": \"13800138000\",\n  \"remark\": \"菜品有异物要求退款\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/consume/refunds/apply",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "consume", "refunds", "apply"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "审批退款",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/consume/refunds/{{refundId}}/approve?approved=true&approveReason=同意退款申请",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "consume", "refunds", "{{refundId}}", "approve"],
+              "query": [
+                {
+                  "key": "approved",
+                  "value": "true"
+                },
+                {
+                  "key": "approveReason",
+                  "value": "同意退款申请"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "消费统计概览",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/consume/statistics/overview?startDate=&endDate=",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "consume", "statistics", "overview"],
+              "query": [
+                {
+                  "key": "startDate",
+                  "value": ""
+                },
+                {
+                  "key": "endDate",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "用户消费排行榜",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/consume/statistics/users/ranking?startDate=&endDate=&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "consume", "statistics", "users", "ranking"],
+              "query": [
+                {
+                  "key": "startDate",
+                  "value": ""
+                },
+                {
+                  "key": "endDate",
+                  "value": ""
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "视频监控",
+      "item": [
+        {
+          "name": "查询视频设备",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/video/devices/query?pageNum=1&pageSize=20&deviceName=&status=&deviceType=",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "video", "devices", "query"],
+              "query": [
+                {
+                  "key": "pageNum",
+                  "value": "1"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "20"
+                },
+                {
+                  "key": "deviceName",
+                  "value": ""
+                },
+                {
+                  "key": "status",
+                  "value": ""
+                },
+                {
+                  "key": "deviceType",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "获取实时视频流",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/video/devices/{{deviceId}}/stream?quality=HD",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "video", "devices", "{{deviceId}}", "stream"],
+              "query": [
+                {
+                  "key": "quality",
+                  "value": "HD"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "查询录像记录",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/video/recordings/query?pageNum=1&pageSize=20&deviceId=&startTime=&endTime=",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "video", "recordings", "query"],
+              "query": [
+                {
+                  "key": "pageNum",
+                  "value": "1"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "20"
+                },
+                {
+                  "key": "deviceId",
+                  "value": ""
+                },
+                {
+                  "key": "startTime",
+                  "value": ""
+                },
+                {
+                  "key": "endTime",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "录像下载",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/video/recordings/{{recordingId}}/download",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "video", "recordings", "{{recordingId}}", "download"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "访客管理",
+      "item": [
+        {
+          "name": "查询访客预约",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/visitor/appointments/query?pageNum=1&pageSize=20&visitDate=&status=",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "visitor", "appointments", "query"],
+              "query": [
+                {
+                  "key": "pageNum",
+                  "value": "1"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "20"
+                },
+                {
+                  "key": "visitDate",
+                  "value": ""
+                },
+                {
+                  "key": "status",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "创建访客预约",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"visitorName\": \"李四\",\n  \"visitorPhone\": \"13800138000\",\n  \"visitorCompany\": \"ABC公司\",\n  \"visitDate\": \"2025-12-25\",\n  \"visitStartTime\": \"09:00\",\n  \"visitEndTime\": \"18:00\",\n  \"visitPurpose\": \"商务洽谈\",\n  \"intervieweeId\": 2001,\n  \"intervieweeName\": \"王经理\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/visitor/appointments/add",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "visitor", "appointments", "add"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "访客签到",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"appointmentId\": 1001,\n  \"checkinTime\": \"2025-12-25T09:15:00\",\n  \"actualVisitorName\": \"李四\",\n  \"idCardNumber\": \"110101199001011234\",\n  \"photo\": \"base64_photo\",\n  \"remark\": \"准时到达\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/visitor/checkin",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "visitor", "checkin"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "访客签出",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"appointmentId\": 1001,\n  \"checkoutTime\": \"2025-12-25T17:30:00\",\n  \"remark\": \"访问完成\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/visitor/checkout",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "visitor", "checkout"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "系统管理",
+      "item": [
+        {
+          "name": "查询系统配置",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/system/configs?configKey=&category=",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "system", "configs"],
+              "query": [
+                {
+                  "key": "configKey",
+                  "value": ""
+                },
+                {
+                  "key": "category",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "更新系统配置",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"configValue\": \"IOE-DREAM智能管理系统\",\n  \"description\": \"系统标题\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/system/configs/{{configId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "system", "configs", "{{configId}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "系统健康检查",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/system/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "system", "health"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "系统监控指标",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/system/metrics",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "system", "metrics"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

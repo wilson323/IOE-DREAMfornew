@@ -1,4 +1,4 @@
-﻿package net.lab1024.sa.attendance.performance;
+package net.lab1024.sa.attendance.performance;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -16,8 +16,11 @@ import org.springframework.test.context.ActiveProfiles;
  * @author IOE-DREAM架构团队
  * @since 2025-12-16
  */
-@SpringBootTest
-@ActiveProfiles("test")
+@SpringBootTest(classes = {
+    org.springframework.boot.autoconfigure.ImportAutoConfiguration.class,
+    org.springframework.context.annotation.Configuration.class
+})
+@ActiveProfiles("h2-test")
 @Disabled("性能压力测试需独立环境执行，且原实现接口已变更；保留占位以保证编译通过")
 @DisplayName("考勤系统性能压力测试（已禁用）")
 public class AttendancePerformanceTest {

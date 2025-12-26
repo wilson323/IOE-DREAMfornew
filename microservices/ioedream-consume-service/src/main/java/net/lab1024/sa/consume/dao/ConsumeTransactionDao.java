@@ -2,133 +2,144 @@ package net.lab1024.sa.consume.dao;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
-import net.lab1024.sa.consume.entity.ConsumeTransactionEntity;
+import net.lab1024.sa.common.domain.PageResult;
+import net.lab1024.sa.consume.domain.form.ConsumeTransactionQueryForm;
+import net.lab1024.sa.consume.domain.vo.ConsumeTransactionVO;
+import net.lab1024.sa.consume.domain.entity.ConsumeTransactionEntity;
 
 /**
- * 消费交易DAO接口
+ * 消费交易数据访问对象
  * <p>
- * 用于消费交易的数据访问操作
- * 严格遵循CLAUDE.md规范：
- * - 使用@Mapper注解标识
- * - 继承BaseMapper<Entity>
- * - 使用Dao后缀命名
+ * 遵循MyBatis-Plus规范，使用@Mapper注解而非@Repository
+ * 提供交易相关的数据访问操作
  * </p>
  *
  * @author IOE-DREAM Team
  * @version 1.0.0
- * @since 2025-01-30
+ * @since 2025-12-21
  */
-@org.apache.ibatis.annotations.Mapper
+@Mapper
 public interface ConsumeTransactionDao extends BaseMapper<ConsumeTransactionEntity> {
+
+    /**
+     * 分页查询交易记录
+     *
+     * @param queryForm 查询条件
+     * @return 分页结果
+     */
+    PageResult<ConsumeTransactionVO> queryPage(@Param("queryForm") ConsumeTransactionQueryForm queryForm);
+
+    /**
+     * 根据交易ID查询详细信息
+     *
+     * @param transactionId 交易ID
+     * @return 交易详情
+     */
+    ConsumeTransactionVO selectDetailById(@Param("transactionId") String transactionId);
+
+    /**
+     * 根据日期范围查询交易记录
+     *
+     * @param startTime 开始时间
+     * @param endTime 结束时间
+     * @param deviceId 设备ID（可选）
+     * @return 交易记录列表
+     */
+    List<ConsumeTransactionVO> selectByDateRange(@Param("startTime") LocalDateTime startTime,
+                                               @Param("endTime") LocalDateTime endTime,
+                                               @Param("deviceId") String deviceId);
+
+    /**
+     * 获取交易统计信息
+     *
+     * @param params 查询参数（包含userId、deviceId、startDate、endDate等）
+     * @return 统计信息
+     */
+    Map<String, Object> getStatistics(@Param("params") Map<String, Object> params);
+
+    /**
+     * 获取交易趋势数据
+     *
+     * @param params 查询参数（包含userId、deviceId、startDate、endDate等）
+     * @return 趋势数据
+     */
+    Map<String, Object> getTransactionTrend(@Param("params") Map<String, Object> params);
+
+    /**
+     * 获取账户交易统计信息
+     *
+     * @param accountId 账户ID
+     * @return 统计信息
+     */
+    Map<String, Object> getAccountStatistics(@Param("accountId") Long accountId);
+
+    /**
+     * 更新交易状态
+     *
+     * @param transactionId 交易ID
+     * @param status 新状态
+     * @return 更新行数
+     */
+    int updateStatus(@Param("transactionId") String transactionId, @Param("status") String status);
 
     /**
      * 根据用户ID查询交易记录
      *
      * @param userId 用户ID
-     * @param startTime 开始时间
-     * @param endTime 结束时间
+     * @param limit 限制条数
      * @return 交易记录列表
      */
-    List<ConsumeTransactionEntity> selectByUserId(@Param("userId") String userId,
-            @Param("startTime") LocalDateTime startTime,
-            @Param("endTime") LocalDateTime endTime);
+    List<ConsumeTransactionVO> selectByUserId(@Param("userId") Long userId, @Param("limit") Integer limit);
 
     /**
-     * 根据账户ID查询交易记录
+     * 根据设备ID查询交易记录
      *
-     * @param accountId 账户ID
-     * @param startTime 开始时间
-     * @param endTime 结束时间
+     * @param deviceId 设备ID
+     * @param limit 限制条数
      * @return 交易记录列表
      */
-    List<ConsumeTransactionEntity> selectByAccountId(@Param("accountId") String accountId,
-            @Param("startTime") LocalDateTime startTime,
-            @Param("endTime") LocalDateTime endTime);
+    List<ConsumeTransactionVO> selectByDeviceId(@Param("deviceId") String deviceId, @Param("limit") Integer limit);
 
     /**
-     * 根据交易流水号查询交易记录
+     * 获取指定日期的交易汇总信息
      *
-     * @param transactionNo 交易流水号
-     * @return 交易记录
+     * @param date 日期
+     * @return 汇总信息
      */
-    ConsumeTransactionEntity selectByTransactionNo(@Param("transactionNo") String transactionNo);
+    Map<String, Object> getTransactionSummary(@Param("date") String date);
 
     /**
-     * 根据区域ID查询交易记录
+     * 查询异常交易记录
      *
-     * @param areaId 区域ID
-     * @param startTime 开始时间
-     * @param endTime 结束时间
-     * @return 交易记录列表
+     * @param pageNum 页码
+     * @param pageSize 页大小
+     * @return 异常交易记录
      */
-    List<ConsumeTransactionEntity> selectByAreaId(@Param("areaId") String areaId,
-            @Param("startTime") LocalDateTime startTime,
-            @Param("endTime") LocalDateTime endTime);
-
+    PageResult<ConsumeTransactionVO> selectAbnormalTransactions(@Param("pageNum") Integer pageNum,
+                                                              @Param("pageSize") Integer pageSize);
     /**
-     * 根据时间范围查询交易记录
+     * 统计指定日期范围内的交易数量
      *
      * @param startTime 开始时间
      * @param endTime 结束时间
-     * @return 交易记录列表
+     * @return 交易数量
      */
-    List<ConsumeTransactionEntity> selectByTimeRange(
-            @Param("startTime") LocalDateTime startTime,
-            @Param("endTime") LocalDateTime endTime);
+    int countByDateRange(@Param("startTime") LocalDateTime startTime, @Param("endTime") LocalDateTime endTime);
 
     /**
-     * 根据用户ID和时间范围查询交易记录
+     * 汇总指定日期范围内的交易金额
      *
-     * @param userId 用户ID
      * @param startTime 开始时间
      * @param endTime 结束时间
-     * @return 交易记录列表
+     * @return 交易总金额
      */
-    List<ConsumeTransactionEntity> selectByUserIdAndTimeRange(
-            @Param("userId") String userId,
-            @Param("startTime") LocalDateTime startTime,
-            @Param("endTime") LocalDateTime endTime);
-
-    /**
-     * 分页查询交易记录
-     * <p>
-     * 支持多条件组合查询：
-     * - 用户ID筛选
-     * - 区域ID筛选
-     * - 时间范围筛选
-     * - 消费模式筛选
-     * - 交易状态筛选
-     * </p>
-	     *
-	     * @param page 分页参数
-	     * @param userId 用户ID（可选）
-	     * @param transactionNo 交易流水号（可选）
-	     * @param deviceId 设备ID（可选）
-	     * @param areaId 区域ID（可选）
-	     * @param startTime 开始时间（可选）
-	     * @param endTime 结束时间（可选）
-	     * @param consumeMode 消费模式（可选）
-	     * @param status 交易状态（可选）
-	     * @return 分页结果
-	     */
-	    IPage<ConsumeTransactionEntity> queryTransactions(
-	            Page<ConsumeTransactionEntity> page,
-	            @Param("userId") Long userId,
-	            @Param("transactionNo") String transactionNo,
-	            @Param("deviceId") Long deviceId,
-	            @Param("areaId") String areaId,
-	            @Param("startTime") LocalDateTime startTime,
-	            @Param("endTime") LocalDateTime endTime,
-	            @Param("consumeMode") String consumeMode,
-	            @Param("status") String status);
+    java.math.BigDecimal sumAmountByDateRange(@Param("startTime") LocalDateTime startTime, @Param("endTime") LocalDateTime endTime);
 }
-
-
 

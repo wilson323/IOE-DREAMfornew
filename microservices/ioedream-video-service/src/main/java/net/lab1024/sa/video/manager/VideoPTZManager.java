@@ -1,14 +1,14 @@
 package net.lab1024.sa.video.manager;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
-import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -90,9 +90,9 @@ public class VideoPTZManager {
     /**
      * 移动云台
      *
-     * @param deviceId 设备ID
+     * @param deviceId  设备ID
      * @param channelNo 通道号
-     * @param command 控制命令
+     * @param command   控制命令
      * @param moveSpeed 移动速度
      * @return 是否成功移动
      */
@@ -122,7 +122,7 @@ public class VideoPTZManager {
     /**
      * 变倍控制
      *
-     * @param deviceId 设备ID
+     * @param deviceId  设备ID
      * @param channelNo 通道号
      * @param zoomRatio 变倍倍数
      * @return 是否成功变倍
@@ -153,10 +153,10 @@ public class VideoPTZManager {
     /**
      * 设置预置位
      *
-     * @param deviceId 设备ID
-     * @param channelNo 通道号
+     * @param deviceId     设备ID
+     * @param channelNo    通道号
      * @param presetNumber 预置位编号
-     * @param presetName 预置位名称
+     * @param presetName   预置位名称
      * @return 是否成功设置
      */
     public boolean setPreset(Long deviceId, Integer channelNo, Integer presetNumber, String presetName) {
@@ -201,8 +201,8 @@ public class VideoPTZManager {
     /**
      * 调用预置位
      *
-     * @param deviceId 设备ID
-     * @param channelNo 通道号
+     * @param deviceId     设备ID
+     * @param channelNo    通道号
      * @param presetNumber 预置位编号
      * @return 是否成功调用
      */
@@ -232,7 +232,7 @@ public class VideoPTZManager {
     /**
      * 删除预置位
      *
-     * @param deviceId 设备ID
+     * @param deviceId     设备ID
      * @param presetNumber 预置位编号
      * @return 是否成功删除
      */
@@ -264,7 +264,7 @@ public class VideoPTZManager {
     /**
      * 获取设备预置位列表
      *
-     * @param deviceId 设备ID
+     * @param deviceId  设备ID
      * @param channelNo 通道号
      * @return 预置位列表
      */
@@ -275,7 +275,7 @@ public class VideoPTZManager {
 
             if (devicePresets == null) {
                 List<VideoPTZEntity> presets = videoPTZDao.selectPresetsByDevice(deviceId);
-                devicePresets = new ConcurrentHashMap<>();
+                devicePresets = new HashMap<>();
                 for (VideoPTZEntity preset : presets) {
                     devicePresets.put(preset.getPresetNumber(), preset);
                 }
@@ -293,8 +293,8 @@ public class VideoPTZManager {
     /**
      * 开始巡航
      *
-     * @param deviceId 设备ID
-     * @param channelNo 通道号
+     * @param deviceId     设备ID
+     * @param channelNo    通道号
      * @param cruisePathId 巡航路径ID
      * @return 是否成功开始
      */
@@ -324,7 +324,7 @@ public class VideoPTZManager {
     /**
      * 停止巡航
      *
-     * @param deviceId 设备ID
+     * @param deviceId  设备ID
      * @param channelNo 通道号
      * @return 是否成功停止
      */
@@ -351,15 +351,15 @@ public class VideoPTZManager {
     /**
      * 更新云台当前位置
      *
-     * @param deviceId 设备ID
+     * @param deviceId  设备ID
      * @param channelNo 通道号
-     * @param panAngle 水平角度
+     * @param panAngle  水平角度
      * @param tiltAngle 垂直角度
      * @param zoomRatio 变倍倍数
      * @return 是否成功更新
      */
     public boolean updateCurrentPosition(Long deviceId, Integer channelNo,
-                                         Double panAngle, Double tiltAngle, Double zoomRatio) {
+            Double panAngle, Double tiltAngle, Double zoomRatio) {
         try {
             int result = videoPTZDao.updateCurrentPosition(deviceId, channelNo, panAngle, tiltAngle, zoomRatio);
 
@@ -392,7 +392,7 @@ public class VideoPTZManager {
      * 获取云台控制统计
      *
      * @param deviceId 设备ID
-     * @param hours 统计时间范围（小时）
+     * @param hours    统计时间范围（小时）
      * @return 控制频率统计
      */
     public Map<String, Object> getPTZStatistics(Long deviceId, Integer hours) {
@@ -479,7 +479,7 @@ public class VideoPTZManager {
      * 完成执行
      *
      * @param controlId 控制ID
-     * @param success 是否成功
+     * @param success   是否成功
      */
     private void completeExecution(Long controlId, boolean success) {
         try {
@@ -498,12 +498,11 @@ public class VideoPTZManager {
             // 更新缓存位置
             if (success && control.getControlType() == 1) {
                 updateCurrentPosition(
-                    control.getDeviceId(),
-                    control.getChannelNo(),
-                    control.getPanAngle(),
-                    control.getTiltAngle(),
-                    control.getZoomRatio()
-                );
+                        control.getDeviceId(),
+                        control.getChannelNo(),
+                        control.getPanAngle(),
+                        control.getTiltAngle(),
+                        control.getZoomRatio());
             }
 
             log.info("[云台控制] 控制{}，controlId={}, command={}, duration={}ms",
@@ -565,7 +564,7 @@ public class VideoPTZManager {
     /**
      * 生成设备缓存键
      *
-     * @param deviceId 设备ID
+     * @param deviceId  设备ID
      * @param channelNo 通道号
      * @return 缓存键
      */
@@ -639,4 +638,3 @@ public class VideoPTZManager {
         }
     }
 }
-

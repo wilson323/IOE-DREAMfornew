@@ -101,3 +101,4 @@ public class ResolutionStatistics {
      */
     private Double averageQualityScore;
 }
+

@@ -2,7 +2,7 @@ package net.lab1024.sa.video.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.common.openapi.domain.response.PageResult;
+import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.video.domain.form.VideoObjectDetectionForm;
 import net.lab1024.sa.video.domain.vo.VideoObjectDetectionVO;
 import net.lab1024.sa.video.entity.VideoObjectDetectionEntity;

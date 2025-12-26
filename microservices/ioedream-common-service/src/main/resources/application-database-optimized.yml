@@ -1,4 +1,4 @@
-# =====================================================
+﻿# =====================================================
 # IOE-DREAM 数据库性能优化配置
 # 适用于Spring Boot 3.5.8 + MyBatis-Plus 3.5.15
 # =====================================================
@@ -237,9 +237,9 @@ management:
   metrics:
     distribution:
       percentiles-histogram:
-        http.server.requests: true
+        "[http.server.requests]": true
       percentiles:
-        http.server.requests: 0.5,0.9,0.95,0.99
+        "[http.server.requests]": 0.5,0.9,0.95,0.99
 
 # ===========================================
 # 日志配置
@@ -247,12 +247,12 @@ management:
 logging:
   level:
     # Druid SQL日志
-    druid.sql.Statement: DEBUG
-    druid.sql.ResultSet: DEBUG
+    "druid.sql.Statement": DEBUG
+    "druid.sql.ResultSet": DEBUG
     # MyBatis SQL日志
     net.lab1024.sa.**.dao: DEBUG
     # 数据库连接池日志
-    com.alibaba.druid: INFO
+    "com.alibaba.druid": INFO
   pattern:
     # 控制台日志格式
     console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level [%X{traceId:-}] %logger{36} - %msg%n"
@@ -278,3 +278,4 @@ server:
     connection-timeout: 20000
     # 最大处理队列长度
     accept-count: 100
+

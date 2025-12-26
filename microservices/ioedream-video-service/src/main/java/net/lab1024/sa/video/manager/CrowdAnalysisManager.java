@@ -1,11 +1,13 @@
 package net.lab1024.sa.video.manager;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import lombok.extern.slf4j.Slf4j;
+
 import net.lab1024.sa.video.sdk.AiSdkProvider;
 
 /**
@@ -55,7 +57,7 @@ public class CrowdAnalysisManager {
      * 4. 判断拥挤等级
      * </p>
      *
-     * @param cameraId 摄像头ID
+     * @param cameraId  摄像头ID
      * @param frameData 视频帧数据
      * @return 人流密度结果
      */
@@ -111,8 +113,8 @@ public class CrowdAnalysisManager {
      * </p>
      *
      * @param cameraId 摄像头ID
-     * @param width 宽度
-     * @param height 高度
+     * @param width    宽度
+     * @param height   高度
      * @param gridSize 网格大小
      * @return 热力图数据
      */
@@ -166,8 +168,8 @@ public class CrowdAnalysisManager {
      * 添加轨迹点（由视频分析服务调用）
      *
      * @param cameraId 摄像头ID
-     * @param x X坐标
-     * @param y Y坐标
+     * @param x        X坐标
+     * @param y        Y坐标
      */
     public void addTrajectoryPoint(String cameraId, int x, int y) {
         TrajectoryHistory history = trajectoryHistories.computeIfAbsent(cameraId, k -> new TrajectoryHistory());
@@ -207,7 +209,7 @@ public class CrowdAnalysisManager {
      * 获取人流趋势
      *
      * @param cameraId 摄像头ID
-     * @param minutes 时间范围（分钟）
+     * @param minutes  时间范围（分钟）
      * @return 趋势数据
      */
     public Map<LocalDateTime, Integer> getFlowTrend(String cameraId, int minutes) {
@@ -220,7 +222,7 @@ public class CrowdAnalysisManager {
 
     // 内部类：密度历史记录
     private static class DensityHistory {
-        private final Map<LocalDateTime, Integer> records = new ConcurrentHashMap<>();
+        private final Map<LocalDateTime, Integer> records = new HashMap<>();
 
         void addRecord(int count, LocalDateTime time) {
             records.put(time, count);
@@ -250,7 +252,7 @@ public class CrowdAnalysisManager {
 
     // 内部类：轨迹历史记录
     private static class TrajectoryHistory {
-        private final Map<String, TrajectoryPoint> trajectoryPoints = new ConcurrentHashMap<>();
+        private final Map<String, TrajectoryPoint> trajectoryPoints = new HashMap<>();
 
         void addPoint(int x, int y, LocalDateTime time) {
             String key = x + "," + y;
@@ -312,8 +314,17 @@ public class CrowdAnalysisManager {
     }
 
     // 记录类型
-    public enum CrowdLevel { NORMAL, WARNING, ALARM }
-    public record DensityResult(String cameraId, int personCount, double density, CrowdLevel level, LocalDateTime timestamp) {}
-    public record HeatmapData(String cameraId, int[][] grid, int gridSize, LocalDateTime timestamp) {}
-    public record CrowdWarning(boolean warning, CrowdLevel level, int personCount, String message) {}
+    public enum CrowdLevel {
+        NORMAL, WARNING, ALARM
+    }
+
+    public record DensityResult(String cameraId, int personCount, double density, CrowdLevel level,
+            LocalDateTime timestamp) {
+    }
+
+    public record HeatmapData(String cameraId, int[][] grid, int gridSize, LocalDateTime timestamp) {
+    }
+
+    public record CrowdWarning(boolean warning, CrowdLevel level, int personCount, String message) {
+    }
 }

@@ -1,7 +1,6 @@
 package net.lab1024.sa.oa.workflow.config;
 
 import lombok.extern.slf4j.Slf4j;
-
 /**
  * Flowable事件配置 - 占位符
  * <p>
@@ -18,8 +17,8 @@ import lombok.extern.slf4j.Slf4j;
  * @version 2.0.0
  * @since 2025-01-17
  */
-@Slf4j
 // @Configuration - 待实现后启用
+@Slf4j
 public class FlowableEventConfiguration {
 
     // TODO: 完整实现需要：

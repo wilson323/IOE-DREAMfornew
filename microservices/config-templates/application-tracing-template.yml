@@ -1,4 +1,4 @@
-# ============================================================
+﻿# ============================================================
 # IOE-DREAM 分布式链路追踪配置模板
 #
 # 功能：企业级分布式链路追踪，提供完整的服务调用链监控
@@ -155,11 +155,11 @@ logging:
   # 日志级别配置
   level:
     # Sleuth相关日志级别
-    org.springframework.cloud.sleuth: ${SLEUTH_LOG_LEVEL:INFO}
+    "org.springframework.cloud.sleuth": ${SLEUTH_LOG_LEVEL:INFO}
     # Zipkin相关日志级别
     brave: ${BRAVE_LOG_LEVEL:INFO}
     # 业务追踪日志级别
-    net.lab1024.sa.tracing: ${BUSINESS_TRACING_LOG_LEVEL:INFO}
+    "net.lab1024.sa.tracing": ${BUSINESS_TRACING_LOG_LEVEL:INFO}
 
   # 日志模式配置
   pattern:

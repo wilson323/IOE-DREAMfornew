@@ -1,11 +1,16 @@
 package net.lab1024.sa.common.system.cache.controller;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,12 +24,9 @@ import io.micrometer.observation.annotation.Observed;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
-import org.springframework.data.redis.core.RedisTemplate;
-
 import jakarta.annotation.Resource;
-import lombok.extern.slf4j.Slf4j;
+// CacheNamespace已迁移到microservices-common-cache模块
+// 需要添加依赖：microservices-common-cache
 import net.lab1024.sa.common.cache.CacheNamespace;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.exception.BusinessException;
@@ -46,12 +48,13 @@ import net.lab1024.sa.common.exception.SystemException;
  * @version 1.0.0
  * @since 2025-12-02
  */
-@Slf4j
 @RestController
 @Tag(name = "缓存管理", description = "缓存管理相关接口")
 @RequestMapping("/api/v1/system/cache")
-@SuppressWarnings({"null"})
+@SuppressWarnings({ "null" })
+@Slf4j
 public class CacheController {
+
 
     @Resource
     private CacheManager cacheManager;
@@ -151,7 +154,7 @@ public class CacheController {
             // 1. 转换命名空间字符串为枚举
             CacheNamespace cacheNamespace = CacheNamespace.valueOfPrefix(namespace);
             if (cacheNamespace == null) {
-                return ResponseDTO.errorParam("无效的缓存命名空间: " + namespace);
+                return ResponseDTO.paramError("无效的缓存命名空间: " + namespace);
             }
 
             // 2. 清理命名空间缓存（使用Spring Cache CacheManager）
@@ -161,8 +164,8 @@ public class CacheController {
                 cache.clear();
             }
 
-            // 同时清理Redis中的缓存键（使用命名空间前缀）
-            String pattern = cacheNamespace.getPrefix() + ":*";
+            // 同时清理Redis中的缓存键（使用完整命名空间前缀）
+            String pattern = cacheNamespace.getFullPrefix() + "*";
             Set<String> keys = redisTemplate.keys(pattern);
             if (keys != null && !keys.isEmpty()) {
                 redisTemplate.delete(keys);
@@ -197,7 +200,7 @@ public class CacheController {
             // 1. 转换命名空间字符串为枚举
             CacheNamespace cacheNamespace = CacheNamespace.valueOfPrefix(namespace);
             if (cacheNamespace == null) {
-                return ResponseDTO.errorParam("无效的缓存命名空间: " + namespace);
+                return ResponseDTO.paramError("无效的缓存命名空间: " + namespace);
             }
 
             // 2. 删除缓存键（使用Spring Cache CacheManager）
@@ -249,7 +252,7 @@ public class CacheController {
             // 1. 转换命名空间字符串为枚举
             CacheNamespace cacheNamespace = CacheNamespace.valueOfPrefix(namespace);
             if (cacheNamespace == null) {
-                return ResponseDTO.errorParam("无效的缓存命名空间: " + namespace);
+                return ResponseDTO.paramError("无效的缓存命名空间: " + namespace);
             }
 
             // 2. 获取缓存值（使用Spring Cache CacheManager）
@@ -270,7 +273,7 @@ public class CacheController {
             }
 
             if (value == null) {
-                return ResponseDTO.errorNotFound("缓存键不存在或已过期");
+                return ResponseDTO.error("NOT_FOUND", "缓存键不存在或已过期");
             }
 
             log.debug("[缓存获取] 获取缓存值成功，namespace：{}，key：{}", namespace, key);
@@ -304,7 +307,7 @@ public class CacheController {
             // 1. 转换命名空间字符串为枚举
             CacheNamespace cacheNamespace = CacheNamespace.valueOfPrefix(namespace);
             if (cacheNamespace == null) {
-                return ResponseDTO.errorParam("无效的缓存命名空间: " + namespace);
+                return ResponseDTO.paramError("无效的缓存命名空间: " + namespace);
             }
 
             // 2. 设置缓存值（使用Spring Cache CacheManager）
@@ -356,8 +359,8 @@ public class CacheController {
                         cache.clear();
                     }
 
-                    // 同时清理Redis中的缓存键
-                    String pattern = namespace.getPrefix() + ":*";
+                    // 同时清理Redis中的缓存键（使用完整命名空间前缀）
+                    String pattern = namespace.getFullPrefix() + "*";
                     Set<String> keys = redisTemplate.keys(pattern);
                     if (keys != null && !keys.isEmpty()) {
                         redisTemplate.delete(keys);
@@ -408,7 +411,7 @@ public class CacheController {
             // 1. 转换命名空间字符串为枚举
             CacheNamespace cacheNamespace = CacheNamespace.valueOfPrefix(namespace);
             if (cacheNamespace == null) {
-                return ResponseDTO.errorParam("无效的缓存命名空间: " + namespace);
+                return ResponseDTO.paramError("无效的缓存命名空间: " + namespace);
             }
 
             // 2. 获取缓存键列表（使用模式匹配）
@@ -446,7 +449,7 @@ public class CacheController {
             // 1. 转换命名空间字符串为枚举
             CacheNamespace cacheNamespace = CacheNamespace.valueOfPrefix(namespace);
             if (cacheNamespace == null) {
-                return ResponseDTO.errorParam("无效的缓存命名空间: " + namespace);
+                return ResponseDTO.paramError("无效的缓存命名空间: " + namespace);
             }
 
             // 2. 缓存预热（使用Spring Cache CacheManager）
@@ -455,9 +458,9 @@ public class CacheController {
             Map<String, Object> warmupData = new HashMap<>();
             // 实际实现应该根据命名空间加载对应的数据
             // if (cacheNamespace == CacheNamespace.USER) {
-            //     warmupData = loadUserData();
+            // warmupData = loadUserData();
             // } else if (cacheNamespace == CacheNamespace.MENU) {
-            //     warmupData = loadMenuData();
+            // warmupData = loadMenuData();
             // }
 
             // 使用Spring Cache CacheManager进行缓存预热
@@ -494,4 +497,3 @@ public class CacheController {
         }
     }
 }
-

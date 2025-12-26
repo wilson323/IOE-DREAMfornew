@@ -1,0 +1,229 @@
+# ============================================================================
+# Druid连接池最佳实践配置模板
+# ============================================================================
+# 版本: 1.0.0
+# 创建时间: 2025-12-26
+# 用途: IOE-DREAM项目统一Druid连接池配置模板
+# ============================================================================
+
+spring:
+  datasource:
+    # ==================== 数据源类型配置 ====================
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+    # ==================== 数据库连接配置 ====================
+    url: jdbc:mysql://${MYSQL_HOST:127.0.0.1}:${MYSQL_PORT:3306}/${MYSQL_DATABASE:ioedream}?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: ${MYSQL_USERNAME:root}
+    password: ${MYSQL_PASSWORD:ENC(AES256:...)}
+
+    # ==================== Druid连接池基本配置 ====================
+    druid:
+      # 初始连接数（应用启动时创建的连接数）
+      initial-size: ${DRUID_INITIAL_SIZE:5}
+
+      # 最小空闲连接数（连接池中保持的最小空闲连接数）
+      min-idle: ${DRUID_MIN_IDLE:5}
+
+      # 最大活跃连接数（连接池中同时能活跃的最大连接数）
+      max-active: ${DRUID_MAX_ACTIVE:20}
+
+      # 获取连接最大等待时间（毫秒）
+      # 超过此时间未获取到连接将抛出异常
+      max-wait: ${DRUID_MAX_WAIT:60000}
+
+      # ==================== 连接有效性检测配置 ====================
+      # 验证连接的SQL语句
+      validation-query: ${DRUID_VALIDATION_QUERY:SELECT 1}
+
+      # 空闲时检测连接有效性（推荐：true）
+      # 从连接池获取连接时，如果连接空闲时间超过timeBetweenEvictionRunsMillis，会检测连接是否有效
+      test-while-idle: true
+
+      # 获取连接时检测（不推荐：false，影响性能）
+      # 从连接池获取连接时检测连接是否有效
+      test-on-borrow: false
+
+      # 归还连接时检测（不推荐：false，影响性能）
+      # 连接归还到连接池时检测连接是否有效
+      test-on-return: false
+
+      # ==================== 连接回收配置 ====================
+      # 检测空闲连接间隔时间（毫秒）
+      # 配置间隔多久进行一次检测，检测需要关闭的空闲连接
+      time-between-eviction-runs-millis: ${DRUID_TIME_BETWEEN_EVICTION_RUNS_MILLIS:60000}
+
+      # 连接最小空闲时间（毫秒）
+      # 连接在池中最小空闲时间，超过此时间将被回收
+      min-evictable-idle-time-millis: ${DRUID_MIN_EVICTABLE_IDLE_TIME_MILLIS:300000}
+
+      # ==================== 监控统计配置 ====================
+      # Druid StatViewServlet配置（监控页面）
+      stat-view-servlet:
+        # 启用StatViewServlet（推荐：true，生产环境建议通过环境变量控制）
+        enabled: ${DRUID_STAT_ENABLED:true}
+
+        # 监控页面访问路径
+        url-pattern: /druid/*
+
+        # 允许重置统计数据（推荐：true，方便调试）
+        reset-enable: ${DRUID_STAT_RESET_ENABLED:true}
+
+        # 监控页面登录用户名
+        login-username: ${DRUID_STAT_USERNAME:admin}
+
+        # 监控页面登录密码（生产环境必须配置）
+        login-password: ${DRUID_STAT_PASSWORD:}
+
+        # 允许访问监控页面的IP地址（白名单，生产环境建议配置）
+        # allow: 127.0.0.1,192.168.1.0/24
+
+        # 拒绝访问监控页面的IP地址（黑名单）
+        # deny: 192.168.1.100
+
+      # ==================== Web监控配置 ====================
+      # WebStatFilter配置（Web应用监控）
+      web-stat-filter:
+        # 启用WebStatFilter（推荐：true）
+        enabled: ${DRUID_WEB_STAT_ENABLED:true}
+
+        # 统计所有URL
+        url-pattern: /*
+
+        # 排除静态资源（不统计这些URL）
+        exclusions: "*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*,/actuator/*"
+
+        # 是否开启session统计（推荐：false，性能考虑）
+        session-stat-enable: false
+
+        # session统计的最大数量（默认：1000）
+        # session-stat-max-count: 1000
+
+      # ==================== 慢SQL记录配置 ====================
+      filter:
+        # StatFilter配置（SQL统计）
+        stat:
+          # 启用StatFilter（推荐：true）
+          enabled: ${DRUID_STAT_FILTER_ENABLED:true}
+
+          # 记录慢SQL（推荐：true）
+          log-slow-sql: ${DRUID_LOG_SLOW_SQL:true}
+
+          # 慢SQL阈值（毫秒）
+          # 执行时间超过此值的SQL将被记录为慢SQL
+          slow-sql-millis: ${DRUID_SLOW_SQL_MILLIS:1000}
+
+          # 合并相同SQL（推荐：true）
+          # 相同SQL（参数不同）合并统计，减少日志输出
+          merge-sql: ${DRUID_MERGE_SQL:true}
+
+          # SQL执行日志输出到日志系统
+          # statement-log-enabled: false
+          # statement-executable-sql-log-enable: false
+
+        # WallFilter配置（SQL防火墙）
+        wall:
+          # 启用WallFilter（推荐：true）
+          enabled: ${DRUID_WALL_FILTER_ENABLED:true}
+
+          # 配置文件路径
+          config: ${DRUID_WALL_CONFIG_FILE:classpath:druid-wall-config.properties}
+
+          # 允许批量SQL（推荐：true，很多场景需要）
+          multi-statement-allow: true
+
+          # 允许SQL注释（推荐：true）
+          comment-allow: true
+
+          # 检测SQL注入（推荐：true）
+          # select-allow: true
+          # update-allow: true
+          # insert-allow: true
+          # delete-allow: true
+
+        # Log4j2Filter配置（SQL日志输出到Log4j2）
+        # log4j2:
+        #   enabled: ${DRUID_LOG4J2_FILTER_ENABLED:false}
+        #   statement-log-enabled: true
+        #   statement-executable-sql-log-enable: true
+        #   statement-create-after-log-enabled: false
+        #   statement-close-after-log-enabled: false
+        #   statement-parameter-set-log-enabled: false
+        #   statement-parameter-clear-log-enabled: false
+        #   statement-batch-execute-after-log-enabled: true
+        #   result-set-log-enabled: false
+        #   result-set-close-after-log-enabled: false
+        #   result-set-open-after-log-enabled: false
+
+      # ==================== 预防SQL注入配置 ====================
+      # 持久化连接池（避免重启后连接失效）
+      # keep-alive: true
+
+      # 从连接池获取连接后执行SQL（如：SET time_zone = '+08:00'）
+      # connection-init-sql: SET time_zone = '+08:00'
+
+      # 连接属性（如：字符集、时区等）
+      # connection-properties: charset=utf8;timezone=Asia/Shanghai
+
+      # ==================== 性能优化配置 ====================
+      # 是否缓存preparedStatement（PSCache）
+      # PSCache对支持游标的数据库性能提升巨大，如Oracle
+      # MySQL下建议关闭（5.7+版本已优化）
+      pool-prepared-statements: false
+
+      # PSCache最大值（当pool-prepared-statements=true时生效）
+      # max-pool-prepared-statement-per-connection-size: 20
+
+      # 是否使用proxyDriver（不推荐：false，有性能损耗）
+      # use-global-data-source-stat: true
+
+      # 连接泄漏检测（推荐：开启，用于检测连接未关闭的情况）
+      # remove-abandoned: true
+      # remove-abandoned-timeout: 1800
+      # log-abandoned: true
+
+# ============================================================================
+# 环境变量配置说明
+# ============================================================================
+#
+# 【基础连接配置】
+# MYSQL_HOST           - MySQL服务器地址（默认：127.0.0.1）
+# MYSQL_PORT           - MySQL端口（默认：3306）
+# MYSQL_DATABASE       - 数据库名称（默认：ioedream）
+# MYSQL_USERNAME       - 数据库用户名（默认：root）
+# MYSQL_PASSWORD       - 数据库密码（必须配置，支持Jasypt加密）
+#
+# 【连接池参数配置】
+# DRUID_INITIAL_SIZE                    - 初始连接数（默认：5）
+# DRUID_MIN_IDLE                        - 最小空闲连接数（默认：5）
+# DRUID_MAX_ACTIVE                      - 最大活跃连接数（默认：20）
+# DRUID_MAX_WAIT                        - 获取连接最大等待时间ms（默认：60000）
+# DRUID_VALIDATION_QUERY                - 连接验证SQL（默认：SELECT 1）
+# DRUID_TIME_BETWEEN_EVICTION_RUNS_MILLIS  - 检测间隔ms（默认：60000）
+# DRUID_MIN_EVICTABLE_IDLE_TIME_MILLIS     - 最小空闲时间ms（默认：300000）
+#
+# 【监控配置】
+# DRUID_STAT_ENABLED                    - 启用监控页面（默认：true）
+# DRUID_STAT_RESET_ENABLED              - 允许重置统计（默认：true）
+# DRUID_STAT_USERNAME                   - 监控页面用户名（默认：admin）
+# DRUID_STAT_PASSWORD                   - 监控页面密码（生产环境必须配置）
+# DRUID_WEB_STAT_ENABLED                - 启用Web统计（默认：true）
+#
+# 【过滤器配置】
+# DRUID_STAT_FILTER_ENABLED             - 启用统计过滤器（默认：true）
+# DRUID_LOG_SLOW_SQL                    - 记录慢SQL（默认：true）
+# DRUID_SLOW_SQL_MILLIS                 - 慢SQL阈值ms（默认：1000）
+# DRUID_MERGE_SQL                       - 合并相同SQL（默认：true）
+# DRUID_WALL_FILTER_ENABLED             - 启用SQL防火墙（默认：true）
+#
+# ============================================================================
+# 使用说明
+# ============================================================================
+#
+# 1. 复制本模板到微服务的 src/main/resources/application.yml
+# 2. 根据微服务特点调整配置参数
+# 3. 生产环境必须配置环境变量覆盖敏感信息
+# 4. 访问监控页面: http://localhost:{port}/druid/index.html
+# 5. 查看慢SQL: 日志中搜索 [慢SQL]
+#
+# ============================================================================

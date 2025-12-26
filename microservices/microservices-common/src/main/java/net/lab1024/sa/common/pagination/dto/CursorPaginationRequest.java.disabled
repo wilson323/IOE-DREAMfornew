@@ -1,0 +1,248 @@
+package net.lab1024.sa.common.pagination.dto;
+
+import lombok.Data;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+
+/**
+ * IOE-DREAM 游标分页请求DTO
+ * <p>
+ * 游标分页请求参数，支持游标查询和传统分页降级
+ * 提供灵活的分页查询接口，兼容多种分页场景
+ * </p>
+ *
+ * @author IOE-DREAM架构团队
+ * @version 1.0.0
+ * @since 2025-12-20
+ */
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class CursorPaginationRequest {
+
+    /**
+     * 游标标识
+     * <p>
+     * 首次查询时为null或空字符串
+     * 后续查询时使用上一页返回的nextCursor
+     * </p>
+     */
+    private String cursor;
+
+    /**
+     * 每页大小
+     * <p>
+     * 限制单页返回的记录数量
+     * 建议范围：10-100
+     * </p>
+     */
+    @NotNull(message = "每页大小不能为空")
+    @Min(value = 1, message = "每页大小至少为1")
+    @Max(value = 1000, message = "每页大小不能超过1000")
+    private Integer size;
+
+    /**
+     * 查询条件
+     * <p>
+     * 额外的SQL查询条件
+     * 例如：status = 1 AND deleted_flag = 0
+     * </p>
+     */
+    private String condition;
+
+    /**
+     * 排序条件
+     * <p>
+     * 用于传统分页降级时的排序
+     * 例如：ORDER BY create_time DESC, id DESC
+     * </p>
+     */
+    private String orderBy;
+
+    /**
+     * 是否包含总数统计
+     * <p>
+     * true: 查询总数（可能影响性能）
+     * false: 不查询总数（性能更好）
+     * </p>
+     */
+    @Builder.Default
+    private Boolean includeTotal = false;
+
+    /**
+     * 查询类型
+     * <p>
+     * cursor: 游标分页
+     * traditional: 传统分页
+     * auto: 自动选择（推荐）
+     * </p>
+     */
+    @Builder.Default
+    private String queryType = "auto";
+
+    /**
+     * 超时时间（秒）
+     */
+    @Builder.Default
+    private Integer timeoutSeconds = 30;
+
+    /**
+     * 创建首次分页请求
+     *
+     * @param size 每页大小
+     * @return 分页请求
+     */
+    public static CursorPaginationRequest first(int size) {
+        return CursorPaginationRequest.builder()
+                .cursor(null)
+                .size(size)
+                .queryType("auto")
+                .includeTotal(false)
+                .build();
+    }
+
+    /**
+     * 创建下一页请求
+     *
+     * @param nextCursor 下一页游标
+     * @param size 每页大小
+     * @return 分页请求
+     */
+    public static CursorPaginationRequest next(String nextCursor, int size) {
+        return CursorPaginationRequest.builder()
+                .cursor(nextCursor)
+                .size(size)
+                .queryType("auto")
+                .includeTotal(false)
+                .build();
+    }
+
+    /**
+     * 创建传统分页请求
+     *
+     * @param pageNum 页码（从1开始）
+     * @param size 每页大小
+     * @return 分页请求
+     */
+    public static CursorPaginationRequest traditional(int pageNum, int size) {
+        return CursorPaginationRequest.builder()
+                .cursor("page_" + pageNum)
+                .size(size)
+                .queryType("traditional")
+                .includeTotal(true)
+                .build();
+    }
+
+    /**
+     * 检查是否为首次查询
+     */
+    public boolean isFirstQuery() {
+        return cursor == null || cursor.isEmpty();
+    }
+
+    /**
+     * 检查是否为传统分页
+     */
+    public boolean isTraditionalPagination() {
+        return cursor != null && cursor.startsWith("page_");
+    }
+
+    /**
+     * 获取页码（仅适用于传统分页）
+     */
+    public int getPageNum() {
+        if (!isTraditionalPagination()) {
+            return 1;
+        }
+
+        try {
+            return Integer.parseInt(cursor.substring(5));
+        } catch (Exception e) {
+            return 1;
+        }
+    }
+
+    /**
+     * 验证请求参数
+     */
+    public boolean isValid() {
+        if (size == null || size < 1 || size > 1000) {
+            return false;
+        }
+
+        if (queryType == null || (!"cursor".equals(queryType) &&
+                                   !"traditional".equals(queryType) &&
+                                   !"auto".equals(queryType))) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * 获取请求描述
+     */
+    public String getDescription() {
+        if (isFirstQuery()) {
+            return String.format("首次查询，每页%d条", size);
+        } else if (isTraditionalPagination()) {
+            return String.format("传统分页，第%d页，每页%d条", getPageNum(), size);
+        } else {
+            return String.format("游标分页，每页%d条", size);
+        }
+    }
+
+    /**
+     * 克隆请求对象
+     */
+    public CursorPaginationRequest clone() {
+        return CursorPaginationRequest.builder()
+                .cursor(this.cursor)
+                .size(this.size)
+                .condition(this.condition)
+                .orderBy(this.orderBy)
+                .includeTotal(this.includeTotal)
+                .queryType(this.queryType)
+                .timeoutSeconds(this.timeoutSeconds)
+                .build();
+    }
+
+    /**
+     * 设置查询条件
+     *
+     * @param condition 查询条件
+     * @return 当前对象
+     */
+    public CursorPaginationRequest withCondition(String condition) {
+        this.condition = condition;
+        return this;
+    }
+
+    /**
+     * 设置排序条件
+     *
+     * @param orderBy 排序条件
+     * @return 当前对象
+     */
+    public CursorPaginationRequest withOrderBy(String orderBy) {
+        this.orderBy = orderBy;
+        return this;
+    }
+
+    /**
+     * 设置是否包含总数
+     *
+     * @param includeTotal 是否包含总数
+     * @return 当前对象
+     */
+    public CursorPaginationRequest withIncludeTotal(Boolean includeTotal) {
+        this.includeTotal = includeTotal;
+        return this;
+    }
+}

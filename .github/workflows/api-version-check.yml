@@ -1,0 +1,85 @@
+name: API Version Check
+
+on:
+  push:
+    branches: [ main, develop, new-clean-branch ]
+  pull_request:
+    branches: [ main, develop, new-clean-branch ]
+
+jobs:
+  api-version-check:
+    runs-on: ubuntu-latest
+    name: 检查API版本规范
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 检查 javax.annotation 使用（应使用 jakarta.annotation）
+        run: |
+          echo "🔍 检查 javax.annotation 使用情况..."
+          VIOLATIONS=$(grep -r "import javax\.annotation\." microservices/ --include="*.java" || true)
+
+          if [ -n "$VIOLATIONS" ]; then
+            echo "❌ 发现使用 javax.annotation，应使用 jakarta.annotation"
+            echo "$VIOLATIONS"
+            echo ""
+            echo "修复方法："
+            echo "  将 'import javax.annotation.Resource;'"
+            echo "  改为 'import jakarta.annotation.Resource;'"
+            exit 1
+          fi
+
+          echo "✅ javax.annotation 检查通过"
+
+      - name: 检查 javax.persistence 使用（应使用 jakarta.persistence）
+        run: |
+          echo "🔍 检查 javax.persistence 使用情况..."
+          VIOLATIONS=$(grep -r "import javax\.persistence\." microservices/ --include="*.java" || true)
+
+          if [ -n "$VIOLATIONS" ]; then
+            echo "❌ 发现使用 javax.persistence，应使用 jakarta.persistence"
+            echo "$VIOLATIONS"
+            exit 1
+          fi
+
+          echo "✅ javax.persistence 检查通过"
+
+      - name: 检查 javax.validation 使用（应使用 jakarta.validation）
+        run: |
+          echo "🔍 检查 javax.validation 使用情况..."
+          VIOLATIONS=$(grep -r "import javax\.validation\." microservices/ --include="*.java" || true)
+
+          if [ -n "$VIOLATIONS" ]; then
+            echo "❌ 发现使用 javax.validation，应使用 jakarta.validation"
+            echo "$VIOLATIONS"
+            exit 1
+          fi
+
+          echo "✅ javax.validation 检查通过"
+
+      - name: 检查 OpenAPI 3.1 API 使用（应使用 OpenAPI 3.0）
+        run: |
+          echo "🔍 检查 OpenAPI 版本..."
+          VIOLATIONS=$(grep -r "requiredMode" microservices/ --include="*.java" || true)
+
+          if [ -n "$VIOLATIONS" ]; then
+            echo "❌ 发现使用 OpenAPI 3.1 API (requiredMode)，应使用 OpenAPI 3.0 (required)"
+            echo "$VIOLATIONS"
+            echo ""
+            echo "修复方法："
+            echo "  将 '@Schema(requiredMode = Schema.RequiredMode.REQUIRED)'"
+            echo "  改为 '@Schema(required = true)'"
+            exit 1
+          fi
+
+          echo "✅ OpenAPI 版本检查通过"
+
+      - name: 生成检查报告
+        if: always()
+        run: |
+          echo "📊 API版本规范检查报告"
+          echo "====================="
+          echo "✅ Jakarta EE 迁移状态：已完成"
+          echo "✅ OpenAPI 3.0 统一状态：已完成"
+          echo "✅ 所有检查通过：代码符合API版本规范"

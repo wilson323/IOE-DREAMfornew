@@ -1,10 +1,10 @@
 package net.lab1024.sa.oa.workflow.model;
 
-import lombok.Data;
-import lombok.experimental.Accessors;
-
 import java.util.List;
 import java.util.Map;
+
+import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
  * 工作流定义
@@ -85,7 +85,7 @@ public class WorkflowDefinition {
      */
     public WorkflowDefinition addNode(WorkflowNode node) {
         if (nodes == null) {
-            nodes = new java.util.ArrayList<>();
+            nodes = new java.util.ArrayList<WorkflowNode>();
         }
         nodes.add(node);
         return this;
@@ -111,6 +111,3 @@ public class WorkflowDefinition {
         return nodes.get(nodes.size() - 1);
     }
 }
-
-
-

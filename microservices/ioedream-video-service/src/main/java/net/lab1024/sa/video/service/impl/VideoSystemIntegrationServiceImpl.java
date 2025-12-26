@@ -1,5 +1,4 @@
 package net.lab1024.sa.video.service.impl;
-
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.video.manager.VideoSystemIntegrationManager;
 import net.lab1024.sa.video.manager.VideoSystemIntegrationManager.SystemIntegrationStatus;

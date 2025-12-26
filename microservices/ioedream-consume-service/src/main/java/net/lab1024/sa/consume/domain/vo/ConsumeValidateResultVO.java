@@ -1,32 +1,23 @@
 package net.lab1024.sa.consume.domain.vo;
 
+import java.math.BigDecimal;
+
 import lombok.Data;
 
 /**
- * 消费权限验证结果VO
+ * 消费权限校验结果
  *
  * @author IOE-DREAM Team
- * @version 1.0.0
- * @since 2025-01-30
+ * @since 2025-12-22
  */
 @Data
 public class ConsumeValidateResultVO {
 
-    /**
-     * 是否有效
-     */
-    private Boolean valid;
+    private Boolean allowed;
 
-    /**
-     * 验证消息
-     */
-    private String message;
+    private String reason;
 
-    /**
-     * 拒绝原因
-     */
-    private String denyReason;
+    private BigDecimal accountBalance;
+
+    private BigDecimal requiredAmount;
 }
-
-
-

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.lab1024.sa.consume.dao.SubsidyRuleConditionDao">
+
+    <!-- 结果映射 -->
+    <resultMap id="BaseResultMap" type="net.lab1024.sa.consume.entity.SubsidyRuleConditionEntity">
+        <id column="id" property="id"/>
+        <result column="condition_uuid" property="conditionUuid"/>
+        <result column="rule_id" property="ruleId"/>
+        <result column="rule_code" property="ruleCode"/>
+        <result column="condition_type" property="conditionType"/>
+        <result column="condition_operator" property="conditionOperator"/>
+        <result column="condition_value" property="conditionValue"/>
+        <result column="logic_operator" property="logicOperator"/>
+        <result column="status" property="status"/>
+        <result column="description" property="description"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="deleted_flag" property="deletedFlag"/>
+    </resultMap>
+
+    <!-- 基础字段 -->
+    <sql id="Base_Column_List">
+        id, condition_uuid, rule_id, rule_code, condition_type, condition_operator,
+        condition_value, logic_operator, status, description,
+        create_time, update_time, deleted_flag
+    </sql>
+
+    <!-- 查询规则的所有条件 -->
+    <select id="selectByRuleId" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM t_subsidy_rule_condition
+        WHERE rule_id = #{ruleId}
+        AND deleted_flag = 0
+        ORDER BY id ASC
+    </select>
+
+    <!-- 查询规则的所有启用条件 -->
+    <select id="selectActiveByRuleId" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM t_subsidy_rule_condition
+        WHERE rule_id = #{ruleId}
+        AND status = 1
+        AND deleted_flag = 0
+        ORDER BY id ASC
+    </select>
+
+    <!-- 查询规则的所有启用条件（通过规则编码） -->
+    <select id="selectActiveByRuleCode" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM t_subsidy_rule_condition
+        WHERE rule_code = #{ruleCode}
+        AND status = 1
+        AND deleted_flag = 0
+        ORDER BY id ASC
+    </select>
+
+    <!-- 批量查询多个规则的启用条件 -->
+    <select id="selectActiveByRuleIds" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM t_subsidy_rule_condition
+        WHERE rule_id IN
+        <foreach collection="ruleIds" item="ruleId" open="(" separator="," close=")">
+            #{ruleId}
+        </foreach>
+        AND status = 1
+        AND deleted_flag = 0
+        ORDER BY rule_id ASC, id ASC
+    </select>
+
+    <!-- 批量删除规则条件 -->
+    <delete id="deleteByRuleId">
+        UPDATE t_subsidy_rule_condition
+        SET deleted_flag = 1
+        WHERE rule_id = #{ruleId}
+    </delete>
+
+</mapper>

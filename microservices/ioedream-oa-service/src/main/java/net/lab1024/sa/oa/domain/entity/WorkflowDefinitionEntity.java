@@ -1,12 +1,13 @@
 package net.lab1024.sa.oa.domain.entity;
 
+import java.time.LocalDateTime;
+
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.Data;
 
-import java.time.LocalDateTime;
+import lombok.Data;
 
 /**
  * 工作流定义实体
@@ -104,23 +105,23 @@ public class WorkflowDefinitionEntity {
 
     // Compatibility
 
-    public String getProcessKey() {
+    public String getProcessKey () {
         return this.code;
     }
 
-    public void setProcessKey(String processKey) {
+    public void setProcessKey (String processKey) {
         this.code = processKey;
     }
 
-    public String getProcessName() {
+    public String getProcessName () {
         return this.name;
     }
 
-    public void setProcessName(String processName) {
+    public void setProcessName (String processName) {
         this.name = processName;
     }
 
-    public void setDeletedFlag(Integer deletedFlag) {
+    public void setDeletedFlag (Integer deletedFlag) {
         this.deleted = (deletedFlag != null && deletedFlag == 1);
     }
 }

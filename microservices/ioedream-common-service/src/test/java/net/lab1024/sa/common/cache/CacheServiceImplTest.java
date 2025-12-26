@@ -91,15 +91,15 @@ class CacheServiceImplTest {
     }
 
     @Test
-    @DisplayName("测试set-成功场景")
-    void test_set_Success() {
+    @DisplayName("测试put-成功场景")
+    void test_put_Success() {
         // Given
         String key = "test:key:1";
         String value = "test-value";
         when(cacheManager.getCache(anyString())).thenReturn(cache);
 
         // When
-        cacheServiceImpl.set(key, value);
+        cacheServiceImpl.put(key, value);
 
         // Then
         verify(cache, times(1)).put(key, value);
@@ -107,8 +107,8 @@ class CacheServiceImplTest {
     }
 
     @Test
-    @DisplayName("测试set-带过期时间成功场景")
-    void test_setWithTimeout_Success() {
+    @DisplayName("测试put-带过期时间成功场景")
+    void test_putWithTimeout_Success() {
         // Given
         String key = "test:key:1";
         String value = "test-value";
@@ -117,7 +117,7 @@ class CacheServiceImplTest {
         when(cacheManager.getCache(anyString())).thenReturn(cache);
 
         // When
-        cacheServiceImpl.set(key, value, timeout, unit);
+        cacheServiceImpl.put(key, value, timeout, unit);
 
         // Then
         verify(cache, times(1)).put(key, value);
@@ -125,15 +125,15 @@ class CacheServiceImplTest {
     }
 
     @Test
-    @DisplayName("测试delete-成功场景")
-    void test_delete_Success() {
+    @DisplayName("测试evict-成功场景")
+    void test_evict_Success() {
         // Given
         String key = "test:key:1";
         when(cacheManager.getCache(anyString())).thenReturn(cache);
         when(redisTemplate.delete(anyString())).thenReturn(true);
 
         // When
-        Boolean result = cacheServiceImpl.delete(key);
+        boolean result = cacheServiceImpl.evict(key);
 
         // Then
         assertTrue(result);
@@ -142,87 +142,18 @@ class CacheServiceImplTest {
     }
 
     @Test
-    @DisplayName("测试hasKey-成功场景")
-    void test_hasKey_Success() {
+    @DisplayName("测试exists-成功场景")
+    void test_exists_Success() {
         // Given
         String key = "test:key:1";
         when(redisTemplate.hasKey(anyString())).thenReturn(true);
 
         // When
-        Boolean result = cacheServiceImpl.hasKey(key);
+        boolean result = cacheServiceImpl.exists(key);
 
         // Then
         assertTrue(result);
         verify(redisTemplate, times(1)).hasKey(anyString());
-    }
-
-    @Test
-    @DisplayName("测试expire-成功场景")
-    void test_expire_Success() {
-        // Given
-        String key = "test:key:1";
-        long timeout = 300;
-        TimeUnit unit = TimeUnit.SECONDS;
-        when(redisTemplate.expire(anyString(), eq(timeout), eq(unit))).thenReturn(true);
-
-        // When
-        Boolean result = cacheServiceImpl.expire(key, timeout, unit);
-
-        // Then
-        assertTrue(result);
-        verify(redisTemplate, times(1)).expire(anyString(), eq(timeout), eq(unit));
-    }
-
-    @Test
-    @DisplayName("测试increment-成功场景")
-    void test_increment_Success() {
-        // Given
-        String key = "test:key:1";
-        Long expectedValue = 2L;
-        when(valueOperations.increment(anyString())).thenReturn(expectedValue);
-
-        // When
-        Long result = cacheServiceImpl.increment(key);
-
-        // Then
-        assertNotNull(result);
-        assertEquals(expectedValue, result);
-        verify(valueOperations, times(1)).increment(anyString());
-    }
-
-    @Test
-    @DisplayName("测试increment-带增量成功场景")
-    void test_incrementWithDelta_Success() {
-        // Given
-        String key = "test:key:1";
-        long delta = 5L;
-        Long expectedValue = 6L;
-        when(valueOperations.increment(anyString(), eq(delta))).thenReturn(expectedValue);
-
-        // When
-        Long result = cacheServiceImpl.increment(key, delta);
-
-        // Then
-        assertNotNull(result);
-        assertEquals(expectedValue, result);
-        verify(valueOperations, times(1)).increment(anyString(), eq(delta));
-    }
-
-    @Test
-    @DisplayName("测试decrement-成功场景")
-    void test_decrement_Success() {
-        // Given
-        String key = "test:key:1";
-        Long expectedValue = 0L;
-        when(valueOperations.decrement(anyString())).thenReturn(expectedValue);
-
-        // When
-        Long result = cacheServiceImpl.decrement(key);
-
-        // Then
-        assertNotNull(result);
-        assertEquals(expectedValue, result);
-        verify(valueOperations, times(1)).decrement(anyString());
     }
 
     @Test
@@ -245,15 +176,15 @@ class CacheServiceImplTest {
     }
 
     @Test
-    @DisplayName("测试set-异常场景")
-    void test_set_Exception() {
+    @DisplayName("测试put-异常场景")
+    void test_put_Exception() {
         // Given
         String key = "test:key:1";
         String value = "test-value";
         when(cacheManager.getCache(anyString())).thenThrow(new RuntimeException("Cache error"));
 
         // When
-        cacheServiceImpl.set(key, value);
+        cacheServiceImpl.put(key, value);
 
         // Then
         // 方法应该处理异常而不抛出
@@ -261,4 +192,3 @@ class CacheServiceImplTest {
     }
 
 }
-

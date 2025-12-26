@@ -1,0 +1,50 @@
+package net.lab1024.sa.attendance.solver.model;
+
+import lombok.extern.slf4j.Slf4j;
+import org.optaplanner.core.api.score.stream.Constraint;
+import org.optaplanner.core.api.score.stream.ConstraintFactory;
+import org.optaplanner.core.api.score.stream.ConstraintProvider;
+import org.springframework.stereotype.Component;
+
+/**
+ * 考勤排班约束提供者 - OptaPlanner ConstraintProvider
+ *
+ * 核心概念:
+ * - ConstraintProvider: 定义约束规则的接口
+ * - Hard Constraint: 必须满足的约束 (负数表示违规次数)
+ * - Soft Constraint: 尽量满足的约束 (负数表示未满足程度)
+ * - Score: HardSoftScore = (hardScore, softScore)
+ *
+ * @author IOE-DREAM
+ * @since 2025-12-26
+ */
+@Slf4j
+@Component
+public class AttendanceConstraintProvider implements ConstraintProvider {
+
+    @Override
+    public Constraint[] defineConstraints(ConstraintFactory constraintFactory) {
+        // TODO: OptaPlanner 9.x API迁移 - 临时返回空数组
+        // 硬约束和软约束实现需要更新到新的OptaPlanner 9.x API
+        log.warn("[考勤排班] ConstraintProvider暂时返回空数组，需要更新到OptaPlanner 9.x API");
+        return new Constraint[]{};
+    }
+
+    // ============================================================
+    // 硬约束实现 (待迁移到OptaPlanner 9.x API)
+    // ============================================================
+    // HC-1: 员工可用性检查
+    // HC-2: 技能匹配检查
+    // HC-3: 时间冲突检查
+    // HC-4: 每日工作时长限制
+    // HC-5: 班次间休息时间
+
+    // ============================================================
+    // 软约束实现 (待迁移到OptaPlanner 9.x API)
+    // ============================================================
+    // SC-1: 排班次数均衡
+    // SC-2: 员工班次偏好
+    // SC-3: 避免过度连续排班
+    // SC-4: 最大化技能利用率
+    // SC-5: 成本优化
+}

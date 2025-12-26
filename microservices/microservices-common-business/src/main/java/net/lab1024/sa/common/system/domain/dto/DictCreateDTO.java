@@ -1,37 +1,42 @@
 package net.lab1024.sa.common.system.domain.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+
+import java.io.Serializable;
 
 /**
  * 字典创建DTO
- * 整合自ioedream-system-service
  *
  * @author IOE-DREAM Team
- * @version 1.0.0
- * @since 2025-12-02（整合自system-service）
+ * @since 2025-12-21
  */
 @Data
-public class DictCreateDTO {
+@Schema(description = "字典创建DTO")
+public class DictCreateDTO implements Serializable {
 
-    @NotNull(message = "字典类型ID不能为空")
-    private Long dictTypeId;
+    private static final long serialVersionUID = 1L;
 
+    @Schema(description = "字典类型编码", required = true, example = "GENDER")
     @NotBlank(message = "字典类型编码不能为空")
     private String dictTypeCode;
 
-    @NotBlank(message = "字典标签不能为空")
-    private String dictLabel;
+    @Schema(description = "字典数据编码", required = true, example = "MALE")
+    @NotBlank(message = "字典数据编码不能为空")
+    private String dictDataCode;
 
-    @NotBlank(message = "字典值不能为空")
-    private String dictValue;
+    @Schema(description = "字典数据值", required = true, example = "男")
+    @NotBlank(message = "字典数据值不能为空")
+    private String dictDataValue;
 
-    private String cssClass;
-    private String listClass;
-    private Integer isDefault;
+    @Schema(description = "排序号", example = "1")
     private Integer sortOrder;
+
+    @Schema(description = "状态", example = "1")
     private Integer status;
+
+    @Schema(description = "备注", example = "性别字典")
     private String remark;
 }
 

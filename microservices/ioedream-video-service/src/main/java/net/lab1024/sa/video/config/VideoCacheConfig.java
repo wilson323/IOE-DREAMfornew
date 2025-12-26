@@ -1,5 +1,6 @@
 package net.lab1024.sa.video.config;
 
+import lombok.extern.slf4j.Slf4j;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.Ticker;
@@ -16,9 +17,6 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext.SerializationPair;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
-
-import lombok.extern.slf4j.Slf4j;
-
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 

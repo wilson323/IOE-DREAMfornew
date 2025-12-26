@@ -1,0 +1,354 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ============================================================
+  IOE-DREAM 公共功能模块 POM 模板
+
+  适用模块:
+    - microservices-common-data (数据访问层)
+    - microservices-common-security (安全认证层)
+    - microservices-common-cache (缓存管理)
+    - microservices-common-monitor (监控模块)
+    - microservices-common-storage (文件存储)
+    - microservices-common-export (导出功能)
+    - microservices-common-workflow (工作流)
+    - microservices-common-permission (权限验证)
+    - microservices-common-business (业务公共组件)
+    - microservices-common-util (工具类模块)
+
+  特征:
+    - ✅ 依赖 microservices-common-core
+    - ✅ 包含特定功能依赖
+    - ✅ 可选依赖其他细粒度模块
+
+  使用说明:
+    1. 复制此模板到目标模块
+    2. 修改 <artifactId> 为实际模块名
+    3. 修改 <name> 和 <description>
+    4. 根据功能需求调整依赖
+    5. 移除不需要的依赖注释块
+
+  依赖分类:
+    - 核心基础: 必须保留 (common-core, lombok, spring-boot-starter)
+    - 功能特定: 根据模块功能选择
+    - 测试依赖: 必须保留
+
+  注意:
+    - 此模板生成的 JAR 不能直接运行
+    - 生成库 JAR 供其他模块依赖
+  ============================================================
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <!-- ============================================================
+       父 POM 配置
+       ============================================================ -->
+  <parent>
+    <groupId>net.lab1024.sa</groupId>
+    <artifactId>ioedream-microservices-parent</artifactId>
+    <version>1.0.0</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+
+  <!-- ============================================================
+       模块基本信息
+       ============================================================ -->
+  <artifactId>microservices-common-xxx</artifactId>
+  <packaging>jar</packaging>
+
+  <name>Microservices Common XXX</name>
+  <description>XXX功能模块：详细描述功能职责和边界</description>
+
+  <!-- ============================================================
+       构建配置
+       ============================================================ -->
+  <build>
+    <plugins>
+      <!--
+        禁用 spring-boot-maven-plugin 的 repackage
+        原因: 这是一个库模块,不需要生成可执行 JAR
+      -->
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <!-- ============================================================
+       依赖管理
+       ============================================================ -->
+  <dependencies>
+    <!-- ==================== 核心基础模块 (必须保留) ==================== -->
+
+    <!-- Common Core (最小稳定内核) -->
+    <dependency>
+      <groupId>net.lab1024.sa</groupId>
+      <artifactId>microservices-common-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!-- Lombok (代码生成) -->
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <optional>true</optional>
+    </dependency>
+
+    <!-- Spring Boot Starter (核心功能支持) -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter</artifactId>
+    </dependency>
+
+    <!-- ==================== 功能特定依赖 (根据需要选择) ==================== -->
+
+    <!--
+      ============ 数据访问层依赖 (microservices-common-data) ============
+      <dependency>
+        <groupId>org.mybatis</groupId>
+        <artifactId>mybatis</artifactId>
+        <version>3.5.16</version>
+      </dependency>
+      <dependency>
+        <groupId>org.mybatis</groupId>
+        <artifactId>mybatis-spring</artifactId>
+        <version>3.0.4</version>
+      </dependency>
+      <dependency>
+        <groupId>com.baomidou</groupId>
+        <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
+      </dependency>
+      <dependency>
+        <groupId>com.mysql</groupId>
+        <artifactId>mysql-connector-j</artifactId>
+        <scope>runtime</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.alibaba</groupId>
+        <artifactId>druid-spring-boot-3-starter</artifactId>
+      </dependency>
+      <dependency>
+        <groupId>org.flywaydb</groupId>
+        <artifactId>flyway-core</artifactId>
+      </dependency>
+      <dependency>
+        <groupId>org.flywaydb</groupId>
+        <artifactId>flyway-mysql</artifactId>
+      </dependency>
+      <dependency>
+        <groupId>jakarta.transaction</groupId>
+        <artifactId>jakarta.transaction-api</artifactId>
+      </dependency>
+    -->
+
+    <!--
+      ============ 安全认证依赖 (microservices-common-security) ============
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-security</artifactId>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-web</artifactId>
+      </dependency>
+      <dependency>
+        <groupId>io.jsonwebtoken</groupId>
+        <artifactId>jjwt-api</artifactId>
+        <version>${jjwt.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.jsonwebtoken</groupId>
+        <artifactId>jjwt-impl</artifactId>
+        <version>${jjwt.version}</version>
+        <scope>runtime</scope>
+      </dependency>
+      <dependency>
+        <groupId>io.jsonwebtoken</groupId>
+        <artifactId>jjwt-jackson</artifactId>
+        <version>${jjwt.version}</version>
+        <scope>runtime</scope>
+      </dependency>
+      <dependency>
+        <groupId>cn.dev33</groupId>
+        <artifactId>sa-token-core</artifactId>
+      </dependency>
+      <dependency>
+        <groupId>cn.dev33</groupId>
+        <artifactId>sa-token-jwt</artifactId>
+      </dependency>
+    -->
+
+    <!--
+      ============ 缓存管理依赖 (microservices-common-cache) ============
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-cache</artifactId>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-data-redis</artifactId>
+      </dependency>
+      <dependency>
+        <groupId>com.github.ben-manes.caffeine</groupId>
+        <artifactId>caffeine</artifactId>
+      </dependency>
+      <dependency>
+        <groupId>org.redisson</groupId>
+        <artifactId>redisson-spring-boot-starter</artifactId>
+      </dependency>
+    -->
+
+    <!--
+      ============ 监控模块依赖 (microservices-common-monitor) ============
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-actuator</artifactId>
+      </dependency>
+      <dependency>
+        <groupId>io.micrometer</groupId>
+        <artifactId>micrometer-registry-prometheus</artifactId>
+      </dependency>
+      <dependency>
+        <groupId>io.micrometer</groupId>
+        <artifactId>micrometer-tracing-bridge-brave</artifactId>
+      </dependency>
+    -->
+
+    <!--
+      ============ 文件存储依赖 (microservices-common-storage) ============
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-web</artifactId>
+      </dependency>
+      <dependency>
+        <groupId>io.minio</groupId>
+        <artifactId>minio</artifactId>
+      </dependency>
+      <dependency>
+        <groupId>com.aliyun.oss</groupId>
+        <artifactId>aliyun-sdk-oss</artifactId>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.tika</groupId>
+        <artifactId>tika-core</artifactId>
+      </dependency>
+    -->
+
+    <!--
+      ============ 导出功能依赖 (microservices-common-export) ============
+      <dependency>
+        <groupId>com.alibaba</groupId>
+        <artifactId>easyexcel</artifactId>
+      </dependency>
+      <dependency>
+        <groupId>com.itextpdf</groupId>
+        <artifactId>itext-core</artifactId>
+        <version>${itextpdf.version}</version>
+      </dependency>
+    -->
+
+    <!--
+      ============ 工作流依赖 (microservices-common-workflow) ============
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-quartz</artifactId>
+      </dependency>
+      <dependency>
+        <groupId>com.googlecode.aviator</groupId>
+        <artifactId>aviator</artifactId>
+        <version>${aviator.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.flowable</groupId>
+        <artifactId>flowable-spring-boot-starter-process</artifactId>
+      </dependency>
+    -->
+
+    <!--
+      ============ 权限验证依赖 (microservices-common-permission) ============
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-web</artifactId>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-security</artifactId>
+      </dependency>
+      <dependency>
+        <groupId>cn.dev33</groupId>
+        <artifactId>sa-token-core</artifactId>
+      </dependency>
+    -->
+
+    <!--
+      ============ 业务公共组件依赖 (microservices-common-business) ============
+      <dependency>
+        <groupId>net.lab1024.sa</groupId>
+        <artifactId>microservices-common-entity</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+    -->
+
+    <!--
+      ============ 工具类模块依赖 (microservices-common-util) ============
+      <dependency>
+        <groupId>cn.hutool</groupId>
+        <artifactId>hutool-all</artifactId>
+      </dependency>
+      <dependency>
+        <groupId>com.google.zxing</groupId>
+        <artifactId>core</artifactId>
+        <version>${zxing.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.zxing</groupId>
+        <artifactId>javase</artifactId>
+        <version>${zxing.version}</version>
+      </dependency>
+    -->
+
+    <!-- ==================== 可选的内部模块依赖 (按需添加) ==================== -->
+
+    <!--
+      <dependency>
+        <groupId>net.lab1024.sa</groupId>
+        <artifactId>microservices-common-entity</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>net.lab1024.sa</groupId>
+        <artifactId>microservices-common-data</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>net.lab1024.sa</groupId>
+        <artifactId>microservices-common-cache</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+    -->
+
+    <!-- ==================== 测试依赖 (必须保留) ==================== -->
+
+    <!-- JUnit Jupiter -->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- Spring Boot Test -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+</project>

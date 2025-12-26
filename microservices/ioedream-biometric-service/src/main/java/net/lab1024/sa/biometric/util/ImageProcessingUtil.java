@@ -37,6 +37,7 @@ import javax.imageio.ImageIO;
 @Slf4j
 public class ImageProcessingUtil {
 
+
     /**
      * 最小图像尺寸（宽度）
      */

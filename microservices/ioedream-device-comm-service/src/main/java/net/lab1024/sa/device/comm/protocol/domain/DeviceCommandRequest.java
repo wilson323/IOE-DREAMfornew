@@ -29,6 +29,11 @@ public class DeviceCommandRequest {
     private Long deviceId;
 
     /**
+     * 协议类型
+     */
+    private String protocolType;
+
+    /**
      * 命令类型
      */
     private String commandType;

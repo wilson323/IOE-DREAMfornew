@@ -1,19 +1,32 @@
 package net.lab1024.sa.device.comm.protocol.zkteco;
 
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.device.comm.protocol.*;
-import net.lab1024.sa.device.comm.protocol.domain.*;
-import net.lab1024.sa.device.comm.protocol.entity.ProtocolMessageEntity;
-import net.lab1024.sa.device.comm.protocol.exception.ProtocolParseException;
-import net.lab1024.sa.device.comm.protocol.exception.ProtocolBuildException;
-import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.math.BigDecimal;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
+
+import org.springframework.stereotype.Component;
+
+import net.lab1024.sa.device.comm.protocol.ProtocolAdapter;
+import net.lab1024.sa.device.comm.protocol.domain.ProtocolDeviceStatus;
+import net.lab1024.sa.device.comm.protocol.domain.ProtocolErrorInfo;
+import net.lab1024.sa.device.comm.protocol.domain.ProtocolErrorResponse;
+import net.lab1024.sa.device.comm.protocol.domain.ProtocolHeartbeatResult;
+import net.lab1024.sa.device.comm.protocol.domain.ProtocolInitResult;
+import net.lab1024.sa.device.comm.protocol.domain.ProtocolMessage;
+import net.lab1024.sa.device.comm.protocol.domain.ProtocolPermissionResult;
+import net.lab1024.sa.device.comm.protocol.domain.ProtocolProcessResult;
+import net.lab1024.sa.device.comm.protocol.domain.ProtocolRegistrationResult;
+import net.lab1024.sa.device.comm.protocol.domain.ProtocolValidationResult;
+import net.lab1024.sa.device.comm.protocol.exception.ProtocolBuildException;
+import net.lab1024.sa.device.comm.protocol.exception.ProtocolParseException;
 
 /**
  * 中控智慧消费协议V1.0适配器实现
@@ -35,8 +48,8 @@ import java.util.concurrent.Future;
  * @version 1.0.0
  * @since 2025-12-16
  */
-@Slf4j
 @Component
+@Slf4j
 public class ConsumeZktecoV10Adapter implements ProtocolAdapter {
 
     // ==================== 协议常量定义 ====================
@@ -48,49 +61,49 @@ public class ConsumeZktecoV10Adapter implements ProtocolAdapter {
 
     /** 支持的设备型号 */
     private static final String[] SUPPORTED_DEVICE_MODELS = {
-        "IC-600T", "F2", "SC700", "SC810", "IC-700A", "IC-800A",
-        "IC-260T", "IC-360T", "IC-560T", "IC-760T", "SC602", "SC603"
+            "IC-600T", "F2", "SC700", "SC810", "IC-700A", "IC-800A",
+            "IC-260T", "IC-360T", "IC-560T", "IC-760T", "SC602", "SC603"
     };
 
     /** 消息类型代码 */
-    private static final int MSG_TYPE_CONSUME_RECORD = 0x01;       // 消费记录上传
-    private static final int MSG_TYPE_DEVICE_STATUS = 0x02;        // 设备状态上报
-    private static final int MSG_TYPE_HEARTBEAT = 0x03;            // 心跳包
-    private static final int MSG_TYPE_ACCOUNT_QUERY = 0x04;        // 账户查询请求
-    private static final int MSG_TYPE_ACCOUNT_RESPONSE = 0x05;     // 账户查询响应
-    private static final int MSG_TYPE_RECHARGE_RECORD = 0x06;      // 充值记录上传
-    private static final int MSG_TYPE_SUBSIDY_RECORD = 0x07;       // 补贴记录上传
-    private static final int MSG_TYPE_ERROR_REPORT = 0x08;         // 错误报告
+    private static final int MSG_TYPE_CONSUME_RECORD = 0x01; // 消费记录上传
+    private static final int MSG_TYPE_DEVICE_STATUS = 0x02; // 设备状态上报
+    private static final int MSG_TYPE_HEARTBEAT = 0x03; // 心跳包
+    private static final int MSG_TYPE_ACCOUNT_QUERY = 0x04; // 账户查询请求
+    private static final int MSG_TYPE_ACCOUNT_RESPONSE = 0x05; // 账户查询响应
+    private static final int MSG_TYPE_RECHARGE_RECORD = 0x06; // 充值记录上传
+    private static final int MSG_TYPE_SUBSIDY_RECORD = 0x07; // 补贴记录上传
+    private static final int MSG_TYPE_ERROR_REPORT = 0x08; // 错误报告
     private static final int MSG_TYPE_DEVICE_CONFIG_REQUEST = 0x09; // 设备配置请求
     private static final int MSG_TYPE_DEVICE_CONFIG_RESPONSE = 0x0A; // 设备配置响应
 
     /** 交易类型代码 */
-    private static final int TRANSACTION_TYPE_CONSUME = 0x01;      // 消费
-    private static final int TRANSACTION_TYPE_RECHARGE = 0x02;     // 充值
-    private static final int TRANSACTION_TYPE_REFUND = 0x03;       // 退款
-    private static final int TRANSACTION_TYPE_CANCEL = 0x04;       // 撤销
-    private static final int TRANSACTION_TYPE_ADJUST = 0x05;       // 调整
+    private static final int TRANSACTION_TYPE_CONSUME = 0x01; // 消费
+    private static final int TRANSACTION_TYPE_RECHARGE = 0x02; // 充值
+    private static final int TRANSACTION_TYPE_REFUND = 0x03; // 退款
+    private static final int TRANSACTION_TYPE_CANCEL = 0x04; // 撤销
+    private static final int TRANSACTION_TYPE_ADJUST = 0x05; // 调整
 
     /** 消费方式代码 */
-    private static final int CONSUME_METHOD_CARD = 0x01;           // 刷卡
-    private static final int CONSUME_METHOD_FACE = 0x02;           // 人脸
-    private static final int CONSUME_METHOD_FINGERPRINT = 0x03;     // 指纹
-    private static final int CONSUME_METHOD_QR_CODE = 0x04;        // 二维码
-    private static final int CONSUME_METHOD_NFC = 0x05;            // NFC支付
-    private static final int CONSUME_METHOD_OFFLINE = 0x06;        // 离线消费
+    private static final int CONSUME_METHOD_CARD = 0x01; // 刷卡
+    private static final int CONSUME_METHOD_FACE = 0x02; // 人脸
+    private static final int CONSUME_METHOD_FINGERPRINT = 0x03; // 指纹
+    private static final int CONSUME_METHOD_QR_CODE = 0x04; // 二维码
+    private static final int CONSUME_METHOD_NFC = 0x05; // NFC支付
+    private static final int CONSUME_METHOD_OFFLINE = 0x06; // 离线消费
 
     /** 支付方式代码 */
-    private static final int PAYMENT_METHOD_ACCOUNT = 0x01;        // 账户余额
-    private static final int PAYMENT_METHOD_SUBSIDY = 0x02;        // 补贴
-    private static final int PAYMENT_METHOD_CASH = 0x03;           // 现金
-    private static final int PAYMENT_METHOD_BANK_CARD = 0x04;      // 银行卡
-    private static final int PAYMENT_METHOD_MOBILE = 0x05;         // 移动支付
+    private static final int PAYMENT_METHOD_ACCOUNT = 0x01; // 账户余额
+    private static final int PAYMENT_METHOD_SUBSIDY = 0x02; // 补贴
+    private static final int PAYMENT_METHOD_CASH = 0x03; // 现金
+    private static final int PAYMENT_METHOD_BANK_CARD = 0x04; // 银行卡
+    private static final int PAYMENT_METHOD_MOBILE = 0x05; // 移动支付
 
     /** 交易状态代码 */
-    private static final int TRANSACTION_STATUS_SUCCESS = 0x01;     // 成功
-    private static final int TRANSACTION_STATUS_FAILED = 0x02;      // 失败
-    private static final int TRANSACTION_STATUS_PENDING = 0x03;     // 待处理
-    private static final int TRANSACTION_STATUS_CANCELLED = 0x04;  // 已取消
+    private static final int TRANSACTION_STATUS_SUCCESS = 0x01; // 成功
+    private static final int TRANSACTION_STATUS_FAILED = 0x02; // 失败
+    private static final int TRANSACTION_STATUS_PENDING = 0x03; // 待处理
+    private static final int TRANSACTION_STATUS_CANCELLED = 0x04; // 已取消
 
     // ==================== 协议标识接口实现 ====================
 
@@ -212,7 +225,7 @@ public class ConsumeZktecoV10Adapter implements ProtocolAdapter {
             }
 
             log.debug("[中控消费协议V1.0] 消息解析完成, messageType={}, deviceId={}",
-                message.getMessageTypeName(), message.getDeviceId());
+                    message.getMessageTypeName(), message.getDeviceId());
 
             // 转换为ProtocolMessage类型
             ProtocolMessage protocolMessage = convertToProtocolMessage(message);
@@ -244,7 +257,8 @@ public class ConsumeZktecoV10Adapter implements ProtocolAdapter {
     }
 
     @Override
-    public byte[] buildDeviceResponse(String messageType, Map<String, Object> businessData, Long deviceId) throws ProtocolBuildException {
+    public byte[] buildDeviceResponse(String messageType, Map<String, Object> businessData, Long deviceId)
+            throws ProtocolBuildException {
         log.debug("[中控消费协议V1.0] 开始构建设备响应, messageType={}, deviceId={}", messageType, deviceId);
 
         try {
@@ -258,9 +272,9 @@ public class ConsumeZktecoV10Adapter implements ProtocolAdapter {
             buffer.putShort((short) 0);
 
             buffer.putShort((short) 0x0100); // 版本号 V1.0
-            buffer.put((byte) 0x00);        // 响应消息类型
-            buffer.put((byte) 0x00);        // 响应命令代码
-            buffer.putInt(0);               // 序列号
+            buffer.put((byte) 0x00); // 响应消息类型
+            buffer.put((byte) 0x00); // 响应命令代码
+            buffer.putInt(0); // 序列号
             buffer.putLong(System.currentTimeMillis() / 1000); // 时间戳
 
             // 2. 根据消息类型构建业务数据
@@ -311,7 +325,8 @@ public class ConsumeZktecoV10Adapter implements ProtocolAdapter {
     }
 
     @Override
-    public String buildDeviceResponseHex(String messageType, Map<String, Object> businessData, Long deviceId) throws ProtocolBuildException {
+    public String buildDeviceResponseHex(String messageType, Map<String, Object> businessData, Long deviceId)
+            throws ProtocolBuildException {
         byte[] response = buildDeviceResponse(messageType, businessData, deviceId);
         return bytesToHexString(response);
     }
@@ -328,7 +343,7 @@ public class ConsumeZktecoV10Adapter implements ProtocolAdapter {
 
             // 2. 协议类型验证
             if (message.getProtocolType() == null || !message.getProtocolType().equals(PROTOCOL_TYPE)) {
-                return ProtocolValidationResult.failure("PROTOCOL_TYPE_MISMATCH", 
+                return ProtocolValidationResult.failure("PROTOCOL_TYPE_MISMATCH",
                         "协议类型不匹配: " + message.getProtocolType());
             }
 
@@ -351,7 +366,7 @@ public class ConsumeZktecoV10Adapter implements ProtocolAdapter {
             if (messageData != null && messageData.containsKey("deviceModel")) {
                 String deviceModel = (String) messageData.get("deviceModel");
                 if (deviceModel != null && !isDeviceModelSupported(deviceModel)) {
-                    return ProtocolValidationResult.failure("DEVICE_MODEL_UNSUPPORTED", 
+                    return ProtocolValidationResult.failure("DEVICE_MODEL_UNSUPPORTED",
                             "不支持的设备型号: " + deviceModel);
                 }
             }
@@ -362,7 +377,7 @@ public class ConsumeZktecoV10Adapter implements ProtocolAdapter {
                 if (amountObj instanceof BigDecimal) {
                     BigDecimal consumeAmount = (BigDecimal) amountObj;
                     if (consumeAmount.compareTo(BigDecimal.ZERO) <= 0) {
-                        return ProtocolValidationResult.failure("INVALID_CONSUME_AMOUNT", 
+                        return ProtocolValidationResult.failure("INVALID_CONSUME_AMOUNT",
                                 "消费金额必须大于0");
                     }
                 }
@@ -374,7 +389,7 @@ public class ConsumeZktecoV10Adapter implements ProtocolAdapter {
                 long messageTime = message.getTimestamp().atZone(java.time.ZoneId.systemDefault())
                         .toInstant().toEpochMilli();
                 if (Math.abs(currentTime - messageTime) > 300000) { // 5分钟
-                    return ProtocolValidationResult.failure("TIMESTAMP_OUT_OF_RANGE", 
+                    return ProtocolValidationResult.failure("TIMESTAMP_OUT_OF_RANGE",
                             "消息时间戳超出允许范围");
                 }
             }
@@ -383,7 +398,7 @@ public class ConsumeZktecoV10Adapter implements ProtocolAdapter {
 
         } catch (Exception e) {
             log.error("[中控消费协议V1.0] 消息验证异常", e);
-            return ProtocolValidationResult.failure("VALIDATION_EXCEPTION", 
+            return ProtocolValidationResult.failure("VALIDATION_EXCEPTION",
                     "消息验证异常: " + e.getMessage());
         }
     }
@@ -417,7 +432,8 @@ public class ConsumeZktecoV10Adapter implements ProtocolAdapter {
     // ==================== 业务数据处理接口实现 ====================
 
     @Override
-    public Future<ProtocolProcessResult> processAccessBusiness(String businessType, Map<String, Object> businessData, Long deviceId) {
+    public Future<ProtocolProcessResult> processAccessBusiness(String businessType, Map<String, Object> businessData,
+            Long deviceId) {
         return CompletableFuture.supplyAsync(() -> {
             ProtocolProcessResult result = new ProtocolProcessResult();
             result.setSuccess(false);
@@ -428,7 +444,8 @@ public class ConsumeZktecoV10Adapter implements ProtocolAdapter {
     }
 
     @Override
-    public Future<ProtocolProcessResult> processAttendanceBusiness(String businessType, Map<String, Object> businessData, Long deviceId) {
+    public Future<ProtocolProcessResult> processAttendanceBusiness(String businessType,
+            Map<String, Object> businessData, Long deviceId) {
         return CompletableFuture.supplyAsync(() -> {
             ProtocolProcessResult result = new ProtocolProcessResult();
             result.setSuccess(false);
@@ -439,7 +456,8 @@ public class ConsumeZktecoV10Adapter implements ProtocolAdapter {
     }
 
     @Override
-    public Future<ProtocolProcessResult> processConsumeBusiness(String businessType, Map<String, Object> businessData, Long deviceId) {
+    public Future<ProtocolProcessResult> processConsumeBusiness(String businessType, Map<String, Object> businessData,
+            Long deviceId) {
         return CompletableFuture.supplyAsync(() -> {
             ProtocolProcessResult result = new ProtocolProcessResult();
 
@@ -568,9 +586,8 @@ public class ConsumeZktecoV10Adapter implements ProtocolAdapter {
         // 消费时间 (8字节)
         long consumeTime = buffer.getLong() * 1000;
         message.setConsumeTime(java.time.LocalDateTime.ofInstant(
-            java.time.Instant.ofEpochMilli(consumeTime),
-            java.time.ZoneId.systemDefault()
-        ));
+                java.time.Instant.ofEpochMilli(consumeTime),
+                java.time.ZoneId.systemDefault()));
 
         // 商品ID (4字节)
         int productId = buffer.getInt();
@@ -750,9 +767,8 @@ public class ConsumeZktecoV10Adapter implements ProtocolAdapter {
         // 充值时间 (8字节)
         long rechargeTime = buffer.getLong() * 1000;
         message.setRechargeTime(java.time.LocalDateTime.ofInstant(
-            java.time.Instant.ofEpochMilli(rechargeTime),
-            java.time.ZoneId.systemDefault()
-        ));
+                java.time.Instant.ofEpochMilli(rechargeTime),
+                java.time.ZoneId.systemDefault()));
 
         // 操作员ID (4字节)
         int operatorId = buffer.getInt();
@@ -790,16 +806,14 @@ public class ConsumeZktecoV10Adapter implements ProtocolAdapter {
         // 补贴发放时间 (8字节)
         long grantTime = buffer.getLong() * 1000;
         message.setSubsidyGrantTime(java.time.LocalDateTime.ofInstant(
-            java.time.Instant.ofEpochMilli(grantTime),
-            java.time.ZoneId.systemDefault()
-        ));
+                java.time.Instant.ofEpochMilli(grantTime),
+                java.time.ZoneId.systemDefault()));
 
         // 补贴有效期 (8字节)
         long expireTime = buffer.getLong() * 1000;
         message.setSubsidyExpireTime(java.time.LocalDateTime.ofInstant(
-            java.time.Instant.ofEpochMilli(expireTime),
-            java.time.ZoneId.systemDefault()
-        ));
+                java.time.Instant.ofEpochMilli(expireTime),
+                java.time.ZoneId.systemDefault()));
     }
 
     /**
@@ -991,13 +1005,20 @@ public class ConsumeZktecoV10Adapter implements ProtocolAdapter {
      */
     private String getConsumeMethodName(int consumeMethodCode) {
         switch (consumeMethodCode) {
-            case CONSUME_METHOD_CARD: return "CARD";
-            case CONSUME_METHOD_FACE: return "FACE";
-            case CONSUME_METHOD_FINGERPRINT: return "FINGERPRINT";
-            case CONSUME_METHOD_QR_CODE: return "QR_CODE";
-            case CONSUME_METHOD_NFC: return "NFC";
-            case CONSUME_METHOD_OFFLINE: return "OFFLINE";
-            default: return "UNKNOWN";
+            case CONSUME_METHOD_CARD:
+                return "CARD";
+            case CONSUME_METHOD_FACE:
+                return "FACE";
+            case CONSUME_METHOD_FINGERPRINT:
+                return "FINGERPRINT";
+            case CONSUME_METHOD_QR_CODE:
+                return "QR_CODE";
+            case CONSUME_METHOD_NFC:
+                return "NFC";
+            case CONSUME_METHOD_OFFLINE:
+                return "OFFLINE";
+            default:
+                return "UNKNOWN";
         }
     }
 
@@ -1006,11 +1027,16 @@ public class ConsumeZktecoV10Adapter implements ProtocolAdapter {
      */
     private String getConsumeTypeName(int consumeTypeCode) {
         switch (consumeTypeCode) {
-            case 0x01: return "MEAL";
-            case 0x02: return "SNACK";
-            case 0x03: return "DRINK";
-            case 0x04: return "GROCERY";
-            default: return "OTHER";
+            case 0x01:
+                return "MEAL";
+            case 0x02:
+                return "SNACK";
+            case 0x03:
+                return "DRINK";
+            case 0x04:
+                return "GROCERY";
+            default:
+                return "OTHER";
         }
     }
 
@@ -1019,12 +1045,18 @@ public class ConsumeZktecoV10Adapter implements ProtocolAdapter {
      */
     private String getConsumeCategoryName(int consumeCategoryCode) {
         switch (consumeCategoryCode) {
-            case 0x01: return "BREAKFAST";
-            case 0x02: return "LUNCH";
-            case 0x03: return "DINNER";
-            case 0x04: return "SUPPER";
-            case 0x05: return "SNACK";
-            default: return "OTHER";
+            case 0x01:
+                return "BREAKFAST";
+            case 0x02:
+                return "LUNCH";
+            case 0x03:
+                return "DINNER";
+            case 0x04:
+                return "SUPPER";
+            case 0x05:
+                return "SNACK";
+            default:
+                return "OTHER";
         }
     }
 
@@ -1033,12 +1065,18 @@ public class ConsumeZktecoV10Adapter implements ProtocolAdapter {
      */
     private String getTransactionTypeName(int transactionTypeCode) {
         switch (transactionTypeCode) {
-            case TRANSACTION_TYPE_CONSUME: return "CONSUME";
-            case TRANSACTION_TYPE_RECHARGE: return "RECHARGE";
-            case TRANSACTION_TYPE_REFUND: return "REFUND";
-            case TRANSACTION_TYPE_CANCEL: return "CANCEL";
-            case TRANSACTION_TYPE_ADJUST: return "ADJUST";
-            default: return "UNKNOWN";
+            case TRANSACTION_TYPE_CONSUME:
+                return "CONSUME";
+            case TRANSACTION_TYPE_RECHARGE:
+                return "RECHARGE";
+            case TRANSACTION_TYPE_REFUND:
+                return "REFUND";
+            case TRANSACTION_TYPE_CANCEL:
+                return "CANCEL";
+            case TRANSACTION_TYPE_ADJUST:
+                return "ADJUST";
+            default:
+                return "UNKNOWN";
         }
     }
 
@@ -1047,11 +1085,16 @@ public class ConsumeZktecoV10Adapter implements ProtocolAdapter {
      */
     private String getTransactionStatusName(int transactionStatusCode) {
         switch (transactionStatusCode) {
-            case TRANSACTION_STATUS_SUCCESS: return "SUCCESS";
-            case TRANSACTION_STATUS_FAILED: return "FAILED";
-            case TRANSACTION_STATUS_PENDING: return "PENDING";
-            case TRANSACTION_STATUS_CANCELLED: return "CANCELLED";
-            default: return "UNKNOWN";
+            case TRANSACTION_STATUS_SUCCESS:
+                return "SUCCESS";
+            case TRANSACTION_STATUS_FAILED:
+                return "FAILED";
+            case TRANSACTION_STATUS_PENDING:
+                return "PENDING";
+            case TRANSACTION_STATUS_CANCELLED:
+                return "CANCELLED";
+            default:
+                return "UNKNOWN";
         }
     }
 
@@ -1060,12 +1103,18 @@ public class ConsumeZktecoV10Adapter implements ProtocolAdapter {
      */
     private String getPaymentMethodName(int paymentMethodCode) {
         switch (paymentMethodCode) {
-            case PAYMENT_METHOD_ACCOUNT: return "ACCOUNT";
-            case PAYMENT_METHOD_SUBSIDY: return "SUBSIDY";
-            case PAYMENT_METHOD_CASH: return "CASH";
-            case PAYMENT_METHOD_BANK_CARD: return "BANK_CARD";
-            case PAYMENT_METHOD_MOBILE: return "MOBILE";
-            default: return "UNKNOWN";
+            case PAYMENT_METHOD_ACCOUNT:
+                return "ACCOUNT";
+            case PAYMENT_METHOD_SUBSIDY:
+                return "SUBSIDY";
+            case PAYMENT_METHOD_CASH:
+                return "CASH";
+            case PAYMENT_METHOD_BANK_CARD:
+                return "BANK_CARD";
+            case PAYMENT_METHOD_MOBILE:
+                return "MOBILE";
+            default:
+                return "UNKNOWN";
         }
     }
 
@@ -1074,12 +1123,18 @@ public class ConsumeZktecoV10Adapter implements ProtocolAdapter {
      */
     private String getDeviceStatusName(int deviceStatusCode) {
         switch (deviceStatusCode) {
-            case 0x01: return "ONLINE";
-            case 0x02: return "OFFLINE";
-            case 0x03: return "BUSY";
-            case 0x04: return "ERROR";
-            case 0x05: return "MAINTENANCE";
-            default: return "UNKNOWN";
+            case 0x01:
+                return "ONLINE";
+            case 0x02:
+                return "OFFLINE";
+            case 0x03:
+                return "BUSY";
+            case 0x04:
+                return "ERROR";
+            case 0x05:
+                return "MAINTENANCE";
+            default:
+                return "UNKNOWN";
         }
     }
 
@@ -1088,11 +1143,16 @@ public class ConsumeZktecoV10Adapter implements ProtocolAdapter {
      */
     private String getDeviceTypeName(int deviceTypeCode) {
         switch (deviceTypeCode) {
-            case 0x01: return "POS_MACHINE";
-            case 0x02: return "SELF_SERVICE";
-            case 0x03: return "CANTEEN";
-            case 0x04: return "VENDING";
-            default: return "UNKNOWN";
+            case 0x01:
+                return "POS_MACHINE";
+            case 0x02:
+                return "SELF_SERVICE";
+            case 0x03:
+                return "CANTEEN";
+            case 0x04:
+                return "VENDING";
+            default:
+                return "UNKNOWN";
         }
     }
 
@@ -1101,11 +1161,16 @@ public class ConsumeZktecoV10Adapter implements ProtocolAdapter {
      */
     private String getAccountTypeName(int accountTypeCode) {
         switch (accountTypeCode) {
-            case 0x01: return "PERSONAL";
-            case 0x02: return "SUBSIDY";
-            case 0x03: return "COMPANY";
-            case 0x04: return "TEMP";
-            default: return "UNKNOWN";
+            case 0x01:
+                return "PERSONAL";
+            case 0x02:
+                return "SUBSIDY";
+            case 0x03:
+                return "COMPANY";
+            case 0x04:
+                return "TEMP";
+            default:
+                return "UNKNOWN";
         }
     }
 
@@ -1114,11 +1179,16 @@ public class ConsumeZktecoV10Adapter implements ProtocolAdapter {
      */
     private String getAccountStatusName(int accountStatusCode) {
         switch (accountStatusCode) {
-            case 0x01: return "ACTIVE";
-            case 0x02: return "FROZEN";
-            case 0x03: return "EXPIRED";
-            case 0x04: return "DISABLED";
-            default: return "UNKNOWN";
+            case 0x01:
+                return "ACTIVE";
+            case 0x02:
+                return "FROZEN";
+            case 0x03:
+                return "EXPIRED";
+            case 0x04:
+                return "DISABLED";
+            default:
+                return "UNKNOWN";
         }
     }
 
@@ -1127,12 +1197,18 @@ public class ConsumeZktecoV10Adapter implements ProtocolAdapter {
      */
     private String getRechargeMethodName(int rechargeMethodCode) {
         switch (rechargeMethodCode) {
-            case 0x01: return "CASH";
-            case 0x02: return "BANK_CARD";
-            case 0x03: return "MOBILE";
-            case 0x04: return "TRANSFER";
-            case 0x05: return "SUBSIDY";
-            default: return "UNKNOWN";
+            case 0x01:
+                return "CASH";
+            case 0x02:
+                return "BANK_CARD";
+            case 0x03:
+                return "MOBILE";
+            case 0x04:
+                return "TRANSFER";
+            case 0x05:
+                return "SUBSIDY";
+            default:
+                return "UNKNOWN";
         }
     }
 
@@ -1141,11 +1217,16 @@ public class ConsumeZktecoV10Adapter implements ProtocolAdapter {
      */
     private String getSubsidyTypeName(int subsidyTypeCode) {
         switch (subsidyTypeCode) {
-            case 0x01: return "MEAL";
-            case 0x02: return "TRANSPORT";
-            case 0x03: return "HOUSING";
-            case 0x04: return "WELFARE";
-            default: return "UNKNOWN";
+            case 0x01:
+                return "MEAL";
+            case 0x02:
+                return "TRANSPORT";
+            case 0x03:
+                return "HOUSING";
+            case 0x04:
+                return "WELFARE";
+            default:
+                return "UNKNOWN";
         }
     }
 
@@ -1154,11 +1235,16 @@ public class ConsumeZktecoV10Adapter implements ProtocolAdapter {
      */
     private String getAlarmLevelName(int alarmLevelCode) {
         switch (alarmLevelCode) {
-            case 0x01: return "LOW";
-            case 0x02: return "MEDIUM";
-            case 0x03: return "HIGH";
-            case 0x04: return "CRITICAL";
-            default: return "UNKNOWN";
+            case 0x01:
+                return "LOW";
+            case 0x02:
+                return "MEDIUM";
+            case 0x03:
+                return "HIGH";
+            case 0x04:
+                return "CRITICAL";
+            default:
+                return "UNKNOWN";
         }
     }
 
@@ -1167,7 +1253,7 @@ public class ConsumeZktecoV10Adapter implements ProtocolAdapter {
      */
     private boolean isValidMessageType(int messageTypeCode) {
         return messageTypeCode >= MSG_TYPE_CONSUME_RECORD &&
-               messageTypeCode <= MSG_TYPE_DEVICE_CONFIG_RESPONSE;
+                messageTypeCode <= MSG_TYPE_DEVICE_CONFIG_RESPONSE;
     }
 
     // ==================== 其他接口实现（简化版本）====================
@@ -1291,9 +1377,10 @@ public class ConsumeZktecoV10Adapter implements ProtocolAdapter {
      */
     private ProtocolMessage convertToProtocolMessage(ConsumeZktecoV10Message zktecoMessage) {
         ProtocolMessage protocolMessage = new ProtocolMessage();
-        protocolMessage.setMessageId(zktecoMessage.getSequenceNumber() != null ? 
-            String.valueOf(zktecoMessage.getSequenceNumber()) : UUID.randomUUID().toString());
-        
+        protocolMessage.setMessageId(
+                zktecoMessage.getSequenceNumber() != null ? String.valueOf(zktecoMessage.getSequenceNumber())
+                        : UUID.randomUUID().toString());
+
         // 转换deviceId为Long类型
         try {
             if (zktecoMessage.getDeviceId() != null && !zktecoMessage.getDeviceId().trim().isEmpty()) {
@@ -1302,11 +1389,11 @@ public class ConsumeZktecoV10Adapter implements ProtocolAdapter {
         } catch (NumberFormatException e) {
             log.warn("[中控消费协议V1.0] 设备ID格式错误: {}", zktecoMessage.getDeviceId());
         }
-        
+
         protocolMessage.setDeviceCode(zktecoMessage.getDeviceId());
         protocolMessage.setProtocolType(PROTOCOL_TYPE);
         protocolMessage.setMessageType(zktecoMessage.getMessageTypeName());
-        
+
         // 将业务数据转换为Map
         Map<String, Object> messageData = new HashMap<>();
         if (zktecoMessage.getConsumeRecordNumber() != null) {
@@ -1322,14 +1409,14 @@ public class ConsumeZktecoV10Adapter implements ProtocolAdapter {
             messageData.put("consumeAmount", zktecoMessage.getConsumeAmount());
         }
         protocolMessage.setBusinessData(messageData);
-        
+
         if (zktecoMessage.getTimestamp() != null) {
             protocolMessage.setTimestamp(java.time.LocalDateTime.ofEpochSecond(
-                zktecoMessage.getTimestamp(), 0, java.time.ZoneOffset.UTC));
+                    zktecoMessage.getTimestamp(), 0, java.time.ZoneOffset.UTC));
         } else {
             protocolMessage.setTimestamp(java.time.LocalDateTime.now());
         }
-        
+
         return protocolMessage;
     }
 
@@ -1340,8 +1427,8 @@ public class ConsumeZktecoV10Adapter implements ProtocolAdapter {
         // 如果ProtocolMessage的messageData中包含原始消息，可以恢复
         // 否则需要重新解析
         // 这里简化处理，返回null表示无法转换
-        if (protocolMessage.getProtocolType() != null && 
-            protocolMessage.getProtocolType().equals(PROTOCOL_TYPE)) {
+        if (protocolMessage.getProtocolType() != null &&
+                protocolMessage.getProtocolType().equals(PROTOCOL_TYPE)) {
             // 可以尝试从messageData中恢复
             return null; // TODO: 实现完整的转换逻辑
         }

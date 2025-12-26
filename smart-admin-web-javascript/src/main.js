@@ -35,6 +35,13 @@ import { useDictStore } from '/@/store/modules/system/dict.js';
 import { dictApi } from '/@/api/support/dict-api.js';
 import { initWorkflowWebSocketConnection } from '/@/utils/workflow-websocket-init';
 
+// ==================== 百度地图集成 ====================
+import BaiduMap from 'vue-baidu-map-3x';
+import BaiduMapComponents from 'vue-baidu-map-3x';
+
+// 百度地图 AK（需要申请）
+const BAIDU_MAP_AK = import.meta.env.VITE_BAIDU_MAP_AK || 'YOUR_BAIDU_MAP_AK_HERE';
+
 /*
  * -------------------- ※ 着重 解释说明下main.js的初始化逻辑 begin ※ --------------------
  *
@@ -101,7 +108,11 @@ async function initVue() {
     .use(smartEnumPlugin, constantsInfo)
     .use(privilegePlugin)
     .use(dictPlugin)
-    .use(JsonViewer);
+    .use(JsonViewer)
+    .use(BaiduMap, {
+      ak: BAIDU_MAP_AK,
+      plugins: BaiduMapComponents
+    });
   //注入权限
   app.directive('privilege', {
     mounted(el, binding) {

@@ -87,15 +87,10 @@ public class MultiModalAuthenticationServiceImpl implements MultiModalAuthentica
         log.info("[多模态认证] 获取认证方式统计: startTime={}, endTime={}", startTime, endTime);
 
         try {
-            // TODO: 实现认证方式统计逻辑
-            // 1. 从通行记录表统计各认证方式的使用次数
-            // 2. 计算各认证方式的成功率
-            // 3. 分析各认证方式的使用趋势
+            // 调用Manager层实现统计逻辑
+            Map<String, Object> statistics = multiModalAuthenticationManager.calculateVerifyTypeStatistics(startTime, endTime);
 
-            Map<String, Object> statistics = new HashMap<>();
-            statistics.put("message", "认证方式统计功能待实现");
-            statistics.put("supportedTypes", multiModalAuthenticationManager.getSupportedVerifyTypes().size());
-
+            log.info("[多模态认证] 认证方式统计完成: dataCount={}", statistics.get("totalRecords"));
             return ResponseDTO.ok(statistics);
         } catch (Exception e) {
             log.error("[多模态认证] 获取认证方式统计异常: error={}", e.getMessage(), e);

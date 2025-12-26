@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.5">
+  <hashTree>
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="视频服务性能测试" enabled="true">
+      <stringProp name="TestPlan.comments">Tasks 9-10 关键接口性能压力测试</stringProp>
+      <boolProp name="TestPlan.functional_mode">false</boolProp>
+      <boolProp name="TestPlan.tearDown_on_shutdown">true</boolProp>
+      <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
+      <elementProp name="TestPlan.user_defined_variables" elementType="Arguments">
+        <collectionProp name="Arguments.arguments">
+          <elementProp name="BASE_URL" elementType="Argument">
+            <stringProp name="Argument.name">BASE_URL</stringProp>
+            <stringProp name="Argument.value">http://localhost:8092</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="THREAD_COUNT" elementType="Argument">
+            <stringProp name="Argument.name">THREAD_COUNT</stringProp>
+            <stringProp name="Argument.value">50</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="RAMP_UP_TIME" elementType="Argument">
+            <stringProp name="Argument.name">RAMP_UP_TIME</stringProp>
+            <stringProp name="Argument.value">10</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="LOOP_COUNT" elementType="Argument">
+            <stringProp name="Argument.name">LOOP_COUNT</stringProp>
+            <stringProp name="Argument.value">500</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+        </collectionProp>
+      </elementProp>
+      <stringProp name="TestPlan.user_define_classpath"></stringProp>
+    </TestPlan>
+
+    <!-- HTTP Cookie Manager -->
+    <hashTree>
+      <CookieManager guiclass="CookiePanel" testclass="CookieManager" testname="HTTP Cookie Manager" enabled="true"/>
+    </hashTree>
+
+    <!-- HTTP Header Manager -->
+    <hashTree>
+      <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+        <collectionProp name="HeaderManager.headers">
+          <elementProp name="" elementType="Header">
+            <stringProp name="Header.name">Content-Type</stringProp>
+            <stringProp name="Header.value">application/json</stringProp>
+          </elementProp>
+          <elementProp name="" elementType="Header">
+            <stringProp name="Header.name">Accept</stringProp>
+            <stringProp name="Header.value">application/json</stringProp>
+          </elementProp>
+        </collectionProp>
+      </HeaderManager>
+    </hashTree>
+
+    <!-- Thread Group -->
+    <hashTree>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="视频服务压力测试" enabled="true">
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <stringProp name="LoopController.loops">${LOOP_COUNT}</stringProp>
+        </elementProp>
+        <stringProp name="ThreadGroup.num_threads">${THREAD_COUNT}</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">${RAMP_UP_TIME}</stringProp>
+        <boolProp name="ThreadGroup.scheduler">false</boolProp>
+        <stringProp name="ThreadGroup.duration"></stringProp>
+        <stringProp name="ThreadGroup.delay">0</stringProp>
+        <boolProp name="ThreadGroup.same_user_on_sim_iteration">true</boolProp>
+      </ThreadGroup>
+
+      <!-- HTTP Request Defaults -->
+      <hashTree>
+        <ConfigTestElement guiclass="HttpDefaultsGui" testclass="ConfigTestElement" testname="HTTP Request Defaults" enabled="true">
+          <stringProp name="HTTPSampler.domain">${BASE_URL}</stringProp>
+          <stringProp name="HTTPSampler.port"></stringProp>
+          <stringProp name="HTTPSampler.protocol">http</stringProp>
+          <stringProp name="HTTPSampler.contentEncoding">UTF-8</stringProp>
+          <stringProp name="HTTPSampler.path"></stringProp>
+        </ConfigTestElement>
+
+        <!-- Firmware Upgrade Test -->
+        <hashTree>
+          <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="固件升级接口性能测试" enabled="true"/>
+
+          <!-- 1. Create Upgrade Task -->
+          <hashTree>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="创建升级任务" enabled="true">
+              <stringProp name="HTTPSampler.path">/api/v1/video/firmware/upload</stringProp>
+              <stringProp name="HTTPSampler.method">POST</stringProp>
+              <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="" elementType="HTTPArgument">
+                    <stringProp name="Argument.name"></stringProp>
+                    <stringProp name="Argument.value">{"deviceId":1001,"deviceCode":"CAM001","deviceName":"1号摄像头","currentVersion":"1.0.0","targetVersion":"2.0.0","firmwareUrl":"http://firmware.example.com/v2.0.0.bin","fileSize":52428800,"fileMd5":"abc123def456","upgradeType":1}</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                    <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                    <stringProp name="HTTPArgument.use_equals">true</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </elementProp>
+            </HTTPSamplerProxy>
+          </hashTree>
+
+          <!-- 2. Query Upgrade Progress -->
+          <hashTree>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="查询升级进度" enabled="true">
+              <stringProp name="HTTPSampler.path">/api/v1/video/firmware/${upgradeId}/progress</stringProp>
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments"></collectionProp>
+              </elementProp>
+            </HTTPSamplerProxy>
+          </hashTree>
+
+          <!-- 3. Query Upgrade Statistics -->
+          <hashTree>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="查询升级统计" enabled="true">
+              <stringProp name="HTTPSampler.path">/api/v1/video/firmware/statistics</stringProp>
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="startDate" elementType="HTTPArgument">
+                    <stringProp name="Argument.value">2025-12-01</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                  <elementProp name="endDate" elementType="HTTPArgument">
+                    <stringProp name="Argument.value">2025-12-31</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </elementProp>
+            </HTTPSamplerProxy>
+          </hashTree>
+        </hashTree>
+
+        <!-- Device Health Test -->
+        <hashTree>
+          <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="设备健康检查接口性能测试" enabled="true"/>
+
+          <!-- 1. Create Health Check -->
+          <hashTree>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="创建健康检查" enabled="true">
+              <stringProp name="HTTPSampler.path">/api/v1/video/health/check</stringProp>
+              <stringProp name="HTTPSampler.method">POST</stringProp>
+              <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="" elementType="HTTPArgument">
+                    <stringProp name="Argument.name"></stringProp>
+                    <stringProp name="Argument.value">{"deviceId":1001,"deviceCode":"CAM001","deviceName":"1号摄像头","cpuUsage":45.5,"memoryUsage":60.2,"diskUsage":50.0,"networkLatency":20,"packetLoss":0.1,"frameRate":25,"temperature":45,"uptime":720}</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                    <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                    <stringProp name="HTTPArgument.use_equals">true</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </elementProp>
+            </HTTPSamplerProxy>
+          </hashTree>
+
+          <!-- 2. Query Device Health -->
+          <hashTree>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="查询设备健康状态" enabled="true">
+              <stringProp name="HTTPSampler.path">/api/v1/video/health/device/1001</stringProp>
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments"></collectionProp>
+              </elementProp>
+            </HTTPSamplerProxy>
+          </hashTree>
+
+          <!-- 3. Query Health Statistics -->
+          <hashTree>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="查询健康统计" enabled="true">
+              <stringProp name="HTTPSampler.path">/api/v1/video/health/statistics</stringProp>
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="startDate" elementType="HTTPArgument">
+                    <stringProp name="Argument.value">2025-12-01</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                  <elementProp name="endDate" elementType="HTTPArgument">
+                    <stringProp name="Argument.value">2025-12-31</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </elementProp>
+            </HTTPSamplerProxy>
+          </hashTree>
+        </hashTree>
+
+        <!-- Results Summary -->
+        <hashTree>
+          <ResultCollector guiclass="SummaryReport" testclass="SummaryReport" testname="Summary Report" enabled="true"/>
+          <ResultCollector guiclass="StatVisualizer" testclass="StatVisualizer" testname="Aggregate Report" enabled="true"/>
+          <ResultCollector guiclass="RespTimeGraphVisualizer" testclass="RespTimeGraphVisualizer" testname="Response Times Graph" enabled="true"/>
+        </hashTree>
+      </hashTree>
+    </hashTree>
+  </hashTree>
+</jmeterTestPlan>

@@ -22,7 +22,7 @@ spring:
     import:
       - "classpath:common-config/cache-application.yml"
       - "classpath:common-config/database-application.yml"
-      - "optional:ENC(AES256:K9L0M1N2O3P4Q5R6S7T8U9V0W1X2Y3Z):ioedream-device-comm-service-dev.yaml"  # 使用dev配置
+      - "classpath:common-config/resilience4j-application.yml"
   # ==================== Nacos服务发现配置 ====================
   cloud:
     nacos:
@@ -60,16 +60,9 @@ spring:
 
   # ==================== 数据源配置 ====================
   datasource:
-    type: com.alibaba.druid.pool.DruidDataSource
-    driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://${MYSQL_HOST:127.0.0.1}:${MYSQL_PORT:3306}/${MYSQL_DATABASE:ioedream}?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
     username: ${MYSQL_USERNAME:ENC(AES256:M1N2O3P4Q5R6S7T8U9V0W1X2Y3Z4A5B)}
     password: ${MYSQL_PASSWORD:ENC(AES256:G6K7X8J9M0N1O2P3Q4R5S6T7U8V9W0X)}
-    druid:
-      initial-size: 5
-      min-idle: 5
-      max-active: 20
-      max-wait: 60000
 
   # ==================== Redis配置 ====================
   data:

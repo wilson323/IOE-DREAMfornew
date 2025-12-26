@@ -1,80 +1,49 @@
 package net.lab1024.sa.common.system.employee.domain.dto;
 
-import lombok.Data;
+import java.io.Serializable;
 
-import jakarta.validation.constraints.Min;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import net.lab1024.sa.common.domain.PageParam;
 
 /**
  * 员工查询DTO
- * <p>
- * 严格遵循CLAUDE.md规范:
- * - 使用@Data注解自动生成getter/setter
- * - 使用@Min验证分页参数
- * - 完整的字段注释
- * </p>
  *
  * @author IOE-DREAM Team
- * @version 1.0.0
- * @since 2025-12-02
+ * @since 2025-12-21
  */
 @Data
-public class EmployeeQueryDTO {
+@EqualsAndHashCode(callSuper = true)
+@Schema(description = "员工查询DTO")
+public class EmployeeQueryDTO extends PageParam implements Serializable {
 
-    /**
-     * 员工姓名
-     */
+    private static final long serialVersionUID = 1L;
+
+    @Schema(description = "员工姓名", example = "张三")
     private String employeeName;
 
-    /**
-     * 员工工号
-     */
+    @Schema(description = "员工工号", example = "EMP001")
     private String employeeNo;
 
-    /**
-     * 部门ID
-     */
+    @Schema(description = "部门ID", example = "1001")
     private Long departmentId;
 
-    /**
-     * 职位
-     */
+    @Schema(description = "职位", example = "软件工程师")
     private String position;
 
-    /**
-     * 员工状态
-     */
+    @Schema(description = "状态", example = "1")
     private Integer status;
 
-    /**
-     * 性别
-     */
+    @Schema(description = "性别", example = "1")
     private Integer gender;
 
-    /**
-     * 手机号
-     */
+    @Schema(description = "手机号码", example = "13800138000")
     private String phone;
 
-    /**
-     * 邮箱
-     */
+    @Schema(description = "邮箱", example = "zhangsan@example.com")
     private String email;
 
-    /**
-     * 员工类型
-     */
+    @Schema(description = "员工类型", example = "1")
     private Integer employeeType;
-
-    /**
-     * 页码
-     */
-    @Min(value = 1, message = "页码必须大于0")
-    private Integer pageNum = 1;
-
-    /**
-     * 页大小
-     */
-    @Min(value = 1, message = "页大小必须大于0")
-    private Integer pageSize = 20;
 }
-

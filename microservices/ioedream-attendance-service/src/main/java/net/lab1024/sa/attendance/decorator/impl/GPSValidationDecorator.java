@@ -1,11 +1,11 @@
 package net.lab1024.sa.attendance.decorator.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.attendance.decorator.IPunchExecutor;
-import net.lab1024.sa.attendance.decorator.PunchDecorator;
+
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.Resource;
+import net.lab1024.sa.attendance.decorator.IPunchExecutor;
+import net.lab1024.sa.attendance.decorator.PunchDecorator;
 
 /**
  * GPS位置验证装饰器
@@ -18,8 +18,8 @@ import jakarta.annotation.Resource;
  * @version 1.0.0
  * @since 2025-12-18
  */
-@Slf4j
 @Component
+@Slf4j
 public class GPSValidationDecorator extends PunchDecorator {
 
     /**
@@ -32,7 +32,7 @@ public class GPSValidationDecorator extends PunchDecorator {
     }
 
     @Override
-    public PunchResult execute(MobilePunchRequest request) {
+    public IPunchExecutor.PunchResult execute(IPunchExecutor.MobilePunchRequest request) {
         // GPS位置验证
         if (request.getLatitude() != null && request.getLongitude() != null) {
             // TODO: 实现GPS位置验证逻辑
@@ -40,13 +40,12 @@ public class GPSValidationDecorator extends PunchDecorator {
             // 2. 如果不在区域内，返回失败
             boolean withinCompanyArea = isWithinCompanyArea(
                     request.getLatitude(),
-                    request.getLongitude()
-            );
+                    request.getLongitude());
 
             if (!withinCompanyArea) {
                 log.warn("[GPS验证装饰器] 用户不在打卡范围内, userId={}, location=({}, {})",
                         request.getUserId(), request.getLatitude(), request.getLongitude());
-                return PunchResult.failed("不在打卡范围内");
+                return IPunchExecutor.PunchResult.failed("不在打卡范围内");
             }
         }
 
@@ -59,7 +58,7 @@ public class GPSValidationDecorator extends PunchDecorator {
      * TODO: 实现GPS位置验证逻辑
      * </p>
      *
-     * @param latitude 纬度
+     * @param latitude  纬度
      * @param longitude 经度
      * @return 是否在区域内
      */

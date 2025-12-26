@@ -1,87 +1,90 @@
 package net.lab1024.sa.consume.domain.vo;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
 
 import lombok.Data;
+import lombok.Builder;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
- * 消费统计数据VO
+ * 消费统计视图对象
  *
  * @author IOE-DREAM Team
  * @version 1.0.0
- * @since 2025-01-30
+ * @since 2025-12-21
  */
 @Data
+@Builder
+@Schema(description = "消费统计视图对象")
 public class ConsumeStatisticsVO {
 
-    /**
-     * 时间范围
-     */
-    private String timeRange;
+    @Schema(description = "总消费次数", example = "156")
+    private Integer totalCount;
 
-    /**
-     * 生成时间
-     */
-    private LocalDateTime generateTime;
-
-    /**
-     * 总消费金额
-     */
+    @Schema(description = "总消费金额", example = "5680.50")
     private BigDecimal totalAmount;
 
-    /**
-     * 总消费笔数
-     */
-    private Long totalCount;
+    @Schema(description = "平均消费金额", example = "36.41")
+    private BigDecimal avgAmount;
 
-    /**
-     * 消费人数
-     */
-    private Integer userCount;
-
-    /**
-     * 平均消费金额
-     */
-    private BigDecimal averageAmount;
-
-    /**
-     * 最高消费金额
-     */
+    @Schema(description = "最大消费金额", example = "200.00")
     private BigDecimal maxAmount;
 
-    /**
-     * 最低消费金额
-     */
+    @Schema(description = "最小消费金额", example = "1.50")
     private BigDecimal minAmount;
 
-    /**
-     * 活跃用户数
-     */
-    private Integer activeUserCount;
+    @Schema(description = "今日消费次数", example = "3")
+    private Integer todayCount;
 
-    /**
-     * 新用户数
-     */
-    private Integer newUserCount;
+    @Schema(description = "今日消费金额", example = "85.50")
+    private BigDecimal todayAmount;
 
-    /**
-     * 时间序列数据
-     */
-    private List<Map<String, Object>> timeSeriesData;
+    @Schema(description = "本周消费次数", example = "15")
+    private Integer weekCount;
 
-    /**
-     * 类别数据
-     */
-    private List<Map<String, Object>> categoryData;
+    @Schema(description = "本周消费金额", example = "568.00")
+    private BigDecimal weekAmount;
 
-    /**
-     * 区域数据
-     */
-    private List<Map<String, Object>> regionData;
+    @Schema(description = "本月消费次数", example = "62")
+    private Integer monthCount;
+
+    @Schema(description = "本月消费金额", example = "2340.50")
+    private BigDecimal monthAmount;
+
+    @Schema(description = "餐饮消费次数", example = "98")
+    private Integer mealCount;
+
+    @Schema(description = "餐饮消费金额", example = "3520.00")
+    private BigDecimal mealAmount;
+
+    @Schema(description = "购物消费次数", example = "35")
+    private Integer shoppingCount;
+
+    @Schema(description = "购物消费金额", example = "1250.50")
+    private BigDecimal shoppingAmount;
+
+    @Schema(description = "其他消费次数", example = "23")
+    private Integer otherCount;
+
+    @Schema(description = "其他消费金额", example = "910.00")
+    private BigDecimal otherAmount;
+
+    @Schema(description = "余额支付次数", example = "120")
+    private Integer balancePaymentCount;
+
+    @Schema(description = "余额支付金额", example = "4320.00")
+    private BigDecimal balancePaymentAmount;
+
+    @Schema(description = "卡片支付次数", example = "25")
+    private Integer cardPaymentCount;
+
+    @Schema(description = "卡片支付金额", example = "890.50")
+    private BigDecimal cardPaymentAmount;
+
+    @Schema(description = "其他支付次数", example = "11")
+    private Integer otherPaymentCount;
+
+    @Schema(description = "其他支付金额", example = "470.00")
+    private BigDecimal otherPaymentAmount;
 }
-
-
-

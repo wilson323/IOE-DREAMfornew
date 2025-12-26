@@ -1,7 +1,9 @@
 package net.lab1024.sa.common.example;
 
-import com.github.benmanes.caffeine.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
+
+
+import com.github.benmanes.caffeine.cache.Cache;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
@@ -21,9 +23,10 @@ import java.util.concurrent.CompletableFuture;
  * @author IOE-DREAM Team
  * @since 2025-12-17
  */
-@Slf4j
 @Service
+@Slf4j
 public class UnifiedConfigurationExample {
+
 
     // ==================== 注入统一线程池 ====================
     

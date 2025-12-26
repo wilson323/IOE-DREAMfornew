@@ -1,4 +1,4 @@
-# ============================================================
+﻿# ============================================================
 # IOE-DREAM Video Service 生产环境配置
 #
 # @Author:    IOE-DREAM Team
@@ -20,8 +20,9 @@ server:
     mime-types: application/json,application/xml,text/html,text/xml,text/plain,video/mp4,video/avi,video/mov
   tomcat:
     uri-encoding: UTF-8
-    max-threads: 400
-    min-spare-threads: 50
+    threads:
+      max: 400
+      min-spare: 50
     accept-count: 200
     connection-timeout: 20000
 
@@ -82,12 +83,12 @@ spring:
   cache:
     type: redis
     redis:
-      time-to-live: 600000  # 10分钟
+      time-to-live: 600000 # 10分钟
       cache-null-values: false
       key-prefix: video_cache_
 
-  # ==================== Zipkin分布式追踪配置 ====================
-  sleuth:
+  # ==================== 分布式追踪配置 ====================
+  tracing:
     zipkin:
       base-url: ${ZIPKIN_BASE_URL:http://zipkin-prod:9411}
       enabled: ${ZIPKIN_ENABLED:true}
@@ -139,9 +140,9 @@ management:
         step: 30s
     distribution:
       percentiles-histogram:
-        http.server.requests: true
+        "[http.server.requests]": true
       percentiles:
-        http.server.requests: 0.5,0.9,0.95,0.99
+        "[http.server.requests]": 0.5,0.9,0.95,0.99
     tags:
       application: ${spring.application.name}
       environment: ${spring.profiles.active}
@@ -168,8 +169,8 @@ resilience4j:
 # ==================== 日志配置 ====================
 logging:
   level:
-    net.lab1024.sa.video: INFO
-    org.bytedeco.javacv: WARN
+    "net.lab1024.sa.video": INFO
+    "org.bytedeco.javacv": WARN
   pattern:
     console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr([%X{traceId:-},%X{spanId:-}]){blue} %clr(%5p){magenta} %clr(${PID:- }){yellow} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}"
 
@@ -390,23 +391,23 @@ video:
   cache:
     # 缓存配置
     live-streams:
-      ttl: ${VIDEO_LIVE_STREAMS_TTL:60}          # 1分钟
+      ttl: ${VIDEO_LIVE_STREAMS_TTL:60} # 1分钟
       max-size: ${VIDEO_LIVE_STREAMS_MAX_SIZE:100}
 
     device-status:
-      ttl: ${VIDEO_DEVICE_STATUS_TTL:30}         # 30秒
+      ttl: ${VIDEO_DEVICE_STATUS_TTL:30} # 30秒
       max-size: ${VIDEO_DEVICE_STATUS_MAX_SIZE:1000}
 
     recording-metadata:
-      ttl: ${VIDEO_RECORDING_METADATA_TTL:3600}  # 1小时
+      ttl: ${VIDEO_RECORDING_METADATA_TTL:3600} # 1小时
       max-size: ${VIDEO_RECORDING_METADATA_MAX_SIZE:5000}
 
     ai-results:
-      ttl: ${AI_RESULTS_TTL:300}                  # 5分钟
+      ttl: ${AI_RESULTS_TTL:300} # 5分钟
       max-size: ${AI_RESULTS_MAX_SIZE:2000}
 
     thumbnail-cache:
-      ttl: ${THUMBNAIL_CACHE_TTL:3600}            # 1小时
+      ttl: ${THUMBNAIL_CACHE_TTL:3600} # 1小时
       max-size: ${THUMBNAIL_CACHE_MAX_SIZE:10000}
 
   security:
@@ -480,3 +481,4 @@ video:
       log-retention-days: ${LOG_RETENTION_DAYS:30}
       log-compression: ${LOG_COMPRESSION_ENABLED:true}
       log-rotation: ${LOG_ROTATION_ENABLED:true}
+

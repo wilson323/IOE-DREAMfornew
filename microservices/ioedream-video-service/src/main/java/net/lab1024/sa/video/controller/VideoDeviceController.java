@@ -2,8 +2,10 @@ package net.lab1024.sa.video.controller;
 
 import java.util.List;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -19,12 +21,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import lombok.extern.slf4j.Slf4j;
+import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.exception.BusinessException;
 import net.lab1024.sa.common.exception.ParamException;
 import net.lab1024.sa.common.exception.SystemException;
-import net.lab1024.sa.common.openapi.domain.response.PageResult;
 import net.lab1024.sa.common.permission.annotation.PermissionCheck;
 import net.lab1024.sa.video.domain.form.VideoDeviceAddForm;
 import net.lab1024.sa.video.domain.form.VideoDeviceQueryForm;
@@ -83,34 +84,24 @@ public class VideoDeviceController {
      * @apiNote 示例请求：
      *
      *          <pre>
-     * GET /api/v1/video/device/query?pageNum=1&pageSize=20&keyword=摄像头&areaId=4001&status=1
+     * POST /api/v1/video/device/query
+     * Body: {"pageNum": 1, "pageSize": 20, "keyword": "摄像头", "areaId": 4001, "status": 1}
      *          </pre>
      */
     @Observed(name = "video.device.queryDevices", contextualName = "video-device-query")
-    @GetMapping("/query")
-    @Operation(summary = "分页查询设备", description = "根据条件分页查询视频设备，支持关键词搜索、区域筛选、状态筛选。严格遵循RESTful规范：查询操作使用GET方法。", responses = {
+    @PostMapping("/query")
+    @Operation(summary = "分页查询设备", description = "根据条件分页查询视频设备，支持关键词搜索、区域筛选、状态筛选。由于查询参数较多且复杂，使用POST方法。", responses = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "查询成功", content = @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json", schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = PageResult.class))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "参数错误"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "无权限")
     })
     @PermissionCheck(value = "VIDEO_MANAGER", description = "视频管理权限")
     public ResponseDTO<PageResult<VideoDeviceVO>> queryDevices(
-            @Parameter(description = "页码（从1开始）") @RequestParam(defaultValue = "1") Integer pageNum,
-            @Parameter(description = "每页大小") @RequestParam(defaultValue = "20") Integer pageSize,
-            @Parameter(description = "关键词（设备名称、设备编号）") @RequestParam(required = false) String keyword,
-            @Parameter(description = "区域ID（可选）") @RequestParam(required = false) String areaId,
-            @Parameter(description = "设备状态（可选，1-在线，2-离线，3-故障）") @RequestParam(required = false) Integer status) {
+            @ModelAttribute VideoDeviceQueryForm queryForm) {
         log.info("[视频设备] 分页查询设备，pageNum={}, pageSize={}, keyword={}, areaId={}, status={}",
-                pageNum, pageSize, keyword, areaId, status);
+                queryForm.getPageNum(), queryForm.getPageSize(),
+                queryForm.getKeyword(), queryForm.getAreaId(), queryForm.getStatus());
         try {
-            // 构建查询表单
-            VideoDeviceQueryForm queryForm = new VideoDeviceQueryForm();
-            queryForm.setPageNum(pageNum);
-            queryForm.setPageSize(pageSize);
-            queryForm.setKeyword(keyword);
-            queryForm.setAreaId(areaId);
-            queryForm.setStatus(status);
-
             PageResult<VideoDeviceVO> result = videoDeviceService.queryDevices(queryForm);
             return ResponseDTO.ok(result);
         } catch (ParamException e) {

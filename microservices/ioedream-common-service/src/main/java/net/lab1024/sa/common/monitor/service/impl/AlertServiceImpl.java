@@ -1,5 +1,7 @@
 package net.lab1024.sa.common.monitor.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,16 +12,21 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import io.micrometer.observation.annotation.Observed;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.micrometer.observation.annotation.Observed;
 import jakarta.annotation.Resource;
-import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.domain.PageResult;
+import net.lab1024.sa.common.exception.BusinessException;
+import net.lab1024.sa.common.exception.ParamException;
+import net.lab1024.sa.common.exception.SystemException;
 import net.lab1024.sa.common.monitor.dao.AlertDao;
 import net.lab1024.sa.common.monitor.dao.AlertRuleDao;
+import net.lab1024.sa.common.monitor.domain.constant.SecurityAlertConstants;
 import net.lab1024.sa.common.monitor.domain.dto.AlertRuleAddDTO;
 import net.lab1024.sa.common.monitor.domain.dto.AlertRuleQueryDTO;
 import net.lab1024.sa.common.monitor.domain.entity.AlertEntity;
@@ -27,9 +34,6 @@ import net.lab1024.sa.common.monitor.domain.entity.AlertRuleEntity;
 import net.lab1024.sa.common.monitor.domain.vo.AlertRuleVO;
 import net.lab1024.sa.common.monitor.manager.NotificationManager;
 import net.lab1024.sa.common.monitor.service.AlertService;
-import net.lab1024.sa.common.exception.BusinessException;
-import net.lab1024.sa.common.exception.SystemException;
-import net.lab1024.sa.common.exception.ParamException;
 
 /**
  * 告警管理服务实现类
@@ -45,10 +49,11 @@ import net.lab1024.sa.common.exception.ParamException;
  * @version 1.0.0
  * @since 2025-12-02
  */
-@Slf4j
 @Service
 @Transactional(rollbackFor = Exception.class)
+@Slf4j
 public class AlertServiceImpl implements AlertService {
+
 
     @Resource
     private AlertDao alertDao;
@@ -59,6 +64,9 @@ public class AlertServiceImpl implements AlertService {
     @Resource
     private NotificationManager notificationManager;
 
+    @Resource
+    private ObjectMapper objectMapper;
+
     @Override
     @Observed(name = "alert.rule.add", contextualName = "alert-rule-add")
     public Long addAlertRule(AlertRuleAddDTO addDTO) {
@@ -67,28 +75,47 @@ public class AlertServiceImpl implements AlertService {
         try {
             AlertRuleEntity alertRule = new AlertRuleEntity();
             alertRule.setRuleName(addDTO.getRuleName());
-            alertRule.setRuleDescription(addDTO.getRuleDescription());
-            alertRule.setMetricName(addDTO.getMetricName());
-            alertRule.setMonitorType(addDTO.getMonitorType());
-            alertRule.setConditionOperator(addDTO.getConditionOperator());
-            alertRule.setThresholdValue(addDTO.getThresholdValue());
-            alertRule.setAlertLevel(addDTO.getAlertLevel());
-            alertRule.setStatus(addDTO.getStatus() != null ? addDTO.getStatus() : "ENABLED");
-            alertRule.setDurationMinutes(addDTO.getDurationMinutes());
-            alertRule.setNotificationChannels(addDTO.getNotificationChannels());
-            alertRule.setNotificationUsers(addDTO.getNotificationUsers());
-            alertRule.setNotificationInterval(addDTO.getNotificationInterval());
-            alertRule.setSuppressionDuration(addDTO.getSuppressionDuration());
-            alertRule.setRuleExpression(addDTO.getRuleExpression());
-            alertRule.setPriority(addDTO.getPriority());
-            alertRule.setTags(addDTO.getTags());
-            alertRule.setApplicableServices(addDTO.getApplicableServices());
-            alertRule.setApplicableEnvironments(addDTO.getApplicableEnvironments());
+            alertRule.setRuleType(addDTO.getMonitorType()); // 使用monitorType作为ruleType
+            // 将String类型的alertLevel转换为Integer（使用安防告警标准：P1=1, P2=2, P3=3, P4=4）
+            Integer alertLevelInt = SecurityAlertConstants.AlertLevel.fromString(addDTO.getAlertLevel());
+            alertRule.setAlertLevel(alertLevelInt);
+            // notifyChannels是List<String>，需要转换为String（JSON格式或逗号分隔）
+            String notifyChannelsStr = addDTO.getNotificationChannels() != null
+                    ? String.join(",", addDTO.getNotificationChannels())
+                    : null;
+            alertRule.setNotifyChannels(notifyChannelsStr);
+            alertRule.setStatus(addDTO.getStatus() != null && "ENABLED".equals(addDTO.getStatus()) ? 1 : 0); // 转换为Integer
+            alertRule.setRemark(addDTO.getRuleDescription());
+
+            // 将详细配置序列化到ruleConfig JSON中
+            Map<String, Object> ruleConfig = new HashMap<>();
+            ruleConfig.put("ruleDescription", addDTO.getRuleDescription());
+            ruleConfig.put("metricName", addDTO.getMetricName());
+            ruleConfig.put("monitorType", addDTO.getMonitorType());
+            ruleConfig.put("conditionOperator", addDTO.getConditionOperator());
+            ruleConfig.put("thresholdValue", addDTO.getThresholdValue());
+            ruleConfig.put("durationMinutes", addDTO.getDurationMinutes());
+            ruleConfig.put("notificationUsers", addDTO.getNotificationUsers());
+            ruleConfig.put("notificationInterval", addDTO.getNotificationInterval());
+            ruleConfig.put("suppressionDuration", addDTO.getSuppressionDuration());
+            ruleConfig.put("ruleExpression", addDTO.getRuleExpression());
+            ruleConfig.put("priority", addDTO.getPriority());
+            ruleConfig.put("tags", addDTO.getTags());
+            ruleConfig.put("applicableServices", addDTO.getApplicableServices());
+            ruleConfig.put("applicableEnvironments", addDTO.getApplicableEnvironments());
+
+            try {
+                String ruleConfigJson = objectMapper.writeValueAsString(ruleConfig);
+                alertRule.setRuleConfig(ruleConfigJson);
+            } catch (Exception e) {
+                log.error("[告警服务] 序列化ruleConfig失败", e);
+                throw new SystemException("ALERT_RULE_CONFIG_SERIALIZE_ERROR", "告警规则配置序列化失败", e);
+            }
 
             alertRuleDao.insert(alertRule);
 
-            log.info("告警规则添加成功，ID：{}", alertRule.getId());
-            return alertRule.getId();
+            log.info("告警规则添加成功，ID：{}", alertRule.getRuleId());
+            return alertRule.getRuleId();
 
         } catch (IllegalArgumentException | ParamException e) {
             log.warn("[告警服务] 添加告警规则参数异常, error={}", e.getMessage());
@@ -174,8 +201,8 @@ public class AlertServiceImpl implements AlertService {
 
         try {
             AlertRuleEntity alertRule = new AlertRuleEntity();
-            alertRule.setId(ruleId);
-            alertRule.setStatus("ENABLED");
+            alertRule.setRuleId(ruleId);
+            alertRule.setStatus(1); // 1-启用
 
             alertRuleDao.updateById(alertRule);
 
@@ -200,7 +227,7 @@ public class AlertServiceImpl implements AlertService {
         try {
             AlertRuleEntity alertRule = new AlertRuleEntity();
             alertRule.setId(ruleId);
-            alertRule.setStatus("DISABLED");
+            alertRule.setStatus(0); // 0-禁用 1-启用
 
             alertRuleDao.updateById(alertRule);
 
@@ -224,7 +251,7 @@ public class AlertServiceImpl implements AlertService {
 
         try {
             AlertRuleEntity alertRule = new AlertRuleEntity();
-            alertRule.setId(ruleId);
+            alertRule.setRuleId(ruleId);
             alertRule.setDeletedFlag(1);
 
             alertRuleDao.updateById(alertRule);
@@ -241,7 +268,6 @@ public class AlertServiceImpl implements AlertService {
         }
     }
 
-    @Override
     @Observed(name = "alert.history.get", contextualName = "alert-history-get")
     @Transactional(readOnly = true)
     public PageResult<Map<String, Object>> getAlertHistory(Integer pageNum, Integer pageSize, String severity,
@@ -289,7 +315,6 @@ public class AlertServiceImpl implements AlertService {
         }
     }
 
-    @Override
     @Observed(name = "alert.active.count", contextualName = "alert-active-count")
     @Transactional(readOnly = true)
     public Map<String, Object> getActiveAlertCount() {
@@ -297,24 +322,28 @@ public class AlertServiceImpl implements AlertService {
 
         try {
             QueryWrapper<AlertEntity> queryWrapper = new QueryWrapper<>();
-            queryWrapper.eq("status", "ACTIVE");
+            queryWrapper.eq("status", SecurityAlertConstants.AlertStatus.PENDING); // 使用安防告警标准状态（待处理）
             queryWrapper.eq("deleted_flag", 0);
 
             long totalCount = alertDao.selectCount(queryWrapper);
 
-            // 按级别统计
+            // 按级别统计（使用安防告警标准级别：P1/P2/P3/P4）
             Map<String, Long> countByLevel = new HashMap<>();
-            countByLevel.put("CRITICAL", alertDao.selectCount(new QueryWrapper<AlertEntity>()
-                    .eq("status", "ACTIVE")
-                    .eq("alert_level", "CRITICAL")
+            countByLevel.put("P1", alertDao.selectCount(new QueryWrapper<AlertEntity>()
+                    .eq("status", SecurityAlertConstants.AlertStatus.PENDING)
+                    .eq("alert_level", SecurityAlertConstants.AlertLevel.P1_URGENT)
                     .eq("deleted_flag", 0)));
-            countByLevel.put("ERROR", alertDao.selectCount(new QueryWrapper<AlertEntity>()
-                    .eq("status", "ACTIVE")
-                    .eq("alert_level", "ERROR")
+            countByLevel.put("P2", alertDao.selectCount(new QueryWrapper<AlertEntity>()
+                    .eq("status", SecurityAlertConstants.AlertStatus.PENDING)
+                    .eq("alert_level", SecurityAlertConstants.AlertLevel.P2_IMPORTANT)
                     .eq("deleted_flag", 0)));
-            countByLevel.put("WARNING", alertDao.selectCount(new QueryWrapper<AlertEntity>()
-                    .eq("status", "ACTIVE")
-                    .eq("alert_level", "WARNING")
+            countByLevel.put("P3", alertDao.selectCount(new QueryWrapper<AlertEntity>()
+                    .eq("status", SecurityAlertConstants.AlertStatus.PENDING)
+                    .eq("alert_level", SecurityAlertConstants.AlertLevel.P3_NORMAL)
+                    .eq("deleted_flag", 0)));
+            countByLevel.put("P4", alertDao.selectCount(new QueryWrapper<AlertEntity>()
+                    .eq("status", SecurityAlertConstants.AlertStatus.PENDING)
+                    .eq("alert_level", SecurityAlertConstants.AlertLevel.P4_INFO)
                     .eq("deleted_flag", 0)));
 
             Map<String, Object> result = new HashMap<>();
@@ -329,7 +358,6 @@ public class AlertServiceImpl implements AlertService {
         }
     }
 
-    @Override
     @Observed(name = "alert.statistics.get", contextualName = "alert-statistics-get")
     @Transactional(readOnly = true)
     public Map<String, Object> getAlertStatistics(Integer days) {
@@ -345,7 +373,7 @@ public class AlertServiceImpl implements AlertService {
             long totalAlerts = alertDao.selectCount(queryWrapper);
             long resolvedAlerts = alertDao.selectCount(new QueryWrapper<AlertEntity>()
                     .ge("create_time", startTime)
-                    .eq("status", "RESOLVED")
+                    .eq("status", SecurityAlertConstants.AlertStatus.RESOLVED) // 使用安防告警标准状态
                     .eq("deleted_flag", 0));
 
             Map<String, Object> statistics = new HashMap<>();
@@ -362,7 +390,6 @@ public class AlertServiceImpl implements AlertService {
         }
     }
 
-    @Override
     @Observed(name = "alert.notification.test", contextualName = "alert-notification-test")
     public Map<String, Object> testNotification(String notificationType, List<String> recipients) {
         log.info("测试通知，类型：{}，接收人：{}", notificationType, recipients);
@@ -418,7 +445,6 @@ public class AlertServiceImpl implements AlertService {
         }
     }
 
-    @Override
     @Observed(name = "alert.notification.channels", contextualName = "alert-notification-channels")
     @Transactional(readOnly = true)
     public List<Map<String, Object>> getNotificationChannels() {
@@ -434,7 +460,6 @@ public class AlertServiceImpl implements AlertService {
         return channels;
     }
 
-    @Override
     @Observed(name = "alert.batch.resolve", contextualName = "alert-batch-resolve")
     public Map<String, Integer> batchResolveAlerts(List<Long> alertIds, String resolution) {
         log.info("批量解决告警，数量：{}", alertIds.size());
@@ -446,9 +471,10 @@ public class AlertServiceImpl implements AlertService {
             try {
                 AlertEntity alert = new AlertEntity();
                 alert.setId(alertId);
-                alert.setStatus("RESOLVED");
-                alert.setResolutionNotes(resolution);
-                alert.setResolvedTime(LocalDateTime.now());
+                alert.setStatus(2); // 2-已解决（假设：0-未处理 1-处理中 2-已解决）
+                // AlertEntity中没有resolutionNotes和resolvedTime字段，使用handleRemark和handleTime
+                alert.setHandleRemark(resolution);
+                alert.setHandleTime(LocalDateTime.now());
 
                 alertDao.updateById(alert);
                 successCount++;
@@ -469,7 +495,6 @@ public class AlertServiceImpl implements AlertService {
         return result;
     }
 
-    @Override
     @Observed(name = "alert.trends.get", contextualName = "alert-trends-get")
     @Transactional(readOnly = true)
     public List<Map<String, Object>> getAlertTrends(Integer days) {
@@ -503,28 +528,103 @@ public class AlertServiceImpl implements AlertService {
      */
     private AlertRuleVO convertToVO(AlertRuleEntity entity) {
         AlertRuleVO vo = new AlertRuleVO();
-        vo.setRuleId(entity.getId());
+        vo.setId(entity.getRuleId());
         vo.setRuleName(entity.getRuleName());
-        vo.setRuleDescription(entity.getRuleDescription());
-        vo.setMetricName(entity.getMetricName());
-        vo.setMonitorType(entity.getMonitorType());
-        vo.setConditionOperator(entity.getConditionOperator());
-        vo.setThresholdValue(entity.getThresholdValue());
-        vo.setAlertLevel(entity.getAlertLevel());
-        vo.setStatus(entity.getStatus());
-        vo.setDurationMinutes(entity.getDurationMinutes());
-        vo.setNotificationChannels(entity.getNotificationChannels());
-        vo.setNotificationUsers(entity.getNotificationUsers());
-        vo.setNotificationInterval(entity.getNotificationInterval());
-        vo.setSuppressionDuration(entity.getSuppressionDuration());
-        vo.setRuleExpression(entity.getRuleExpression());
-        vo.setPriority(entity.getPriority());
-        vo.setTags(entity.getTags());
-        vo.setApplicableServices(entity.getApplicableServices());
-        vo.setApplicableEnvironments(entity.getApplicableEnvironments());
+        vo.setMonitorType(entity.getRuleType());
         vo.setCreateTime(entity.getCreateTime());
         vo.setUpdateTime(entity.getUpdateTime());
+
+        // 从rule_config JSON中解析详细配置
+        if (entity.getRuleConfig() != null && !entity.getRuleConfig().isEmpty()) {
+            try {
+                Map<String, Object> ruleConfig = objectMapper.readValue(
+                        entity.getRuleConfig(),
+                        new TypeReference<Map<String, Object>>() {
+                        });
+                vo.setRuleDescription((String) ruleConfig.get("ruleDescription"));
+                vo.setMetricName((String) ruleConfig.get("metricName"));
+                vo.setConditionOperator((String) ruleConfig.get("conditionOperator"));
+                if (ruleConfig.get("thresholdValue") != null) {
+                    vo.setThresholdValue(Double.valueOf(ruleConfig.get("thresholdValue").toString()));
+                }
+                if (ruleConfig.get("durationMinutes") != null) {
+                    vo.setDurationMinutes(Integer.valueOf(ruleConfig.get("durationMinutes").toString()));
+                }
+                if (ruleConfig.get("notificationChannels") != null) {
+                    vo.setNotificationChannels((List<String>) ruleConfig.get("notificationChannels"));
+                }
+                if (ruleConfig.get("notificationUsers") != null) {
+                    vo.setNotificationUsers((List<Long>) ruleConfig.get("notificationUsers"));
+                }
+                if (ruleConfig.get("notificationInterval") != null) {
+                    vo.setNotificationInterval(Integer.valueOf(ruleConfig.get("notificationInterval").toString()));
+                }
+                if (ruleConfig.get("suppressionDuration") != null) {
+                    vo.setSuppressionDuration(Integer.valueOf(ruleConfig.get("suppressionDuration").toString()));
+                }
+                vo.setRuleExpression((String) ruleConfig.get("ruleExpression"));
+                if (ruleConfig.get("priority") != null) {
+                    vo.setPriority(Integer.valueOf(ruleConfig.get("priority").toString()));
+                }
+                vo.setTags((List<String>) ruleConfig.get("tags"));
+                vo.setApplicableServices((List<String>) ruleConfig.get("applicableServices"));
+                vo.setApplicableEnvironments((List<String>) ruleConfig.get("applicableEnvironments"));
+            } catch (Exception e) {
+                log.warn("[告警服务] 解析rule_config JSON失败, ruleId={}, error={}", entity.getRuleId(), e.getMessage());
+            }
+        }
+
+        // 告警级别转换：1=CRITICAL, 2=ERROR, 3=WARNING, 4=INFO
+        if (entity.getAlertLevel() != null) {
+            switch (entity.getAlertLevel()) {
+                case 1:
+                    vo.setAlertLevel("CRITICAL");
+                    break;
+                case 2:
+                    vo.setAlertLevel("ERROR");
+                    break;
+                case 3:
+                    vo.setAlertLevel("WARNING");
+                    break;
+                case 4:
+                    vo.setAlertLevel("INFO");
+                    break;
+                default:
+                    vo.setAlertLevel("ERROR");
+                    break;
+            }
+        }
+
+        // 状态转换：1=ENABLED, 0=DISABLED
+        vo.setStatus(entity.getStatus() != null && entity.getStatus() == 1 ? "ENABLED" : "DISABLED");
+
         return vo;
+    }
+
+    /**
+     * 将String类型的告警级别转换为Integer（使用安防告警标准）
+     * <p>
+     * 使用SecurityAlertConstants.AlertLevel统一管理告警级别转换
+     * P1紧急=1, P2重要=2, P3普通=3, P4提示=4
+     * </p>
+     *
+     * @param alertLevel 告警级别字符串
+     * @return 告警级别整数
+     * @deprecated 使用SecurityAlertConstants.AlertLevel.fromString()替代
+     */
+    @Deprecated
+    private Integer convertAlertLevelToInteger(String alertLevel) {
+        return SecurityAlertConstants.AlertLevel.fromString(alertLevel);
+    }
+
+    /**
+     * 将Integer类型的告警级别转换为String（使用安防告警标准）
+     *
+     * @param alertLevel 告警级别整数
+     * @return 告警级别字符串（P1/P2/P3/P4）
+     */
+    private String convertAlertLevelToString(Integer alertLevel) {
+        return SecurityAlertConstants.AlertLevel.toString(alertLevel);
     }
 
     /**
@@ -535,7 +635,7 @@ public class AlertServiceImpl implements AlertService {
         map.put("alertId", entity.getId());
         map.put("alertLevel", entity.getAlertLevel());
         map.put("alertTitle", entity.getAlertTitle());
-        map.put("alertMessage", entity.getAlertMessage());
+        map.put("alertMessage", entity.getAlertContent());
         map.put("status", entity.getStatus());
         map.put("createTime", entity.getCreateTime());
         return map;
@@ -550,7 +650,6 @@ public class AlertServiceImpl implements AlertService {
      * @param alert 报警实体
      * @return 创建的报警ID
      */
-    @Override
     @Observed(name = "alert.create", contextualName = "alert-create")
     public Long createAlert(AlertEntity alert) {
         log.info("创建报警记录，报警标题：{}，报警级别：{}", alert.getAlertTitle(), alert.getAlertLevel());
@@ -561,19 +660,9 @@ public class AlertServiceImpl implements AlertService {
                 alert.setCreateTime(LocalDateTime.now());
             }
 
-            // 设置报警时间
-            if (alert.getAlertTime() == null) {
-                alert.setAlertTime(LocalDateTime.now());
-            }
-
-            // 设置默认状态
+            // 设置默认状态（0-未处理 1-处理中 2-已解决）
             if (alert.getStatus() == null) {
-                alert.setStatus("ACTIVE"); // 默认激活状态
-            }
-
-            // 设置默认删除标记
-            if (alert.getDeletedFlag() == null) {
-                alert.setDeletedFlag(0);
+                alert.setStatus(0); // 默认未处理状态
             }
 
             // 插入报警记录
@@ -598,3 +687,4 @@ public class AlertServiceImpl implements AlertService {
         }
     }
 }
+

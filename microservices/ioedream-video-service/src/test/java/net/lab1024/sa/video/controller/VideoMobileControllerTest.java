@@ -66,3 +66,4 @@ class VideoMobileControllerTest {
         verify(videoPlayService).getMobileDeviceList(eq(areaId), eq(deviceType), eq(status));
     }
 }
+

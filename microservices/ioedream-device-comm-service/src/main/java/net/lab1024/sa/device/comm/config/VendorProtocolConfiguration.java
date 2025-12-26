@@ -1,8 +1,9 @@
 package net.lab1024.sa.device.comm.config;
 
+import lombok.extern.slf4j.Slf4j;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.annotation.Resource;
-import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.device.comm.protocol.factory.ProtocolAdapterFactory;
 import net.lab1024.sa.device.comm.protocol.hikvision.VideoHikvisionV20Adapter;
 import net.lab1024.sa.device.comm.protocol.dahua.VideoDahuaV20Adapter;
@@ -29,10 +30,11 @@ import java.util.Map;
  * @version 1.0.0
  * @since 2025-12-16
  */
-@Slf4j
 @Configuration
 @Schema(description = "厂商协议配置")
+@Slf4j
 public class VendorProtocolConfiguration {
+
 
     @Resource
     private ProtocolAdapterFactory protocolAdapterFactory;
@@ -182,3 +184,4 @@ public class VendorProtocolConfiguration {
         }
     }
 }
+

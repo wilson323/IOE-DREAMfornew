@@ -31,10 +31,11 @@ import java.util.Map;
  * 注意：这是一个临时的存根实现，用于解决编译问题。
  *       生产环境中应集成真实的OCR服务（如腾讯云、阿里云OCR）。
  */
-@Slf4j
 @Service
 @Transactional(readOnly = true)
+@Slf4j
 public class OcrService {
+
 
     @Value("${tencent.cloud.ocr.secret-id:}")
     private String secretId;
@@ -263,4 +264,5 @@ public class OcrService {
         return result;
     }
 }
+
 

@@ -1,0 +1,159 @@
+# ============================================================
+# IOE-DREAM Attendance Service 测试环境配置文件
+#
+# @Author:    IOE-DREAM Team
+# @Date:      2025-01-30
+# @Copyright  IOE-DREAM智慧园区一卡通管理平台
+#
+# 测试环境配置说明:
+# - 使用独立的测试数据库: ioedream_test
+# - 使用独立的Redis数据库: database 15
+# - 禁用Nacos配置中心（使用本地配置）
+# - 禁用消息队列（单元测试不需要）
+# - 启用详细日志（DEBUG级别）
+# ============================================================
+
+# ==================== 服务基本信息 ====================
+spring:
+  application:
+    name: ioedream-attendance-service
+
+  # ==================== 禁用不需要的自动配置 ====================
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+
+  # ==================== 测试数据源配置 ====================
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    # 测试数据库连接
+    url: jdbc:mysql://${MYSQL_TEST_HOST:127.0.0.1}:${MYSQL_TEST_PORT:3306}/${MYSQL_TEST_DATABASE:ioedream_test}?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: ${MYSQL_TEST_USERNAME:root}
+    password: ${MYSQL_TEST_PASSWORD:123456}
+    druid:
+      # 测试环境连接池配置（较小）
+      initial-size: 2
+      min-idle: 2
+      max-active: 10
+      max-wait: 30000
+      # 测试查询超时
+      query-timeout: 10
+      # 连接验证
+      validation-query: SELECT 1
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+
+  # ==================== 测试Redis配置 ====================
+  data:
+    redis:
+      host: ${REDIS_TEST_HOST:127.0.0.1}
+      port: ${REDIS_TEST_PORT:6379}
+      password: ${REDIS_TEST_PASSWORD:}
+      # 使用独立的测试数据库（15）
+      database: ${REDIS_TEST_DATABASE:15}
+      # 测试环境超时设置
+      timeout: 3000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 2
+          max-wait: -1ms
+
+  # ==================== 测试环境禁用RabbitMQ ====================
+  rabbitmq:
+    host: ${RABBITMQ_TEST_HOST:localhost}
+    port: ${RABBITMQ_TEST_PORT:5672}
+    username: ${RABBITMQ_TEST_USERNAME:guest}
+    password: ${RABBITMQ_TEST_PASSWORD:guest}
+    virtual-host: ${RABBITMQ_TEST_VHOST:/}
+
+  # ==================== 禁用Flyway（测试环境手动管理Schema）====================
+  flyway:
+    enabled: false
+    clean-disabled: false
+
+  # ==================== 测试环境Nacos配置 ====================
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${NACOS_TEST_SERVER_ADDR:127.0.0.1:8848}
+        namespace: ${NACOS_TEST_NAMESPACE:test}
+        group: ${NACOS_TEST_GROUP:TEST_GROUP}
+        username: ${NACOS_TEST_USERNAME:nacos}
+        password: ${NACOS_TEST_PASSWORD:nacos}
+        enabled: false  # 测试环境禁用服务发现
+        register-enabled: false
+      config:
+        server-addr: ${NACOS_TEST_SERVER_ADDR:127.0.0.1:8848}
+        namespace: ${NACOS_TEST_NAMESPACE:test}
+        group: ${NACOS_TEST_GROUP:TEST_GROUP}
+        username: ${NACOS_TEST_USERNAME:nacos}
+        password: ${NACOS_TEST_PASSWORD:nacos}
+        file-extension: yaml
+        enabled: false  # 测试环境禁用配置中心
+
+# ==================== 服务器配置 ====================
+server:
+  port: ${ATTENDANCE_TEST_SERVICE_PORT:8091}
+  servlet:
+    context-path: /
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
+# ==================== MyBatis-Plus配置 ====================
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    # 测试环境使用控制台输出SQL，方便调试
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    cache-enabled: false  # 测试环境禁用二级缓存
+  mapper-locations: classpath*:/mapper/**/*.xml
+  type-aliases-package: net.lab1024.sa.common.entity,net.lab1024.sa.common.domain.entity,net.lab1024.sa.attendance.entity
+  global-config:
+    db-config:
+      # 测试环境逻辑删除配置
+      logic-delete-field: deletedFlag
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+# ==================== 日志配置（测试环境详细日志）====================
+logging:
+  level:
+    root: INFO
+    # 测试环境使用DEBUG级别
+    "net.lab1024.sa": DEBUG
+    "net.lab1024.sa.attendance": DEBUG
+    # SQL日志
+    "net.lab1024.sa.attendance.dao": DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"
+
+# ==================== 安全配置（测试环境）====================
+security:
+  jwt:
+    # 测试环境密钥
+    secret: ${JWT_TEST_SECRET:test-jwt-secret-key-for-integration-testing-must-be-at-least-256-bits-long-for-security}
+    # 测试环境较短的有效期
+    expiration: ${JWT_TEST_EXPIRATION:3600}
+    refresh-expiration: ${JWT_TEST_REFRESH_EXPIRATION:7200}
+
+# ==================== Actuator监控配置（测试环境）====================
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: always
+  # 测试环境禁用追踪
+  tracing:
+    enabled: false

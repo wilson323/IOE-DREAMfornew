@@ -1,0 +1,122 @@
+# ============================================================
+# IOE-DREAM 集成测试环境 Docker Compose 配置
+#
+# @Author:    IOE-DREAM Team
+# @Date:      2025-01-30
+# @Copyright  IOE-DREAM智慧园区一卡通管理平台
+#
+# 测试环境包含:
+# - MySQL 8.0: 测试数据库
+# - Redis 7: 缓存服务
+# - Nacos 2.3: 配置中心和服务发现（可选）
+#
+# 使用方法:
+#   docker-compose -f docker-compose-test.yml up -d
+#   docker-compose -f docker-compose-test.yml down
+# ============================================================
+
+version: '3.8'
+
+services:
+  # ==================== MySQL 测试数据库 ====================
+  mysql-test:
+    image: mysql:8.0
+    container_name: ioedream-mysql-test
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_TEST_PASSWORD:-123456}
+      MYSQL_DATABASE: ${MYSQL_TEST_DATABASE:-ioedream_test}
+      MYSQL_USER: ${MYSQL_TEST_USERNAME:-test_user}
+      MYSQL_PASSWORD: ${MYSQL_TEST_PASSWORD:-123456}
+      TZ: Asia/Shanghai
+    ports:
+      - "${MYSQL_TEST_PORT:-3307}:3306"  # 使用3307避免与生产环境冲突
+    volumes:
+      # 测试数据初始化脚本
+      - ./mysql-test-init:/docker-entrypoint-initdb.d
+      # 测试数据持久化（可选）
+      - mysql-test-data:/var/lib/mysql
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --default-authentication-plugin=mysql_native_password
+      - --max_connections=1000
+      - --max_allowed_packet=256M
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_TEST_PASSWORD:-123456}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - ioedream-test-network
+
+  # ==================== Redis 测试缓存 ====================
+  redis-test:
+    image: redis:7-alpine
+    container_name: ioedream-redis-test
+    restart: unless-stopped
+    ports:
+      - "${REDIS_TEST_PORT:-6380}:6379"  # 使用6380避免与生产环境冲突
+    volumes:
+      # Redis配置文件
+      - ./redis-test.conf:/usr/local/etc/redis/redis.conf:ro
+      # 测试数据持久化（可选）
+      - redis-test-data:/data
+    command: redis-server /usr/local/etc/redis/redis.conf
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    networks:
+      - ioedream-test-network
+
+  # ==================== Nacos 测试环境（可选）====================
+  nacos-test:
+    image: nacos/nacos-server:v2.3.0
+    container_name: ioedream-nacos-test
+    restart: unless-stopped
+    environment:
+      MODE: standalone
+      SPRING_DATASOURCE_PLATFORM: mysql
+      MYSQL_SERVICE_HOST: mysql-test
+      MYSQL_SERVICE_PORT: 3306
+      MYSQL_SERVICE_DB_NAME: nacos_test
+      MYSQL_SERVICE_USER: root
+      MYSQL_SERVICE_PASSWORD: ${MYSQL_TEST_PASSWORD:-123456}
+      NACOS_AUTH_ENABLE: true
+      NACOS_AUTH_TOKEN: SecretKey012345678901234567890123456789012345678901234567890123456789
+      NACOS_AUTH_IDENTITY_KEY: nacos
+      NACOS_AUTH_IDENTITY_VALUE: nacos
+      JVM_XMS: 256m
+      JVM_XMX: 512m
+    ports:
+      - "${NACOS_TEST_PORT:-8849}:8848"  # 使用8849避免与生产环境冲突
+      - "${NACOS_TEST_PORT_GRPC:-9849}:9848"
+    volumes:
+      - nacos-test-logs:/home/nacos/logs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8848/nacos/v1/console/health/readiness"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - ioedream-test-network
+    depends_on:
+      mysql-test:
+        condition: service_healthy
+
+# ==================== 网络配置 ====================
+networks:
+  ioedream-test-network:
+    driver: bridge
+    name: ioedream-test-network
+
+# ==================== 数据卷配置 ====================
+volumes:
+  mysql-test-data:
+    name: ioedream-mysql-test-data
+  redis-test-data:
+    name: ioedream-redis-test-data
+  nacos-test-logs:
+    name: ioedream-nacos-test-logs

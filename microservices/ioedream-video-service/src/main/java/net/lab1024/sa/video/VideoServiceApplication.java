@@ -89,3 +89,4 @@ public class VideoServiceApplication {
         SpringApplication.run(VideoServiceApplication.class, args);
     }
 }
+

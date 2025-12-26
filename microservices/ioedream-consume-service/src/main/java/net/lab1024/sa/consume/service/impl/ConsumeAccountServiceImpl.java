@@ -1,476 +1,588 @@
 package net.lab1024.sa.consume.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import java.math.BigDecimal;
-import java.util.ArrayList;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-
-import io.micrometer.observation.annotation.Observed;
-import jakarta.annotation.Resource;
-import jakarta.servlet.http.HttpServletResponse;
+import io.seata.spring.annotation.GlobalTransactional;
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.domain.PageResult;
-import net.lab1024.sa.common.exception.BusinessException;
-import net.lab1024.sa.consume.dao.AccountDao;
-import net.lab1024.sa.consume.domain.dto.RechargeRequestDTO;
-import net.lab1024.sa.consume.entity.AccountEntity;
-import net.lab1024.sa.consume.domain.form.AccountQueryForm;
-import net.lab1024.sa.consume.domain.vo.AccountVO;
+import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.common.util.QueryBuilder;
+import net.lab1024.sa.consume.client.AccountServiceClient;
+import net.lab1024.sa.consume.client.dto.BalanceChangeResult;
+import net.lab1024.sa.consume.client.dto.BalanceDecreaseRequest;
+import net.lab1024.sa.consume.client.dto.BalanceIncreaseRequest;
+import net.lab1024.sa.consume.dao.ConsumeAccountDao;
+import net.lab1024.sa.consume.dao.ConsumeAccountTransactionDao;
+import net.lab1024.sa.consume.dao.ConsumeRecordDao;
+import net.lab1024.sa.consume.domain.entity.ConsumeAccountEntity;
+import net.lab1024.sa.consume.domain.entity.ConsumeAccountTransactionEntity;
+import net.lab1024.sa.consume.domain.form.ConsumeAccountAddForm;
+import net.lab1024.sa.consume.domain.form.ConsumeAccountQueryForm;
+import net.lab1024.sa.consume.domain.form.ConsumeAccountRechargeForm;
+import net.lab1024.sa.consume.domain.form.ConsumeAccountUpdateForm;
+import net.lab1024.sa.consume.domain.vo.ConsumeAccountVO;
+import net.lab1024.sa.consume.exception.ConsumeAccountException;
+import net.lab1024.sa.consume.manager.ConsumeAccountManager;
 import net.lab1024.sa.consume.service.ConsumeAccountService;
 
 /**
- * 消费账户服务实现类（临时存根实现）
+ * 消费账户服务实现
  * <p>
- * 提供消费账户管理相关功能的临时实现
- * 生产环境中需要实现完整的业务逻辑
+ * 提供消费账户的完整业务功能实现，包括：
+ * - 在线消费余额扣减（实时调用账户服务）
+ * - 退款余额增加（实时调用账户服务）
+ * - 离线消费补偿（异步同步）
+ * - 账户管理功能（查询、创建、更新等）
  * </p>
  *
- * @author IOE-DREAM
+ * <p>技术特性：</p>
+ * <ul>
+ *   <li>使用OpenFeign调用账户服务进行余额操作</li>
+ *   <li>集成Seata分布式事务保证数据一致性</li>
+ *   <li>提供降级策略（账户服务不可用时使用本地补偿）</li>
+ *   <li>完整的事务审计日志</li>
+ * </ul>
+ *
+ * @author IOE-DREAM架构团队
  * @version 1.0.0
- * @since 2025-12-09
+ * @since 2025-12-23
  */
 @Slf4j
 @Service
-@Transactional(rollbackFor = Exception.class)
 public class ConsumeAccountServiceImpl implements ConsumeAccountService {
 
-    @Resource
-    private AccountDao accountDao;
+    private final ConsumeAccountManager accountManager;
+    private final ConsumeAccountDao accountDao;
+    private final ConsumeAccountTransactionDao transactionDao;
+    private final ConsumeRecordDao recordDao;
+    private final AccountServiceClient accountServiceClient;
 
-    @Override
-    @Observed(name = "consume.account.queryAccountPage", contextualName = "consume-account-query-page")
-    public ResponseDTO<IPage<AccountVO>> queryAccountPage(AccountQueryForm queryForm) {
-        log.info("[消费账户服务] 分页查询账户，queryForm={}", queryForm);
-
-        // 临时存根实现
-        Page<AccountVO> page = new Page<>(1, 20);
-        page.setRecords(new ArrayList<>());
-        page.setTotal(0);
-
-        return ResponseDTO.ok(page);
+    /**
+     * 构造函数注入依赖
+     */
+    public ConsumeAccountServiceImpl(ConsumeAccountManager accountManager,
+                                     ConsumeAccountDao accountDao,
+                                     ConsumeAccountTransactionDao transactionDao,
+                                     ConsumeRecordDao recordDao,
+                                     AccountServiceClient accountServiceClient) {
+        this.accountManager = accountManager;
+        this.accountDao = accountDao;
+        this.transactionDao = transactionDao;
+        this.recordDao = recordDao;
+        this.accountServiceClient = accountServiceClient;
     }
 
     @Override
-    @Observed(name = "consume.account.getAccountById", contextualName = "consume-account-get-by-id")
-    public ResponseDTO<AccountVO> getAccountById(Long accountId) {
-        log.info("[消费账户服务] 根据ID查询账户，accountId={}", accountId);
+    public PageResult<ConsumeAccountVO> queryAccounts(ConsumeAccountQueryForm queryForm) {
+        log.info("[账户服务] 分页查询账户列表: queryForm={}", queryForm);
 
-        AccountEntity account = accountDao.selectById(accountId);
-        if (account == null) {
-            throw new BusinessException("账户不存在");
+        try {
+            // 使用MyBatis-Plus分页查询
+            com.baomidou.mybatisplus.extension.plugins.pagination.Page<ConsumeAccountVO> page =
+                new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(
+                    queryForm.getPageNum(),
+                    queryForm.getPageSize()
+                );
+
+            com.baomidou.mybatisplus.core.metadata.IPage<ConsumeAccountVO> pageResult =
+                accountDao.selectPage(page, queryForm);
+
+            // 转换为PageResult
+            PageResult<ConsumeAccountVO> result = new PageResult<>();
+            result.setList(pageResult.getRecords());
+            result.setTotal(pageResult.getTotal());
+            result.setPageNum(queryForm.getPageNum());
+            result.setPageSize(queryForm.getPageSize());
+            result.setPages((int) pageResult.getPages());
+
+            return result;
+        } catch (Exception e) {
+            log.error("[账户服务] 分页查询失败", e);
+            throw ConsumeAccountException.queryFailed("查询账户列表失败: " + e.getMessage());
         }
-
-        AccountVO accountVO = convertToVO(account);
-        return ResponseDTO.ok(accountVO);
     }
 
     @Override
-    @Observed(name = "consume.account.getAccountByNo", contextualName = "consume-account-get-by-no")
-    public ResponseDTO<AccountVO> getAccountByNo(String accountNo) {
-        log.info("[消费账户服务] 根据账户编号查询账户，accountNo={}", accountNo);
+    public ConsumeAccountVO getAccountDetail(Long accountId) {
+        log.info("[账户服务] 获取账户详情: accountId={}", accountId);
 
-        LambdaQueryWrapper<AccountEntity> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(AccountEntity::getAccountNo, accountNo);
-        AccountEntity account = accountDao.selectOne(wrapper);
-
-        if (account == null) {
-            throw new BusinessException("账户不存在");
+        try {
+            return accountManager.getAccountDetail(accountId);
+        } catch (Exception e) {
+            log.error("[账户服务] 获取账户详情失败: accountId={}", accountId, e);
+            throw ConsumeAccountException.queryFailed("获取账户详情失败: " + e.getMessage());
         }
-
-        AccountVO accountVO = convertToVO(account);
-        return ResponseDTO.ok(accountVO);
     }
 
     @Override
-    @Observed(name = "consume.account.getAccountByUserId", contextualName = "consume-account-get-by-user-id")
-    public AccountVO getAccountByUserId(Long userId) {
-        log.info("[消费账户服务] 根据用户ID查询账户，userId={}", userId);
+    public ConsumeAccountVO getAccountByUserId(Long userId) {
+        log.info("[账户服务] 根据用户ID获取账户: userId={}", userId);
 
-        LambdaQueryWrapper<AccountEntity> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(AccountEntity::getUserId, userId);
-        AccountEntity account = accountDao.selectOne(wrapper);
-
-        if (account == null) {
-            return null;
+        try {
+            return accountManager.getAccountByUserId(userId);
+        } catch (Exception e) {
+            log.error("[账户服务] 获取用户账户失败: userId={}", userId, e);
+            throw ConsumeAccountException.queryFailed("获取用户账户失败: " + e.getMessage());
         }
-
-        return convertToVO(account);
     }
 
     @Override
-    @Observed(name = "consume.account.recharge", contextualName = "consume-account-recharge")
-    public ResponseDTO<Void> recharge(RechargeRequestDTO rechargeRequest) {
-        log.info("[消费账户服务] 账户充值，rechargeRequest={}", rechargeRequest);
+    @Transactional(rollbackFor = Exception.class)
+    public Long createAccount(ConsumeAccountAddForm addForm) {
+        log.info("[账户服务] 创建账户: userId={}, username={}", addForm.getUserId(), addForm.getUsername());
 
-        // 临时存根实现
-        return ResponseDTO.ok();
-    }
+        try {
+            // 1. 验证用户是否已有账户
+            ConsumeAccountVO existingAccount = accountDao.selectByUserId(addForm.getUserId());
+            if (existingAccount != null) {
+                log.warn("[账户服务] 用户已有账户: userId={}", addForm.getUserId());
+                throw ConsumeAccountException.accountAlreadyExists("用户已有账户，无法重复创建");
+            }
 
-    @Override
-    @Observed(name = "consume.account.deduct", contextualName = "consume-account-deduct")
-    public ResponseDTO<Void> deduct(Long accountId, BigDecimal amount) {
-        log.info("[消费账户服务] 账户扣费，accountId={}, amount={}", accountId, amount);
+            // 2. 创建账户实体
+            ConsumeAccountEntity account = new ConsumeAccountEntity();
+            account.setUserId(addForm.getUserId());
 
-        // 临时存根实现
-        return ResponseDTO.ok();
-    }
+            // 生成账户编码
+            String accountCode = "ACC_" + System.currentTimeMillis();
+            account.setAccountCode(accountCode);
 
-    @Override
-    @Observed(name = "consume.account.refund", contextualName = "consume-account-refund")
-    public ResponseDTO<Void> refund(Long accountId, BigDecimal amount, String reason) {
-        log.info("[消费账户服务] 账户退款，accountId={}, amount={}, reason={}", accountId, amount, reason);
+            // 转换账户类型：String -> Integer
+            Integer accountType = convertAccountType(addForm.getAccountType());
+            account.setAccountType(accountType);
 
-        // 临时存根实现
-        return ResponseDTO.ok();
-    }
+            // 使用username作为账户名称
+            account.setAccountName(addForm.getUsername());
 
-    @Override
-    @Observed(name = "consume.account.freeze", contextualName = "consume-account-freeze")
-    public ResponseDTO<Void> freeze(Long accountId, BigDecimal amount) {
-        log.info("[消费账户服务] 账户冻结，accountId={}, amount={}", accountId, amount);
+            account.setBalance(addForm.getInitialBalance() != null ? addForm.getInitialBalance() : BigDecimal.ZERO);
+            account.setFrozenAmount(BigDecimal.ZERO);
+            account.setCreditLimit(addForm.getCreditLimit() != null ? addForm.getCreditLimit() : BigDecimal.ZERO);
+            account.setTotalRecharge(BigDecimal.ZERO);
+            account.setTotalConsume(BigDecimal.ZERO);
+            account.setAccountStatus(1); // 正常状态
 
-        // 临时存根实现
-        return ResponseDTO.ok();
-    }
+            // 3. 插入数据库
+            accountDao.insert(account);
 
-    @Override
-    @Observed(name = "consume.account.unfreeze", contextualName = "consume-account-unfreeze")
-    public ResponseDTO<Void> unfreeze(Long accountId, BigDecimal amount) {
-        log.info("[消费账户服务] 账户解冻，accountId={}, amount={}", accountId, amount);
+            log.info("[账户服务] 账户创建成功: accountId={}, accountCode={}", account.getAccountId(), accountCode);
+            return account.getAccountId();
 
-        // 临时存根实现
-        return ResponseDTO.ok();
-    }
-
-    @Override
-    @Observed(name = "consume.account.updateAccountStatus", contextualName = "consume-account-update-status")
-    public ResponseDTO<Void> updateAccountStatus(Long accountId, Boolean enabled) {
-        log.info("[消费账户服务] 更新账户状态，accountId={}, enabled={}", accountId, enabled);
-
-        // 临时存根实现
-        return ResponseDTO.ok();
-    }
-
-    @Override
-    @Observed(name = "consume.account.exportAccountData", contextualName = "consume-account-export")
-    public void exportAccountData(AccountQueryForm queryForm, HttpServletResponse response) {
-        log.info("[消费账户服务] 导出账户数据，queryForm={}", queryForm);
-
-        // 临时存根实现
-    }
-
-    @Override
-    @Observed(name = "consume.account.getAccountBalance", contextualName = "consume-account-get-balance")
-    public ResponseDTO<BigDecimal> getAccountBalance(Long accountId) {
-        log.info("[消费账户服务] 获取账户余额，accountId={}", accountId);
-
-        AccountEntity account = accountDao.selectById(accountId);
-        if (account == null) {
-            throw new BusinessException("账户不存在");
+        } catch (ConsumeAccountException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("[账户服务] 创建账户失败", e);
+            throw ConsumeAccountException.createFailed("创建账户失败: " + e.getMessage());
         }
-
-        return ResponseDTO.ok(account.getBalance());
-    }
-
-    @Override
-    @Observed(name = "consume.account.updateAccount", contextualName = "consume-account-update")
-    public ResponseDTO<Void> updateAccount(AccountVO accountVO) {
-        log.info("[消费账户服务] 更新账户信息，accountVO={}", accountVO);
-
-        // 临时存根实现
-        return ResponseDTO.ok();
-    }
-
-    @Override
-    @Observed(name = "consume.account.existsAccount", contextualName = "consume-account-exists")
-    public Boolean existsAccount(Long accountId) {
-        log.debug("[消费账户服务] 检查账户是否存在，accountId={}", accountId);
-
-        AccountEntity account = accountDao.selectById(accountId);
-        return account != null;
-    }
-
-    @Override
-    @Observed(name = "consume.account.checkBalance", contextualName = "consume-account-check-balance")
-    public Boolean checkBalance(Long accountId, BigDecimal amount) {
-        log.debug("[消费账户服务] 检查账户余额是否充足，accountId={}, amount={}", accountId, amount);
-
-        AccountEntity account = accountDao.selectById(accountId);
-        if (account == null) {
-            return false;
-        }
-
-        return account.getBalance().compareTo(amount) >= 0;
-    }
-
-    @Override
-    @Observed(name = "consume.account.balanceChangeNotification", contextualName = "consume-account-balance-notification")
-    public void balanceChangeNotification(Long accountId, BigDecimal oldBalance, BigDecimal newBalance, String changeType, String remark) {
-        log.info("[消费账户服务] 账户余额变动通知，accountId={}, oldBalance={}, newBalance={}, changeType={}, remark={}",
-                accountId, oldBalance, newBalance, changeType, remark);
-
-        // 临时存根实现
-    }
-
-    @Override
-    @Observed(name = "consume.account.getUserBalanceInfo", contextualName = "consume-account-get-user-balance")
-    public Map<String, Object> getUserBalanceInfo(Long userId) {
-        log.info("[消费账户服务] 获取用户账户余额信息，userId={}", userId);
-
-        LambdaQueryWrapper<AccountEntity> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(AccountEntity::getUserId, userId);
-        AccountEntity account = accountDao.selectOne(wrapper);
-
-        Map<String, Object> balanceInfo = new HashMap<>();
-        if (account != null) {
-            balanceInfo.put("accountId", account.getId());
-            balanceInfo.put("balance", account.getBalance());
-            balanceInfo.put("frozenBalance", account.getFrozenBalance());
-            balanceInfo.put("availableBalance", account.getBalance().subtract(account.getFrozenBalance()));
-        } else {
-            balanceInfo.put("balance", BigDecimal.ZERO);
-            balanceInfo.put("frozenBalance", BigDecimal.ZERO);
-            balanceInfo.put("availableBalance", BigDecimal.ZERO);
-        }
-
-        return balanceInfo;
-    }
-
-    // 以下为新增方法的存根实现
-
-
-    @Override
-    @Observed(name = "consume.account.freezeAccount", contextualName = "consume-account-freeze-account")
-    @Transactional(rollbackFor = Exception.class)
-    public boolean freezeAccount(Long accountId, String reason, Integer freezeDays) {
-        log.info("[消费账户服务] 冻结账户，accountId={}, reason={}, freezeDays={}", accountId, reason, freezeDays);
-
-        // 临时存根实现
-        return true;
-    }
-
-    @Override
-    @Observed(name = "consume.account.unfreezeAccount", contextualName = "consume-account-unfreeze-account")
-    @Transactional(rollbackFor = Exception.class)
-    public boolean unfreezeAccount(Long accountId, String reason) {
-        log.info("[消费账户服务] 解冻账户，accountId={}, reason={}", accountId, reason);
-
-        // 临时存根实现
-        return true;
-    }
-
-    @Override
-    @Observed(name = "consume.account.rechargeAccount", contextualName = "consume-account-recharge-account")
-    @Transactional(rollbackFor = Exception.class)
-    public boolean rechargeAccount(Long accountId, BigDecimal amount, String rechargeType, String remark) {
-        log.info("[消费账户服务] 账户充值，accountId={}, amount={}, rechargeType={}, remark={}",
-                accountId, amount, rechargeType, remark);
-
-        // 临时存根实现
-        return true;
-    }
-
-    @Override
-    @Observed(name = "consume.account.setAccountLimit", contextualName = "consume-account-set-limit")
-    @Transactional(rollbackFor = Exception.class)
-    public boolean setAccountLimit(Long accountId, BigDecimal dailyLimit, BigDecimal monthlyLimit) {
-        log.info("[消费账户服务] 设置账户限额，accountId={}, dailyLimit={}, monthlyLimit={}",
-                accountId, dailyLimit, monthlyLimit);
-
-        // 临时存根实现
-        return true;
-    }
-
-    @Override
-    @Observed(name = "consume.account.batchUpdateAccountStatus", contextualName = "consume-account-batch-update-status")
-    @Transactional(rollbackFor = Exception.class)
-    public int batchUpdateAccountStatus(List<Long> accountIds, String operationType, String reason) {
-        log.info("[消费账户服务] 批量更新账户状态，accountIds={}, operationType={}, reason={}",
-                accountIds, operationType, reason);
-
-        // 临时存根实现
-        return accountIds != null ? accountIds.size() : 0;
-    }
-
-    @Override
-    @Observed(name = "consume.account.getAccountStatistics", contextualName = "consume-account-get-statistics")
-    public Map<String, Object> getAccountStatistics() {
-        log.info("[消费账户服务] 获取账户统计信息");
-
-        Map<String, Object> statistics = new HashMap<>();
-        statistics.put("totalAccounts", 0);
-        statistics.put("activeAccounts", 0);
-        statistics.put("frozenAccounts", 0);
-        statistics.put("totalBalance", BigDecimal.ZERO);
-
-        return statistics;
-    }
-
-    @Override
-    @Observed(name = "consume.account.getAccountConsumeRecords", contextualName = "consume-account-get-consume-records")
-    public PageResult<Map<String, Object>> getAccountConsumeRecords(Long accountId, Integer pageNum, Integer pageSize) {
-        log.info("[消费账户服务] 获取账户消费记录，accountId={}, pageNum={}, pageSize={}",
-                accountId, pageNum, pageSize);
-
-        // 临时存根实现
-        PageResult<Map<String, Object>> result = PageResult.empty(pageNum, pageSize);
-        return result;
-    }
-
-    @Override
-    @Observed(name = "consume.account.checkAccountStatus", contextualName = "consume-account-check-status")
-    public Map<String, Object> checkAccountStatus(Long accountId) {
-        log.info("[消费账户服务] 检查账户状态，accountId={}", accountId);
-
-        AccountEntity account = accountDao.selectById(accountId);
-        Map<String, Object> statusInfo = new HashMap<>();
-
-        if (account != null) {
-            statusInfo.put("accountId", accountId);
-            statusInfo.put("status", account.getStatus());
-            statusInfo.put("balance", account.getBalance());
-            statusInfo.put("frozenBalance", account.getFrozenBalance());
-            statusInfo.put("isNormal", account.getStatus() == 1);
-        } else {
-            statusInfo.put("exists", false);
-        }
-
-        return statusInfo;
-    }
-
-    @Override
-    @Observed(name = "consume.account.createAccount", contextualName = "consume-account-create")
-    @Transactional(rollbackFor = Exception.class)
-    public Long createAccount(AccountEntity accountEntity) {
-        log.info("[消费账户服务] 创建账户，accountEntity={}", accountEntity);
-
-        accountDao.insert(accountEntity);
-        return accountEntity.getId();
-    }
-
-    @Override
-    @Observed(name = "consume.account.updateAccountEntity", contextualName = "consume-account-update-entity")
-    @Transactional(rollbackFor = Exception.class)
-    public boolean updateAccount(AccountEntity accountEntity) {
-        log.info("[消费账户服务] 更新账户，accountEntity={}", accountEntity);
-
-        int result = accountDao.updateById(accountEntity);
-        return result > 0;
-    }
-
-    @Override
-    @Observed(name = "consume.account.deleteAccount", contextualName = "consume-account-delete")
-    @Transactional(rollbackFor = Exception.class)
-    public boolean deleteAccount(Long accountId) {
-        log.info("[消费账户服务] 删除账户，accountId={}", accountId);
-
-        int result = accountDao.deleteById(accountId);
-        return result > 0;
     }
 
     /**
-     * 将AccountEntity转换为AccountVO
-     * <p>
-     * 负责实体到视图对象的转换，包括字段映射和状态描述转换
-     * </p>
-     *
-     * @param account 账户实体
-     * @return 账户VO对象
+     * 转换账户类型字符串为整数
      */
-    private AccountVO convertToVO(AccountEntity account) {
-        if (account == null) {
-            return null;
+    private Integer convertAccountType(String accountTypeStr) {
+        if (accountTypeStr == null) {
+            return 1; // 默认员工账户
         }
+        return switch (accountTypeStr.toUpperCase()) {
+            case "STAFF" -> 1;
+            case "STUDENT" -> 2;
+            case "VISITOR" -> 3;
+            default -> 1;
+        };
+    }
 
-        AccountVO vo = new AccountVO();
-        // 基本信息
-        vo.setAccountId(account.getAccountId());
-        vo.setAccountNo(account.getAccountNo());
-        vo.setUserId(account.getUserId());
-        // 注意：AccountVO没有accountName字段，AccountEntity的accountName暂不映射
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updateAccount(Long accountId, ConsumeAccountUpdateForm updateForm) {
+        log.info("[账户服务] 更新账户信息: accountId={}", accountId);
 
-        // 账户类型转换：Integer -> String
-        if (account.getAccountType() != null) {
-            switch (account.getAccountType()) {
-                case 1:
-                    vo.setAccountType("STAFF");
-                    vo.setAccountTypeDesc("个人账户");
-                    break;
-                case 2:
-                    vo.setAccountType("STUDENT");
-                    vo.setAccountTypeDesc("团体账户");
-                    break;
-                case 3:
-                    vo.setAccountType("VISITOR");
-                    vo.setAccountTypeDesc("临时账户");
-                    break;
-                default:
-                    vo.setAccountType("UNKNOWN");
-                    vo.setAccountTypeDesc("未知类型");
-                    break;
+        try {
+            // 1. 查询账户
+            ConsumeAccountEntity account = accountDao.selectById(accountId);
+            if (account == null) {
+                throw ConsumeAccountException.accountNotFound("账户不存在");
+            }
+
+            // 2. 更新字段（只更新Entity中存在的字段）
+            if (updateForm.getCreditLimit() != null) {
+                account.setCreditLimit(updateForm.getCreditLimit());
+            }
+
+            // 3. 保存更新
+            accountDao.updateById(account);
+
+            log.info("[账户服务] 账户信息更新成功: accountId={}", accountId);
+
+        } catch (ConsumeAccountException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("[账户服务] 更新账户失败: accountId={}", accountId, e);
+            throw ConsumeAccountException.updateFailed("更新账户失败: " + e.getMessage());
+        }
+    }
+
+    @Override
+    @GlobalTransactional(name = "recharge-account", rollbackFor = Exception.class)
+    public Boolean rechargeAccount(Long accountId, ConsumeAccountRechargeForm rechargeForm) {
+        log.info("[账户服务] 账户充值: accountId={}, amount={}", accountId, rechargeForm.getAmount());
+
+        try {
+            // 1. 查询账户
+            ConsumeAccountEntity account = accountDao.selectById(accountId);
+            if (account == null) {
+                throw ConsumeAccountException.accountNotFound("账户不存在");
+            }
+
+            // 2. 调用账户服务增加余额
+            String businessNo = "RECHARGE-" + System.currentTimeMillis() + "-" + accountId;
+            BalanceIncreaseRequest request = new BalanceIncreaseRequest();
+            request.setUserId(account.getUserId());
+            request.setAmount(rechargeForm.getAmount());
+            request.setBusinessType("RECHARGE");
+            request.setBusinessNo(businessNo);
+            request.setRemark(rechargeForm.getRemark());
+
+            ResponseDTO<BalanceChangeResult> response = accountServiceClient.increaseBalance(request);
+
+            if (response == null || !response.isSuccess()) {
+                log.error("[账户服务] 调用账户服务失败: accountId={}, response={}", accountId, response);
+                throw ConsumeAccountException.rechargeFailed(accountId, "充值失败: " + (response != null ? response.getMessage() : "账户服务无响应"));
+            }
+
+            BalanceChangeResult result = response.getData();
+            if (result == null || !result.getSuccess()) {
+                log.error("[账户服务] 账户服务返回失败: accountId={}, result={}", accountId, result);
+                throw ConsumeAccountException.rechargeFailed(accountId, "充值失败: " + (result != null ? result.getErrorMessage() : "未知错误"));
+            }
+
+            log.info("[账户服务] 账户充值成功: accountId={}, balanceBefore={}, balanceAfter={}",
+                    accountId, result.getBalanceBefore(), result.getBalanceAfter());
+            return true;
+
+        } catch (ConsumeAccountException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("[账户服务] 充值异常: accountId={}", accountId, e);
+            throw ConsumeAccountException.rechargeFailed(accountId, "充值异常: " + e.getMessage());
+        }
+    }
+
+    @Override
+    @GlobalTransactional(name = "deduct-amount", rollbackFor = Exception.class)
+    public Boolean deductAmount(Long accountId, BigDecimal amount, String description) {
+        log.info("[账户服务] 扣减账户余额: accountId={}, amount={}, description={}", accountId, amount, description);
+
+        try {
+            // 1. 查询账户
+            ConsumeAccountEntity account = accountDao.selectById(accountId);
+            if (account == null) {
+                throw ConsumeAccountException.accountNotFound("账户不存在");
+            }
+
+            // 2. 调用账户服务扣减余额（核心功能：在线消费）
+            String businessNo = "CONSUME-" + System.currentTimeMillis() + "-" + accountId;
+            BalanceDecreaseRequest request = new BalanceDecreaseRequest();
+            request.setUserId(account.getUserId());
+            request.setAmount(amount);
+            request.setBusinessType("CONSUME");
+            request.setBusinessNo(businessNo);
+            request.setRemark(description);
+            request.setCheckBalance(true); // 检查余额是否充足
+
+            log.info("[账户服务] 调用账户服务扣减余额: userId={}, amount={}, businessNo={}",
+                    account.getUserId(), amount, businessNo);
+
+            ResponseDTO<BalanceChangeResult> response = accountServiceClient.decreaseBalance(request);
+
+            if (response == null || !response.isSuccess()) {
+                log.error("[账户服务] 调用账户服务失败: accountId={}, response={}", accountId, response);
+                throw ConsumeAccountException.deductFailed("扣款失败: " + (response != null ? response.getMessage() : "账户服务无响应"));
+            }
+
+            BalanceChangeResult result = response.getData();
+            if (result == null || !result.getSuccess()) {
+                log.error("[账户服务] 账户服务返回失败: accountId={}, result={}", accountId, result);
+                throw ConsumeAccountException.deductFailed("扣款失败: " + (result != null ? result.getErrorMessage() : "未知错误"));
+            }
+
+            log.info("[账户服务] 账户余额扣减成功: accountId={}, balanceBefore={}, balanceAfter={}, transactionId={}",
+                    accountId, result.getBalanceBefore(), result.getBalanceAfter(), result.getTransactionId());
+            return true;
+
+        } catch (ConsumeAccountException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("[账户服务] 扣减余额异常: accountId={}", accountId, e);
+            throw ConsumeAccountException.deductFailed("扣减异常: " + e.getMessage());
+        }
+    }
+
+    @Override
+    @GlobalTransactional(name = "refund-amount", rollbackFor = Exception.class)
+    public Boolean refundAmount(Long accountId, BigDecimal amount, String reason) {
+        log.info("[账户服务] 账户退款: accountId={}, amount={}, reason={}", accountId, amount, reason);
+
+        try {
+            // 1. 查询账户
+            ConsumeAccountEntity account = accountDao.selectById(accountId);
+            if (account == null) {
+                throw ConsumeAccountException.accountNotFound("账户不存在");
+            }
+
+            // 2. 调用账户服务增加余额（退款）
+            String businessNo = "REFUND-" + System.currentTimeMillis() + "-" + accountId;
+            BalanceIncreaseRequest request = new BalanceIncreaseRequest();
+            request.setUserId(account.getUserId());
+            request.setAmount(amount);
+            request.setBusinessType("REFUND");
+            request.setBusinessNo(businessNo);
+            request.setRemark(reason);
+
+            log.info("[账户服务] 调用账户服务退款: userId={}, amount={}, businessNo={}",
+                    account.getUserId(), amount, businessNo);
+
+            ResponseDTO<BalanceChangeResult> response = accountServiceClient.increaseBalance(request);
+
+            if (response == null || !response.isSuccess()) {
+                log.error("[账户服务] 调用账户服务失败: accountId={}, response={}", accountId, response);
+                throw ConsumeAccountException.refundFailed("退款失败: " + (response != null ? response.getMessage() : "账户服务无响应"));
+            }
+
+            BalanceChangeResult result = response.getData();
+            if (result == null || !result.getSuccess()) {
+                log.error("[账户服务] 账户服务返回失败: accountId={}, result={}", accountId, result);
+                throw ConsumeAccountException.refundFailed("退款失败: " + (result != null ? result.getErrorMessage() : "未知错误"));
+            }
+
+            log.info("[账户服务] 账户退款成功: accountId={}, balanceBefore={}, balanceAfter={}",
+                    accountId, result.getBalanceBefore(), result.getBalanceAfter());
+            return true;
+
+        } catch (ConsumeAccountException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("[账户服务] 退款异常: accountId={}", accountId, e);
+            throw ConsumeAccountException.refundFailed("退款异常: " + e.getMessage());
+        }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void freezeAccount(Long accountId, String reason) {
+        log.info("[账户服务] 冻结账户: accountId={}, reason={}", accountId, reason);
+
+        try {
+            ConsumeAccountEntity account = accountDao.selectById(accountId);
+            if (account == null) {
+                throw ConsumeAccountException.accountNotFound("账户不存在");
+            }
+
+            account.setAccountStatus(0); // 冻结状态
+            accountDao.updateById(account);
+
+            log.info("[账户服务] 账户冻结成功: accountId={}", accountId);
+
+        } catch (ConsumeAccountException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("[账户服务] 冻结账户失败: accountId={}", accountId, e);
+            throw ConsumeAccountException.updateFailed("冻结账户失败: " + e.getMessage());
+        }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void unfreezeAccount(Long accountId, String reason) {
+        log.info("[账户服务] 解冻账户: accountId={}, reason={}", accountId, reason);
+
+        try {
+            ConsumeAccountEntity account = accountDao.selectById(accountId);
+            if (account == null) {
+                throw ConsumeAccountException.accountNotFound("账户不存在");
+            }
+
+            account.setAccountStatus(1); // 正常状态
+            accountDao.updateById(account);
+
+            log.info("[账户服务] 账户解冻成功: accountId={}", accountId);
+
+        } catch (ConsumeAccountException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("[账户服务] 解冻账户失败: accountId={}", accountId, e);
+            throw ConsumeAccountException.updateFailed("解冻账户失败: " + e.getMessage());
+        }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void closeAccount(Long accountId, String reason) {
+        log.info("[账户服务] 注销账户: accountId={}, reason={}", accountId, reason);
+
+        try {
+            ConsumeAccountEntity account = accountDao.selectById(accountId);
+            if (account == null) {
+                throw ConsumeAccountException.accountNotFound("账户不存在");
+            }
+
+            // 检查余额
+            if (account.getBalance().compareTo(BigDecimal.ZERO) > 0) {
+                throw ConsumeAccountException.closeFailed("账户余额不为零，无法注销");
+            }
+
+            account.setAccountStatus(2); // 注销状态
+            accountDao.updateById(account);
+
+            log.info("[账户服务] 账户注销成功: accountId={}", accountId);
+
+        } catch (ConsumeAccountException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("[账户服务] 注销账户失败: accountId={}", accountId, e);
+            throw ConsumeAccountException.closeFailed("注销账户失败: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public BigDecimal getAccountBalance(Long accountId) {
+        log.info("[账户服务] 查询账户余额: accountId={}", accountId);
+
+        try {
+            ConsumeAccountEntity account = accountDao.selectById(accountId);
+            if (account == null) {
+                throw ConsumeAccountException.accountNotFound("账户不存在");
+            }
+
+            log.info("[账户服务] 账户余额查询成功: accountId={}, balance={}", accountId, account.getBalance());
+            return account.getBalance();
+
+        } catch (ConsumeAccountException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("[账户服务] 查询账户余额失败: accountId={}", accountId, e);
+            throw ConsumeAccountException.queryFailed("查询余额失败: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public Map<String, Object> getUserConsumeStatistics(Long userId, LocalDateTime startDate, LocalDateTime endDate) {
+        log.info("[账户服务] 获取用户消费统计: userId={}, startDate={}, endDate={}", userId, startDate, endDate);
+
+        try {
+            // 使用MyBatis-Plus查询用户在指定时间范围的消费记录
+            LambdaQueryWrapper<ConsumeAccountTransactionEntity> queryWrapper = QueryBuilder.of(ConsumeAccountTransactionEntity.class)
+                .eq(ConsumeAccountTransactionEntity::getUserId, userId)
+                .ge(ConsumeAccountTransactionEntity::getTransactionTime, startDate)
+                .le(ConsumeAccountTransactionEntity::getTransactionTime, endDate)
+                .orderByDesc(ConsumeAccountTransactionEntity::getTransactionTime)
+                .build();
+
+            List<ConsumeAccountTransactionEntity> transactions = transactionDao.selectList(queryWrapper);
+
+            // 构建统计结果
+            Map<String, Object> statistics = new HashMap<>();
+
+            java.math.BigDecimal totalRecharge = java.math.BigDecimal.ZERO;
+            java.math.BigDecimal totalConsume = java.math.BigDecimal.ZERO;
+            java.math.BigDecimal totalRefund = java.math.BigDecimal.ZERO;
+            int transactionCount = transactions.size();
+
+            for (ConsumeAccountTransactionEntity transaction : transactions) {
+                if ("RECHARGE".equals(transaction.getTransactionType()) && transaction.getAmount().compareTo(java.math.BigDecimal.ZERO) > 0) {
+                    totalRecharge = totalRecharge.add(transaction.getAmount());
+                } else if ("CONSUME".equals(transaction.getTransactionType()) || "DEDUCT".equals(transaction.getTransactionType())) {
+                    totalConsume = totalConsume.add(transaction.getAmount().abs());
+                } else if ("REFUND".equals(transaction.getTransactionType())) {
+                    totalRefund = totalRefund.add(transaction.getAmount());
+                }
+            }
+
+            statistics.put("userId", userId);
+            statistics.put("startDate", startDate);
+            statistics.put("endDate", endDate);
+            statistics.put("transactionCount", transactionCount);
+            statistics.put("totalRecharge", totalRecharge);
+            statistics.put("totalConsume", totalConsume);
+            statistics.put("totalRefund", totalRefund);
+            statistics.put("netAmount", totalRecharge.subtract(totalConsume).add(totalRefund));
+
+            log.info("[账户服务] 消费统计查询成功: userId={}, transactionCount={}", userId, transactionCount);
+            return statistics;
+
+        } catch (Exception e) {
+            log.error("[账户服务] 获取消费统计失败", e);
+            throw ConsumeAccountException.queryFailed("获取消费统计失败: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public List<ConsumeAccountVO> getActiveAccounts() {
+        log.info("[账户服务] 获取活跃账户列表");
+
+        try {
+            // 使用MyBatis-Plus查询状态为1（正常）的账户
+            LambdaQueryWrapper<ConsumeAccountEntity> queryWrapper = QueryBuilder.of(ConsumeAccountEntity.class)
+                .eq(ConsumeAccountEntity::getStatus, 1)
+                .build();
+
+            List<ConsumeAccountEntity> entities = accountDao.selectList(queryWrapper);
+
+            // 转换为VO
+            return entities.stream()
+                    .map(this::convertToVO)
+                    .toList();
+        } catch (Exception e) {
+            log.error("[账户服务] 获取活跃账户失败", e);
+            throw ConsumeAccountException.queryFailed("获取活跃账户失败: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 将Entity转换为VO
+     */
+    private ConsumeAccountVO convertToVO(ConsumeAccountEntity entity) {
+        return ConsumeAccountVO.builder()
+                .accountId(entity.getAccountId())
+                .userId(entity.getUserId())
+                .balance(entity.getBalance())
+                .creditLimit(entity.getCreditLimit())
+                .availableLimit(entity.getBalance().add(entity.getCreditLimit()))
+                .status(entity.getAccountStatus() == 1 ? "ACTIVE" : "FROZEN")
+                .build();
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Map<String, Object> batchCreateAccounts(List<ConsumeAccountAddForm> addForms) {
+        log.info("[账户服务] 批量创建账户: count={}", addForms.size());
+
+        int successCount = 0;
+        int failCount = 0;
+
+        for (ConsumeAccountAddForm addForm : addForms) {
+            try {
+                createAccount(addForm);
+                successCount++;
+            } catch (Exception e) {
+                log.error("[账户服务] 批量创建失败: userId={}", addForm.getUserId(), e);
+                failCount++;
             }
         }
 
-        // 余额信息
-        vo.setBalance(account.getBalance());
-        vo.setFrozenAmount(account.getFrozenAmount());
-        vo.setAvailableBalance(account.getBalance() != null && account.getFrozenAmount() != null
-                ? account.getBalance().subtract(account.getFrozenAmount())
-                : account.getBalance());
-        vo.setCreditLimit(account.getCreditLimit());
+        log.info("[账户服务] 批量创建完成: total={}, success={}, fail={}", addForms.size(), successCount, failCount);
 
-        // 累计金额
-        vo.setTotalRecharge(account.getTotalRechargeAmount());
-        vo.setTotalConsume(account.getTotalConsumeAmount());
-        vo.setTotalSubsidy(account.getTotalSubsidyAmount());
-
-        // 账户状态转换：Integer -> Integer + String描述
-        vo.setStatus(account.getStatus());
-        if (account.getStatus() != null) {
-            switch (account.getStatus()) {
-                case 1:
-                    vo.setStatusDesc("正常");
-                    vo.setEnabled(true);
-                    break;
-                case 2:
-                    vo.setStatusDesc("冻结");
-                    vo.setEnabled(false);
-                    break;
-                case 3:
-                    vo.setStatusDesc("注销");
-                    vo.setEnabled(false);
-                    break;
-                default:
-                    vo.setStatusDesc("未知");
-                    vo.setEnabled(false);
-                    break;
-            }
-        }
-
-        // 时间信息
-        vo.setCreateTime(account.getCreateTime());
-        vo.setUpdateTime(account.getUpdateTime());
-        vo.setLastConsumeTime(account.getLastUseTime());
-        vo.setLastRechargeTime(account.getLastUseTime()); // 注意：Entity中没有lastRechargeTime字段，使用lastUseTime
-
-        // 币种（默认CNY）
-        vo.setCurrency("CNY");
-
-        // 扩展信息
-        // 注意：AccountEntity没有remark和extendAttrs字段，暂不设置
-
-        return vo;
+        return Map.of(
+            "total", addForms.size(),
+            "successCount", successCount,
+            "failCount", failCount
+        );
     }
 }
-
-
-

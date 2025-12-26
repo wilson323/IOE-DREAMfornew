@@ -1,122 +1,69 @@
 package net.lab1024.sa.common.monitoring;
 
-import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
-
-import java.util.concurrent.atomic.AtomicLong;
+import io.micrometer.core.instrument.MeterRegistry;
 
 /**
  * 指标收集器
  * <p>
- * 收集系统运行时的各项指标数据
- * 支持HTTP请求统计、错误统计、业务操作统计
+ * 职责：
+ * - 收集应用运行时指标，如异常计数、方法执行时间等
+ * - 提供统一的指标记录接口
+ * </p>
+ * <p>
+ * 注意：这是一个纯Java类，通过构造函数注入MeterRegistry。
  * </p>
  *
  * @author IOE-DREAM Team
- * @since 2025-12-17
+ * @since 2025-12-20
  */
-@Slf4j
 public class MetricsCollector {
 
-    private final AtomicLong totalRequests = new AtomicLong(0);
-    private final AtomicLong errorRequests = new AtomicLong(0);
-    private final AtomicLong errorCount = new AtomicLong(0);
-    private final AtomicLong businessOperations = new AtomicLong(0);
-    private final AtomicLong businessErrorCount = new AtomicLong(0);
+    private final MeterRegistry meterRegistry;
 
-    /**
-     * 记录请求
-     */
-    public void recordRequest() {
-        totalRequests.incrementAndGet();
+    public MetricsCollector(MeterRegistry meterRegistry) {
+        this.meterRegistry = meterRegistry;
     }
 
     /**
-     * 记录错误请求
-     */
-    public void recordErrorRequest() {
-        errorRequests.incrementAndGet();
-        errorCount.incrementAndGet();
-    }
-
-    /**
-     * 记录业务操作
-     */
-    public void recordBusinessOperation() {
-        businessOperations.incrementAndGet();
-    }
-
-    /**
-     * 记录业务错误
-     */
-    public void recordBusinessError() {
-        businessErrorCount.incrementAndGet();
-    }
-
-    /**
-     * 获取指标概览
+     * 记录指标
      *
-     * @return 指标概览对象
+     * @param name 指标名称
+     * @param value 指标值
      */
-    public MetricOverview getMetricOverview() {
-        MetricOverview overview = new MetricOverview();
-        overview.setTotalRequests(totalRequests.get());
-        overview.setErrorRequests(errorRequests.get());
-        overview.setErrorCount(errorCount.get());
-        overview.setBusinessOperations(businessOperations.get());
-        overview.setBusinessErrorCount(businessErrorCount.get());
-        return overview;
+    public void record(String name, double value) {
+        if (meterRegistry != null) {
+            meterRegistry.counter(name).increment(value);
+        }
     }
 
     /**
-     * 重置所有计数器
+     * 记录业务指标
+     *
+     * @param metricName 指标名称
+     * @param value      值
+     * @param tags       标签
      */
-    public void reset() {
-        totalRequests.set(0);
-        errorRequests.set(0);
-        errorCount.set(0);
-        businessOperations.set(0);
-        businessErrorCount.set(0);
+    public void recordBusinessMetric(String metricName, double value, String... tags) {
+        if (meterRegistry != null && tags.length >= 2) {
+            // 将tags数组转换为Map或使用Micrometer的tag方法
+            io.micrometer.core.instrument.Counter.Builder counterBuilder = io.micrometer.core.instrument.Counter.builder(metricName);
+            for (int i = 0; i < tags.length - 1; i += 2) {
+                counterBuilder.tag(tags[i], tags[i + 1]);
+            }
+            counterBuilder.register(meterRegistry).increment(value);
+        }
     }
 
     /**
-     * 指标概览数据类
+     * 记录异常指标
+     *
+     * @param exception 异常
+     * @param duration 持续时间
      */
-    @Data
-    public static class MetricOverview {
-        /**
-         * 总请求数
-         */
-        private long totalRequests;
-
-        /**
-         * 错误请求数
-         */
-        private long errorRequests;
-
-        /**
-         * 错误计数
-         */
-        private long errorCount;
-
-        /**
-         * 业务操作数
-         */
-        private long businessOperations;
-
-        /**
-         * 业务错误数
-         */
-        private long businessErrorCount;
-
-        /**
-         * 平均响应时间（毫秒）
-         */
-        private double averageResponseTime;
-
-        /**
-         * 缓存命中率
-         */
-        private double cacheHitRate;
+    public void recordException(Exception exception, long duration) {
+        if (meterRegistry != null) {
+            meterRegistry.counter("exception", "type", exception.getClass().getSimpleName()).increment();
+            meterRegistry.timer("exception.duration").record(duration, java.util.concurrent.TimeUnit.MILLISECONDS);
+        }
     }
 }

@@ -27,7 +27,7 @@ spring:
         namespace: ${NACOS_NAMESPACE:dev}
         group: ${NACOS_GROUP:IOE-DREAM}
         username: ${NACOS_USERNAME:nacos}
-        password: ${NACOS_PASSWORD:nacos}
+        password: ${NACOS_PASSWORD:ENC(I2//JcHFpBc7vLPrYnCJNA==)}
         enabled: true
         register-enabled: true
         # 服务注册元数据
@@ -44,7 +44,7 @@ spring:
         namespace: ${NACOS_NAMESPACE:dev}
         group: ${NACOS_GROUP:IOE-DREAM}
         username: ${NACOS_USERNAME:nacos}
-        password: ${NACOS_PASSWORD:nacos}
+        password: ${NACOS_PASSWORD:ENC(I2//JcHFpBc7vLPrYnCJNA==)}
         file-extension: yaml
         enabled: ${NACOS_CONFIG_ENABLED:true}
         refresh-enabled: ${NACOS_CONFIG_REFRESH_ENABLED:true}
@@ -98,7 +98,7 @@ seata:
       namespace: ${NACOS_NAMESPACE:dev}
       group: ${NACOS_GROUP:SEATA_GROUP}
       username: ${NACOS_USERNAME:nacos}
-      password: ${NACOS_PASSWORD}
+      password: ${NACOS_PASSWORD:ENC(I2//JcHFpBc7vLPrYnCJNA==)}
       data-id: seataServer.properties
   registry:
     type: nacos
@@ -108,7 +108,7 @@ seata:
       namespace: ${NACOS_NAMESPACE:dev}
       group: ${NACOS_GROUP:SEATA_GROUP}
       username: ${NACOS_USERNAME:nacos}
-      password: ${NACOS_PASSWORD}
+      password: ${NACOS_PASSWORD:ENC(I2//JcHFpBc7vLPrYnCJNA==)}
       cluster: ${SEATA_CLUSTER:default}
   client:
     rm:
@@ -258,13 +258,13 @@ consume:
     # 发放策略
     distribution:
       auto-distribute: ${CONSUME_AUTO_DISTRIBUTE:true}
-      schedule: ${CONSUME_DISTRIBUTION_SCHEDULE:0 0 1 * *}  # 每月1号
+      schedule: ${CONSUME_DISTRIBUTION_SCHEDULE:0 0 1 * *} # 每月1号
       calculation-method: ${CONSUME_CALCULATION_METHOD:attendance-based}
 
     # 补贴规则
     rules:
       meal-subsidy-amount: ${CONSUME_MEAL_AMOUNT:30}
-      max-meal-subsidy: ${CONSUME_MAX_MEAL:90}  # 每天3餐
+      max-meal-subsidy: ${CONSUME_MAX_MEAL:90} # 每天3餐
       carry-forward: ${CONSUME_CARRY_FORWARD:false}
       expiry-days: ${CONSUME_EXPIRY_DAYS:30}
 
@@ -344,15 +344,15 @@ consume:
   cache:
     # 缓存配置
     account-balance:
-      ttl: ${CONSUME_BALANCE_TTL:300}           # 5分钟
+      ttl: ${CONSUME_BALANCE_TTL:300} # 5分钟
       max-size: ${CONSUME_BALANCE_MAX_SIZE:50000}
 
     product-price:
-      ttl: ${CONSUME_PRICE_TTL:600}            # 10分钟
+      ttl: ${CONSUME_PRICE_TTL:600} # 10分钟
       max-size: ${CONSUME_PRICE_MAX_SIZE:10000}
 
     transaction-records:
-      ttl: ${CONSUME_TRANSACTION_TTL:1800}     # 30分钟
+      ttl: ${CONSUME_TRANSACTION_TTL:1800} # 30分钟
       max-size: ${CONSUME_TRANSACTION_MAX_SIZE:100000}
 
   notification:

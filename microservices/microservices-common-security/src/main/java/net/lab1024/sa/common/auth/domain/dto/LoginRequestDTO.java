@@ -1,41 +1,37 @@
 package net.lab1024.sa.common.auth.domain.dto;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
 /**
- * 登录请求DTO
- * 整合自ioedream-auth-service
+ * 用户登录请求DTO
  *
  * @author IOE-DREAM Team
- * @version 1.0.0
- * @since 2025-12-02（整合自auth-service）
+ * @since 2025-12-16
  */
 @Data
-@Schema(description = "登录请求")
 public class LoginRequestDTO {
 
-    @Schema(description = "用户名", example = "admin")
     @NotBlank(message = "用户名不能为空")
+    @Size(max = 50, message = "用户名长度不能超过50个字符")
     private String username;
 
-    @Schema(description = "密码", example = "123456")
     @NotBlank(message = "密码不能为空")
+    @Size(min = 6, max = 100, message = "密码长度必须在6-100个字符之间")
     private String password;
 
-    @Schema(description = "验证码", example = "1234")
+    private String phone;
     private String captcha;
-
-    @Schema(description = "验证码Key", example = "captcha:xxx")
     private String captchaKey;
-
-    @Schema(description = "设备信息", example = "Chrome/Windows")
-    private String deviceInfo;
-
-    @Schema(description = "登录IP", example = "192.168.1.1")
-    private String loginIp;
-
-    @Schema(description = "记住我", example = "false")
+    private String loginType = "password";
+    private String userAgent;
+    private String deviceId;
+    private String deviceInfo; // 设备信息（JSON格式）
     private Boolean rememberMe = false;
+    private String thirdPartyToken;
+    private String thirdPartyType;
+    private String loginIp;
 }
+

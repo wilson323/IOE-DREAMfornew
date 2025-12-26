@@ -1,5 +1,8 @@
 package net.lab1024.sa.common.config;
 
+import lombok.extern.slf4j.Slf4j;
+
+
 import net.lab1024.sa.common.constant.SystemConstants;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
@@ -8,8 +11,6 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
-
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * RestTemplate配置类
@@ -25,9 +26,10 @@ import lombok.extern.slf4j.Slf4j;
  * @version 1.0.0
  * @since 2025-01-30
  */
-@Slf4j
 @Configuration
+@Slf4j
 public class RestTemplateConfiguration {
+
 
     /**
      * 配置RestTemplate Bean
@@ -42,8 +44,6 @@ public class RestTemplateConfiguration {
     @Primary
     public RestTemplate restTemplate(RestTemplateBuilder builder) {
         log.info("配置RestTemplate Bean");
-
-        // Spring Boot 3.4.0+ 超时设置在requestFactory中配置，避免使用已弃用的方法
         return builder
                 .requestFactory(this::httpRequestFactory)
                 .build();

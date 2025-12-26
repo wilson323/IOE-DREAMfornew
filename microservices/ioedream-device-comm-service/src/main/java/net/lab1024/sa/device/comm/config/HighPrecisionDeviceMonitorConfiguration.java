@@ -1,8 +1,9 @@
 package net.lab1024.sa.device.comm.config;
 
+import lombok.extern.slf4j.Slf4j;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.annotation.Resource;
-import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.organization.dao.DeviceDao;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
 import net.lab1024.sa.device.comm.monitor.HighPrecisionDeviceMonitor;
@@ -32,12 +33,13 @@ import java.util.concurrent.Executor;
  * @deprecated 线程池配置请使用 UnifiedThreadPoolConfiguration
  */
 @Deprecated
-@Slf4j
 @Configuration
 @EnableAsync
 @EnableScheduling
 @Schema(description = "高精度设备监控配置")
+@Slf4j
 public class HighPrecisionDeviceMonitorConfiguration {
+
 
     @Resource
     private DeviceDao deviceDao;

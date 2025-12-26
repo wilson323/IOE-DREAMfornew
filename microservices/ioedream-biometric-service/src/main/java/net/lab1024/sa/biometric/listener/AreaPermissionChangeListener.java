@@ -23,8 +23,8 @@ import jakarta.annotation.Resource;
  * @version 1.0.0
  * @since 2025-12-18
  */
-@Slf4j
 @Component
+@Slf4j
 public class AreaPermissionChangeListener {
 
     @Resource

@@ -1,17 +1,18 @@
 package net.lab1024.sa.oa.workflow.metrics;
 
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.concurrent.atomic.AtomicLong;
+
+import org.springframework.stereotype.Component;
+
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
-
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import net.lab1024.sa.oa.workflow.service.WorkflowEngineService;
-
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * 工作流引擎指标收集器
@@ -28,8 +29,8 @@ import java.util.concurrent.atomic.AtomicLong;
  * @version 1.0.0
  * @since 2025-01-16
  */
-@Slf4j
 @Component("workflowEngineMetricsCollector")
+@Slf4j
 public class WorkflowEngineMetricsCollector {
 
     @Resource
@@ -134,17 +135,13 @@ public class WorkflowEngineMetricsCollector {
 
     /**
      * 记录流程部署指标
+     * <p>
+     * 注意：不使用动态 process_key 作为标签，因为它是高基数标签会导致指标爆炸
+     * </p>
      */
     public void recordProcessDeployment(String processKey) {
         try {
             processDeploymentCounter.increment();
-
-            // 使用带标签的Counter
-            Counter.builder("workflow.process.deployment.count.tagged")
-                    .tag("process_key", processKey)
-                    .register(meterRegistry)
-                    .increment();
-
             log.debug("[工作流指标] 记录流程部署指标: processKey={}", processKey);
         } catch (Exception e) {
             log.warn("[工作流指标] 记录流程部署指标失败", e);
@@ -166,18 +163,13 @@ public class WorkflowEngineMetricsCollector {
 
     /**
      * 记录流程启动指标
+     * <p>
+     * 注意：不使用动态 process_key、business_key 作为标签，因为它们是高基数标签会导致指标爆炸
+     * </p>
      */
     public void recordProcessStart(String processKey, String businessKey) {
         try {
             processStartCounter.increment();
-
-            // 使用带标签的Counter
-            Counter.builder("workflow.process.start.count.tagged")
-                    .tag("process_key", processKey)
-                    .tag("business_key", businessKey != null ? businessKey : "unknown")
-                    .register(meterRegistry)
-                    .increment();
-
             log.debug("[工作流指标] 记录流程启动指标: processKey={}, businessKey={}", processKey, businessKey);
         } catch (Exception e) {
             log.warn("[工作流指标] 记录流程启动指标失败", e);
@@ -199,18 +191,13 @@ public class WorkflowEngineMetricsCollector {
 
     /**
      * 记录流程完成指标
+     * <p>
+     * 注意：不使用动态 process_key、outcome 作为标签，因为它们是高基数标签会导致指标爆炸
+     * </p>
      */
     public void recordProcessComplete(String processKey, String outcome) {
         try {
             processCompleteCounter.increment();
-
-            // 使用带标签的Counter
-            Counter.builder("workflow.process.complete.count.tagged")
-                    .tag("process_key", processKey)
-                    .tag("outcome", outcome != null ? outcome : "unknown")
-                    .register(meterRegistry)
-                    .increment();
-
             log.debug("[工作流指标] 记录流程完成指标: processKey={}, outcome={}", processKey, outcome);
         } catch (Exception e) {
             log.warn("[工作流指标] 记录流程完成指标失败", e);
@@ -219,19 +206,14 @@ public class WorkflowEngineMetricsCollector {
 
     /**
      * 记录任务创建指标
+     * <p>
+     * 注意：不使用动态 task_name、process_key 作为标签，因为它们是高基数标签会导致指标爆炸
+     * </p>
      */
     public void recordTaskCreate(String taskName, String processKey) {
         try {
             taskCreateCounter.increment();
             activeTasks.incrementAndGet();
-
-            // 使用带标签的Counter
-            Counter.builder("workflow.task.create.count.tagged")
-                    .tag("task_name", taskName != null ? taskName : "unknown")
-                    .tag("process_key", processKey != null ? processKey : "unknown")
-                    .register(meterRegistry)
-                    .increment();
-
             log.debug("[工作流指标] 记录任务创建指标: taskName={}, processKey={}", taskName, processKey);
         } catch (Exception e) {
             log.warn("[工作流指标] 记录任务创建指标失败", e);
@@ -240,18 +222,14 @@ public class WorkflowEngineMetricsCollector {
 
     /**
      * 记录任务完成指标
+     * <p>
+     * 注意：不使用动态 task_name、outcome 作为标签，因为它们是高基数标签会导致指标爆炸
+     * </p>
      */
     public void recordTaskComplete(String taskName, String outcome, long durationMs) {
         try {
             taskCompleteCounter.increment();
             activeTasks.decrementAndGet();
-
-            // 使用带标签的Counter
-            Counter.builder("workflow.task.complete.count.tagged")
-                    .tag("task_name", taskName != null ? taskName : "unknown")
-                    .tag("outcome", outcome != null ? outcome : "unknown")
-                    .register(meterRegistry)
-                    .increment();
 
             // 记录耗时
             taskCompleteTimer.record(durationMs, java.util.concurrent.TimeUnit.MILLISECONDS);
@@ -264,18 +242,13 @@ public class WorkflowEngineMetricsCollector {
 
     /**
      * 记录任务分配指标
+     * <p>
+     * 注意：不使用动态 task_name、assignee_id 作为标签，因为它们是高基数标签会导致指标爆炸
+     * </p>
      */
     public void recordTaskAssign(String taskName, Long assigneeId) {
         try {
             taskAssignCounter.increment();
-
-            // 使用带标签的Counter
-            Counter.builder("workflow.task.assign.count.tagged")
-                    .tag("task_name", taskName != null ? taskName : "unknown")
-                    .tag("assignee_id", String.valueOf(assigneeId != null ? assigneeId : 0))
-                    .register(meterRegistry)
-                    .increment();
-
             log.debug("[工作流指标] 记录任务分配指标: taskName={}, assigneeId={}", taskName, assigneeId);
         } catch (Exception e) {
             log.warn("[工作流指标] 记录任务分配指标失败", e);
@@ -284,18 +257,14 @@ public class WorkflowEngineMetricsCollector {
 
     /**
      * 记录错误指标
+     * <p>
+     * 注意：不使用动态 operation、error_type 作为标签，因为它们是高基数标签会导致指标爆炸
+     * 如需按维度统计，可通过日志聚合分析实现
+     * </p>
      */
     public void recordError(String operation, String errorType) {
         try {
             errorCounter.increment();
-
-            // 使用带标签的Counter
-            Counter.builder("workflow.error.count.tagged")
-                    .tag("operation", operation != null ? operation : "unknown")
-                    .tag("error_type", errorType != null ? errorType : "unknown")
-                    .register(meterRegistry)
-                    .increment();
-
             log.debug("[工作流指标] 记录错误指标: operation={}, errorType={}", operation, errorType);
         } catch (Exception e) {
             log.warn("[工作流指标] 记录错误指标失败", e);

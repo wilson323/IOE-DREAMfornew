@@ -1,5 +1,7 @@
 package net.lab1024.sa.oa.manager;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -7,15 +9,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.springframework.http.HttpMethod;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import lombok.extern.slf4j.Slf4j;
+import net.lab1024.sa.common.auth.domain.vo.UserInfoVO;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
-import net.lab1024.sa.common.security.identity.domain.vo.UserDetailVO;
+import net.lab1024.sa.common.gateway.domain.response.UserInfoResponse;
 import net.lab1024.sa.common.system.employee.domain.vo.EmployeeVO;
-import org.springframework.http.HttpMethod;
 
 /**
  * 工作流引擎管理器
@@ -33,7 +36,9 @@ import org.springframework.http.HttpMethod;
  */
 @Slf4j
 public class WorkflowEngineManager {
-    private final ObjectMapper objectMapper = new ObjectMapper();
+
+
+    private final ObjectMapper objectMapper;
     private final AtomicLong instanceSequence = new AtomicLong(0);
     private final GatewayServiceClient gatewayServiceClient;
 
@@ -44,9 +49,11 @@ public class WorkflowEngineManager {
      * </p>
      *
      * @param gatewayServiceClient 网关服务客户端
+     * @param objectMapper         ObjectMapper（由Spring统一提供，避免重复创建）
      */
-    public WorkflowEngineManager(GatewayServiceClient gatewayServiceClient) {
+    public WorkflowEngineManager(GatewayServiceClient gatewayServiceClient, ObjectMapper objectMapper) {
         this.gatewayServiceClient = gatewayServiceClient;
+        this.objectMapper = objectMapper;
     }
 
     /**
@@ -61,9 +68,9 @@ public class WorkflowEngineManager {
     /**
      * 解析流程定义
      */
-    public WorkflowDefinition parseDefinition(String definitionJson) {
+    public WorkflowEngineManager.WorkflowDefinition parseDefinition(String definitionJson) {
         try {
-            return objectMapper.readValue(definitionJson, WorkflowDefinition.class);
+            return objectMapper.readValue(definitionJson, WorkflowEngineManager.WorkflowDefinition.class);
         } catch (Exception e) {
             log.error("[工作流引擎] 解析流程定义失败", e);
             return null;
@@ -73,7 +80,7 @@ public class WorkflowEngineManager {
     /**
      * 获取开始节点
      */
-    public WorkflowNode getStartNode(WorkflowDefinition definition) {
+    public WorkflowNode getStartNode(WorkflowEngineManager.WorkflowDefinition definition) {
         return definition.getNodes().stream()
                 .filter(n -> "START".equals(n.getType()))
                 .findFirst()
@@ -126,7 +133,7 @@ public class WorkflowEngineManager {
      * 3. 通过GatewayServiceClient调用公共服务获取用户信息
      * </p>
      *
-     * @param node 工作流节点
+     * @param node      工作流节点
      * @param variables 流程变量（包含initiatorId等）
      * @return 审批人ID列表
      */
@@ -176,16 +183,16 @@ public class WorkflowEngineManager {
             try {
                 // 通过GatewayServiceClient调用公共服务查询角色用户
                 // 注意：API路径需要根据实际公共服务接口调整
-                ResponseDTO<List<UserDetailVO>> response = gatewayServiceClient.callCommonService(
+                @SuppressWarnings("unchecked") ResponseDTO<List<UserInfoVO>> response = (ResponseDTO<List<UserInfoVO>>) gatewayServiceClient.callCommonService(
                         "/api/v1/role/" + roleId + "/users",
                         HttpMethod.GET,
                         null,
-                        new TypeReference<ResponseDTO<List<UserDetailVO>>>() {}
-                );
+                        new TypeReference<ResponseDTO<List<UserInfoVO>>>() {
+                        });
 
                 if (response != null && response.isSuccess() && response.getData() != null) {
-                    List<UserDetailVO> users = response.getData();
-                    for (UserDetailVO user : users) {
+                    List<UserInfoVO> users = response.getData();
+                    for (UserInfoVO user : users) {
                         if (user.getUserId() != null) {
                             userIds.add(user.getUserId());
                         }
@@ -193,7 +200,7 @@ public class WorkflowEngineManager {
                     log.debug("[工作流引擎] 根据角色查询用户成功，roleId={}, userCount={}", roleId, users.size());
                 } else {
                     log.warn("[工作流引擎] 根据角色查询用户失败，roleId={}, message={}",
-                        roleId, response != null ? response.getMessage() : "响应为空");
+                            roleId, response != null ? response.getMessage() : "响应为空");
                 }
             } catch (Exception e) {
                 log.error("[工作流引擎] 根据角色查询用户异常，roleId={}, error={}", roleId, e.getMessage(), e);
@@ -224,12 +231,11 @@ public class WorkflowEngineManager {
 
         try {
             // 1. 验证发起人是否存在
-            ResponseDTO<UserDetailVO> userResponse = gatewayServiceClient.callCommonService(
-                    "/api/v1/users/" + initiatorId,
+            ResponseDTO<UserInfoResponse> userResponse = gatewayServiceClient.callCommonService(
+                    "/open/api/v1/users/" + initiatorId,
                     HttpMethod.GET,
                     null,
-                    UserDetailVO.class
-            );
+                    new TypeReference<ResponseDTO<UserInfoResponse>>() {});
 
             if (userResponse == null || !userResponse.isSuccess() || userResponse.getData() == null) {
                 log.warn("[工作流引擎] 获取发起人信息失败，initiatorId={}", initiatorId);
@@ -244,19 +250,20 @@ public class WorkflowEngineManager {
             }
 
             // 3. 查询部门详情获取leaderId（部门负责人）
-            ResponseDTO<Map<String, Object>> deptResponse = gatewayServiceClient.callCommonService(
+            @SuppressWarnings("unchecked")
+            ResponseDTO<Map<String, Object>> deptResponse = (ResponseDTO<Map<String, Object>>) gatewayServiceClient.callCommonService(
                     "/api/v1/department/" + departmentId,
                     HttpMethod.GET,
                     null,
-                    new TypeReference<ResponseDTO<Map<String, Object>>>() {}
-            );
+                    new TypeReference<ResponseDTO<Map<String, Object>>>() {
+                    });
 
             if (deptResponse != null && deptResponse.isSuccess() && deptResponse.getData() != null) {
                 Map<String, Object> department = deptResponse.getData();
                 Object leaderIdObj = department.get("leaderId");
                 if (leaderIdObj != null) {
-                    Long leaderId = leaderIdObj instanceof Number ?
-                        ((Number) leaderIdObj).longValue() : Long.parseLong(leaderIdObj.toString());
+                    Long leaderId = leaderIdObj instanceof Number ? ((Number) leaderIdObj).longValue()
+                            : Long.parseLong(leaderIdObj.toString());
                     log.debug("[工作流引擎] 根据部门查询主管成功，departmentId={}, leaderId={}", departmentId, leaderId);
                     return List.of(leaderId);
                 } else {
@@ -292,21 +299,28 @@ public class WorkflowEngineManager {
         try {
             // 通过用户ID查询员工信息
             // 注意：需要通过员工服务查询，因为员工表中有supervisorId字段
-            ResponseDTO<List<EmployeeVO>> employeeResponse = gatewayServiceClient.callCommonService(
+            @SuppressWarnings("unchecked")
+            ResponseDTO<List<Map<String, Object>>> employeeResponse = (ResponseDTO<List<Map<String, Object>>>) gatewayServiceClient.callCommonService(
                     "/api/v1/system/employee/user/" + initiatorId,
                     HttpMethod.GET,
                     null,
-                    new TypeReference<ResponseDTO<List<EmployeeVO>>>() {}
-            );
+                    new TypeReference<ResponseDTO<List<Map<String, Object>>>>() {
+                    });
 
             if (employeeResponse != null && employeeResponse.isSuccess() &&
-                employeeResponse.getData() != null && !employeeResponse.getData().isEmpty()) {
-                EmployeeVO employee = employeeResponse.getData().get(0);
-                Long supervisorId = employee.getSupervisorId();
+                    employeeResponse.getData() != null && !employeeResponse.getData().isEmpty()) {
+                Map<String, Object> employee = employeeResponse.getData().get(0);
+                Object supervisorIdObj = employee.get("supervisorId");
+                Long supervisorId = null;
+                if (supervisorIdObj instanceof Number number) {
+                    supervisorId = number.longValue();
+                } else if (supervisorIdObj != null) {
+                    supervisorId = Long.parseLong(String.valueOf(supervisorIdObj));
+                }
 
                 if (supervisorId != null) {
                     log.debug("[工作流引擎] 查询发起人直接主管成功，initiatorId={}, supervisorId={}",
-                        initiatorId, supervisorId);
+                            initiatorId, supervisorId);
                     return List.of(supervisorId);
                 } else {
                     log.warn("[工作流引擎] 发起人没有直属上级，initiatorId={}", initiatorId);
@@ -317,7 +331,7 @@ public class WorkflowEngineManager {
             }
         } catch (Exception e) {
             log.error("[工作流引擎] 查询发起人直接主管异常，initiatorId={}, error={}",
-                initiatorId, e.getMessage(), e);
+                    initiatorId, e.getMessage(), e);
         }
 
         return List.of();
@@ -341,15 +355,16 @@ public class WorkflowEngineManager {
 
         try {
             // 通过用户ID查询员工信息
-            ResponseDTO<List<EmployeeVO>> employeeResponse = gatewayServiceClient.callCommonService(
+            @SuppressWarnings("unchecked")
+            ResponseDTO<List<EmployeeVO>> employeeResponse = (ResponseDTO<List<EmployeeVO>>) gatewayServiceClient.callCommonService(
                     "/api/v1/system/employee/user/" + userId,
                     HttpMethod.GET,
                     null,
-                    new TypeReference<ResponseDTO<List<EmployeeVO>>>() {}
-            );
+                    new TypeReference<ResponseDTO<List<EmployeeVO>>>() {
+                    });
 
             if (employeeResponse != null && employeeResponse.isSuccess() &&
-                employeeResponse.getData() != null && !employeeResponse.getData().isEmpty()) {
+                    employeeResponse.getData() != null && !employeeResponse.getData().isEmpty()) {
                 EmployeeVO employee = employeeResponse.getData().get(0);
                 return employee.getDepartmentId();
             }
@@ -428,14 +443,37 @@ public class WorkflowEngineManager {
         private List<WorkflowNode> nodes;
         private List<WorkflowTransition> transitions;
 
-        public String getId() { return id; }
-        public void setId(String id) { this.id = id; }
-        public String getName() { return name; }
-        public void setName(String name) { this.name = name; }
-        public List<WorkflowNode> getNodes() { return nodes; }
-        public void setNodes(List<WorkflowNode> nodes) { this.nodes = nodes; }
-        public List<WorkflowTransition> getTransitions() { return transitions; }
-        public void setTransitions(List<WorkflowTransition> transitions) { this.transitions = transitions; }
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public List<WorkflowNode> getNodes() {
+            return nodes;
+        }
+
+        public void setNodes(List<WorkflowNode> nodes) {
+            this.nodes = nodes;
+        }
+
+        public List<WorkflowTransition> getTransitions() {
+            return transitions;
+        }
+
+        public void setTransitions(List<WorkflowTransition> transitions) {
+            this.transitions = transitions;
+        }
     }
 
     public static class WorkflowNode {
@@ -446,18 +484,53 @@ public class WorkflowEngineManager {
         private List<Long> assigneeIds;
         private Integer timeoutHours;
 
-        public String getId() { return id; }
-        public void setId(String id) { this.id = id; }
-        public String getName() { return name; }
-        public void setName(String name) { this.name = name; }
-        public String getType() { return type; }
-        public void setType(String type) { this.type = type; }
-        public String getAssigneeType() { return assigneeType; }
-        public void setAssigneeType(String assigneeType) { this.assigneeType = assigneeType; }
-        public List<Long> getAssigneeIds() { return assigneeIds; }
-        public void setAssigneeIds(List<Long> assigneeIds) { this.assigneeIds = assigneeIds; }
-        public Integer getTimeoutHours() { return timeoutHours; }
-        public void setTimeoutHours(Integer timeoutHours) { this.timeoutHours = timeoutHours; }
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
+
+        public String getAssigneeType() {
+            return assigneeType;
+        }
+
+        public void setAssigneeType(String assigneeType) {
+            this.assigneeType = assigneeType;
+        }
+
+        public List<Long> getAssigneeIds() {
+            return assigneeIds;
+        }
+
+        public void setAssigneeIds(List<Long> assigneeIds) {
+            this.assigneeIds = assigneeIds;
+        }
+
+        public Integer getTimeoutHours() {
+            return timeoutHours;
+        }
+
+        public void setTimeoutHours(Integer timeoutHours) {
+            this.timeoutHours = timeoutHours;
+        }
     }
 
     public static class WorkflowTransition {
@@ -466,15 +539,39 @@ public class WorkflowEngineManager {
         private String toNodeId;
         private String condition; // APPROVED, REJECTED, null(默认)
 
-        public String getId() { return id; }
-        public void setId(String id) { this.id = id; }
-        public String getFromNodeId() { return fromNodeId; }
-        public void setFromNodeId(String fromNodeId) { this.fromNodeId = fromNodeId; }
-        public String getToNodeId() { return toNodeId; }
-        public void setToNodeId(String toNodeId) { this.toNodeId = toNodeId; }
-        public String getCondition() { return condition; }
-        public void setCondition(String condition) { this.condition = condition; }
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public String getFromNodeId() {
+            return fromNodeId;
+        }
+
+        public void setFromNodeId(String fromNodeId) {
+            this.fromNodeId = fromNodeId;
+        }
+
+        public String getToNodeId() {
+            return toNodeId;
+        }
+
+        public void setToNodeId(String toNodeId) {
+            this.toNodeId = toNodeId;
+        }
+
+        public String getCondition() {
+            return condition;
+        }
+
+        public void setCondition(String condition) {
+            this.condition = condition;
+        }
     }
 
-    public record TaskResult(Long taskId, Long assigneeId, String status, String comment) {}
+    public record TaskResult(Long taskId, Long assigneeId, String status, String comment) {
+    }
 }

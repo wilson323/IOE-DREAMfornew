@@ -1,6 +1,6 @@
 package net.lab1024.sa.gateway.config;
 
-import net.lab1024.sa.common.config.properties.IoeDreamGatewayProperties;
+import net.lab1024.sa.gateway.config.IoeDreamGatewayProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 

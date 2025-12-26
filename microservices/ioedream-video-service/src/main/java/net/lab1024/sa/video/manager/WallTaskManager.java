@@ -1,13 +1,14 @@
 package net.lab1024.sa.video.manager;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 import lombok.extern.slf4j.Slf4j;
+
 import net.lab1024.sa.video.dao.VideoDisplayTaskDao;
 import net.lab1024.sa.video.dao.VideoWallWindowDao;
 import net.lab1024.sa.video.entity.VideoDisplayTaskEntity;
 import net.lab1024.sa.video.entity.VideoWallWindowEntity;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 /**
  * 上墙任务管理器
@@ -42,10 +43,10 @@ public class WallTaskManager {
      * </p>
      *
      * @param videoDisplayTaskDao 上墙任务数据访问层
-     * @param videoWallWindowDao 窗口数据访问层
+     * @param videoWallWindowDao  窗口数据访问层
      */
     public WallTaskManager(VideoDisplayTaskDao videoDisplayTaskDao,
-                          VideoWallWindowDao videoWallWindowDao) {
+            VideoWallWindowDao videoWallWindowDao) {
         this.videoDisplayTaskDao = videoDisplayTaskDao;
         this.videoWallWindowDao = videoWallWindowDao;
         log.info("[WallTaskManager] 初始化上墙任务管理器");
@@ -151,8 +152,8 @@ public class WallTaskManager {
     /**
      * 更新任务状态
      *
-     * @param taskId 任务ID
-     * @param status 状态：0-等待，1-执行中，2-完成，3-失败
+     * @param taskId   任务ID
+     * @param status   状态：0-等待，1-执行中，2-完成，3-失败
      * @param errorMsg 错误信息（可选）
      */
     public void updateTaskStatus(Long taskId, Integer status, String errorMsg) {

@@ -225,3 +225,30 @@ export {
   throttle,
   lazyLoad
 }
+
+// ==================== 新增性能优化工具导出 ====================
+
+// 防抖节流（增强版）
+export {
+  debounce as debounceEnhanced,
+  throttle as throttleEnhanced,
+  debounceDirective,
+  throttleDirective,
+  useDebounce,
+  useThrottle
+} from './performance-debounce.js'
+
+// 请求缓存
+export {
+  requestCache,
+  cached,
+  createCachedRequest,
+  useRequestCache
+} from './performance-cache.js'
+
+// 性能监控（增强版）
+export {
+  performanceMonitor as performanceMonitorEnhanced,
+  usePerformanceMonitor,
+  autoMonitor
+} from './performance-monitor.js'

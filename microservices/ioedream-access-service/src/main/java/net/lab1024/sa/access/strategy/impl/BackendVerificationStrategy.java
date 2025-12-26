@@ -3,8 +3,12 @@ package net.lab1024.sa.access.strategy.impl;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.access.domain.dto.AccessVerificationRequest;
 import net.lab1024.sa.access.domain.dto.VerificationResult;
+import net.lab1024.sa.access.domain.form.AntiPassbackDetectForm;
+import net.lab1024.sa.access.domain.vo.AntiPassbackDetectResultVO;
 import net.lab1024.sa.access.manager.AccessVerificationManager;
+import net.lab1024.sa.access.service.AntiPassbackService;
 import net.lab1024.sa.access.strategy.VerificationModeStrategy;
+import net.lab1024.sa.common.dto.ResponseDTO;
 import org.springframework.stereotype.Component;
 
 import jakarta.annotation.Resource;
@@ -67,6 +71,9 @@ public class BackendVerificationStrategy implements VerificationModeStrategy {
     @Resource
     private AccessVerificationManager accessVerificationManager;
 
+    @Resource
+    private AntiPassbackService antiPassbackService;
+
     @Override
     public VerificationResult verify(AccessVerificationRequest request) {
         log.info("[后台验证] 开始验证: userId={}, deviceId={}, areaId={}, event={}, verifyType={}",
@@ -78,15 +85,14 @@ public class BackendVerificationStrategy implements VerificationModeStrategy {
             // - 设备端已验证认证方式是否支持（如果设备不支持该认证方式，设备端不会识别成功）
             // - 设备端发送请求到软件端：pin=1001, verifytype=11
             // - 软件端只需要验证权限（反潜、互锁、时间段等），不需要验证认证方式
-            
+
             // 记录认证方式（用于统计和审计）
             log.debug("[后台验证] 认证方式: verifyType={}", request.getVerifyType());
 
-            // 1. 反潜验证（传递areaId参数以读取反潜配置）
-            if (!accessVerificationManager.verifyAntiPassback(
-                    request.getUserId(), request.getDeviceId(), request.getInOutStatus(), request.getAreaId())) {
-                log.warn("[后台验证] 反潜验证失败: userId={}", request.getUserId());
-                return VerificationResult.failed("ANTI_PASSBACK_VIOLATION", "反潜验证失败,请从正确的门进出");
+            // 1. 反潜验证（优先使用新的AntiPassbackService，失败时降级到旧Manager）
+            VerificationResult antiPassbackResult = verifyAntiPassbackWithService(request);
+            if (!antiPassbackResult.isSuccess()) {
+                return antiPassbackResult; // 返回具体的反潜失败原因
             }
 
             // 2. 互锁验证（传递areaId参数以读取互锁配置）
@@ -136,6 +142,106 @@ public class BackendVerificationStrategy implements VerificationModeStrategy {
             log.error("[后台验证] 验证异常: userId={}, error={}", request.getUserId(), e.getMessage(), e);
             return VerificationResult.failed("SYSTEM_ERROR", "系统异常，请稍后重试");
         }
+    }
+
+    /**
+     * 使用新的AntiPassbackService进行反潜验证
+     * <p>
+     * 集成Phase 1.4的完整反潜回服务（支持4种模式：全局/区域/软/硬）
+     * </p>
+     * <p>
+     * 降级策略：如果新服务调用失败，自动降级到旧的AntiPassbackManager
+     * </p>
+     *
+     * @param request 验证请求
+     * @return 验证结果
+     */
+    private VerificationResult verifyAntiPassbackWithService(AccessVerificationRequest request) {
+        try {
+            // 构建AntiPassbackDetectForm
+            // 注意：某些字段使用null或默认值，因为这些信息在验证请求中不可用
+            AntiPassbackDetectForm detectForm = AntiPassbackDetectForm.builder()
+                    .userId(request.getUserId())
+                    .userName("用户" + request.getUserId()) // 动态生成用户名
+                    .userCardNo(request.getCardNo() != null ? request.getCardNo() : "N/A")
+                    .deviceId(request.getDeviceId())
+                    .deviceName("设备" + request.getDeviceId()) // 动态生成设备名
+                    .deviceCode("DEV-" + request.getDeviceId())
+                    .areaId(request.getAreaId())
+                    .areaName("区域" + request.getAreaId())
+                    .passTime(request.getVerifyTime() != null ?
+                            request.getVerifyTime().atZone(java.time.ZoneId.systemDefault()).toInstant().toEpochMilli() :
+                            java.time.LocalDateTime.now().atZone(java.time.ZoneId.systemDefault()).toInstant().toEpochMilli())
+                    .skipDetection(false)
+                    .build();
+
+            // 调用新的AntiPassbackService
+            ResponseDTO<AntiPassbackDetectResultVO> response = antiPassbackService.detect(detectForm);
+
+            if (response == null || !response.isSuccess()) {
+                log.warn("[后台验证] 反潜回检测服务调用失败，降级到旧Manager: userId={}, response={}",
+                        request.getUserId(), response);
+                // 降级到旧的Manager
+                return verifyAntiPassbackWithManager(request);
+            }
+
+            AntiPassbackDetectResultVO result = response.getData();
+            if (result == null) {
+                log.warn("[后台验证] 反潜回检测结果为空，降级到旧Manager: userId={}", request.getUserId());
+                return verifyAntiPassbackWithManager(request);
+            }
+
+            // 检查是否允许通行
+            if (!Boolean.TRUE.equals(result.getAllowPass())) {
+                log.warn("[后台验证] 反潜回检测不通过: userId={}, result={}, message={}",
+                        request.getUserId(), result.getResult(), result.getResultMessage());
+                // 根据检测结果返回失败原因
+                if (result.getResult() == 3) { // 硬反潜回
+                    return VerificationResult.failed("ANTI_PASSBACK_HARD_VIOLATION",
+                            result.getResultMessage() != null ? result.getResultMessage() : "硬反潜回违规，禁止通行");
+                } else if (result.getResult() == 2) { // 软反潜回
+                    return VerificationResult.failed("ANTI_PASSBACK_SOFT_VIOLATION",
+                            result.getResultMessage() != null ? result.getResultMessage() : "软反潜回告警");
+                } else {
+                    return VerificationResult.failed("ANTI_PASSBACK_VIOLATION",
+                            result.getResultMessage() != null ? result.getResultMessage() : "反潜回违规");
+                }
+            }
+
+            // 检测通过
+            log.debug("[后台验证] 反潜回检测通过: userId={}, detectionTime={}ms",
+                    request.getUserId(), result.getDetectionTime());
+            return VerificationResult.builder()
+                    .success(true)
+                    .authStatus("SUCCEED")
+                    .message("反潜验证通过")
+                    .build();
+
+        } catch (Exception e) {
+            log.warn("[后台验证] 反潜回检测服务异常，降级到旧Manager: userId={}, error={}",
+                    request.getUserId(), e.getMessage());
+            // 降级到旧的Manager
+            return verifyAntiPassbackWithManager(request);
+        }
+    }
+
+    /**
+     * 使用旧的AntiPassbackManager进行反潜验证（降级方案）
+     *
+     * @param request 验证请求
+     * @return 验证结果
+     */
+    private VerificationResult verifyAntiPassbackWithManager(AccessVerificationRequest request) {
+        if (!accessVerificationManager.verifyAntiPassback(
+                request.getUserId(), request.getDeviceId(), request.getInOutStatus(), request.getAreaId())) {
+            log.warn("[后台验证] 反潜验证失败（旧Manager）: userId={}", request.getUserId());
+            return VerificationResult.failed("ANTI_PASSBACK_VIOLATION", "反潜验证失败,请从正确的门进出");
+        }
+        return VerificationResult.builder()
+                .success(true)
+                .authStatus("SUCCEED")
+                .message("反潜验证通过")
+                .build();
     }
 
     @Override

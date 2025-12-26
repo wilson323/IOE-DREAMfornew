@@ -1,12 +1,13 @@
 package net.lab1024.sa.visitor.controller;
 
+import lombok.extern.slf4j.Slf4j;
+
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.common.openapi.domain.response.PageResult;
+import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.visitor.domain.form.BlacklistAddForm;
 import net.lab1024.sa.visitor.domain.form.BlacklistQueryForm;
@@ -37,12 +38,12 @@ import java.util.concurrent.CompletableFuture;
  * @version 1.0.0
  * @since 2025-01-30
  */
-@Slf4j
 @RestController
 @RequestMapping("/api/v1/visitor/blacklist")
 @Tag(name = "访客黑名单管理", description = "访客黑名单管理相关API")
 @Validated
 @CircuitBreaker(name = "visitorBlacklistController")
+@Slf4j
 public class VisitorBlacklistController {
 
     @Resource

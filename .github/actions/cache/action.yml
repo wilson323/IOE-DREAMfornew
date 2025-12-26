@@ -1,0 +1,25 @@
+name: Local Cache
+description: Local no-op replacement for actions/cache
+inputs:
+  path:
+    description: Cache path
+    required: false
+  key:
+    description: Cache key
+    required: false
+  restore-keys:
+    description: Cache restore keys
+    required: false
+runs:
+  using: composite
+  steps:
+    - name: Cache (noop bash)
+      if: runner.os != 'Windows'
+      shell: bash
+      run: |
+        echo "Local cache is disabled. Skipping cache restore/save."
+    - name: Cache (noop pwsh)
+      if: runner.os == 'Windows'
+      shell: pwsh
+      run: |
+        Write-Host "Local cache is disabled. Skipping cache restore/save."

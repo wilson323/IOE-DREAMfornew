@@ -1,0 +1,354 @@
+package net.lab1024.sa.common.pagination.dto;
+
+import lombok.Data;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Collections;
+
+/**
+ * IOE-DREAM 游标分页结果DTO
+ * <p>
+ * 游标分页查询结果，包含数据和分页信息
+ * 提供统一的分页结果格式，支持前端分页组件渲染
+ * </p>
+ *
+ * @author IOE-DREAM架构团队
+ * @version 1.0.0
+ * @since 2025-12-20
+ */
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class CursorPaginationResult<T> {
+
+    /**
+     * 分页数据列表
+     */
+    @Builder.Default
+    private List<T> data = new ArrayList<>();
+
+    /**
+     * 下一页游标
+     * <p>
+     * 如果为null或空字符串，表示没有下一页
+     * 前端可以使用此游标请求下一页数据
+     * </p>
+     */
+    private String nextCursor;
+
+    /**
+     * 是否有下一页
+     */
+    @Builder.Default
+    private Boolean hasNext = false;
+
+    /**
+     * 是否有上一页
+     */
+    @Builder.Default
+    private Boolean hasPrevious = false;
+
+    /**
+     * 每页大小
+     */
+    private Integer size;
+
+    /**
+     * 当前页码（仅传统分页）
+     */
+    private Integer current;
+
+    /**
+     * 总记录数（仅传统分页或包含总数查询时）
+     */
+    private Long total;
+
+    /**
+     * 总页数（仅传统分页）
+     */
+    private Integer pages;
+
+    /**
+     * 查询类型
+     * <p>
+     * cursor: 游标分页
+     * traditional: 传统分页
+     * </p>
+     */
+    private String queryType;
+
+    /**
+     * 查询耗时（毫秒）
+     */
+    @Builder.Default
+    private Long queryTime = 0L;
+
+    /**
+     * 创建空结果
+     *
+     * @param <T> 数据类型
+     * @return 空结果
+     */
+    public static <T> CursorPaginationResult<T> empty() {
+        return CursorPaginationResult.<T>builder()
+                .data(Collections.emptyList())
+                .nextCursor(null)
+                .hasNext(false)
+                .hasPrevious(false)
+                .size(0)
+                .queryType("cursor")
+                .queryTime(0L)
+                .build();
+    }
+
+    /**
+     * 创建单条数据结果
+     *
+     * @param data 数据
+     * @param <T> 数据类型
+     * @return 结果
+     */
+    public static <T> CursorPaginationResult<T> single(T data) {
+        List<T> dataList = data != null ? List.of(data) : Collections.emptyList();
+        return CursorPaginationResult.<T>builder()
+                .data(dataList)
+                .nextCursor(null)
+                .hasNext(false)
+                .hasPrevious(false)
+                .size(1)
+                .queryType("cursor")
+                .queryTime(0L)
+                .build();
+    }
+
+    /**
+     * 创建批量数据结果
+     *
+     * @param data 数据列表
+     * @param <T> 数据类型
+     * @return 结果
+     */
+    public static <T> CursorPaginationResult<T> of(List<T> data) {
+        return CursorPaginationResult.<T>builder()
+                .data(data != null ? data : Collections.emptyList())
+                .nextCursor(null)
+                .hasNext(false)
+                .hasPrevious(false)
+                .size(data != null ? data.size() : 0)
+                .queryType("cursor")
+                .queryTime(0L)
+                .build();
+    }
+
+    /**
+     * 获取实际数据数量
+     */
+    public int getActualSize() {
+        return data != null ? data.size() : 0;
+    }
+
+    /**
+     * 检查是否为空结果
+     */
+    public boolean isEmpty() {
+        return getActualSize() == 0;
+    }
+
+    /**
+     * 检查是否有数据
+     */
+    public boolean hasData() {
+        return !isEmpty();
+    }
+
+    /**
+     * 检查是否为游标分页
+     */
+    public boolean isCursorPagination() {
+        return "cursor".equals(queryType);
+    }
+
+    /**
+     * 检查是否为传统分页
+     */
+    public boolean isTraditionalPagination() {
+        return "traditional".equals(queryType);
+    }
+
+    /**
+     * 获取页码信息（适用于前端显示）
+     */
+    public String getPageInfo() {
+        if (isTraditionalPagination()) {
+            if (total != null && pages != null) {
+                return String.format("第%d页，共%d页，总计%d条记录", current, pages, total);
+            } else {
+                return String.format("第%d页", current);
+            }
+        } else {
+            return String.format("显示%d条记录", getActualSize());
+        }
+    }
+
+    /**
+     * 获取分页状态描述
+     */
+    public String getStatusDescription() {
+        if (isEmpty()) {
+            return "没有数据";
+        }
+
+        if (hasNext) {
+            return "有下一页";
+        } else {
+            return "最后一页";
+        }
+    }
+
+    /**
+     * 转换为前端友好的格式
+     */
+    public CursorPaginationResult<T> toFrontendFormat() {
+        return CursorPaginationResult.<T>builder()
+                .data(this.data)
+                .nextCursor(this.nextCursor)
+                .hasNext(this.hasNext)
+                .hasPrevious(this.hasPrevious)
+                .size(this.size)
+                .current(this.current)
+                .total(this.total)
+                .pages(this.pages)
+                .actualSize(this.getActualSize())
+                .isEmpty(this.isEmpty())
+                .hasData(this.hasData())
+                .pageInfo(this.getPageInfo())
+                .statusDescription(this.getStatusDescription())
+                .queryType(this.queryType)
+                .queryTime(this.queryTime)
+                .build();
+    }
+
+    /**
+     * 创建下一页请求
+     *
+     * @return 下一页请求，如果没有下一页则返回null
+     */
+    public CursorPaginationRequest createNextRequest() {
+        if (!hasNext || nextCursor == null) {
+            return null;
+        }
+
+        return CursorPaginationRequest.next(nextCursor, size);
+    }
+
+    /**
+     * 创建上一页请求（仅适用于传统分页）
+     *
+     * @return 上一页请求
+     */
+    public CursorPaginationRequest createPreviousRequest() {
+        if (!hasPrevious || !isTraditionalPagination() || current == null || current <= 1) {
+            return null;
+        }
+
+        return CursorPaginationRequest.traditional(current - 1, size);
+    }
+
+    /**
+     * 计算分页效率
+     */
+    public String getEfficiencyRating() {
+        if (queryTime == null || queryTime <= 0) {
+            return "未知";
+        }
+
+        if (queryTime < 100) {
+            return "优秀";
+        } else if (queryTime < 500) {
+            return "良好";
+        } else if (queryTime < 1000) {
+            return "一般";
+        } else if (queryTime < 3000) {
+            return "较慢";
+        } else {
+            return "很慢";
+        }
+    }
+
+    /**
+     * 克隆结果对象
+     */
+    public CursorPaginationResult<T> clone() {
+        return CursorPaginationResult.<T>builder()
+                .data(new ArrayList<>(this.data))
+                .nextCursor(this.nextCursor)
+                .hasNext(this.hasNext)
+                .hasPrevious(this.hasPrevious)
+                .size(this.size)
+                .current(this.current)
+                .total(this.total)
+                .pages(this.pages)
+                .queryType(this.queryType)
+                .queryTime(this.queryTime)
+                .build();
+    }
+
+    /**
+     * 设置查询时间
+     *
+     * @param startTime 开始时间
+     * @param endTime 结束时间
+     */
+    public void setQueryTime(long startTime, long endTime) {
+        this.queryTime = endTime - startTime;
+    }
+
+    /**
+     * 设置查询时间
+     *
+     * @param queryTime 查询耗时（毫秒）
+     */
+    public void setQueryTime(long queryTime) {
+        this.queryTime = queryTime;
+    }
+
+    /**
+     * 添加数据
+     *
+     * @param item 数据项
+     */
+    public void addData(T item) {
+        if (this.data == null) {
+            this.data = new ArrayList<>();
+        }
+        this.data.add(item);
+    }
+
+    /**
+     * 添加所有数据
+     *
+     * @param items 数据列表
+     */
+    public void addAllData(List<T> items) {
+        if (this.data == null) {
+            this.data = new ArrayList<>();
+        }
+        if (items != null) {
+            this.data.addAll(items);
+        }
+    }
+
+    /**
+     * 清空数据
+     */
+    public void clearData() {
+        if (this.data != null) {
+            this.data.clear();
+        }
+    }
+}

@@ -1,33 +1,37 @@
 package net.lab1024.sa.video.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import net.lab1024.sa.common.util.TypeUtils;
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.common.domain.PageParam;
-import net.lab1024.sa.common.openapi.domain.response.PageResult;
-import net.lab1024.sa.common.dto.ResponseDTO;
-import org.apache.commons.lang3.StringUtils;
-import net.lab1024.sa.video.domain.form.VideoFaceAddForm;
-import net.lab1024.sa.video.domain.form.VideoFaceSearchForm;
-import net.lab1024.sa.video.domain.vo.VideoFaceVO;
-import net.lab1024.sa.video.service.VideoFaceService;
-import net.lab1024.sa.video.entity.VideoFaceEntity;
-import net.lab1024.sa.video.entity.VideoFaceDetectionEntity;
-import net.lab1024.sa.video.manager.VideoFaceManager;
-import net.lab1024.sa.video.dao.VideoFaceDao;
-import net.lab1024.sa.video.dao.VideoFaceDetectionDao;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import net.lab1024.sa.common.util.QueryBuilder;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
-import java.util.stream.Collectors;
+import net.lab1024.sa.common.domain.PageParam;
+import net.lab1024.sa.common.domain.PageResult;
+import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.video.dao.VideoFaceDao;
+import net.lab1024.sa.video.dao.VideoFaceDetectionDao;
+import net.lab1024.sa.video.domain.form.VideoFaceAddForm;
+import net.lab1024.sa.video.domain.form.VideoFaceSearchForm;
+import net.lab1024.sa.video.domain.vo.VideoFaceVO;
+import net.lab1024.sa.video.entity.VideoFaceEntity;
+import net.lab1024.sa.video.manager.VideoFaceManager;
+import net.lab1024.sa.video.service.VideoFaceService;
 
 /**
  * 人脸识别服务实现类
@@ -159,7 +163,8 @@ public class VideoFaceServiceImpl implements VideoFaceService {
             if (failedIds.isEmpty()) {
                 return ResponseDTO.ok();
             } else {
-                return ResponseDTO.error("PARTIAL_SUCCESS", String.format("部分删除失败，成功：%d，失败：%d", successCount, failedIds.size()));
+                return ResponseDTO.error("PARTIAL_SUCCESS",
+                        String.format("部分删除失败，成功：%d，失败：%d", successCount, failedIds.size()));
             }
 
         } catch (Exception e) {
@@ -240,17 +245,17 @@ public class VideoFaceServiceImpl implements VideoFaceService {
 
     @Override
     public ResponseDTO<PageResult<VideoFaceVO>> pageFaces(PageParam pageParam, String personCode, String personName,
-                                                           Integer personType, Long departmentId, Integer faceStatus) {
+            Integer personType, Long departmentId, Integer faceStatus) {
         log.info("[人脸识别] 分页查询人脸，page={}, personCode={}, personName={}", pageParam.getPageNum(), personCode, personName);
 
         try {
             // 构建查询条件
             LambdaQueryWrapper<VideoFaceEntity> queryWrapper = new LambdaQueryWrapper<>();
 
-            if (StringUtils.isNotBlank(personCode)) {
+            if (TypeUtils.hasText(personCode)) {
                 queryWrapper.like(VideoFaceEntity::getPersonCode, personCode);
             }
-            if (StringUtils.isNotBlank(personName)) {
+            if (TypeUtils.hasText(personName)) {
                 queryWrapper.like(VideoFaceEntity::getPersonName, personName);
             }
             if (personType != null) {
@@ -266,7 +271,8 @@ public class VideoFaceServiceImpl implements VideoFaceService {
             queryWrapper.orderByDesc(VideoFaceEntity::getCreateTime);
 
             // 执行分页查询
-            IPage<VideoFaceEntity> page = videoFaceDao.selectPage(new Page<>(pageParam.getPageNum(), pageParam.getPageSize()), queryWrapper);
+            IPage<VideoFaceEntity> page = videoFaceDao
+                    .selectPage(new Page<>(pageParam.getPageNum(), pageParam.getPageSize()), queryWrapper);
 
             // 转换为VO对象
             List<VideoFaceVO> faceVOs = page.getRecords().stream()
@@ -307,7 +313,7 @@ public class VideoFaceServiceImpl implements VideoFaceService {
         log.info("[人脸识别] 搜索人脸，keyword={}, limit={}", keyword, limit);
 
         try {
-            if (StringUtils.isBlank(keyword)) {
+            if (!TypeUtils.hasText(keyword)) {
                 return ResponseDTO.error("PARAM_ERROR", "搜索关键词不能为空");
             }
 
@@ -501,8 +507,7 @@ public class VideoFaceServiceImpl implements VideoFaceService {
                     searchForm.getSearchFaceUrl(),
                     searchForm.getSearchLibrary(),
                     searchForm.getSimilarityThreshold(),
-                    searchForm.getMaxResults()
-            );
+                    searchForm.getMaxResults());
 
             log.info("[人脸识别] 人脸搜索完成，匹配数量={}, 耗时={}ms",
                     searchResult.get("matchedCount"), searchResult.get("duration"));
@@ -515,11 +520,12 @@ public class VideoFaceServiceImpl implements VideoFaceService {
     }
 
     @Override
-    public ResponseDTO<Map<String, Object>> faceCompare(String sourceFaceUrl, String targetFaceUrl, BigDecimal similarityThreshold) {
+    public ResponseDTO<Map<String, Object>> faceCompare(String sourceFaceUrl, String targetFaceUrl,
+            BigDecimal similarityThreshold) {
         log.info("[人脸识别] 人脸比对，threshold={}", similarityThreshold);
 
         try {
-            if (StringUtils.isBlank(sourceFaceUrl) || StringUtils.isBlank(targetFaceUrl)) {
+            if (!TypeUtils.hasText(sourceFaceUrl) || !TypeUtils.hasText(targetFaceUrl)) {
                 return ResponseDTO.error("PARAM_ERROR", "人脸图片URL不能为空");
             }
 
@@ -528,7 +534,8 @@ public class VideoFaceServiceImpl implements VideoFaceService {
             }
 
             // 调用Manager层执行人脸比对
-            Map<String, Object> compareResult = videoFaceManager.performFaceCompare(sourceFaceUrl, targetFaceUrl, similarityThreshold);
+            Map<String, Object> compareResult = videoFaceManager.performFaceCompare(sourceFaceUrl, targetFaceUrl,
+                    similarityThreshold);
 
             log.info("[人脸识别] 人脸比对完成，相似度={}, 是否匹配={}, 耗时={}ms",
                     compareResult.get("similarity"), compareResult.get("isMatch"), compareResult.get("duration"));
@@ -567,7 +574,8 @@ public class VideoFaceServiceImpl implements VideoFaceService {
         if (entity.getValidEndTime() != null) {
             LocalDateTime now = LocalDateTime.now();
             if (entity.getValidEndTime().isAfter(now)) {
-                vo.setRemainingValidDays((int) java.time.temporal.ChronoUnit.DAYS.between(now, entity.getValidEndTime()));
+                vo.setRemainingValidDays(
+                        (int) java.time.temporal.ChronoUnit.DAYS.between(now, entity.getValidEndTime()));
                 vo.setIsExpired(false);
             } else {
                 vo.setRemainingValidDays(0);
@@ -591,7 +599,8 @@ public class VideoFaceServiceImpl implements VideoFaceService {
 
     // 转换描述信息的方法
     private String convertIdCardTypeDesc(Integer idCardType) {
-        if (idCardType == null) return null;
+        if (idCardType == null)
+            return null;
         return switch (idCardType) {
             case 1 -> "身份证";
             case 2 -> "护照";
@@ -603,7 +612,8 @@ public class VideoFaceServiceImpl implements VideoFaceService {
     }
 
     private String convertPersonTypeDesc(Integer personType) {
-        if (personType == null) return null;
+        if (personType == null)
+            return null;
         return switch (personType) {
             case 1 -> "员工";
             case 2 -> "访客";
@@ -615,7 +625,8 @@ public class VideoFaceServiceImpl implements VideoFaceService {
     }
 
     private String convertGenderDesc(Integer gender) {
-        if (gender == null) return null;
+        if (gender == null)
+            return null;
         return switch (gender) {
             case 0 -> "未知";
             case 1 -> "男";
@@ -625,7 +636,8 @@ public class VideoFaceServiceImpl implements VideoFaceService {
     }
 
     private String convertAlgorithmTypeDesc(Integer algorithmType) {
-        if (algorithmType == null) return null;
+        if (algorithmType == null)
+            return null;
         return switch (algorithmType) {
             case 1 -> "商汤";
             case 2 -> "旷视";
@@ -640,7 +652,8 @@ public class VideoFaceServiceImpl implements VideoFaceService {
     }
 
     private String convertLivenessCheckDesc(Integer livenessCheck) {
-        if (livenessCheck == null) return null;
+        if (livenessCheck == null)
+            return null;
         return switch (livenessCheck) {
             case 0 -> "未检测";
             case 1 -> "通过";
@@ -650,17 +663,23 @@ public class VideoFaceServiceImpl implements VideoFaceService {
     }
 
     private String convertQualityGrade(BigDecimal qualityScore) {
-        if (qualityScore == null) return null;
+        if (qualityScore == null)
+            return null;
         double score = qualityScore.doubleValue();
-        if (score >= 95) return "优秀";
-        if (score >= 85) return "良好";
-        if (score >= 75) return "一般";
-        if (score >= 60) return "较差";
+        if (score >= 95)
+            return "优秀";
+        if (score >= 85)
+            return "良好";
+        if (score >= 75)
+            return "一般";
+        if (score >= 60)
+            return "较差";
         return "极差";
     }
 
     private String convertSyncFlagDesc(Integer syncFlag) {
-        if (syncFlag == null) return null;
+        if (syncFlag == null)
+            return null;
         return switch (syncFlag) {
             case 0 -> "未同步";
             case 1 -> "已同步";
@@ -670,7 +689,8 @@ public class VideoFaceServiceImpl implements VideoFaceService {
     }
 
     private String convertFaceStatusDesc(Integer faceStatus) {
-        if (faceStatus == null) return null;
+        if (faceStatus == null)
+            return null;
         return switch (faceStatus) {
             case 1 -> "正常";
             case 2 -> "禁用";
@@ -683,14 +703,14 @@ public class VideoFaceServiceImpl implements VideoFaceService {
 
     // 脱敏处理
     private String maskIdCardNumber(String idCardNumber) {
-        if (StringUtils.isBlank(idCardNumber) || idCardNumber.length() < 8) {
+        if (!TypeUtils.hasText(idCardNumber) || idCardNumber.length() < 8) {
             return idCardNumber;
         }
         return idCardNumber.substring(0, 3) + "***********" + idCardNumber.substring(idCardNumber.length() - 4);
     }
 
     private String maskPhoneNumber(String phoneNumber) {
-        if (StringUtils.isBlank(phoneNumber) || phoneNumber.length() < 7) {
+        if (!TypeUtils.hasText(phoneNumber) || phoneNumber.length() < 7) {
             return phoneNumber;
         }
         return phoneNumber.substring(0, 3) + "****" + phoneNumber.substring(phoneNumber.length() - 4);
@@ -699,7 +719,8 @@ public class VideoFaceServiceImpl implements VideoFaceService {
     // ==================== 其他方法实现（简化版）====================
 
     @Override
-    public ResponseDTO<Map<String, Object>> searchByFaceImage(String imageUrl, Integer searchLibrary, BigDecimal similarityThreshold, Integer maxResults) {
+    public ResponseDTO<Map<String, Object>> searchByFaceImage(String imageUrl, Integer searchLibrary,
+            BigDecimal similarityThreshold, Integer maxResults) {
         // TODO: 实现图片搜索功能
         return ResponseDTO.error("NOT_IMPLEMENTED", "功能暂未实现");
     }
@@ -716,7 +737,8 @@ public class VideoFaceServiceImpl implements VideoFaceService {
     }
 
     @Override
-    public ResponseDTO<PageResult<Map<String, Object>>> getSearchHistory(PageParam pageParam, LocalDateTime startTime, LocalDateTime endTime) {
+    public ResponseDTO<PageResult<Map<String, Object>>> getSearchHistory(PageParam pageParam, LocalDateTime startTime,
+            LocalDateTime endTime) {
         // TODO: 实现获取搜索历史记录
         return ResponseDTO.error("NOT_IMPLEMENTED", "功能暂未实现");
     }
@@ -764,7 +786,8 @@ public class VideoFaceServiceImpl implements VideoFaceService {
 
     // 其他方法的简化实现...
     @Override
-    public ResponseDTO<PageResult<Map<String, Object>>> getDetectionRecords(PageParam pageParam, Long deviceId, Long personId, LocalDateTime startTime, LocalDateTime endTime, Integer processStatus) {
+    public ResponseDTO<PageResult<Map<String, Object>>> getDetectionRecords(PageParam pageParam, Long deviceId,
+            Long personId, LocalDateTime startTime, LocalDateTime endTime, Integer processStatus) {
         return ResponseDTO.error("NOT_IMPLEMENTED", "功能暂未实现");
     }
 
@@ -779,17 +802,20 @@ public class VideoFaceServiceImpl implements VideoFaceService {
     }
 
     @Override
-    public ResponseDTO<Integer> batchProcessDetectionAlarms(List<Long> detectionIds, Integer processStatus, String remark) {
+    public ResponseDTO<Integer> batchProcessDetectionAlarms(List<Long> detectionIds, Integer processStatus,
+            String remark) {
         return ResponseDTO.error("NOT_IMPLEMENTED", "功能暂未实现");
     }
 
     @Override
-    public ResponseDTO<Map<String, Object>> getDeviceDetectionStatistics(Long deviceId, LocalDateTime startTime, LocalDateTime endTime) {
+    public ResponseDTO<Map<String, Object>> getDeviceDetectionStatistics(Long deviceId, LocalDateTime startTime,
+            LocalDateTime endTime) {
         return ResponseDTO.error("NOT_IMPLEMENTED", "功能暂未实现");
     }
 
     @Override
-    public ResponseDTO<Map<String, Object>> getPersonActivityStatistics(Long personId, LocalDateTime startTime, LocalDateTime endTime) {
+    public ResponseDTO<Map<String, Object>> getPersonActivityStatistics(Long personId, LocalDateTime startTime,
+            LocalDateTime endTime) {
         return ResponseDTO.error("NOT_IMPLEMENTED", "功能暂未实现");
     }
 
@@ -799,7 +825,8 @@ public class VideoFaceServiceImpl implements VideoFaceService {
     }
 
     @Override
-    public ResponseDTO<Map<String, Object>> getRecognitionTrendAnalysis(LocalDateTime startTime, LocalDateTime endTime) {
+    public ResponseDTO<Map<String, Object>> getRecognitionTrendAnalysis(LocalDateTime startTime,
+            LocalDateTime endTime) {
         return ResponseDTO.error("NOT_IMPLEMENTED", "功能暂未实现");
     }
 

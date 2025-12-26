@@ -233,7 +233,8 @@ public class GlobalExceptionHandler {
 ```markdown
 ✅ 必须使用 jakarta.annotation.Resource
 ✅ 必须使用 jakarta.validation.Valid
-✅ 必须使用 jakarta.persistence.Entity
+✅ 必须使用 @Data
+@TableName("table_name")
 ✅ 必须使用 jakarta.servlet.http.HttpServletRequest
 ✅ 必须使用 jakarta.transaction.Transactional
 ❌ 禁止使用 javax.annotation.* 等Jakarta EE迁移范围的包

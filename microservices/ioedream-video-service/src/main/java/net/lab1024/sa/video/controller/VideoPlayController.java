@@ -1,5 +1,6 @@
 package net.lab1024.sa.video.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.permission.annotation.PermissionCheck;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,7 +15,6 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.validation.constraints.NotNull;
-import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.video.service.VideoPlayService;
 
@@ -46,7 +46,7 @@ import java.util.Map;
 @RequestMapping("/api/v1/video/play")
 @Tag(name = "视频播放管理PC端", description = "实时视频流、录像回放、视频截图等API")
 @PermissionCheck(value = "VIDEO_PLAY", description = "视频播放管理模块权限")
-public class VideoPlayController {
+ public class VideoPlayController {
 
     @Resource
     private VideoPlayService videoPlayService;

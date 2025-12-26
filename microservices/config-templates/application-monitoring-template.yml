@@ -1,4 +1,4 @@
-# ============================================================
+﻿# ============================================================
 # IOE-DREAM 监控告警配置模板
 #
 # 功能：企业级监控告警体系，提供全方位的服务监控
@@ -68,25 +68,23 @@ management:
     beans:
       enabled: ${MANAGEMENT_BEANS_ENABLED:false}
 
-  # 指标配置
-  metrics:
-    # 指标导出
-    export:
-      # Prometheus配置
-      prometheus:
+  # Prometheus 指标导出（Spring Boot 3.5.x 推荐键）
+  # 说明：旧键 management.metrics.export.prometheus.* 已弃用
+  prometheus:
+    metrics:
+      export:
         enabled: ${PROMETHEUS_EXPORT_ENABLED:true}
-        # 步长
         step: ${PROMETHEUS_EXPORT_STEP:30s}
-        # 描述
         descriptions: ${PROMETHEUS_EXPORT_DESCRIPTIONS:true}
-        # 注册指标名称
-        registry: ${PROMETHEUS_EXPORT_REGISTRY:prometheus}
-        # 发布指标
         pushgateway:
           enabled: ${PROMETHEUS_PUSHGATEWAY_ENABLED:false}
           base-url: ${PROMETHEUS_PUSHGATEWAY_URL:http://pushgateway:9091}
           job: ${PROMETHEUS_PUSHGATEWAY_JOB:ioedream}
 
+  # 指标配置
+  metrics:
+    # 指标导出（JMX等）
+    export:
       # JMX配置
       jmx:
         enabled: ${JMX_EXPORT_ENABLED:true}
@@ -95,40 +93,34 @@ management:
 
     # 指标发布配置
     tags:
-      application: ${spring.application.name:unknown}
-      environment: ${spring.profiles.active:unknown}
+      application: ${"spring.application.name":unknown}
+      environment: ${"spring.profiles.active":unknown}
       instance: ${HOSTNAME:${spring.application.name}-${random.uuid}}
       region: ${METRICS_REGION:default}
       zone: ${METRICS_ZONE:default}
 
-    # 指标分布配置
+    # 指标分布配置（map key含特殊字符需转义）
     distribution:
-      # HTTP请求分布
-      http.server.requests:
-        # 启用百分位直方图
-        percentiles-histogram: ${HTTP_METRICS_PERCENTILES_HISTOGRAM:true}
-        # 百分位配置
-        percentiles: ${HTTP_METRICS_PERCENTILES:0.5,0.9,0.95,0.99}
-        # 分桶配置
-        sla: ${HTTP_METRICS_SLA:10ms,50ms,100ms,200ms,500ms,1s,2s,5s}
+      # 百分位直方图配置
+      percentiles-histogram:
+        "[http.server.requests]": ${HTTP_METRICS_PERCENTILES_HISTOGRAM:true}
+        "[hikaricp.connections]": ${HIKARI_METRICS_PERCENTILES_HISTOGRAM:true}
+        "[redis.connections]": ${REDIS_METRICS_PERCENTILES_HISTOGRAM:true}
+        "[business.operations]": ${BUSINESS_METRICS_PERCENTILES_HISTOGRAM:true}
 
-      # 数据库连接池分布
-      hikaricp.connections:
-        percentiles-histogram: ${HIKARI_METRICS_PERCENTILES_HISTOGRAM:true}
-        percentiles: ${HIKARI_METRICS_PERCENTILES:0.5,0.9,0.95,0.99}
-        sla: ${HIKARI_METRICS_SLA:5,10,15,20,25}
+      # 百分位配置
+      percentiles:
+        "[http.server.requests]": ${HTTP_METRICS_PERCENTILES:0.5,0.9,0.95,0.99}
+        "[hikaricp.connections]": ${HIKARI_METRICS_PERCENTILES:0.5,0.9,0.95,0.99}
+        "[redis.connections]": ${REDIS_METRICS_PERCENTILES:0.5,0.9,0.95,0.99}
+        "[business.operations]": ${BUSINESS_METRICS_PERCENTILES:0.5,0.9,0.95,0.99}
 
-      # Redis连接池分布
-      redis.connections:
-        percentiles-histogram: ${REDIS_METRICS_PERCENTILES_HISTOGRAM:true}
-        percentiles: ${REDIS_METRICS_PERCENTILES:0.5,0.9,0.95,0.99}
-        sla: ${REDIS_METRICS_SLA:5,10,15,20}
-
-      # 业务操作分布
-      business.operations:
-        percentiles-histogram: ${BUSINESS_METRICS_PERCENTILES_HISTOGRAM:true}
-        percentiles: ${BUSINESS_METRICS_PERCENTILES:0.5,0.9,0.95,0.99}
-        sla: ${BUSINESS_METRICS_SLA:100ms,500ms,1s,2s,5s}
+      # SLA配置
+      sla:
+        "[http.server.requests]": ${HTTP_METRICS_SLA:10ms,50ms,100ms,200ms,500ms,1s,2s,5s}
+        "[hikaricp.connections]": ${HIKARI_METRICS_SLA:5,10,15,20,25}
+        "[redis.connections]": ${REDIS_METRICS_SLA:5,10,15,20}
+        "[business.operations]": ${BUSINESS_METRICS_SLA:100ms,500ms,1s,2s,5s}
 
     # 自定义指标
     binders:
@@ -268,7 +260,7 @@ logging:
   # 日志级别配置
   level:
     # Actuator日志级别
-    org.springframework.boot.actuator: ${ACTUATOR_LOG_LEVEL:INFO}
+    "org.springframework.boot.actuator": ${ACTUATOR_LOG_LEVEL:INFO}
     # 监控日志级别
     io.micrometer: ${MICROMETER_LOG_LEVEL:INFO}
     # Prometheus日志级别
@@ -397,3 +389,4 @@ ioedream:
 # - grafana/dashboards/ioedream-overview.json
 # - grafana/dashboards/ioedream-microservices.json
 # - grafana/dashboards/ioedream-business.json
+

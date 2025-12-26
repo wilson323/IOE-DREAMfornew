@@ -15,13 +15,14 @@ import net.lab1024.sa.common.organization.dao.AreaUserDao;
 import net.lab1024.sa.common.organization.entity.AreaDeviceEntity;
 import net.lab1024.sa.common.organization.entity.AreaUserEntity;
 import net.lab1024.sa.common.organization.entity.DeviceEntity;
-import net.lab1024.sa.common.security.entity.UserEntity;
+import net.lab1024.sa.common.organization.entity.UserEntity;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.http.HttpMethod;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.fasterxml.jackson.core.type.TypeReference;
 
 import jakarta.annotation.Resource;
 import java.time.LocalDateTime;
@@ -49,10 +50,11 @@ import java.util.stream.Collectors;
  * @version 1.0.0
  * @since 2025-12-18
  */
-@Slf4j
 @Service
 @Transactional(rollbackFor = Exception.class)
+@Slf4j
 public class BiometricTemplateSyncServiceImpl implements BiometricTemplateSyncService {
+
 
     @Resource
     private BiometricTemplateDao biometricTemplateDao;
@@ -176,11 +178,12 @@ public class BiometricTemplateSyncServiceImpl implements BiometricTemplateSyncSe
             deleteRequest.put("deviceId", deviceId);
 
             // 通过设备通讯服务删除模板
-            ResponseDTO<Void> response = gatewayServiceClient.callDeviceCommService(
-                    "/api/v1/device/biometric/template/delete",
+            @SuppressWarnings("unchecked")
+            ResponseDTO<Void> response = gatewayServiceClient.callCommonService(
+                    "/device-comm/api/v1/device/biometric/template/delete",
                     HttpMethod.POST,
                     deleteRequest,
-                    Void.class
+                    new TypeReference<ResponseDTO<Void>>() {}
             );
 
             if (response != null && response.isSuccess()) {
@@ -351,11 +354,20 @@ public class BiometricTemplateSyncServiceImpl implements BiometricTemplateSyncSe
                     .build();
 
             // 2. 通过设备通讯服务同步模板
-            ResponseDTO<Void> response = gatewayServiceClient.callDeviceCommService(
-                    "/api/v1/device/biometric/template/sync",
+            Map<String, Object> requestMap = new HashMap<>();
+            requestMap.put("userId", syncRequest.getUserId());
+            requestMap.put("userName", syncRequest.getUserName());
+            requestMap.put("biometricType", syncRequest.getBiometricType());
+            requestMap.put("featureData", syncRequest.getFeatureData());
+            requestMap.put("qualityScore", syncRequest.getQualityScore());
+            requestMap.put("templateVersion", syncRequest.getTemplateVersion());
+
+            @SuppressWarnings("unchecked")
+            ResponseDTO<Void> response = gatewayServiceClient.callCommonService(
+                    "/device-comm/api/v1/device/biometric/template/sync",
                     HttpMethod.POST,
-                    syncRequest,
-                    Void.class
+                    requestMap,
+                    new TypeReference<ResponseDTO<Void>>() {}
             );
 
             // 3. 处理响应
@@ -389,11 +401,12 @@ public class BiometricTemplateSyncServiceImpl implements BiometricTemplateSyncSe
      */
     private String getUserName(Long userId) {
         try {
+            @SuppressWarnings("unchecked")
             ResponseDTO<UserEntity> response = gatewayServiceClient.callCommonService(
                     "/api/v1/users/" + userId,
                     HttpMethod.GET,
                     null,
-                    UserEntity.class
+                    new TypeReference<ResponseDTO<UserEntity>>() {}
             );
 
             if (response != null && response.isSuccess() && response.getData() != null) {
@@ -411,3 +424,4 @@ public class BiometricTemplateSyncServiceImpl implements BiometricTemplateSyncSe
         }
     }
 }
+

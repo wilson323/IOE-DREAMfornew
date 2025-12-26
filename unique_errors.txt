@@ -1,0 +1,89 @@
+     61 ResponseDTO cannot be resolved
+     60 ResponseDTO cannot be resolved to a type
+     34 AccessProtocolHandler cannot be resolved to a type
+     32 ProtocolParseException cannot be resolved to a type
+     28 ConsumeProtocolHandler cannot be resolved to a type
+     26 AttendanceProtocolHandler cannot be resolved to a type
+     25 ProtocolMessage cannot be resolved to a type
+     14 ProtocolProcessException cannot be resolved to a type
+     13 ProtocolCacheServiceImpl cannot be resolved to a type
+     10 DeviceSyncService cannot be resolved to a type
+      9 The method setDeviceId(Long) in the type DeviceEntity is not applicable for the arguments (String)
+      9 The method assertThrows(Class<T>, Executable) in the type Assertions is not applicable for the arguments (Class<ProtocolParseException>, () -> {})
+      8 VisitorBusinessException cannot be resolved
+      6 The method setDeviceType(Integer) in the type DeviceEntity is not applicable for the arguments (String)
+      5 TODO: 集成ExceptionMetricsCollector
+      5 The method readValue(String, Class<Object>) is ambiguous for the type ObjectMapper
+      5 The method getProtocolType() is undefined for the type DeviceCommandRequest
+      5 The import net.lab1024.sa.common.domain.ResponseDTO cannot be resolved
+      5 DeviceBusinessException cannot be resolved to a type
+      4 The import net.lab1024.sa.device.comm.protocol.message cannot be resolved
+      4 The import net.lab1024.sa.device.comm.protocol.handler.ProtocolProcessException cannot be resolved
+      4 The import net.lab1024.sa.device.comm.protocol.handler.ProtocolParseException cannot be resolved
+      4 Null type safety: The expression of type 'Object' needs unchecked conversion to conform to '@NonNull Object'
+      4 code cannot be resolved or is not a field
+      3 TracingUtils cannot be resolved to a type
+      3 The method assertThrows(Class<T>, Executable) in the type Assertions is not applicable for the arguments (Class<ProtocolProcessException>, () -> {})
+      3 The method assertEquals(long, long) is ambiguous for the type ConsumeRechargeManagerTest
+      3 Null type safety: The expression of type 'String' needs unchecked conversion to conform to '@NonNull String'
+      2 VisitorBusinessException cannot be resolved to a type
+      2 The method performDeviceUserSync(eq(device), long, anyMap()) is undefined for the type DeviceProtocolClient
+      2 The method performDeviceUserRevoke(DeviceEntity, long) is undefined for the type DeviceProtocolClient
+      2 The method performDeviceUserQuery(DeviceEntity) is undefined for the type DeviceProtocolClient
+      2 The method getRechargeTrend(Integer) in the type ConsumeRechargeManager is not applicable for the arguments (LocalDateTime, LocalDateTime)
+      2 The method getData() is undefined for the type PageResult<ConsumeRechargeRecordVO>
+      2 The method countConflictingSubsidies(Long, Integer, Integer, LocalDateTime, Long) in the type ConsumeSubsidyDao is not applicable for the arguments (long, int, int, LocalDateTime, Long, long)
+      2 The import org.springframework.boot.actuate cannot be resolved
+      2 ProtocolCacheService cannot be resolved to a type
+      2 Null type safety: The expression of type 'String' needs unchecked conversion to conform to '@NonNull Object'
+      2 Duplicate field VisitorBusinessException.ErrorCode.VISITOR_AREA_ACCESS_DENIED
+      1 Type safety: Unchecked cast from Object to List<String>
+      1 Type mismatch: cannot convert from PageResult<Object> to PageResult<VisitorAppointmentDetailVO>
+      1 Type mismatch: cannot convert from PageResult<Object> to PageResult<VideoDeviceVO>
+      1 Type mismatch: cannot convert from ArrayList<Object> to List<EdgeCapability>
+      1 The value of the field ProtocolCacheService.LOCK_EXPIRE_TIME is not used
+      1 The method setStock(Integer) from the type ConsumeProductVO is deprecated
+      1 The method setStatus(Integer) in the type ApprovalTaskVO is not applicable for the arguments (String)
+      1 The method setId(long) is undefined for the type ApprovalTaskVO
+      1 The method setId(long) is undefined for the type ApprovalInstanceVO
+      1 The method setDeletedFlag(int) is undefined for the type WorkflowTaskEntity
+      1 The method setAutoRenew(Integer) in the type ConsumeSubsidyEntity is not applicable for the arguments (boolean)
+      1 The method readValue(JsonParser, Class<Object>) is ambiguous for the type ObjectMapper
+      1 The method queryDevices(VideoDeviceQueryForm) in the type VideoDeviceController is not applicable for the arguments (Integer, Integer, String, String, Integer)
+      1 The method processFailed(String, Long, String) in the type ProtocolProcessException is not applicable for the arguments (String, Long, String, Exception)
+      1 The method performDeviceUserQuery(any()) is undefined for the type DeviceProtocolClient
+      1 The method performDeviceMetricsCollection(DeviceEntity) is undefined for the type DeviceProtocolClient
+      1 The method performDeviceHealthCheck(any()) is undefined for the type DeviceProtocolClient
+      1 The method performDeviceAttributeSync(any(), anyMap()) is undefined for the type DeviceProtocolClient
+      1 The method isVideoDeviceException(String) in the type GlobalExceptionHandler is not applicable for the arguments (VideoBusinessException.ErrorCode)
+      1 The method isSecurityException(String) in the type GlobalExceptionHandler is not applicable for the arguments (AccessBusinessException.ErrorCode)
+      1 The method isAttendanceRuleException(String) in the type GlobalExceptionHandler is not applicable for the arguments (AttendanceBusinessException.ErrorCode)
+      1 The method isAIAnalysisException(String) in the type GlobalExceptionHandler is not applicable for the arguments (VideoBusinessException.ErrorCode)
+      1 The method execute(RedisCallback<Object>) is ambiguous for the type RedisTemplate<String,Object>
+      1 The method eval(byte[], ReturnType, int, byte[]...) in the type DefaultedRedisConnection is not applicable for the arguments (byte[], int, byte[], byte[])
+      1 The method checkRechargeRechargeReversibility(Long) is undefined for the type ConsumeRechargeManager
+      1 The import net.lab1024.sa.device.comm.protocol.handler.impl.ConsumeProtocolHandler cannot be resolved
+      1 The import net.lab1024.sa.device.comm.protocol.handler.impl.AttendanceProtocolHandler cannot be resolved
+      1 The import net.lab1024.sa.device.comm.protocol.handler.impl.AccessProtocolHandler cannot be resolved
+      1 The import net.lab1024.sa.device.comm.cache.ProtocolCacheService cannot be resolved
+      1 The import net.lab1024.sa.consume.service.ConsumeProductValidationService cannot be resolved
+      1 The import net.lab1024.sa.consume.service.ConsumeProductStockService cannot be resolved
+      1 The import net.lab1024.sa.consume.service.ConsumeProductStatisticsService cannot be resolved
+      1 The import net.lab1024.sa.consume.service.ConsumeProductPriceService cannot be resolved
+      1 The import net.lab1024.sa.consume.service.ConsumeProductImportExportService cannot be resolved
+      1 The import net.lab1024.sa.consume.service.ConsumeProductBasicService cannot be resolved
+      1 The import net.lab1024.sa.common.tracing cannot be resolved
+      1 Null type safety: The expression of type 'TimeUnit' needs unchecked conversion to conform to '@NonNull TimeUnit'
+      1 DUPLICATE_CLOCK_IN cannot be resolved or is not a field
+      1 DeviceTimeoutException cannot be resolved to a type
+      1 DeviceConnectionException cannot be resolved to a type
+      1 CLOCK_OUT_TOO_EARLY cannot be resolved or is not a field
+      1 CLOCK_IN_TOO_LATE cannot be resolved or is not a field
+      1 CLOCK_IN_TOO_EARLY cannot be resolved or is not a field
+      1 Class<VisitorBusinessException> cannot be resolved to a type
+      1 Class<DeviceTimeoutException> cannot be resolved to a type
+      1 Class<DeviceConnectionException> cannot be resolved to a type
+      1 Class<DeviceBusinessException> cannot be resolved to a type
+      1 CAMERA_CONNECTION_FAILED cannot be resolved or is not a field
+      1 AI_MODEL_LOAD_FAILED cannot be resolved or is not a field
+      1 ABNORMAL_CLOCK_LOCATION cannot be resolved or is not a field

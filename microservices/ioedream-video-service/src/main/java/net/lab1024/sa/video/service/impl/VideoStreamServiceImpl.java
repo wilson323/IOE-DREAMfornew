@@ -7,9 +7,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
+import net.lab1024.sa.common.util.TypeUtils;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
@@ -18,12 +19,11 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.micrometer.observation.annotation.Observed;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
+import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.exception.BusinessException;
 import net.lab1024.sa.common.exception.ParamException;
 import net.lab1024.sa.common.exception.SystemException;
-import net.lab1024.sa.common.openapi.domain.response.PageResult;
 import net.lab1024.sa.video.dao.VideoStreamDao;
 import net.lab1024.sa.video.domain.form.VideoStreamQueryForm;
 import net.lab1024.sa.video.domain.form.VideoStreamStartForm;
@@ -73,7 +73,7 @@ public class VideoStreamServiceImpl implements VideoStreamService {
                     .eq(VideoStreamEntity::getDeletedFlag, 0);
 
             // 关键词搜索（流名称、设备编码）
-            if (StringUtils.hasText(queryForm.getKeyword())) {
+            if (TypeUtils.hasText(queryForm.getKeyword())) {
                 wrapper.and(w -> w.like(VideoStreamEntity::getStreamName, queryForm.getKeyword())
                         .or()
                         .like(VideoStreamEntity::getDeviceCode, queryForm.getKeyword()));
@@ -85,13 +85,16 @@ public class VideoStreamServiceImpl implements VideoStreamService {
             }
 
             // 设备编号筛选
-            if (StringUtils.hasText(queryForm.getDeviceCode())) {
+            if (TypeUtils.hasText(queryForm.getDeviceCode())) {
                 wrapper.like(VideoStreamEntity::getDeviceCode, queryForm.getDeviceCode());
             }
 
             // 流类型筛选
-            if (StringUtils.hasText(queryForm.getStreamType())) {
-                wrapper.eq(VideoStreamEntity::getStreamType, queryForm.getStreamType());
+            if (TypeUtils.hasText(queryForm.getStreamType())) {
+                Integer streamType = parseStreamTypeCode(queryForm.getStreamType());
+                if (streamType != null) {
+                    wrapper.eq(VideoStreamEntity::getStreamType, streamType);
+                }
             }
 
             // 流协议筛选
@@ -105,8 +108,11 @@ public class VideoStreamServiceImpl implements VideoStreamService {
             }
 
             // 视频质量筛选
-            if (StringUtils.hasText(queryForm.getQuality())) {
-                wrapper.eq(VideoStreamEntity::getStreamQuality, queryForm.getQuality());
+            if (TypeUtils.hasText(queryForm.getQuality())) {
+                Integer quality = parseStreamQualityCode(queryForm.getQuality());
+                if (quality != null) {
+                    wrapper.eq(VideoStreamEntity::getStreamQuality, quality);
+                }
             }
 
             // 音频录制筛选
@@ -123,7 +129,7 @@ public class VideoStreamServiceImpl implements VideoStreamService {
             }
 
             // 时间范围筛选
-            if (StringUtils.hasText(queryForm.getStartTime())) {
+            if (TypeUtils.hasText(queryForm.getStartTime())) {
                 try {
                     LocalDateTime startTime = LocalDateTime.parse(queryForm.getStartTime(),
                             java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
@@ -132,7 +138,7 @@ public class VideoStreamServiceImpl implements VideoStreamService {
                     log.warn("[视频流] 开始时间格式错误: {}", queryForm.getStartTime());
                 }
             }
-            if (StringUtils.hasText(queryForm.getEndTime())) {
+            if (TypeUtils.hasText(queryForm.getEndTime())) {
                 try {
                     LocalDateTime endTime = LocalDateTime.parse(queryForm.getEndTime(),
                             java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
@@ -143,7 +149,7 @@ public class VideoStreamServiceImpl implements VideoStreamService {
             }
 
             // 排序
-            if (StringUtils.hasText(queryForm.getSortBy())) {
+            if (TypeUtils.hasText(queryForm.getSortBy())) {
                 if ("desc".equals(queryForm.getSortOrder())) {
                     wrapper.orderByDesc(VideoStreamEntity::getCreateTime);
                 } else {
@@ -243,25 +249,22 @@ public class VideoStreamServiceImpl implements VideoStreamService {
             // 创建流记录
             VideoStreamEntity stream = new VideoStreamEntity();
             stream.setStreamId(generateStreamId());
-            stream.setStreamKey(generateStreamKey(startForm.getDeviceId(), startForm.getChannelId()));
             stream.setDeviceId(startForm.getDeviceId());
-            stream.setChannelId(startForm.getChannelId() != null ? startForm.getChannelId() : 1L);
-            stream.setStreamType(StringUtils.hasText(startForm.getStreamType()) ? startForm.getStreamType() : "main");
+            stream.setChannelNo(startForm.getChannelId() != null ? startForm.getChannelId().intValue() : 1);
+            stream.setStreamType(parseStreamTypeCode(startForm.getStreamType()));
             stream.setProtocol(startForm.getProtocol() != null ? startForm.getProtocol() : 1);
-            stream.setQuality(StringUtils.hasText(startForm.getQuality()) ? startForm.getQuality() : "medium");
+            stream.setStreamQuality(parseStreamQualityCode(startForm.getQuality()));
             stream.setResolution(startForm.getResolution());
             stream.setFrameRate(startForm.getFrameRate() != null ? startForm.getFrameRate() : 25);
             stream.setBitrate(startForm.getBitrate() != null ? startForm.getBitrate() : 2048);
             stream.setStreamStatus(1); // 1-活跃
-            stream.setAudioEnabled(startForm.getAudioEnabled() != null ? startForm.getAudioEnabled() : 1);
+            stream.setAudioCodec(1);
             stream.setRecordEnabled(startForm.getRecordEnabled() != null ? startForm.getRecordEnabled() : 0);
-            stream.setRecordDuration(startForm.getRecordDuration());
-            stream.setClientIp(startForm.getClientIp());
-            stream.setUserAgent(startForm.getUserAgent());
-            stream.setSessionTimeout(startForm.getSessionTimeout() != null ? startForm.getSessionTimeout() : 120);
-            stream.setDynamicBitrate(startForm.getDynamicBitrate() != null ? startForm.getDynamicBitrate() : 1);
+            // recordDuration在新架构中不存在，移除
+            // clientIp在新架构中不存在，移除
+            // userAgent, sessionTimeout, dynamicBitrate在新架构中不存在，移除
             stream.setViewerCount(0);
-            stream.setMaxViewerCount(1000);
+            stream.setMaxViewers(1000);
             stream.setExtendedAttributes(startForm.getExtendedParams());
             stream.setCreateTime(LocalDateTime.now());
             stream.setUpdateTime(LocalDateTime.now());
@@ -329,10 +332,8 @@ public class VideoStreamServiceImpl implements VideoStreamService {
                 return ResponseDTO.error("STOP_STREAM_FAILED", "停止视频流失败");
             }
 
-            // 关闭流会话
-            if (StringUtils.hasText(stream.getSessionId())) {
-                videoStreamManager.closeStreamSession(stream.getSessionId());
-            }
+            // 关闭流会话（使用流ID作为会话标识兜底）
+            videoStreamManager.closeStreamSession(String.valueOf(stream.getStreamId()));
 
             log.info("[视频流] 停止流成功，streamId={}", streamId);
             return ResponseDTO.ok();
@@ -422,21 +423,17 @@ public class VideoStreamServiceImpl implements VideoStreamService {
             // 重新创建启动表单
             VideoStreamStartForm startForm = new VideoStreamStartForm();
             startForm.setDeviceId(stream.getDeviceId());
-            startForm.setChannelId(stream.getChannelId());
-            startForm.setStreamType(stream.getStreamType());
+            startForm.setChannelId(stream.getChannelNo() != null ? stream.getChannelNo().longValue() : null);
+            startForm.setStreamType(convertStreamTypeToString(stream.getStreamType()));
             startForm.setProtocol(stream.getProtocol());
-            startForm.setQuality(stream.getQuality());
+            startForm.setQuality(convertStreamQualityToString(stream.getStreamQuality()));
             startForm.setResolution(stream.getResolution());
             startForm.setFrameRate(stream.getFrameRate());
             startForm.setBitrate(stream.getBitrate());
-            startForm.setAudioEnabled(stream.getAudioEnabled());
             startForm.setRecordEnabled(stream.getRecordEnabled());
-            startForm.setRecordDuration(stream.getRecordDuration());
-            startForm.setClientIp(stream.getClientIp());
-            startForm.setUserAgent(stream.getUserAgent());
-            startForm.setSessionTimeout(stream.getSessionTimeout());
-            startForm.setDynamicBitrate(stream.getDynamicBitrate());
-            startForm.setExtendedParams(stream.getExtendedParams());
+            // getRecordDuration, getClientIp, getUserAgent, getSessionTimeout,
+            // getDynamicBitrate在新架构中不存在，移除
+            startForm.setExtendedParams(stream.getExtendedAttributes());
 
             // 启动流
             return startStream(startForm);
@@ -453,22 +450,21 @@ public class VideoStreamServiceImpl implements VideoStreamService {
         log.info("[视频流] 获取流会话，sessionId={}", sessionId);
 
         try {
-            if (!StringUtils.hasText(sessionId)) {
+            if (!TypeUtils.hasText(sessionId)) {
                 return ResponseDTO.error("PARAM_ERROR", "会话ID不能为空");
             }
 
-            // 根据会话ID查询流记录
-            LambdaQueryWrapper<VideoStreamEntity> wrapper = new LambdaQueryWrapper<VideoStreamEntity>()
-                    .eq(VideoStreamEntity::getSessionId, sessionId)
-                    .eq(VideoStreamEntity::getDeletedFlag, 0);
-
-            VideoStreamEntity stream = videoStreamDao.selectOne(wrapper);
+            Long streamId = parseSessionIdToStreamId(sessionId);
+            if (streamId == null) {
+                return ResponseDTO.error("SESSION_NOT_FOUND", "流会话不存在");
+            }
+            VideoStreamEntity stream = videoStreamDao.selectById(streamId);
             if (stream == null) {
                 return ResponseDTO.error("SESSION_NOT_FOUND", "流会话不存在");
             }
 
             // 获取会话详情
-            Map<String, Object> sessionResult = videoStreamManager.getStreamQualityStats(sessionId);
+            Map<String, Object> sessionResult = videoStreamManager.getStreamQualityStats(String.valueOf(streamId));
 
             // 转换为会话VO
             VideoStreamSessionVO sessionVO = convertToSessionVO(sessionResult, stream);
@@ -487,22 +483,21 @@ public class VideoStreamServiceImpl implements VideoStreamService {
         log.info("[视频流] 关闭流会话，sessionId={}", sessionId);
 
         try {
-            if (!StringUtils.hasText(sessionId)) {
+            if (!TypeUtils.hasText(sessionId)) {
                 return ResponseDTO.error("PARAM_ERROR", "会话ID不能为空");
             }
 
-            // 根据会话ID查询流记录
-            LambdaQueryWrapper<VideoStreamEntity> wrapper = new LambdaQueryWrapper<VideoStreamEntity>()
-                    .eq(VideoStreamEntity::getSessionId, sessionId)
-                    .eq(VideoStreamEntity::getDeletedFlag, 0);
-
-            VideoStreamEntity stream = videoStreamDao.selectOne(wrapper);
+            Long streamId = parseSessionIdToStreamId(sessionId);
+            if (streamId == null) {
+                return ResponseDTO.error("SESSION_NOT_FOUND", "流会话不存在");
+            }
+            VideoStreamEntity stream = videoStreamDao.selectById(streamId);
             if (stream == null) {
                 return ResponseDTO.error("SESSION_NOT_FOUND", "流会话不存在");
             }
 
             // 关闭会话
-            Map<String, Object> result = videoStreamManager.closeStreamSession(sessionId);
+            Map<String, Object> result = videoStreamManager.closeStreamSession(String.valueOf(streamId));
             if (!(Boolean) result.get("success")) {
                 return ResponseDTO.error("CLOSE_SESSION_FAILED", "关闭会话失败：" + result.get("message"));
             }
@@ -613,7 +608,7 @@ public class VideoStreamServiceImpl implements VideoStreamService {
                 return ResponseDTO.error("PARAM_ERROR", "流ID不能为空");
             }
 
-            if (!StringUtils.hasText(quality)) {
+            if (!TypeUtils.hasText(quality)) {
                 return ResponseDTO.error("PARAM_ERROR", "质量参数不能为空");
             }
 
@@ -633,7 +628,8 @@ public class VideoStreamServiceImpl implements VideoStreamService {
             }
 
             // 切换质量
-            Map<String, Object> result = videoStreamManager.switchStreamQuality(stream.getSessionId(), quality);
+            Map<String, Object> result = videoStreamManager.switchStreamQuality(String.valueOf(stream.getStreamId()),
+                    quality);
             if (!(Boolean) result.get("success")) {
                 return ResponseDTO.error("SWITCH_QUALITY_FAILED", "切换质量失败：" + result.get("message"));
             }
@@ -641,7 +637,7 @@ public class VideoStreamServiceImpl implements VideoStreamService {
             // 更新数据库记录
             LambdaUpdateWrapper<VideoStreamEntity> updateWrapper = new LambdaUpdateWrapper<>();
             updateWrapper.eq(VideoStreamEntity::getStreamId, streamId)
-                    .set(VideoStreamEntity::getQuality, quality)
+                    .set(VideoStreamEntity::getStreamQuality, parseStreamQualityCode(quality))
                     .set(VideoStreamEntity::getUpdateTime, LocalDateTime.now());
 
             videoStreamDao.update(null, updateWrapper);
@@ -671,12 +667,8 @@ public class VideoStreamServiceImpl implements VideoStreamService {
                 return ResponseDTO.error("STREAM_NOT_FOUND", "视频流不存在");
             }
 
-            if (!StringUtils.hasText(stream.getSessionId())) {
-                return ResponseDTO.error("SESSION_ID_EMPTY", "会话ID为空");
-            }
-
-            // 获取质量统计
-            Map<String, Object> stats = videoStreamManager.getStreamQualityStats(stream.getSessionId());
+            // 获取质量统计（使用流ID作为会话标识兜底）
+            Map<String, Object> stats = videoStreamManager.getStreamQualityStats(String.valueOf(stream.getStreamId()));
 
             if (!(Boolean) stats.get("success")) {
                 return ResponseDTO.error("GET_STATS_FAILED", "获取质量统计失败：" + stats.get("message"));
@@ -745,7 +737,7 @@ public class VideoStreamServiceImpl implements VideoStreamService {
 
             // 录制中流数
             LambdaQueryWrapper<VideoStreamEntity> recordingWrapper = new LambdaQueryWrapper<>();
-            recordingWrapper.eq(VideoStreamEntity::getRecording, 1)
+            recordingWrapper.eq(VideoStreamEntity::getRecordEnabled, 1)
                     .eq(VideoStreamEntity::getDeletedFlag, 0);
             long recordingStreams = videoStreamDao.selectCount(recordingWrapper);
             statistics.put("recordingStreams", recordingStreams);
@@ -772,7 +764,7 @@ public class VideoStreamServiceImpl implements VideoStreamService {
                             .eq(VideoStreamEntity::getDeletedFlag, 0));
 
             for (VideoStreamEntity stream : allStreams) {
-                String quality = stream.getQuality();
+                String quality = convertStreamQualityToString(stream.getStreamQuality());
                 if (qualityStats.containsKey(quality)) {
                     qualityStats.put(quality, qualityStats.get(quality) + 1);
                 }
@@ -810,16 +802,15 @@ public class VideoStreamServiceImpl implements VideoStreamService {
             status.put("streamStatusDesc", getStreamStatusDesc(stream.getStreamStatus()));
             status.put("viewerCount", stream.getViewerCount());
             status.put("bitrate", stream.getBitrate());
-            status.put("quality", stream.getQuality());
+            status.put("quality", convertStreamQualityToString(stream.getStreamQuality()));
             status.put("protocol", stream.getProtocol());
-            status.put("isRecording", stream.getRecording() == 1);
+            status.put("isRecording", stream.getRecordEnabled() != null && stream.getRecordEnabled() == 1);
             status.put("checkTime", LocalDateTime.now());
 
             // 如果有会话ID，获取会话状态
-            if (StringUtils.hasText(stream.getSessionId())) {
-                Map<String, Object> sessionStats = videoStreamManager.getStreamQualityStats(stream.getSessionId());
-                status.put("sessionStats", sessionStats);
-            }
+            Map<String, Object> sessionStats = videoStreamManager
+                    .getStreamQualityStats(String.valueOf(stream.getStreamId()));
+            status.put("sessionStats", sessionStats);
 
             log.info("[视频流] 检测流状态成功，streamId={}, status={}", streamId, stream.getStreamStatus());
             return ResponseDTO.ok(status);
@@ -853,8 +844,7 @@ public class VideoStreamServiceImpl implements VideoStreamService {
             LambdaUpdateWrapper<VideoStreamEntity> updateWrapper = new LambdaUpdateWrapper<>();
             updateWrapper.eq(VideoStreamEntity::getStreamId, streamId)
                     .set(VideoStreamEntity::getRecordEnabled, 1)
-                    .set(VideoStreamEntity::getRecordStartTime, LocalDateTime.now())
-                    .set(VideoStreamEntity::getRecordDuration, duration)
+                    .set(VideoStreamEntity::getStartTime, LocalDateTime.now())
                     .set(VideoStreamEntity::getUpdateTime, LocalDateTime.now());
 
             int result = videoStreamDao.update(null, updateWrapper);
@@ -865,7 +855,7 @@ public class VideoStreamServiceImpl implements VideoStreamService {
             Map<String, Object> recordResult = new HashMap<>();
             recordResult.put("streamId", streamId);
             recordResult.put("recordEnabled", true);
-            recordResult.put("recordStartTime", stream.getRecordStartTime());
+            recordResult.put("recordStartTime", LocalDateTime.now());
             recordResult.put("recordDuration", duration);
 
             log.info("[视频流] 录制流成功，streamId={}", streamId);
@@ -896,7 +886,7 @@ public class VideoStreamServiceImpl implements VideoStreamService {
             LambdaUpdateWrapper<VideoStreamEntity> updateWrapper = new LambdaUpdateWrapper<>();
             updateWrapper.eq(VideoStreamEntity::getStreamId, streamId)
                     .set(VideoStreamEntity::getRecordEnabled, 0)
-                    .set(VideoStreamEntity::getRecordEndTime, LocalDateTime.now())
+                    .set(VideoStreamEntity::getEndTime, LocalDateTime.now())
                     .set(VideoStreamEntity::getUpdateTime, LocalDateTime.now());
 
             int result = videoStreamDao.update(null, updateWrapper);
@@ -958,56 +948,43 @@ public class VideoStreamServiceImpl implements VideoStreamService {
     private VideoStreamVO convertToVO(VideoStreamEntity entity) {
         VideoStreamVO vo = new VideoStreamVO();
         vo.setStreamId(entity.getStreamId());
-        vo.setStreamKey(entity.getStreamKey());
         vo.setDeviceId(entity.getDeviceId());
         vo.setDeviceCode(entity.getDeviceCode());
-        vo.setDeviceName(entity.getDeviceName());
-        vo.setChannelId(entity.getChannelId());
-        vo.setChannelName(entity.getChannelName());
-        vo.setStreamType(entity.getStreamType());
-        vo.setStreamTypeDesc(getStreamTypeDesc(entity.getStreamType()));
+        vo.setChannelId(entity.getChannelNo() != null ? entity.getChannelNo().longValue() : null);
+        vo.setChannelName(entity.getStreamName());
+        String streamType = convertStreamTypeToString(entity.getStreamType());
+        vo.setStreamType(streamType);
+        vo.setStreamTypeDesc(getStreamTypeDesc(streamType));
         vo.setProtocol(entity.getProtocol());
         vo.setProtocolDesc(getProtocolDesc(entity.getProtocol()));
         vo.setStreamStatus(entity.getStreamStatus());
         vo.setStreamStatusDesc(getStreamStatusDesc(entity.getStreamStatus()));
-        vo.setAreaId(entity.getAreaId());
-        vo.setAreaName(entity.getAreaName());
-        vo.setQuality(entity.getQuality());
-        vo.setQualityDesc(getQualityDesc(entity.getQuality()));
+        String quality = convertStreamQualityToString(entity.getStreamQuality());
+        vo.setQuality(quality);
+        vo.setQualityDesc(getQualityDesc(quality));
         vo.setResolution(entity.getResolution());
         vo.setFrameRate(entity.getFrameRate());
         vo.setBitrate(entity.getBitrate());
-        vo.setCodec(entity.getCodec());
-        vo.setRtspUrl(entity.getRtspUrl());
-        vo.setRtmpUrl(entity.getRtmpUrl());
-        vo.setHlsUrl(entity.getHlsUrl());
-        vo.setWebrtcUrl(entity.getWebrtcUrl());
-        vo.setFlvUrl(entity.getFlvUrl());
-        vo.setAudioEnabled(entity.getAudioEnabled());
-        vo.setAudioEnabledDesc(entity.getAudioEnabled() == 1 ? "启用" : "禁用");
-        vo.setAudioCodec(entity.getAudioCodec());
-        vo.setRecording(entity.getRecording());
-        vo.setRecordingDesc(entity.getRecording() == 1 ? "录制中" : "未录制");
+        vo.setRtspUrl(entity.getStreamUrl());
+        vo.setRtmpUrl(entity.getPushUrl());
+        vo.setHlsUrl(entity.getPullUrl());
+        vo.setFlvUrl(entity.getPullUrl() != null ? entity.getPullUrl().replace(".m3u8", ".flv") : null);
+        vo.setAudioCodec(getAudioCodecDesc(entity.getAudioCodec()));
+        vo.setRecording(entity.getRecordEnabled());
+        vo.setRecordingDesc(entity.getRecordEnabled() != null && entity.getRecordEnabled() == 1 ? "录制中" : "未录制");
         vo.setViewerCount(entity.getViewerCount());
-        vo.setMaxViewerCount(entity.getMaxViewerCount());
-        vo.setStreamServer(entity.getStreamServer());
-        vo.setClientIp(entity.getClientIp());
-        vo.setUserAgent(entity.getUserAgent());
-        vo.setSessionId(entity.getSessionId());
-        vo.setSessionTimeout(entity.getSessionTimeout());
-        vo.setDynamicBitrate(entity.getDynamicBitrate());
+        vo.setMaxViewerCount(entity.getMaxViewers());
+        // streamServer, clientIp, userAgent, sessionId, sessionTimeout在新架构中不存在，移除
+        // dynamicBitrate, jitter在新架构中不存在，移除
         vo.setLatency(entity.getLatency());
         vo.setPacketLoss(entity.getPacketLoss());
-        vo.setJitter(entity.getJitter());
         vo.setCreateTime(entity.getCreateTime());
         vo.setUpdateTime(entity.getUpdateTime());
         vo.setStartTime(entity.getStartTime());
         vo.setEndTime(entity.getEndTime());
         vo.setCreateUserId(entity.getCreateUserId());
-        vo.setCreateUserName(entity.getCreateUserName());
         vo.setUpdateUserId(entity.getUpdateUserId());
-        vo.setUpdateUserName(entity.getUpdateUserName());
-        vo.setRemark(entity.getRemark());
+        vo.setRemark(entity.getDescription());
 
         return vo;
     }
@@ -1024,39 +1001,35 @@ public class VideoStreamServiceImpl implements VideoStreamService {
 
         sessionVO.setSessionId((String) sessionResult.get("sessionId"));
         sessionVO.setStreamId(stream.getStreamId());
-        sessionVO.setStreamKey(stream.getStreamKey());
+        // streamKey在新架构中不存在，移除
         sessionVO.setDeviceId(stream.getDeviceId());
         sessionVO.setDeviceCode(stream.getDeviceCode());
-        sessionVO.setDeviceName(stream.getDeviceName());
-        sessionVO.setChannelId(stream.getChannelId());
-        sessionVO.setChannelName(stream.getChannelName());
-        sessionVO.setStreamType(stream.getStreamType());
+        sessionVO.setDeviceName(stream.getDeviceCode());
+        sessionVO.setChannelId(stream.getChannelNo() != null ? stream.getChannelNo().longValue() : null);
+        sessionVO.setChannelName(stream.getStreamName());
+        sessionVO.setStreamType(convertStreamTypeToString(stream.getStreamType()));
         sessionVO.setProtocol(stream.getProtocol());
-        sessionVO.setQuality(stream.getQuality());
+        sessionVO.setQuality(convertStreamQualityToString(stream.getStreamQuality()));
         sessionVO.setResolution(stream.getResolution());
         sessionVO.setFrameRate(stream.getFrameRate());
         sessionVO.setBitrate(stream.getBitrate());
 
-        // 构建流地址映射
+        // 构建流地址映射（基于新架构）
         Map<String, String> streamUrls = new HashMap<>();
-        streamUrls.put("rtsp", stream.getRtspUrl());
-        streamUrls.put("rtmp", stream.getRtmpUrl());
-        streamUrls.put("hls", stream.getHlsUrl());
-        streamUrls.put("webrtc", stream.getWebrtcUrl());
-        streamUrls.put("flv", stream.getFlvUrl());
+        streamUrls.put("rtsp", stream.getStreamUrl());
+        streamUrls.put("rtmp", stream.getPushUrl());
+        streamUrls.put("hls", stream.getPullUrl());
+        streamUrls.put("http-flv", stream.getPullUrl() != null ? stream.getPullUrl().replace(".m3u8", ".flv") : null);
         sessionVO.setStreamUrls(streamUrls);
 
-        sessionVO.setRtspUrl(stream.getRtspUrl());
-        sessionVO.setRtmpUrl(stream.getRtmpUrl());
-        sessionVO.setHlsUrl(stream.getHlsUrl());
-        sessionVO.setWebrtcUrl(stream.getWebrtcUrl());
-        sessionVO.setFlvUrl(stream.getFlvUrl());
-        sessionVO.setAudioEnabled(stream.getAudioEnabled());
-        sessionVO.setAudioCodec(stream.getAudioCodec());
+        sessionVO.setRtspUrl(stream.getStreamUrl());
+        sessionVO.setRtmpUrl(stream.getPushUrl());
+        sessionVO.setHlsUrl(stream.getPullUrl());
+        sessionVO.setFlvUrl(stream.getPullUrl() != null ? stream.getPullUrl().replace(".m3u8", ".flv") : null);
+        sessionVO.setAudioCodec(getAudioCodecDesc(stream.getAudioCodec()));
         sessionVO.setRecordEnabled(stream.getRecordEnabled());
-        sessionVO.setRecordFilePath(stream.getRecordFilePath());
-        sessionVO.setRecordStartTime(stream.getRecordStartTime());
-        sessionVO.setRecordDuration(stream.getRecordDuration());
+        sessionVO.setRecordFilePath(stream.getRecordPath());
+        sessionVO.setRecordStartTime(stream.getStartTime());
 
         // 会话状态
         if (stream.getStreamStatus() == 1) {
@@ -1073,21 +1046,16 @@ public class VideoStreamServiceImpl implements VideoStreamService {
             sessionVO.setSessionStatusDesc("错误");
         }
 
-        sessionVO.setClientIp(stream.getClientIp());
-        sessionVO.setUserAgent(stream.getUserAgent());
         sessionVO.setCreateTime(stream.getCreateTime());
         sessionVO.setUpdateTime(stream.getUpdateTime());
         sessionVO.setStartTime(stream.getStartTime());
         sessionVO.setEndTime(stream.getEndTime());
-        sessionVO.setSessionTimeout(stream.getSessionTimeout());
-        sessionVO.setDynamicBitrate(stream.getDynamicBitrate());
         sessionVO.setCurrentBitrate((Integer) sessionResult.get("bitrate"));
         sessionVO.setNetworkQuality(getNetworkQuality((Integer) sessionResult.get("latency")));
         sessionVO.setLatency((Integer) sessionResult.get("latency"));
         sessionVO.setPacketLoss((Double) sessionResult.get("packetLoss"));
         sessionVO.setJitter((Integer) sessionResult.get("jitter"));
-        sessionVO.setExtendedParams(stream.getExtendedParams());
-        sessionVO.setRemark(stream.getRemark());
+        sessionVO.setRemark(stream.getDescription());
 
         return sessionVO;
     }
@@ -1302,48 +1270,127 @@ public class VideoStreamServiceImpl implements VideoStreamService {
         }
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public ResponseDTO<Map<String, String>> getStreamPlayUrls(Long streamId) {
-        log.info("[视频流] 获取流播放地址，streamId={}", streamId);
-
+    private Integer parseStreamTypeCode(String streamType) {
+        if (!TypeUtils.hasText(streamType)) {
+            return 1;
+        }
+        if ("main".equalsIgnoreCase(streamType)) {
+            return 1;
+        }
+        if ("sub".equalsIgnoreCase(streamType)) {
+            return 2;
+        }
+        if ("mobile".equalsIgnoreCase(streamType)) {
+            return 3;
+        }
         try {
-            if (streamId == null) {
-                return ResponseDTO.error("PARAM_ERROR", "流ID不能为空");
-            }
-
-            VideoStreamEntity stream = videoStreamDao.selectById(streamId);
-            if (stream == null) {
-                return ResponseDTO.error("STREAM_NOT_FOUND", "视频流不存在");
-            }
-
-            Map<String, String> playUrls = new HashMap<>();
-
-            // RTSP地址
-            if (stream.getStreamUrl() != null) {
-                playUrls.put("rtsp", stream.getStreamUrl());
-            }
-
-            // RTMP地址
-            if (stream.getPushUrl() != null) {
-                playUrls.put("rtmp", stream.getPushUrl());
-            }
-
-            // HLS地址（需要根据实际情况生成）
-            if (stream.getPullUrl() != null) {
-                playUrls.put("hls", stream.getPullUrl());
-            }
-
-            // HTTP-FLV地址
-            if (stream.getPullUrl() != null) {
-                playUrls.put("flv", stream.getPullUrl().replace(".m3u8", ".flv"));
-            }
-
-            log.info("[视频流] 获取流播放地址完成，streamId={}, urls={}", streamId, playUrls);
-            return ResponseDTO.ok(playUrls);
-        } catch (Exception e) {
-            log.error("[视频流] 获取流播放地址失败，streamId={}, error={}", streamId, e.getMessage(), e);
-            return ResponseDTO.error("GET_PLAY_URLS_FAILED", "获取播放地址失败：" + e.getMessage());
+            return Integer.parseInt(streamType);
+        } catch (NumberFormatException e) {
+            return 1;
         }
     }
+
+    private Integer parseStreamQualityCode(String quality) {
+        if (!TypeUtils.hasText(quality)) {
+            return 2;
+        }
+        if ("low".equalsIgnoreCase(quality)) {
+            return 1;
+        }
+        if ("medium".equalsIgnoreCase(quality)) {
+            return 2;
+        }
+        if ("high".equalsIgnoreCase(quality)) {
+            return 3;
+        }
+        if ("ultra".equalsIgnoreCase(quality)) {
+            return 4;
+        }
+        if ("4k".equalsIgnoreCase(quality)) {
+            return 5;
+        }
+        try {
+            return Integer.parseInt(quality);
+        } catch (NumberFormatException e) {
+            return 2;
+        }
+    }
+
+    private Long parseSessionIdToStreamId(String sessionId) {
+        if (!TypeUtils.hasText(sessionId)) {
+            return null;
+        }
+        try {
+            return Long.parseLong(sessionId);
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
+    private String getAudioCodecDesc(Integer audioCodec) {
+        if (audioCodec == null) {
+            return "未知";
+        }
+        switch (audioCodec) {
+            case 1:
+                return "AAC";
+            case 2:
+                return "G711A";
+            case 3:
+                return "G711U";
+            case 4:
+                return "PCM";
+            default:
+                return "未知";
+        }
+    }
+
+    /**
+     * 将流类型Integer转换为String
+     *
+     * @param streamType 流类型（1-主码流 2-子码流 3-移动码流）
+     * @return 流类型字符串
+     */
+    private String convertStreamTypeToString(Integer streamType) {
+        if (streamType == null) {
+            return "main";
+        }
+        switch (streamType) {
+            case 1:
+                return "main";
+            case 2:
+                return "sub";
+            case 3:
+                return "mobile";
+            default:
+                return "main";
+        }
+    }
+
+    /**
+     * 将流质量Integer转换为String
+     *
+     * @param streamQuality 流质量（1-流畅 2-标准 3-高清 4-超清 5-4K）
+     * @return 流质量字符串
+     */
+    private String convertStreamQualityToString(Integer streamQuality) {
+        if (streamQuality == null) {
+            return "medium";
+        }
+        switch (streamQuality) {
+            case 1:
+                return "low";
+            case 2:
+                return "medium";
+            case 3:
+                return "high";
+            case 4:
+                return "ultra";
+            case 5:
+                return "4k";
+            default:
+                return "medium";
+        }
+    }
+
 }

@@ -1,5 +1,7 @@
 package net.lab1024.sa.visitor.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -16,12 +18,11 @@ import org.springframework.util.StringUtils;
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import jakarta.annotation.Resource;
-import lombok.extern.slf4j.Slf4j;
+import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.exception.BusinessException;
 import net.lab1024.sa.common.exception.ParamException;
 import net.lab1024.sa.common.exception.SystemException;
-import net.lab1024.sa.common.openapi.domain.response.PageResult;
 import net.lab1024.sa.visitor.dao.VisitorBlacklistDao;
 import net.lab1024.sa.visitor.domain.form.BlacklistAddForm;
 import net.lab1024.sa.visitor.domain.form.BlacklistQueryForm;
@@ -44,9 +45,9 @@ import net.lab1024.sa.visitor.service.VisitorBlacklistService;
  * @version 1.0.0
  * @since 2025-01-30
  */
-@Slf4j
 @Service
 @Transactional(rollbackFor = Exception.class)
+@Slf4j
 public class VisitorBlacklistServiceImpl implements VisitorBlacklistService {
 
     @Resource
@@ -667,6 +668,9 @@ public class VisitorBlacklistServiceImpl implements VisitorBlacklistService {
      * 获取状态名称
      */
     private String getStatusName(Integer status) {
+        if (status == null) {
+            return "未知状态";
+        }
         switch (status) {
             case 0:
                 return "停用";

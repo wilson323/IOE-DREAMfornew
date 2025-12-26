@@ -1,6 +1,7 @@
 package net.lab1024.sa.common.config;
 
 import lombok.extern.slf4j.Slf4j;
+
 import net.lab1024.sa.common.listener.RabbitMQEventListener;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
@@ -23,10 +24,11 @@ import java.util.Map;
  * @date 2025-12-09
  * @description 提供统一的RabbitMQ配置，包含队列、交换机、死信队列、延迟队列等
  */
-@Slf4j
 @Configuration
 @ConditionalOnProperty(name = "spring.rabbitmq.enabled", havingValue = "true", matchIfMissing = true)
+@Slf4j
 public class RabbitMQConfiguration {
+
 
     @Resource
     private ConnectionFactory connectionFactory;
@@ -396,3 +398,4 @@ public class RabbitMQConfiguration {
         return new RabbitMQEventListener();
     }
 }
+

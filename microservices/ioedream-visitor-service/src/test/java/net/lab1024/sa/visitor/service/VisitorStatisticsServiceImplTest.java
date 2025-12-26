@@ -1,8 +1,12 @@
 package net.lab1024.sa.visitor.service;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
 import java.util.Map;
@@ -13,12 +17,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.visitor.dao.VisitorAppointmentDao;
-import net.lab1024.sa.visitor.service.impl.VisitorStatisticsServiceImpl;
 
 /**
  * VisitorStatisticsServiceImpl Unit Test
@@ -38,8 +43,9 @@ class VisitorStatisticsServiceImplTest {
     @Mock
     private VisitorAppointmentDao visitorAppointmentDao;
 
+    @Spy
     @InjectMocks
-    private VisitorStatisticsServiceImpl visitorStatisticsServiceImpl;
+    private net.lab1024.sa.visitor.service.impl.VisitorStatisticsServiceImpl visitorStatisticsServiceImpl;
 
     @BeforeEach
     void setUp() {
@@ -56,7 +62,7 @@ class VisitorStatisticsServiceImplTest {
         ResponseDTO<Map<String, Object>> result = visitorStatisticsServiceImpl.getStatistics();
 
         // Then
-        assertTrue(result.getOk());
+        assertTrue(result.isSuccess());
         assertNotNull(result.getData());
         assertTrue(result.getData().containsKey("totalAppointments"));
         verify(visitorAppointmentDao, atLeastOnce()).selectCount(any(LambdaQueryWrapper.class));
@@ -71,11 +77,11 @@ class VisitorStatisticsServiceImplTest {
         when(visitorAppointmentDao.selectCount(any(LambdaQueryWrapper.class))).thenReturn(50L);
 
         // When
-        ResponseDTO<Map<String, Object>> result =
-            visitorStatisticsServiceImpl.getStatisticsByDateRange(startDate, endDate);
+        ResponseDTO<Map<String, Object>> result = visitorStatisticsServiceImpl.getStatisticsByDateRange(startDate,
+                endDate);
 
         // Then
-        assertTrue(result.getOk());
+        assertTrue(result.isSuccess());
         assertNotNull(result.getData());
         assertTrue(result.getData().containsKey("totalAppointments"));
         verify(visitorAppointmentDao, atLeastOnce()).selectCount(any(LambdaQueryWrapper.class));

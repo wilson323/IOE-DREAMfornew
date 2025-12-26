@@ -3,9 +3,11 @@ package net.lab1024.sa.common.system.area.controller;
 import java.util.List;
 
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,15 +34,15 @@ import net.lab1024.sa.common.system.area.service.SystemAreaService;
  */
 @RestController
 @Validated
-@RequestMapping({"/api/v1/system/area", "/system/area"})
+@RequestMapping({ "/api/v1/system/area", "/system/area" })
 public class SystemAreaController {
 
     @Resource
     private SystemAreaService systemAreaService;
 
     @Observed(name = "systemArea.queryPage", contextualName = "system-area-query-page")
-    @PostMapping("/page")
-    public ResponseDTO<PageResult<SystemAreaVO>> queryPage(@Valid @RequestBody SystemAreaQueryForm queryForm) {
+    @GetMapping("/page")
+    public ResponseDTO<PageResult<SystemAreaVO>> queryPage(@Valid SystemAreaQueryForm queryForm) {
         return ResponseDTO.ok(systemAreaService.queryPage(queryForm));
     }
 
@@ -63,14 +65,14 @@ public class SystemAreaController {
     }
 
     @Observed(name = "systemArea.update", contextualName = "system-area-update")
-    @PostMapping("/update")
+    @PutMapping("/update")
     public ResponseDTO<Void> update(@Valid @RequestBody SystemAreaUpdateForm form) {
         systemAreaService.update(form);
         return ResponseDTO.ok();
     }
 
     @Observed(name = "systemArea.delete", contextualName = "system-area-delete")
-    @PostMapping("/delete/{areaId}")
+    @DeleteMapping("/delete/{areaId}")
     public ResponseDTO<Void> delete(@PathVariable Long areaId) {
         systemAreaService.delete(areaId);
         return ResponseDTO.ok();

@@ -1,10 +1,12 @@
 package net.lab1024.sa.common.menu.controller;
 
+import lombok.extern.slf4j.Slf4j;
+
+
 import io.micrometer.observation.annotation.Observed;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
-import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.menu.entity.MenuEntity;
 import net.lab1024.sa.common.menu.service.MenuService;
@@ -26,7 +28,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/menu")
 @Tag(name = "菜单管理", description = "菜单管理相关接口")
-public class MenuController {
+ public class MenuController {
+
 
     @Resource
     private MenuService menuService;
@@ -50,3 +53,4 @@ public class MenuController {
     }
 
 }
+

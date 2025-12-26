@@ -84,7 +84,8 @@
 // ❌ 需要替换的javax导入
 javax.annotation.Resource → jakarta.annotation.Resource
 javax.validation.Valid → jakarta.validation.Valid
-javax.persistence.Entity → jakarta.persistence.Entity
+javax.persistence.Entity → @Data
+@TableName("table_name")
 ```
 
 #### 🏗️ 四层架构规范影响
@@ -190,7 +191,8 @@ D:\IOE-DREAM\.claude\skills\openspec-compliance-specialist.md
 // 统一替换javax → jakarta
 @Resource  // Jakarta EE
 jakarta.validation.Valid
-jakarta.persistence.Entity
+@Data
+@TableName("table_name")
 jakarta.transaction.Transactional
 ```
 

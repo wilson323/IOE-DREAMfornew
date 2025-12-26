@@ -1,104 +1,132 @@
 <!--
-  * Attendance Schedule
-  *
-  * @Author:    IOE-DREAM Team
-  * @Date:      2025-01-30
+  @fileoverview 排班管理主页面
+  @author IOE-DREAM Team
+  @description 支持日历视图、列表视图和模板管理切换，集成智能排班功能
 -->
 <template>
   <div class="attendance-schedule-page">
-    <a-card size="small" :bordered="false" class="query-card">
-      <a-form layout="inline" class="smart-query-form">
-        <a-row :gutter="[16, 16]" class="smart-query-form-row">
-          <a-form-item label="Keyword" class="smart-query-form-item">
-            <a-input
-              v-model:value="queryForm.keyword"
-              placeholder="Schedule name / code"
-              style="width: 220px"
-              allow-clear
-            />
-          </a-form-item>
-
-          <a-form-item label="Status" class="smart-query-form-item">
-            <a-select
-              v-model:value="queryForm.status"
-              placeholder="Select status"
-              style="width: 140px"
-              :allow-clear="true"
-            >
-              <a-select-option :value="1">Enabled</a-select-option>
-              <a-select-option :value="0">Disabled</a-select-option>
-            </a-select>
-          </a-form-item>
-
-          <a-form-item class="smart-query-form-item smart-margin-left10">
-            <a-space>
-              <a-button type="primary" @click="queryScheduleList">
-                <template #icon><SearchOutlined /></template>
-                Search
-              </a-button>
-              <a-button @click="resetQuery">
-                <template #icon><ReloadOutlined /></template>
-                Reset
-              </a-button>
-            </a-space>
-          </a-form-item>
-        </a-row>
-      </a-form>
+    <!-- 视图切换标签页 -->
+    <a-card :bordered="false" class="view-switcher-card">
+      <a-radio-group v-model:value="viewMode" button-style="solid" size="large">
+        <a-radio-button value="CALENDAR">
+          <CalendarOutlined />
+          日历视图
+        </a-radio-button>
+        <a-radio-button value="LIST">
+          <UnorderedListOutlined />
+          列表视图
+        </a-radio-button>
+        <a-radio-button value="TEMPLATE">
+          <FileTextOutlined />
+          模板管理
+        </a-radio-button>
+      </a-radio-group>
     </a-card>
 
-    <a-card :bordered="false" style="margin-top: 16px">
-      <template #title>
-        <a-space>
-          <span>Schedule List</span>
-          <a-tag v-if="selectedRowKeys.length > 0" color="blue">
-            Selected {{ selectedRowKeys.length }}
-          </a-tag>
-        </a-space>
-      </template>
+    <!-- 日历视图 -->
+    <template v-if="viewMode === 'CALENDAR'">
+      <CalendarView
+        :plan-id="selectedPlanId"
+        @date-change="handleDateChange"
+        @record-click="handleRecordClick"
+      />
+    </template>
 
-      <template #extra>
-        <a-space>
-          <a-button type="primary" @click="handleAdd">
-            <template #icon><PlusOutlined /></template>
-            New Schedule
-          </a-button>
-          <a-button @click="handleBatchEnable" :disabled="selectedRowKeys.length === 0">
-            <template #icon><CheckCircleOutlined /></template>
-            Enable
-          </a-button>
-          <a-button @click="handleBatchDisable" :disabled="selectedRowKeys.length === 0" danger>
-            <template #icon><StopOutlined /></template>
-            Disable
-          </a-button>
-        </a-space>
-      </template>
+    <!-- 列表视图 -->
+    <template v-else-if="viewMode === 'LIST'">
+      <a-card size="small" :bordered="false" class="query-card">
+        <a-form layout="inline" class="smart-query-form">
+          <a-row :gutter="[16, 16]" class="smart-query-form-row">
+            <a-form-item label="计划名称" class="smart-query-form-item">
+              <a-input
+                v-model:value="queryForm.keyword"
+                placeholder="请输入计划名称"
+                style="width: 220px"
+                allow-clear
+              />
+            </a-form-item>
 
-      <a-table
-        :columns="columns"
-        :data-source="tableData"
-        :pagination="pagination"
-        :loading="loading"
-        :row-selection="rowSelection"
-        row-key="scheduleId"
-        @change="handleTableChange"
-      >
-        <template #bodyCell="{ column, record }">
-          <template v-if="column.key === 'status'">
-            <a-badge
-              :status="record.status === 1 ? 'success' : 'error'"
-              :text="record.status === 1 ? 'Enabled' : 'Disabled'"
-            />
-          </template>
-          <template v-else-if="column.key === 'action'">
-            <a-space>
-              <a-button type="link" size="small" @click="viewDetail(record)">View</a-button>
-              <a-button type="link" size="small" @click="editSchedule(record)">Edit</a-button>
-              <a-button type="link" size="small" @click="deleteSchedule(record)" danger>Delete</a-button>
-            </a-space>
-          </template>
+            <a-form-item label="状态" class="smart-query-form-item">
+              <a-select
+                v-model:value="queryForm.status"
+                placeholder="请选择状态"
+                style="width: 140px"
+                :allow-clear="true"
+              >
+                <a-select-option :value="1">启用</a-select-option>
+                <a-select-option :value="0">禁用</a-select-option>
+              </a-select>
+            </a-form-item>
+
+            <a-form-item class="smart-query-form-item smart-margin-left10">
+              <a-space>
+                <a-button type="primary" @click="queryScheduleList">
+                  <template #icon><SearchOutlined /></template>
+                  查询
+                </a-button>
+                <a-button @click="resetQuery">
+                  <template #icon><ReloadOutlined /></template>
+                  重置
+                </a-button>
+              </a-space>
+            </a-form-item>
+          </a-row>
+        </a-form>
+      </a-card>
+
+      <a-card :bordered="false" style="margin-top: 16px">
+        <template #title>
+          <a-space>
+            <span>排班计划列表</span>
+            <a-tag v-if="selectedRowKeys.length > 0" color="blue">
+              已选 {{ selectedRowKeys.length }} 项
+            </a-tag>
+          </a-space>
         </template>
-      </a-table>
-    </a-card>
+
+        <template #extra>
+          <a-space>
+            <a-button type="primary" @click="handleAdd">
+              <template #icon><PlusOutlined /></template>
+              新增计划
+            </a-button>
+            <a-button @click="handleBatchEnable" :disabled="selectedRowKeys.length === 0">
+              <template #icon><CheckCircleOutlined /></template>
+              批量启用
+            </a-button>
+            <a-button @click="handleBatchDisable" :disabled="selectedRowKeys.length === 0" danger>
+              <template #icon><StopOutlined /></template>
+              批量禁用
+            </a-button>
+          </a-space>
+        </template>
+
+        <a-table
+          :columns="columns"
+          :data-source="tableData"
+          :pagination="pagination"
+          :loading="loading"
+          :row-selection="rowSelection"
+          row-key="scheduleId"
+          @change="handleTableChange"
+        >
+          <template #bodyCell="{ column, record }">
+            <template v-if="column.key === 'status'">
+              <a-badge
+                :status="record.status === 1 ? 'success' : 'error'"
+                :text="record.status === 1 ? '启用' : '禁用'"
+              />
+            </template>
+            <template v-else-if="column.key === 'action'">
+              <a-space>
+                <a-button type="link" size="small" @click="viewDetail(record)">查看</a-button>
+                <a-button type="link" size="small" @click="editSchedule(record)">编辑</a-button>
+                <a-button type="link" size="small" @click="deleteSchedule(record)" danger>删除</a-button>
+              </a-space>
+            </template>
+          </template>
+        </a-table>
+      </a-card>
 
     <a-modal
       v-model:open="formVisible"
@@ -164,10 +192,15 @@
       </a-descriptions>
       <a-empty v-else />
     </a-drawer>
+
+    <!-- 模板管理视图 -->
+    <template v-else-if="viewMode === 'TEMPLATE'">
+      <TemplateManagement />
+    </template>
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { reactive, ref, onMounted } from 'vue';
 import { message, Modal } from 'ant-design-vue';
 import dayjs from 'dayjs';
@@ -177,9 +210,21 @@ import {
   PlusOutlined,
   CheckCircleOutlined,
   StopOutlined,
+  CalendarOutlined,
+  UnorderedListOutlined,
+  FileTextOutlined
 } from '@ant-design/icons-vue';
 import { PAGE_SIZE, PAGE_SIZE_OPTIONS } from '/@/constants/common-const';
 import { smartSentry } from '/@/lib/smart-sentry';
+import CalendarView from './components/CalendarView.vue';
+import TemplateManagement from './components/TemplateManagement.vue';
+import type { ScheduleRecord } from '@/api/business/attendance/schedule';
+
+// 视图模式
+const viewMode = ref<'CALENDAR' | 'LIST' | 'TEMPLATE'>('CALENDAR');
+
+// 选中的计划ID
+const selectedPlanId = ref<number>(1);
 
 const queryFormState = {
   pageNum: 1,
@@ -199,18 +244,18 @@ const pagination = reactive({
   total: 0,
   showSizeChanger: true,
   pageSizeOptions: PAGE_SIZE_OPTIONS,
-  showTotal: (total) => `Total ${total} items`,
+  showTotal: (total) => `共 ${total} 条记录`,
 });
 
 const columns = [
-  { title: 'Name', dataIndex: 'name', key: 'name', width: 180 },
-  { title: 'Code', dataIndex: 'code', key: 'code', width: 120 },
-  { title: 'Cycle', dataIndex: 'cycle', key: 'cycle', width: 120 },
-  { title: 'Working Days', dataIndex: 'workdays', key: 'workdays', width: 200 },
-  { title: 'Time', dataIndex: 'timeRange', key: 'timeRange', width: 160 },
-  { title: 'Status', key: 'status', width: 100 },
-  { title: 'Updated At', dataIndex: 'updateTime', key: 'updateTime', width: 160 },
-  { title: 'Action', key: 'action', width: 200, fixed: 'right' },
+  { title: '计划名称', dataIndex: 'name', key: 'name', width: 180 },
+  { title: '计划编码', dataIndex: 'code', key: 'code', width: 120 },
+  { title: '周期类型', dataIndex: 'cycle', key: 'cycle', width: 120 },
+  { title: '工作日', dataIndex: 'workdays', key: 'workdays', width: 200 },
+  { title: '时间段', dataIndex: 'timeRange', key: 'timeRange', width: 160 },
+  { title: '状态', key: 'status', width: 100 },
+  { title: '更新时间', dataIndex: 'updateTime', key: 'updateTime', width: 160 },
+  { title: '操作', key: 'action', width: 200, fixed: 'right' },
 ];
 
 const rowSelection = {
@@ -219,16 +264,6 @@ const rowSelection = {
     selectedRowKeys.value = keys;
   },
 };
-
-const weekdayOptions = [
-  { label: 'Mon', value: 'Mon' },
-  { label: 'Tue', value: 'Tue' },
-  { label: 'Wed', value: 'Wed' },
-  { label: 'Thu', value: 'Thu' },
-  { label: 'Fri', value: 'Fri' },
-  { label: 'Sat', value: 'Sat' },
-  { label: 'Sun', value: 'Sun' },
-];
 
 const formVisible = ref(false);
 const formRef = ref();
@@ -242,30 +277,41 @@ const formData = reactive({
   name: '',
   code: '',
   cycle: 'WEEKLY',
-  workdays: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
+  workdays: ['周一', '周二', '周三', '周四', '周五'],
   timeRange: ['09:00', '18:00'],
   status: 1,
 });
 
 const formRules = {
-  name: [{ required: true, message: 'Please input name', trigger: 'blur' }],
-  code: [{ required: true, message: 'Please input code', trigger: 'blur' }],
-  workdays: [{ required: true, message: 'Please select workdays', trigger: 'change' }],
-  timeRange: [{ required: true, message: 'Please select time range', trigger: 'change' }],
+  name: [{ required: true, message: '请输入计划名称', trigger: 'blur' }],
+  code: [{ required: true, message: '请输入计划编码', trigger: 'blur' }],
+  workdays: [{ required: true, message: '请选择工作日', trigger: 'change' }],
+  timeRange: [{ required: true, message: '请选择时间段', trigger: 'change' }],
 };
 
+// 模拟数据
 const mockData = () => {
   const now = dayjs();
   return Array.from({ length: 12 }).map((_, idx) => ({
     scheduleId: idx + 1,
-    name: `Standard Shift ${idx + 1}`,
+    name: `标准排班 ${idx + 1}`,
     code: `SCH-${100 + idx}`,
-    cycle: idx % 2 === 0 ? 'WEEKLY' : 'MONTHLY',
-    workdays: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
+    cycle: idx % 2 === 0 ? '每周' : '每月',
+    workdays: ['周一', '周二', '周三', '周四', '周五'],
     timeRange: ['09:00', '18:00'],
     status: idx % 3 === 0 ? 0 : 1,
     updateTime: now.subtract(idx, 'day').format('YYYY-MM-DD'),
   }));
+};
+
+// 日期变化处理
+const handleDateChange = (date: string) => {
+  console.log('日期变化:', date);
+};
+
+// 记录点击处理
+const handleRecordClick = (record: ScheduleRecord) => {
+  console.log('点击记录:', record);
 };
 
 const queryScheduleList = async () => {
@@ -275,7 +321,7 @@ const queryScheduleList = async () => {
     pagination.total = tableData.value.length;
   } catch (error) {
     smartSentry.captureError(error);
-    message.error('Failed to load schedules');
+    message.error('加载排班计划失败');
   } finally {
     loading.value = false;
   }
@@ -300,7 +346,7 @@ const handleAdd = () => {
     name: '',
     code: '',
     cycle: 'WEEKLY',
-    workdays: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
+    workdays: ['周一', '周二', '周三', '周四', '周五'],
     timeRange: ['09:00', '18:00'],
     status: 1,
   });
@@ -315,11 +361,11 @@ const editSchedule = (record) => {
 
 const deleteSchedule = (record) => {
   Modal.confirm({
-    title: 'Delete schedule',
-    content: `Delete ${record.name}?`,
+    title: '删除排班计划',
+    content: `确定要删除 ${record.name} 吗？`,
     onOk: () => {
       tableData.value = tableData.value.filter((item) => item.scheduleId !== record.scheduleId);
-      message.success('Deleted');
+      message.success('删除成功');
     },
   });
 };
@@ -333,10 +379,10 @@ const handleSubmit = async () => {
       if (idx !== -1) {
         tableData.value[idx] = { ...formData };
       }
-      message.success('Updated');
+      message.success('更新成功');
     } else {
       tableData.value.unshift({ ...formData, scheduleId: Date.now(), updateTime: dayjs().format('YYYY-MM-DD') });
-      message.success('Created');
+      message.success('创建成功');
     }
     formVisible.value = false;
   } catch (error) {
@@ -357,24 +403,24 @@ const viewDetail = (record) => {
 
 const handleBatchEnable = () => {
   if (!selectedRowKeys.value.length) {
-    message.warning('Select at least one schedule');
+    message.warning('请至少选择一个计划');
     return;
   }
   tableData.value = tableData.value.map((item) =>
     selectedRowKeys.value.includes(item.scheduleId) ? { ...item, status: 1 } : item
   );
-  message.success('Enabled');
+  message.success('批量启用成功');
 };
 
 const handleBatchDisable = () => {
   if (!selectedRowKeys.value.length) {
-    message.warning('Select at least one schedule');
+    message.warning('请至少选择一个计划');
     return;
   }
   tableData.value = tableData.value.map((item) =>
     selectedRowKeys.value.includes(item.scheduleId) ? { ...item, status: 0 } : item
   );
-  message.success('Disabled');
+  message.success('批量禁用成功');
 };
 
 onMounted(() => {
@@ -384,6 +430,33 @@ onMounted(() => {
 
 <style lang="less" scoped>
 .attendance-schedule-page {
+  .view-switcher-card {
+    margin-bottom: 16px;
+    text-align: center;
+    padding: 12px 0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 8px;
+
+    :deep(.ant-radio-group) {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 4px;
+      border-radius: 6px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    :deep(.ant-radio-button-wrapper) {
+      border: none;
+      background: transparent;
+      transition: all 0.3s;
+
+      &.ant-radio-button-wrapper-checked {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #fff;
+        border-color: transparent;
+      }
+    }
+  }
+
   .query-card {
     margin-bottom: 16px;
   }

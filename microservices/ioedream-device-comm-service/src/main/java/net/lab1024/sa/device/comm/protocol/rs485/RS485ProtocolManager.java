@@ -1,17 +1,19 @@
 package net.lab1024.sa.device.comm.protocol.rs485;
 
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.device.comm.dao.DeviceCommLogDao;
-import net.lab1024.sa.device.comm.protocol.domain.ProtocolMessage;
-import net.lab1024.sa.device.comm.protocol.domain.ProtocolProcessResult;
-import net.lab1024.sa.device.comm.protocol.domain.ProtocolHeartbeatResult;
-import net.lab1024.sa.device.comm.protocol.domain.ProtocolDeviceStatus;
-import net.lab1024.sa.device.comm.protocol.exception.ProtocolParseException;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
+
+
+import net.lab1024.sa.device.comm.dao.DeviceCommLogDao;
+import net.lab1024.sa.device.comm.protocol.domain.ProtocolDeviceStatus;
+import net.lab1024.sa.device.comm.protocol.domain.ProtocolHeartbeatResult;
+import net.lab1024.sa.device.comm.protocol.domain.ProtocolMessage;
+import net.lab1024.sa.device.comm.protocol.domain.ProtocolProcessResult;
+import net.lab1024.sa.device.comm.protocol.exception.ProtocolParseException;
 
 /**
  * RS485协议管理器
@@ -32,7 +34,7 @@ public class RS485ProtocolManager {
     /**
      * 构造函数
      *
-     * @param protocolAdapter RS485协议适配器
+     * @param protocolAdapter  RS485协议适配器
      * @param deviceCommLogDao 设备通讯日志DAO
      */
     public RS485ProtocolManager(RS485ProtocolAdapter protocolAdapter, DeviceCommLogDao deviceCommLogDao) {
@@ -44,7 +46,7 @@ public class RS485ProtocolManager {
     /**
      * 处理设备消息
      *
-     * @param rawData 原始数据
+     * @param rawData  原始数据
      * @param deviceId 设备ID
      * @return 处理结果Future
      */
@@ -73,7 +75,7 @@ public class RS485ProtocolManager {
     /**
      * 发送设备命令
      *
-     * @param command 命令数据
+     * @param command  命令数据
      * @param deviceId 设备ID
      * @return 发送结果Future
      */
@@ -117,7 +119,7 @@ public class RS485ProtocolManager {
      * 采用策略模式处理心跳逻辑
      * </p>
      *
-     * @param deviceId 设备ID
+     * @param deviceId      设备ID
      * @param heartbeatData 心跳数据
      * @return 心跳结果Future
      */
@@ -132,9 +134,10 @@ public class RS485ProtocolManager {
                 // 转换为RS485HeartbeatResult
                 RS485HeartbeatResult heartbeatResult = RS485HeartbeatResult.success(
                         deviceId,
-                        result.getHeartbeatTime() != null ?
-                                java.time.Duration.between(result.getHeartbeatTime(), java.time.LocalDateTime.now()).toMillis() : 0L
-                );
+                        result.getHeartbeatTime() != null
+                                ? java.time.Duration.between(result.getHeartbeatTime(), java.time.LocalDateTime.now())
+                                        .toMillis()
+                                : 0L);
                 heartbeatResult.setOnline(result.isOnline());
 
                 log.debug("[RS485管理器] 设备心跳处理完成, deviceId={}, online={}", deviceId, heartbeatResult.isOnline());
@@ -153,8 +156,8 @@ public class RS485ProtocolManager {
      * 采用模板方法模式统一响应构建流程
      * </p>
      *
-     * @param deviceId 设备ID
-     * @param messageType 消息类型
+     * @param deviceId     设备ID
+     * @param messageType  消息类型
      * @param businessData 业务数据
      * @return 响应数据Future
      */

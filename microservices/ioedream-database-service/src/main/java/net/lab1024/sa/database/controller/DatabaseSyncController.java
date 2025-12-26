@@ -1,18 +1,24 @@
 package net.lab1024.sa.database.controller;
 
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import io.micrometer.observation.annotation.Observed;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
-import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.database.service.DatabaseSyncService;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * 数据库同步控制器
@@ -27,11 +33,12 @@ import java.util.concurrent.CompletableFuture;
  * @version 1.0.0
  * @since 2025-12-08
  */
-@Slf4j
 @RestController
 @RequestMapping("/api/v1/database/sync")
 @Tag(name = "数据库同步管理", description = "数据库初始化和同步管理")
+@Slf4j
 public class DatabaseSyncController {
+
 
     @Resource
     private DatabaseSyncService databaseSyncService;
@@ -133,9 +140,8 @@ public class DatabaseSyncController {
 
             // 可以添加更详细的健康检查逻辑
             health.put("databases", Map.of(
-                "ioedream_common_db", "UP",
-                "ioedream_access_db", "UP"
-            ));
+                    "ioedream_common_db", "UP",
+                    "ioedream_access_db", "UP"));
 
             return ResponseDTO.ok(health);
         } catch (Exception e) {

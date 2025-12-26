@@ -1,13 +1,16 @@
 package net.lab1024.sa.attendance.template;
 
+import java.time.LocalDateTime;
+
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.attendance.domain.form.AttendancePunchForm;
-import net.lab1024.sa.attendance.domain.vo.AttendanceResultVO;
-import net.lab1024.sa.common.organization.entity.DeviceEntity;
-import net.lab1024.sa.common.organization.dao.DeviceDao;
 
 import jakarta.annotation.Resource;
-import java.time.LocalDateTime;
+import net.lab1024.sa.attendance.domain.form.AttendancePunchForm;
+import net.lab1024.sa.attendance.domain.vo.AttendanceResultVO;
+import net.lab1024.sa.common.gateway.GatewayServiceClient;
+import net.lab1024.sa.common.organization.dao.DeviceDao;
+import net.lab1024.sa.common.gateway.domain.response.DeviceResponse;
+import net.lab1024.sa.common.organization.entity.DeviceEntity;
 
 /**
  * 考勤处理流程模板
@@ -28,6 +31,9 @@ public abstract class AbstractAttendanceProcessTemplate {
     @Resource
     protected DeviceDao deviceDao;
 
+    @Resource
+    protected GatewayServiceClient gatewayServiceClient;
+
     /**
      * 模板方法: 考勤处理流程
      * <p>
@@ -43,7 +49,7 @@ public abstract class AbstractAttendanceProcessTemplate {
             validate(punchForm);
 
             // 2. 设备验证
-            DeviceEntity device = validateDevice(punchForm.getDeviceId());
+            DeviceResponse device = validateDevice(punchForm.getDeviceId());
 
             // 3. 用户识别(抽象方法 - 子类实现)
             UserIdentityResult identity = identifyUser(punchForm);
@@ -88,13 +94,13 @@ public abstract class AbstractAttendanceProcessTemplate {
      * 子类必须实现具体的打卡记录逻辑
      * </p>
      *
-     * @param identity 用户识别结果
-     * @param device 设备实体
+     * @param identity  用户识别结果
+     * @param device    设备实体
      * @param punchForm 打卡表单
      * @return 打卡记录结果
      */
     protected abstract AttendanceRecordResult recordPunch(
-            UserIdentityResult identity, DeviceEntity device, AttendancePunchForm punchForm);
+            UserIdentityResult identity, DeviceResponse device, AttendancePunchForm punchForm);
 
     /**
      * 抽象方法: 计算考勤
@@ -102,9 +108,9 @@ public abstract class AbstractAttendanceProcessTemplate {
      * 子类必须实现具体的考勤计算逻辑（结合排班、规则等）
      * </p>
      *
-     * @param identity 用户识别结果
+     * @param identity     用户识别结果
      * @param recordResult 打卡记录结果
-     * @param punchForm 打卡表单
+     * @param punchForm    打卡表单
      * @return 考勤结果
      */
     protected abstract AttendanceResultVO calculateAttendance(
@@ -116,12 +122,12 @@ public abstract class AbstractAttendanceProcessTemplate {
      * 子类可以选择覆盖此方法以实现自定义通知逻辑
      * </p>
      *
-     * @param identity 用户识别结果
-     * @param device 设备实体
+     * @param identity         用户识别结果
+     * @param device           设备实体
      * @param attendanceResult 考勤结果
      */
     protected void notifyAttendanceEvent(UserIdentityResult identity,
-                                         DeviceEntity device, AttendanceResultVO attendanceResult) {
+            DeviceResponse device, AttendanceResultVO attendanceResult) {
         // 默认空实现
     }
 
@@ -140,7 +146,7 @@ public abstract class AbstractAttendanceProcessTemplate {
     /**
      * 设备验证
      */
-    private DeviceEntity validateDevice(Long deviceId) {
+    private DeviceResponse validateDevice(Long deviceId) {
         DeviceEntity device = deviceDao.selectById(deviceId);
         if (device == null) {
             throw new IllegalArgumentException("设备不存在: " + deviceId);
@@ -148,7 +154,30 @@ public abstract class AbstractAttendanceProcessTemplate {
         if (device.getDeviceStatus() != null && device.getDeviceStatus() != 1) {
             throw new IllegalArgumentException("设备未启用: " + deviceId);
         }
-        return device;
+        return convertToDeviceResponse(device);
+    }
+
+    /**
+     * 将DeviceEntity转换为DeviceResponse
+     */
+    private DeviceResponse convertToDeviceResponse(DeviceEntity deviceEntity) {
+        return DeviceResponse.builder()
+                .deviceId(deviceEntity.getDeviceId())
+                .deviceCode(deviceEntity.getDeviceCode())
+                .deviceName(deviceEntity.getDeviceName())
+                .deviceType(String.valueOf(deviceEntity.getDeviceType()))
+                .deviceSubType(String.valueOf(deviceEntity.getDeviceSubType()))
+                .status(deviceEntity.getDeviceStatus())
+                .areaId(deviceEntity.getAreaId())
+                .location("") // Location字段不存在，暂时使用空字符串
+                .ipAddress(deviceEntity.getIpAddress())
+                .port(deviceEntity.getPort())
+                .manufacturer(deviceEntity.getBrand()) // 使用brand字段替代manufacturer
+                .model(deviceEntity.getModel())
+                .online(deviceEntity.getDeviceStatus() == 1) // 根据deviceStatus判断是否在线
+                .createTime(deviceEntity.getCreateTime())
+                .updateTime(deviceEntity.getUpdateTime())
+                .build();
     }
 
     /**
@@ -217,6 +246,10 @@ public abstract class AbstractAttendanceProcessTemplate {
         }
 
         public static UserIdentityResult failed(String message) {
+            return new UserIdentityResult(false, null, message);
+        }
+
+        public static UserIdentityResult error(String message) {
             return new UserIdentityResult(false, null, message);
         }
 

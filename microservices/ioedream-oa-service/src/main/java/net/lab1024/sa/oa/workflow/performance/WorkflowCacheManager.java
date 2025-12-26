@@ -1,21 +1,23 @@
 package net.lab1024.sa.oa.workflow.performance;
 
 import lombok.extern.slf4j.Slf4j;
+
+import java.time.Duration;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Supplier;
+
 import org.springframework.data.redis.core.RedisTemplate;
+
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+
+import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
-import io.micrometer.core.instrument.Counter;
-import java.time.Duration;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Supplier;
-import java.util.Map;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Set;
 
 /**
  * 工作流高级缓存管理器
@@ -49,7 +51,7 @@ public class WorkflowCacheManager {
      * @param meterRegistry 指标注册表
      */
     public WorkflowCacheManager(RedisTemplate<String, Object> redisTemplate,
-                               MeterRegistry meterRegistry) {
+            MeterRegistry meterRegistry) {
         this.redisTemplate = redisTemplate;
         this.meterRegistry = meterRegistry;
         // 初始化性能指标
@@ -77,10 +79,10 @@ public class WorkflowCacheManager {
     }
 
     // L1本地缓存池 - 按业务模块分组
-    private final Map<String, Cache<String, Object>> localCachePool = new ConcurrentHashMap<>();
+    private final Map<String, Cache<String, Object>> localCachePool = new HashMap<>();
 
     // 缓存配置
-    private final Map<String, CacheConfig> cacheConfigs = new ConcurrentHashMap<>();
+    private final Map<String, CacheConfig> cacheConfigs = new HashMap<>();
 
     // 性能指标
     private final Timer cacheHitTimer;
@@ -100,7 +102,7 @@ public class WorkflowCacheManager {
         private final Boolean allowNullValues;
 
         public CacheConfig(Duration expireAfterWrite, Duration expireAfterAccess,
-                          Long maximumSize, Boolean recordStats, Boolean allowNullValues) {
+                Long maximumSize, Boolean recordStats, Boolean allowNullValues) {
             this.expireAfterWrite = expireAfterWrite;
             this.expireAfterAccess = expireAfterAccess;
             this.maximumSize = maximumSize;
@@ -109,11 +111,26 @@ public class WorkflowCacheManager {
         }
 
         // Getters
-        public Duration getExpireAfterWrite() { return expireAfterWrite; }
-        public Duration getExpireAfterAccess() { return expireAfterAccess; }
-        public Long getMaximumSize() { return maximumSize; }
-        public Boolean getRecordStats() { return recordStats; }
-        public Boolean getAllowNullValues() { return allowNullValues; }
+
+        public Duration getExpireAfterWrite() {
+            return expireAfterWrite;
+        }
+
+        public Duration getExpireAfterAccess() {
+            return expireAfterAccess;
+        }
+
+        public Long getMaximumSize() {
+            return maximumSize;
+        }
+
+        public Boolean getRecordStats() {
+            return recordStats;
+        }
+
+        public Boolean getAllowNullValues() {
+            return allowNullValues;
+        }
     }
 
     /**
@@ -122,50 +139,46 @@ public class WorkflowCacheManager {
     private void initializeCacheConfigs() {
         // 流程定义缓存配置
         cacheConfigs.put("processDefinition", new CacheConfig(
-            Duration.ofMinutes(30),  // 写入后30分钟过期
-            Duration.ofMinutes(15),  // 访问后15分钟过期
-            1000L,                  // 最大1000个条目
-            true,                   // 记录统计
-            false                   // 不允许null值
+                Duration.ofMinutes(30), // 写入后30分钟过期
+                Duration.ofMinutes(15), // 访问后15分钟过期
+                1000L, // 最大1000个条目
+                true, // 记录统计
+                false // 不允许null值
         ));
 
         // 流程实例缓存配置
         cacheConfigs.put("processInstance", new CacheConfig(
-            Duration.ofMinutes(60),
-            Duration.ofMinutes(30),
-            5000L,
-            true,
-            false
-        ));
+                Duration.ofMinutes(60),
+                Duration.ofMinutes(30),
+                5000L,
+                true,
+                false));
 
         // 任务缓存配置
         cacheConfigs.put("task", new CacheConfig(
-            Duration.ofMinutes(20),
-            Duration.ofMinutes(10),
-            10000L,
-            true,
-            false
-        ));
+                Duration.ofMinutes(20),
+                Duration.ofMinutes(10),
+                10000L,
+                true,
+                false));
 
         // 用户任务缓存配置
         cacheConfigs.put("userTask", new CacheConfig(
-            Duration.ofMinutes(15),
-            Duration.ofMinutes(8),
-            2000L,
-            true,
-            false
-        ));
+                Duration.ofMinutes(15),
+                Duration.ofMinutes(8),
+                2000L,
+                true,
+                false));
 
         // 审批记录缓存配置
         cacheConfigs.put("approvalRecord", new CacheConfig(
-            Duration.ofMinutes(45),
-            Duration.ofMinutes(20),
-            3000L,
-            true,
-            false
-        ));
+                Duration.ofMinutes(45),
+                Duration.ofMinutes(20),
+                3000L,
+                true,
+                false));
 
-        log.info("[工作流缓存管理器] 缓存配置初始化完成，配置数量: {}", cacheConfigs.size());
+        log.info("[工作流缓存] 缓存配置初始化完成，配置数量: {}", cacheConfigs.size());
     }
 
     /**
@@ -199,9 +212,9 @@ public class WorkflowCacheManager {
      * 获取缓存数据（多级缓存）
      *
      * @param cacheName 缓存名称
-     * @param key 缓存键
-     * @param loader 数据加载器
-     * @param type 数据类型
+     * @param key       缓存键
+     * @param loader    数据加载器
+     * @param type      数据类型
      * @return 缓存数据
      */
     public <T> T get(String cacheName, String key, Supplier<T> loader, Class<T> type) {
@@ -212,7 +225,6 @@ public class WorkflowCacheManager {
             T value = getFromLocalCache(cacheName, key, type);
             if (value != null) {
                 cacheHitCounter.increment();
-                Counter.builder("workflow.cache.hit.tagged").tag("type", "local").register(meterRegistry).increment();
                 sample.stop(cacheHitTimer);
                 log.debug("[工作流缓存] L1缓存命中: cacheName={}, key={}", cacheName, key);
                 return value;
@@ -224,7 +236,6 @@ public class WorkflowCacheManager {
                 // 回填到本地缓存
                 putToLocalCache(cacheName, key, value);
                 cacheHitCounter.increment();
-                Counter.builder("workflow.cache.hit.tagged").tag("type", "redis").register(meterRegistry).increment();
                 sample.stop(cacheHitTimer);
                 log.debug("[工作流缓存] L2缓存命中: cacheName={}, key={}", cacheName, key);
                 return value;
@@ -248,9 +259,7 @@ public class WorkflowCacheManager {
             return value;
 
         } catch (Exception e) {
-            sample.stop(Timer.builder("workflow.cache.error.duration")
-                    .tag("cacheName", cacheName)
-                    .register(meterRegistry));
+            sample.stop(cacheMissTimer);
 
             log.error("[工作流缓存] 获取缓存数据失败: cacheName={}, key={}, error={}",
                     cacheName, key, e.getMessage(), e);
@@ -330,7 +339,7 @@ public class WorkflowCacheManager {
      * 删除缓存数据
      *
      * @param cacheName 缓存名称
-     * @param key 缓存键
+     * @param key       缓存键
      */
     public void evict(String cacheName, String key) {
         try {
@@ -355,7 +364,7 @@ public class WorkflowCacheManager {
      * 批量删除缓存
      *
      * @param cacheName 缓存名称
-     * @param keys 缓存键列表
+     * @param keys      缓存键列表
      */
     public void evictBatch(String cacheName, List<String> keys) {
         if (keys == null || keys.isEmpty()) {
@@ -413,7 +422,7 @@ public class WorkflowCacheManager {
      * 预热缓存
      *
      * @param cacheName 缓存名称
-     * @param loader 预热数据加载器
+     * @param loader    预热数据加载器
      */
     public <T> void warmUp(String cacheName, Supplier<List<T>> loader) {
         try {
@@ -481,9 +490,9 @@ public class WorkflowCacheManager {
      * 防止缓存击穿的获取方法（使用互斥锁）
      *
      * @param cacheName 缓存名称
-     * @param key 缓存键
-     * @param loader 数据加载器
-     * @param type 数据类型
+     * @param key       缓存键
+     * @param loader    数据加载器
+     * @param type      数据类型
      * @return 缓存数据
      */
     public <T> T getWithLock(String cacheName, String key, Supplier<T> loader, Class<T> type) {
@@ -514,25 +523,27 @@ public class WorkflowCacheManager {
                 return value;
             } else {
                 // 未获得锁，等待并重试
-                Thread.sleep(100);
-                return get(cacheName, key, loader, type);
+                try {
+                    Thread.sleep(50); // 等待50ms后重试
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+                // 降级：直接加载数据
+                return loader.get();
             }
-
         } catch (Exception e) {
             log.error("[工作流缓存] 防击穿获取失败: cacheName={}, key={}, error={}",
                     cacheName, key, e.getMessage(), e);
             return loader.get();
-
         } finally {
             // 释放锁
             try {
                 String script = "if redis.call('get', KEYS[1]) == ARGV[1] then " +
-                               "return redis.call('del', KEYS[1]) else return 0 end";
+                        "return redis.call('del', KEYS[1]) else return 0 end";
                 redisTemplate.execute(
                         new org.springframework.data.redis.core.script.DefaultRedisScript<>(script, Long.class),
                         Collections.singletonList(lockKey),
-                        lockValue
-                );
+                        lockValue);
             } catch (Exception e) {
                 log.warn("[工作流缓存] 释放锁失败: lockKey={}, error={}", lockKey, e.getMessage());
             }
@@ -543,9 +554,9 @@ public class WorkflowCacheManager {
      * 刷新缓存
      *
      * @param cacheName 缓存名称
-     * @param key 缓存键
-     * @param loader 数据加载器
-     * @param type 数据类型
+     * @param key       缓存键
+     * @param loader    数据加载器
+     * @param type      数据类型
      * @return 刷新后的数据
      */
     public <T> T refresh(String cacheName, String key, Supplier<T> loader, Class<T> type) {

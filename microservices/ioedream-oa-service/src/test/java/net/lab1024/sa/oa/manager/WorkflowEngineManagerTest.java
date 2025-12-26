@@ -1,5 +1,14 @@
 package net.lab1024.sa.oa.manager;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -7,11 +16,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import net.lab1024.sa.common.gateway.GatewayServiceClient;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * 工作流引擎管理器单元测试
@@ -31,7 +38,7 @@ class WorkflowEngineManagerTest {
 
     @BeforeEach
     void setUp() {
-        workflowEngineManager = new WorkflowEngineManager(gatewayServiceClient);
+        workflowEngineManager = new WorkflowEngineManager(gatewayServiceClient, new ObjectMapper());
     }
 
     @Test
@@ -67,20 +74,20 @@ class WorkflowEngineManagerTest {
     @DisplayName("解析流程定义 - 有效JSON")
     void parseDefinition_validJson_shouldReturnDefinition() {
         String validJson = """
-            {
-                "id": "def001",
-                "name": "请假审批",
-                "nodes": [
-                    {"id": "start", "name": "开始", "type": "START"},
-                    {"id": "approval1", "name": "主管审批", "type": "APPROVAL", "assigneeType": "FIXED", "assigneeIds": [1]},
-                    {"id": "end", "name": "结束", "type": "END"}
-                ],
-                "transitions": [
-                    {"id": "t1", "fromNodeId": "start", "toNodeId": "approval1"},
-                    {"id": "t2", "fromNodeId": "approval1", "toNodeId": "end", "condition": "APPROVED"}
-                ]
-            }
-            """;
+                {
+                    "id": "def001",
+                    "name": "请假审批",
+                    "nodes": [
+                        {"id": "start", "name": "开始", "type": "START"},
+                        {"id": "approval1", "name": "主管审批", "type": "APPROVAL", "assigneeType": "FIXED", "assigneeIds": [1]},
+                        {"id": "end", "name": "结束", "type": "END"}
+                    ],
+                    "transitions": [
+                        {"id": "t1", "fromNodeId": "start", "toNodeId": "approval1"},
+                        {"id": "t2", "fromNodeId": "approval1", "toNodeId": "end", "condition": "APPROVED"}
+                    ]
+                }
+                """;
 
         WorkflowEngineManager.WorkflowDefinition result = workflowEngineManager.parseDefinition(validJson);
 
@@ -119,7 +126,8 @@ class WorkflowEngineManagerTest {
     void getNextNode_withCondition_shouldReturnCorrectNode() {
         WorkflowEngineManager.WorkflowDefinition definition = createTestDefinition();
 
-        WorkflowEngineManager.WorkflowNode nextNode = workflowEngineManager.getNextNode(definition, "approval1", "APPROVED");
+        WorkflowEngineManager.WorkflowNode nextNode = workflowEngineManager.getNextNode(definition, "approval1",
+                "APPROVED");
 
         assertNotNull(nextNode);
         assertEquals("end", nextNode.getId());
@@ -145,8 +153,7 @@ class WorkflowEngineManagerTest {
         List<WorkflowEngineManager.TaskResult> results = List.of(
                 new WorkflowEngineManager.TaskResult(1L, 1L, "APPROVED", "同意"),
                 new WorkflowEngineManager.TaskResult(2L, 2L, "APPROVED", "同意"),
-                new WorkflowEngineManager.TaskResult(3L, 3L, "APPROVED", "同意")
-        );
+                new WorkflowEngineManager.TaskResult(3L, 3L, "APPROVED", "同意"));
 
         assertTrue(workflowEngineManager.isCountersignComplete(results, 3));
     }
@@ -156,8 +163,7 @@ class WorkflowEngineManagerTest {
     void isCountersignComplete_partialApproved_shouldReturnFalse() {
         List<WorkflowEngineManager.TaskResult> results = List.of(
                 new WorkflowEngineManager.TaskResult(1L, 1L, "APPROVED", "同意"),
-                new WorkflowEngineManager.TaskResult(2L, 2L, "PENDING", null)
-        );
+                new WorkflowEngineManager.TaskResult(2L, 2L, "PENDING", null));
 
         assertFalse(workflowEngineManager.isCountersignComplete(results, 3));
     }
@@ -167,8 +173,7 @@ class WorkflowEngineManagerTest {
     void isOrSignComplete_oneApproved_shouldReturnTrue() {
         List<WorkflowEngineManager.TaskResult> results = List.of(
                 new WorkflowEngineManager.TaskResult(1L, 1L, "APPROVED", "同意"),
-                new WorkflowEngineManager.TaskResult(2L, 2L, "PENDING", null)
-        );
+                new WorkflowEngineManager.TaskResult(2L, 2L, "PENDING", null));
 
         assertTrue(workflowEngineManager.isOrSignComplete(results));
     }
@@ -178,8 +183,7 @@ class WorkflowEngineManagerTest {
     void isOrSignComplete_noneProcessed_shouldReturnFalse() {
         List<WorkflowEngineManager.TaskResult> results = List.of(
                 new WorkflowEngineManager.TaskResult(1L, 1L, "PENDING", null),
-                new WorkflowEngineManager.TaskResult(2L, 2L, "PENDING", null)
-        );
+                new WorkflowEngineManager.TaskResult(2L, 2L, "PENDING", null));
 
         assertFalse(workflowEngineManager.isOrSignComplete(results));
     }
@@ -189,8 +193,7 @@ class WorkflowEngineManagerTest {
     void getOrSignResult_shouldReturnFirstResult() {
         List<WorkflowEngineManager.TaskResult> results = List.of(
                 new WorkflowEngineManager.TaskResult(1L, 1L, "REJECTED", "不同意"),
-                new WorkflowEngineManager.TaskResult(2L, 2L, "PENDING", null)
-        );
+                new WorkflowEngineManager.TaskResult(2L, 2L, "PENDING", null));
 
         String result = workflowEngineManager.getOrSignResult(results);
 

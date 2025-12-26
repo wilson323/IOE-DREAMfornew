@@ -1,0 +1,450 @@
+package net.lab1024.sa.access.integration;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.time.LocalDateTime;
+import java.util.concurrent.TimeUnit;
+
+import jakarta.annotation.Resource;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
+
+import net.lab1024.sa.access.mobile.controller.AccessMobileController;
+import net.lab1024.sa.access.domain.form.MobileAuthInitForm;
+import net.lab1024.sa.access.domain.vo.MobileAuthInitVO;
+import net.lab1024.sa.access.domain.form.MobileBiometricForm;
+import net.lab1024.sa.access.domain.vo.MobileBiometricVO;
+import net.lab1024.sa.access.domain.vo.MobileDeviceInfoVO;
+import net.lab1024.sa.access.domain.form.MobileHeartbeatForm;
+import net.lab1024.sa.access.domain.vo.MobileHeartbeatVO;
+import net.lab1024.sa.access.domain.form.MobileLogoutForm;
+import net.lab1024.sa.access.domain.form.MobileQRCodeForm;
+import net.lab1024.sa.access.domain.vo.MobileQRCodeVO;
+import net.lab1024.sa.access.domain.form.MobileRefreshTokenForm;
+import net.lab1024.sa.access.domain.vo.MobileTokenVO;
+import net.lab1024.sa.common.dto.ResponseDTO;
+
+import lombok.extern.slf4j.Slf4j;
+
+/**
+ * 门禁移动端端到端集成测试
+ * <p>
+ * 测试完整的移动端认证→通行流程
+ * </p>
+ *
+ * @author IOE-DREAM Team
+ * @version 1.0.0
+ * @since 2025-01-30
+ */
+@SpringBootTest
+@ActiveProfiles("test")
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@Transactional
+@Slf4j
+@DisplayName("门禁移动端端到端集成测试")
+public class AccessMobileEndToEndTest {
+
+    @Resource
+    private AccessMobileController accessMobileController;
+
+    // 测试数据
+    private static final String TEST_DEVICE_ID = "TEST_MOBILE_DEVICE_001";
+    private static final String TEST_DEVICE_TYPE = "ANDROID";
+    private static final String TEST_USER_ID = "1001";
+    private static final Long TEST_AREA_ID = 1L;
+
+    // 运行时状态
+    private String accessToken;
+    private String refreshToken;
+    private String qrCode;
+    private Long sessionId;
+
+    @Test
+    @Order(1)
+    @DisplayName("完整认证流程端到端测试（初始化→刷新→注销）")
+    void testCompleteAuthenticationFlow() {
+        log.info("[集成测试] 开始测试完整认证流程");
+
+        try {
+            // Step 1: 初始化认证（已登录用户）
+            MobileAuthInitForm initForm = new MobileAuthInitForm();
+            initForm.setDeviceId(TEST_DEVICE_ID);
+            initForm.setDeviceType(TEST_DEVICE_TYPE);
+            initForm.setUserId(TEST_USER_ID);
+
+            ResponseDTO<MobileAuthInitVO> initResponse = accessMobileController.initializeAuth(initForm);
+            assertNotNull(initResponse, "初始化认证响应不应为null");
+            assertTrue(initResponse.isSuccess(), "初始化认证应该成功");
+
+            MobileAuthInitVO initResult = initResponse.getData();
+            assertNotNull(initResult, "初始化认证结果不应为null");
+            assertNotNull(initResult.getAccessToken(), "访问令牌不应为null");
+            assertNotNull(initResult.getRefreshToken(), "刷新令牌不应为null");
+
+            accessToken = initResult.getAccessToken();
+            refreshToken = initResult.getRefreshToken();
+
+            log.info("[集成测试] 初始化认证成功，userId={}, accessToken={}", TEST_USER_ID, accessToken);
+
+            // Step 2: 等待一段时间模拟使用
+            TimeUnit.MILLISECONDS.sleep(100);
+
+            // Step 3: 刷新令牌
+            MobileRefreshTokenForm refreshForm = new MobileRefreshTokenForm();
+            refreshForm.setRefreshToken(refreshToken);
+            refreshForm.setDeviceId(TEST_DEVICE_ID);
+
+            ResponseDTO<MobileTokenVO> refreshResponse =
+                accessMobileController.refreshToken(refreshForm);
+
+            assertNotNull(refreshResponse, "刷新令牌响应不应为null");
+            assertTrue(refreshResponse.isSuccess(), "刷新令牌应该成功");
+
+            MobileTokenVO refreshResult = refreshResponse.getData();
+            assertNotNull(refreshResult, "刷新令牌结果不应为null");
+            assertNotNull(refreshResult.getAccessToken(), "新访问令牌不应为null");
+
+            accessToken = refreshResult.getAccessToken();
+            log.info("[集成测试] 令牌刷新成功，newAccessToken={}", accessToken);
+
+            // Step 4: 等待一段时间
+            TimeUnit.MILLISECONDS.sleep(100);
+
+            // Step 5: 注销认证
+            MobileLogoutForm logoutForm = new MobileLogoutForm();
+            logoutForm.setAccessToken(accessToken);
+            logoutForm.setDeviceId(TEST_DEVICE_ID);
+
+            ResponseDTO<Void> logoutResponse = accessMobileController.logout(logoutForm);
+
+            assertNotNull(logoutResponse, "注销认证响应不应为null");
+            assertTrue(logoutResponse.isSuccess(), "注销认证应该成功");
+
+            log.info("[集成测试] 注销认证成功");
+
+            log.info("[集成测试] 完整认证流程测试通过");
+
+        } catch (Exception e) {
+            log.error("[集成测试] 完整认证流程测试失败", e);
+            fail("完整认证流程测试失败: " + e.getMessage());
+        }
+    }
+
+    @Test
+    @Order(2)
+    @DisplayName("二维码通行完整流程端到端测试")
+    void testQRCodeFlowEndToEnd() {
+        log.info("[集成测试] 开始测试二维码通行完整流程");
+
+        try {
+            // Step 1: 初始化认证获取令牌
+            MobileAuthInitForm initForm = new MobileAuthInitForm();
+            initForm.setDeviceId(TEST_DEVICE_ID);
+            initForm.setUserId(TEST_USER_ID);
+
+            ResponseDTO<MobileAuthInitVO> initResponse = accessMobileController.initializeAuth(initForm);
+            assertTrue(initResponse.isSuccess(), "初始化认证应该成功");
+
+            accessToken = initResponse.getData().getAccessToken();
+            log.info("[集成测试] 初始化认证成功");
+
+            // Step 2: 生成二维码
+            MobileQRCodeForm qrForm = new MobileQRCodeForm();
+            qrForm.setAccessToken(accessToken);
+            qrForm.setAreaId(TEST_AREA_ID);
+            qrForm.setValiditySeconds(300);  // 5分钟有效期
+
+            ResponseDTO<MobileQRCodeVO> qrResponse = accessMobileController.generateQRCode(qrForm);
+
+            assertNotNull(qrResponse, "生成二维码响应不应为null");
+            assertTrue(qrResponse.isSuccess(), "生成二维码应该成功");
+
+            MobileQRCodeVO qrResult = qrResponse.getData();
+            assertNotNull(qrResult, "二维码结果不应为null");
+            assertNotNull(qrResult.getQrCode(), "二维码内容不应为null");
+            assertNotNull(qrResult.getSessionId(), "会话ID不应为null");
+            assertNotNull(qrResult.getExpireTime(), "过期时间不应为null");
+
+            qrCode = qrResult.getQrCode();
+            sessionId = qrResult.getSessionId();
+
+            log.info("[集成测试] 生成二维码成功，sessionId={}, qrCode={}", sessionId, qrCode);
+
+            // Step 3: 验证二维码（成功场景）
+            MobileQRCodeForm verifyForm = new MobileQRCodeForm();
+            verifyForm.setQrCode(qrCode);
+            verifyForm.setAreaId(TEST_AREA_ID);
+            verifyForm.setDeviceId("GATE_DEVICE_001");
+
+            ResponseDTO<MobileQRCodeVO> verifyResponse = accessMobileController.verifyQRCode(verifyForm);
+
+            assertNotNull(verifyResponse, "验证二维码响应不应为null");
+            assertTrue(verifyResponse.isSuccess(), "验证二维码应该成功");
+
+            MobileQRCodeVO verifyResult = verifyResponse.getData();
+            assertNotNull(verifyResult, "验证二维码结果不应为null");
+            assertTrue(verifyResult.isVerified(), "二维码应该验证通过");
+            assertEquals(TEST_USER_ID, verifyResult.getUserId(), "用户ID应匹配");
+
+            log.info("[集成测试] 验证二维码成功，userId={}", verifyResult.getUserId());
+
+            log.info("[集成测试] 二维码通行完整流程测试通过");
+
+        } catch (Exception e) {
+            log.error("[集成测试] 二维码通行完整流程测试失败", e);
+            fail("二维码通行完整流程测试失败: " + e.getMessage());
+        }
+    }
+
+    @Test
+    @Order(3)
+    @DisplayName("生物识别通行完整流程端到端测试")
+    void testBiometricFlowEndToEnd() {
+        log.info("[集成测试] 开始测试生物识别通行完整流程");
+
+        try {
+            // Step 1: 初始化认证
+            MobileAuthInitForm initForm = new MobileAuthInitForm();
+            initForm.setDeviceId(TEST_DEVICE_ID);
+            initForm.setUserId(TEST_USER_ID);
+
+            ResponseDTO<MobileAuthInitVO> initResponse = accessMobileController.initializeAuth(initForm);
+            assertTrue(initResponse.isSuccess(), "初始化认证应该成功");
+
+            accessToken = initResponse.getData().getAccessToken();
+            log.info("[集成测试] 初始化认证成功");
+
+            // Step 2: 生物识别验证（成功场景）
+            MobileBiometricForm bioForm = new MobileBiometricForm();
+            bioForm.setAccessToken(accessToken);
+            bioForm.setAreaId(TEST_AREA_ID);
+            bioForm.setBiometricType("FACE");
+            bioForm.setBiometricData("mock_face_feature_data_12345");
+            bioForm.setDeviceId("GATE_DEVICE_001");
+
+            ResponseDTO<MobileBiometricVO> bioResponse = accessMobileController.verifyBiometric(bioForm);
+
+            assertNotNull(bioResponse, "生物识别响应不应为null");
+            assertTrue(bioResponse.isSuccess(), "生物识别应该成功");
+
+            MobileBiometricVO bioResult = bioResponse.getData();
+            assertNotNull(bioResult, "生物识别结果不应为null");
+            assertTrue(bioResult.isVerified(), "生物识别应该验证通过");
+            assertEquals(TEST_USER_ID, bioResult.getUserId(), "用户ID应匹配");
+
+            log.info("[集成测试] 生物识别验证成功，userId={}", bioResult.getUserId());
+
+            log.info("[集成测试] 生物识别通行完整流程测试通过");
+
+        } catch (Exception e) {
+            log.error("[集成测试] 生物识别通行完整流程测试失败", e);
+            fail("生物识别通行完整流程测试失败: " + e.getMessage());
+        }
+    }
+
+    @Test
+    @Order(4)
+    @DisplayName("设备心跳完整流程端到端测试")
+    void testHeartbeatFlowEndToEnd() {
+        log.info("[集成测试] 开始测试设备心跳完整流程");
+
+        try {
+            // Step 1: 初始化认证
+            MobileAuthInitForm initForm = new MobileAuthInitForm();
+            initForm.setDeviceId(TEST_DEVICE_ID);
+            initForm.setUserId(TEST_USER_ID);
+
+            ResponseDTO<MobileAuthInitVO> initResponse = accessMobileController.initializeAuth(initForm);
+            assertTrue(initResponse.isSuccess(), "初始化认证应该成功");
+
+            accessToken = initResponse.getData().getAccessToken();
+            log.info("[集成测试] 初始化认证成功");
+
+            // Step 2: 发送设备心跳
+            MobileHeartbeatForm heartbeatForm = new MobileHeartbeatForm();
+            heartbeatForm.setAccessToken(accessToken);
+            heartbeatForm.setDeviceId(TEST_DEVICE_ID);
+            heartbeatForm.setBatteryLevel(85);
+            heartbeatForm.setSignalStrength(4);
+            heartbeatForm.setAppVersion("1.0.0");
+
+            ResponseDTO<MobileHeartbeatVO> heartbeatResponse =
+                accessMobileController.sendHeartbeat(heartbeatForm);
+
+            assertNotNull(heartbeatResponse, "心跳响应不应为null");
+            assertTrue(heartbeatResponse.isSuccess(), "发送心跳应该成功");
+
+            MobileHeartbeatVO heartbeatResult = heartbeatResponse.getData();
+            assertNotNull(heartbeatResult, "心跳结果不应为null");
+            assertNotNull(heartbeatResult.getServerTime(), "服务器时间不应为null");
+
+            log.info("[集成测试] 设备心跳成功，serverTime={}", heartbeatResult.getServerTime());
+
+            // Step 3: 等待一段时间
+            TimeUnit.MILLISECONDS.sleep(500);
+
+            // Step 4: 再次发送心跳
+            ResponseDTO<MobileHeartbeatVO> heartbeatResponse2 =
+                accessMobileController.sendHeartbeat(heartbeatForm);
+
+            assertTrue(heartbeatResponse2.isSuccess(), "再次发送心跳应该成功");
+            log.info("[集成测试] 第二次心跳成功");
+
+            log.info("[集成测试] 设备心跳完整流程测试通过");
+
+        } catch (Exception e) {
+            log.error("[集成测试] 设备心跳完整流程测试失败", e);
+            fail("设备心跳完整流程测试失败: " + e.getMessage());
+        }
+    }
+
+    @Test
+    @Order(5)
+    @DisplayName("异常场景处理端到端测试")
+    void testErrorHandlingEndToEnd() {
+        log.info("[集成测试] 开始测试异常场景处理");
+
+        try {
+            // 测试1: 刷新无效令牌
+            MobileRefreshTokenForm invalidRefreshForm = new MobileRefreshTokenForm();
+            invalidRefreshForm.setRefreshToken("invalid_refresh_token");
+            invalidRefreshForm.setDeviceId(TEST_DEVICE_ID);
+
+            ResponseDTO<MobileTokenVO> invalidRefreshResponse =
+                accessMobileController.refreshToken(invalidRefreshForm);
+
+            assertNotNull(invalidRefreshResponse, "无效令牌刷新响应不应为null");
+            assertFalse(invalidRefreshResponse.isSuccess(), "刷新无效令牌应该失败");
+            log.info("[集成测试] 无效令牌刷新错误处理验证通过");
+
+            // 测试2: 验证不存在的二维码
+            MobileQRCodeForm invalidQrForm = new MobileQRCodeForm();
+            invalidQrForm.setQrCode("invalid_qr_code_12345");
+            invalidQrForm.setAreaId(TEST_AREA_ID);
+            invalidQrForm.setDeviceId("GATE_DEVICE_001");
+
+            ResponseDTO<MobileQRCodeVO> invalidQrResponse =
+                accessMobileController.verifyQRCode(invalidQrForm);
+
+            assertNotNull(invalidQrResponse, "无效二维码验证响应不应为null");
+            assertFalse(invalidQrResponse.isSuccess(), "验证无效二维码应该失败");
+            log.info("[集成测试] 无效二维码验证错误处理验证通过");
+
+            // 测试3: 验证区域不匹配的二维码
+            // 先生成一个区域的二维码
+            MobileAuthInitForm initForm = new MobileAuthInitForm();
+            initForm.setDeviceId(TEST_DEVICE_ID);
+            initForm.setUserId(TEST_USER_ID);
+
+            ResponseDTO<MobileAuthInitVO> initResponse = accessMobileController.initializeAuth(initForm);
+            accessToken = initResponse.getData().getAccessToken();
+
+            MobileQRCodeForm qrForm = new MobileQRCodeForm();
+            qrForm.setAccessToken(accessToken);
+            qrForm.setAreaId(TEST_AREA_ID);
+            qrForm.setValiditySeconds(300);
+
+            String validQrCode = accessMobileController.generateQRCode(qrForm).getData().getQrCode();
+
+            // 尝试用不同的区域验证
+            MobileQRCodeForm areaMismatchForm = new MobileQRCodeForm();
+            areaMismatchForm.setQrCode(validQrCode);
+            areaMismatchForm.setAreaId(999L);  // 不同的区域
+            areaMismatchForm.setDeviceId("GATE_DEVICE_001");
+
+            ResponseDTO<MobileQRCodeVO> areaMismatchResponse =
+                accessMobileController.verifyQRCode(areaMismatchForm);
+
+            // 可能成功或失败，取决于业务逻辑
+            assertNotNull(areaMismatchResponse, "区域不匹配响应不应为null");
+            log.info("[集成测试] 区域不匹配场景验证完成，success={}", areaMismatchResponse.isSuccess());
+
+            log.info("[集成测试] 异常场景处理测试通过");
+
+        } catch (Exception e) {
+            log.error("[集成测试] 异常场景处理测试失败", e);
+            fail("异常场景处理测试失败: " + e.getMessage());
+        }
+    }
+
+    @Test
+    @Order(6)
+    @DisplayName("设备信息查询端到端测试")
+    void testDeviceInfoEndToEnd() {
+        log.info("[集成测试] 开始测试设备信息查询");
+
+        try {
+            // Step 1: 初始化认证
+            MobileAuthInitForm initForm = new MobileAuthInitForm();
+            initForm.setDeviceId(TEST_DEVICE_ID);
+            initForm.setUserId(TEST_USER_ID);
+
+            ResponseDTO<MobileAuthInitVO> initResponse = accessMobileController.initializeAuth(initForm);
+            assertTrue(initResponse.isSuccess(), "初始化认证应该成功");
+
+            accessToken = initResponse.getData().getAccessToken();
+            log.info("[集成测试] 初始化认证成功");
+
+            // Step 2: 查询设备信息
+            ResponseDTO<MobileDeviceInfoVO> deviceInfoResponse =
+                accessMobileController.getDeviceInfo(accessToken, TEST_DEVICE_ID);
+
+            assertNotNull(deviceInfoResponse, "设备信息响应不应为null");
+            assertTrue(deviceInfoResponse.isSuccess(), "查询设备信息应该成功");
+
+            MobileDeviceInfoVO deviceInfoResult = deviceInfoResponse.getData();
+            assertNotNull(deviceInfoResult, "设备信息结果不应为null");
+            assertEquals(TEST_DEVICE_ID, deviceInfoResult.getDeviceId(), "设备ID应匹配");
+            assertNotNull(deviceInfoResult.getStatus(), "设备状态不应为null");
+
+            log.info("[集成测试] 查询设备信息成功，deviceId={}, status={}",
+                deviceInfoResult.getDeviceId(), deviceInfoResult.getStatus());
+
+            log.info("[集成测试] 设备信息查询测试通过");
+
+        } catch (Exception e) {
+            log.error("[集成测试] 设备信息查询测试失败", e);
+            fail("设备信息查询测试失败: " + e.getMessage());
+        }
+    }
+
+    @Test
+    @Order(7)
+    @DisplayName("未登录用户初始化认证端到端测试")
+    void testAnonymousUserInitEndToEnd() {
+        log.info("[集成测试] 开始测试未登录用户初始化认证");
+
+        try {
+            // Step 1: 未登录用户初始化（不传userId）
+            MobileAuthInitForm initForm = new MobileAuthInitForm();
+            initForm.setDeviceId(TEST_DEVICE_ID);
+            initForm.setDeviceType(TEST_DEVICE_TYPE);
+            // 不设置userId
+
+            ResponseDTO<MobileAuthInitVO> initResponse = accessMobileController.initializeAuth(initForm);
+
+            assertNotNull(initResponse, "未登录初始化响应不应为null");
+            assertTrue(initResponse.isSuccess(), "未登录初始化应该成功");
+
+            MobileAuthInitVO initResult = initResponse.getData();
+            assertNotNull(initResult, "未登录初始化结果不应为null");
+            assertNull(initResult.getUserId(), "未登录初始化userId应为null");
+
+            log.info("[集成测试] 未登录用户初始化认证成功");
+
+            log.info("[集成测试] 未登录用户初始化认证测试通过");
+
+        } catch (Exception e) {
+            log.error("[集成测试] 未登录用户初始化认证测试失败", e);
+            fail("未登录用户初始化认证测试失败: " + e.getMessage());
+        }
+    }
+}

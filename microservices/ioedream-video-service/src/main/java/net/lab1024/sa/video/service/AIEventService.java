@@ -1,6 +1,6 @@
 package net.lab1024.sa.video.service;
 
-import net.lab1024.sa.common.openapi.domain.response.PageResult;
+import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.video.domain.form.AIEventAddForm;
 import net.lab1024.sa.video.domain.form.AIEventQueryForm;
 import net.lab1024.sa.video.domain.vo.AIEventVO;

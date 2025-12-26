@@ -1,11 +1,11 @@
 package net.lab1024.sa.video.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -34,7 +34,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/v1/video/device")
 @Tag(name = "设备视频分析", description = "接收设备上传的结构化分析数据")
-public class DeviceVideoAnalysisController {
+ public class DeviceVideoAnalysisController {
 
     @Resource
     private MeterRegistry meterRegistry;

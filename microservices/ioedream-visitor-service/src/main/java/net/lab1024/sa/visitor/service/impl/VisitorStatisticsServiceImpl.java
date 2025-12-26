@@ -1,5 +1,7 @@
 package net.lab1024.sa.visitor.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -9,10 +11,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import net.lab1024.sa.common.util.QueryBuilder;
 
 import io.micrometer.observation.annotation.Observed;
 import jakarta.annotation.Resource;
-import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.dto.ResponseDTO;
 import net.lab1024.sa.common.exception.BusinessException;
 import net.lab1024.sa.common.exception.ParamException;
@@ -36,10 +38,11 @@ import net.lab1024.sa.visitor.service.VisitorStatisticsService;
  * @version 1.0.0
  * @since 2025-01-30
  */
-@Slf4j
 @Service
 @Transactional(rollbackFor = Exception.class)
+@Slf4j
 public class VisitorStatisticsServiceImpl implements VisitorStatisticsService {
+
 
     @Resource
     private VisitorAppointmentDao visitorAppointmentDao;
@@ -55,41 +58,47 @@ public class VisitorStatisticsServiceImpl implements VisitorStatisticsService {
 
             // 统计总预约数
             long totalAppointments = visitorAppointmentDao.selectCount(
-                    new LambdaQueryWrapper<VisitorAppointmentEntity>()
-                            .eq(VisitorAppointmentEntity::getDeletedFlag, 0));
+                    QueryBuilder.of(VisitorAppointmentEntity.class)
+                            .eq(VisitorAppointmentEntity::getDeletedFlag, 0)
+                            .build());
 
             // 统计已通过预约数
             long approvedAppointments = visitorAppointmentDao.selectCount(
-                    new LambdaQueryWrapper<VisitorAppointmentEntity>()
+                    QueryBuilder.of(VisitorAppointmentEntity.class)
                             .eq(VisitorAppointmentEntity::getDeletedFlag, 0)
-                            .eq(VisitorAppointmentEntity::getStatus, "APPROVED"));
+                            .eq(VisitorAppointmentEntity::getStatus, "APPROVED")
+                            .build());
 
             // 统计已驳回预约数
             long rejectedAppointments = visitorAppointmentDao.selectCount(
-                    new LambdaQueryWrapper<VisitorAppointmentEntity>()
+                    QueryBuilder.of(VisitorAppointmentEntity.class)
                             .eq(VisitorAppointmentEntity::getDeletedFlag, 0)
-                            .eq(VisitorAppointmentEntity::getStatus, "REJECTED"));
+                            .eq(VisitorAppointmentEntity::getStatus, "REJECTED")
+                            .build());
 
             // 统计待审批预约数
             long pendingAppointments = visitorAppointmentDao.selectCount(
-                    new LambdaQueryWrapper<VisitorAppointmentEntity>()
+                    QueryBuilder.of(VisitorAppointmentEntity.class)
                             .eq(VisitorAppointmentEntity::getDeletedFlag, 0)
-                            .eq(VisitorAppointmentEntity::getStatus, "PENDING"));
+                            .eq(VisitorAppointmentEntity::getStatus, "PENDING")
+                            .build());
 
             // 统计今日预约数
             LocalDate today = LocalDate.now();
             long todayAppointments = visitorAppointmentDao.selectCount(
-                    new LambdaQueryWrapper<VisitorAppointmentEntity>()
+                    QueryBuilder.of(VisitorAppointmentEntity.class)
                             .eq(VisitorAppointmentEntity::getDeletedFlag, 0)
                             .ge(VisitorAppointmentEntity::getAppointmentStartTime, today.atStartOfDay())
-                            .le(VisitorAppointmentEntity::getAppointmentStartTime, today.atTime(23, 59, 59)));
+                            .le(VisitorAppointmentEntity::getAppointmentStartTime, today.atTime(23, 59, 59))
+                            .build());
 
             // 统计本月预约数
             LocalDate monthStart = today.withDayOfMonth(1);
             long monthAppointments = visitorAppointmentDao.selectCount(
-                    new LambdaQueryWrapper<VisitorAppointmentEntity>()
+                    QueryBuilder.of(VisitorAppointmentEntity.class)
                             .eq(VisitorAppointmentEntity::getDeletedFlag, 0)
-                            .ge(VisitorAppointmentEntity::getAppointmentStartTime, monthStart.atStartOfDay()));
+                            .ge(VisitorAppointmentEntity::getAppointmentStartTime, monthStart.atStartOfDay())
+                            .build());
 
             // 构建统计数据
             statistics.put("totalAppointments", totalAppointments);
@@ -138,34 +147,38 @@ public class VisitorStatisticsServiceImpl implements VisitorStatisticsService {
 
             // 统计时间范围内的预约数
             long totalAppointments = visitorAppointmentDao.selectCount(
-                    new LambdaQueryWrapper<VisitorAppointmentEntity>()
+                    QueryBuilder.of(VisitorAppointmentEntity.class)
                             .eq(VisitorAppointmentEntity::getDeletedFlag, 0)
                             .ge(VisitorAppointmentEntity::getAppointmentStartTime, startTime)
-                            .le(VisitorAppointmentEntity::getAppointmentStartTime, endTime));
+                            .le(VisitorAppointmentEntity::getAppointmentStartTime, endTime)
+                            .build());
 
             // 统计已通过预约数
             long approvedAppointments = visitorAppointmentDao.selectCount(
-                    new LambdaQueryWrapper<VisitorAppointmentEntity>()
+                    QueryBuilder.of(VisitorAppointmentEntity.class)
                             .eq(VisitorAppointmentEntity::getDeletedFlag, 0)
                             .eq(VisitorAppointmentEntity::getStatus, "APPROVED")
                             .ge(VisitorAppointmentEntity::getAppointmentStartTime, startTime)
-                            .le(VisitorAppointmentEntity::getAppointmentStartTime, endTime));
+                            .le(VisitorAppointmentEntity::getAppointmentStartTime, endTime)
+                            .build());
 
             // 统计已驳回预约数
             long rejectedAppointments = visitorAppointmentDao.selectCount(
-                    new LambdaQueryWrapper<VisitorAppointmentEntity>()
+                    QueryBuilder.of(VisitorAppointmentEntity.class)
                             .eq(VisitorAppointmentEntity::getDeletedFlag, 0)
                             .eq(VisitorAppointmentEntity::getStatus, "REJECTED")
                             .ge(VisitorAppointmentEntity::getAppointmentStartTime, startTime)
-                            .le(VisitorAppointmentEntity::getAppointmentStartTime, endTime));
+                            .le(VisitorAppointmentEntity::getAppointmentStartTime, endTime)
+                            .build());
 
             // 统计待审批预约数
             long pendingAppointments = visitorAppointmentDao.selectCount(
-                    new LambdaQueryWrapper<VisitorAppointmentEntity>()
+                    QueryBuilder.of(VisitorAppointmentEntity.class)
                             .eq(VisitorAppointmentEntity::getDeletedFlag, 0)
                             .eq(VisitorAppointmentEntity::getStatus, "PENDING")
                             .ge(VisitorAppointmentEntity::getAppointmentStartTime, startTime)
-                            .le(VisitorAppointmentEntity::getAppointmentStartTime, endTime));
+                            .le(VisitorAppointmentEntity::getAppointmentStartTime, endTime)
+                            .build());
 
             // 构建统计数据
             statistics.put("totalAppointments", totalAppointments);
@@ -213,25 +226,28 @@ public class VisitorStatisticsServiceImpl implements VisitorStatisticsService {
 
             // 统计今日预约数（作为被访人）
             long todayAppointments = visitorAppointmentDao.selectCount(
-                    new LambdaQueryWrapper<VisitorAppointmentEntity>()
+                    QueryBuilder.of(VisitorAppointmentEntity.class)
                             .eq(VisitorAppointmentEntity::getDeletedFlag, 0)
                             .eq(VisitorAppointmentEntity::getVisitUserId, userId)
                             .ge(VisitorAppointmentEntity::getAppointmentStartTime, today.atStartOfDay())
-                            .le(VisitorAppointmentEntity::getAppointmentStartTime, today.atTime(23, 59, 59)));
+                            .le(VisitorAppointmentEntity::getAppointmentStartTime, today.atTime(23, 59, 59))
+                            .build());
 
             // 统计当前在访访客数（已签到未签退）
             long activeVisitors = visitorAppointmentDao.selectCount(
-                    new LambdaQueryWrapper<VisitorAppointmentEntity>()
+                    QueryBuilder.of(VisitorAppointmentEntity.class)
                             .eq(VisitorAppointmentEntity::getDeletedFlag, 0)
                             .eq(VisitorAppointmentEntity::getVisitUserId, userId)
-                            .eq(VisitorAppointmentEntity::getStatus, "CHECKED_IN"));
+                            .eq(VisitorAppointmentEntity::getStatus, "CHECKED_IN")
+                            .build());
 
             // 统计本月访问数
             long monthlyVisitors = visitorAppointmentDao.selectCount(
-                    new LambdaQueryWrapper<VisitorAppointmentEntity>()
+                    QueryBuilder.of(VisitorAppointmentEntity.class)
                             .eq(VisitorAppointmentEntity::getDeletedFlag, 0)
                             .eq(VisitorAppointmentEntity::getVisitUserId, userId)
-                            .ge(VisitorAppointmentEntity::getAppointmentStartTime, monthStart.atStartOfDay()));
+                            .ge(VisitorAppointmentEntity::getAppointmentStartTime, monthStart.atStartOfDay())
+                            .build());
 
             // 平均停留时长（模拟值，实际需要从签到签退记录计算）
             int averageDuration = 45;
@@ -258,4 +274,5 @@ public class VisitorStatisticsServiceImpl implements VisitorStatisticsService {
         }
     }
 }
+
 

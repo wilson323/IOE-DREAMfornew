@@ -162,12 +162,12 @@ public class ScheduleResult {
         /**
          * 工作开始时间
          */
-        private String startTime;
+        private String workStartTime;
 
         /**
          * 工作结束时间
          */
-        private String endTime;
+        private String workEndTime;
 
         /**
          * 工作地点

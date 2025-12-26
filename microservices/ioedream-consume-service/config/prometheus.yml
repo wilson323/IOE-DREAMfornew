@@ -1,0 +1,53 @@
+# ============================================================
+# Prometheus监控配置
+# ============================================================
+# 功能：收集消费服务的性能指标和业务指标
+# 维护：IOE-DREAM架构团队
+# ============================================================
+
+global:
+  scrape_interval: 15s  # 抓取间隔
+  evaluation_interval: 15s  # 规则评估间隔
+  external_labels:
+    cluster: 'ioe-dream-production'
+    environment: 'production'
+
+# 告警规则配置
+rule_files:
+  - 'alert_rules.yml'
+
+# 抓取目标配置
+scrape_configs:
+  # 消费服务监控
+  - job_name: 'consume-service'
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 10s
+    static_configs:
+      - targets:
+        - 'localhost:8094'
+        labels:
+          service: 'consume-service'
+          instance: 'consume-1'
+
+  # MySQL数据库监控（可选）
+  - job_name: 'mysql'
+    static_configs:
+      - targets:
+        - 'localhost:9104'
+        labels:
+          service: 'mysql'
+
+  # Redis监控（可选）
+  - job_name: 'redis'
+    static_configs:
+      - targets:
+        - 'localhost:9121'
+        labels:
+          service: 'redis'
+
+# 告警管理器配置
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          - 'localhost:9093'

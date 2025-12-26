@@ -1,20 +1,24 @@
 package net.lab1024.sa.device.comm.discovery;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.common.organization.dao.DeviceDao;
-import net.lab1024.sa.common.organization.entity.DeviceEntity;
-import net.lab1024.sa.device.comm.protocol.ProtocolAdapter;
-import net.lab1024.sa.device.comm.protocol.factory.ProtocolAdapterFactory;
-import net.lab1024.sa.device.comm.vendor.DeviceVendorSupportManager;
 
 import java.time.LocalDateTime;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import net.lab1024.sa.common.organization.dao.DeviceDao;
+import net.lab1024.sa.device.comm.protocol.ProtocolAdapter;
+import net.lab1024.sa.device.comm.protocol.factory.ProtocolAdapterFactory;
+import net.lab1024.sa.device.comm.vendor.DeviceVendorSupportManager;
 
 /**
  * 协议自动发现管理器
@@ -34,8 +38,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @version 1.0.0
  * @since 2025-12-18
  */
-@Slf4j
 @Schema(description = "协议自动发现管理器")
+@Slf4j
 public class ProtocolAutoDiscoveryManager {
 
     private final DeviceDao deviceDao;
@@ -43,9 +47,9 @@ public class ProtocolAutoDiscoveryManager {
     private final DeviceVendorSupportManager vendorSupportManager;
 
     // 发现任务管理
-    private final Map<String, DiscoveryTask> discoveryTasks = new ConcurrentHashMap<>();
-    private final Map<String, DiscoveryResult> discoveryResults = new ConcurrentHashMap<>();
-    private final Map<String, ProtocolFingerprint> protocolFingerprints = new ConcurrentHashMap<>();
+    private final Map<String, DiscoveryTask> discoveryTasks = new HashMap<>();
+    private final Map<String, DiscoveryResult> discoveryResults = new HashMap<>();
+    private final Map<String, ProtocolFingerprint> protocolFingerprints = new HashMap<>();
 
     // 扫描器组件
     private final List<NetworkScanner> networkScanners = new ArrayList<>();
@@ -61,8 +65,8 @@ public class ProtocolAutoDiscoveryManager {
      * 构造函数
      */
     public ProtocolAutoDiscoveryManager(DeviceDao deviceDao,
-                                       ProtocolAdapterFactory protocolAdapterFactory,
-                                       DeviceVendorSupportManager vendorSupportManager) {
+            ProtocolAdapterFactory protocolAdapterFactory,
+            DeviceVendorSupportManager vendorSupportManager) {
         this.deviceDao = deviceDao;
         this.protocolAdapterFactory = protocolAdapterFactory;
         this.vendorSupportManager = vendorSupportManager;
@@ -172,7 +176,7 @@ public class ProtocolAutoDiscoveryManager {
      * 扫描单个设备
      *
      * @param ipAddress 设备IP地址
-     * @param timeout 超时时间（毫秒）
+     * @param timeout   超时时间（毫秒）
      * @return 发现结果
      */
     public DiscoveryResult scanSingleDevice(String ipAddress, int timeout) {
@@ -201,7 +205,7 @@ public class ProtocolAutoDiscoveryManager {
      *
      * @param ipAddress 设备IP地址
      * @param openPorts 开放端口
-     * @param timeout 检测超时时间
+     * @param timeout   检测超时时间
      * @return 检测到的协议类型
      */
     public String detectDeviceProtocol(String ipAddress, Map<Integer, String> openPorts, int timeout) {
@@ -570,7 +574,7 @@ public class ProtocolAutoDiscoveryManager {
      */
     private String generateTaskId() {
         return "DISCOVERY_" + System.currentTimeMillis() + "_" +
-               Thread.currentThread().getId();
+                Thread.currentThread().getId();
     }
 
     /**
@@ -600,7 +604,8 @@ public class ProtocolAutoDiscoveryManager {
      */
     private double calculateSuccessRate() {
         int total = totalDiscoveryTasks.get();
-        if (total == 0) return 0.0;
+        if (total == 0)
+            return 0.0;
         return (double) successfulDiscoveries.get() / total * 100;
     }
 
@@ -629,23 +634,53 @@ public class ProtocolAutoDiscoveryManager {
         private String description;
 
         // getters and setters
-        public String getNetworkRange() { return networkRange; }
-        public void setNetworkRange(String networkRange) { this.networkRange = networkRange; }
+        public String getNetworkRange() {
+            return networkRange;
+        }
 
-        public String getDeviceType() { return deviceType; }
-        public void setDeviceType(String deviceType) { this.deviceType = deviceType; }
+        public void setNetworkRange(String networkRange) {
+            this.networkRange = networkRange;
+        }
 
-        public Integer getScanTimeout() { return scanTimeout; }
-        public void setScanTimeout(Integer scanTimeout) { this.scanTimeout = scanTimeout; }
+        public String getDeviceType() {
+            return deviceType;
+        }
 
-        public Integer getProtocolTimeout() { return protocolTimeout; }
-        public void setProtocolTimeout(Integer protocolTimeout) { this.protocolTimeout = protocolTimeout; }
+        public void setDeviceType(String deviceType) {
+            this.deviceType = deviceType;
+        }
 
-        public boolean isAutoRegister() { return autoRegister; }
-        public void setAutoRegister(boolean autoRegister) { this.autoRegister = autoRegister; }
+        public Integer getScanTimeout() {
+            return scanTimeout;
+        }
 
-        public String getDescription() { return description; }
-        public void setDescription(String description) { this.description = description; }
+        public void setScanTimeout(Integer scanTimeout) {
+            this.scanTimeout = scanTimeout;
+        }
+
+        public Integer getProtocolTimeout() {
+            return protocolTimeout;
+        }
+
+        public void setProtocolTimeout(Integer protocolTimeout) {
+            this.protocolTimeout = protocolTimeout;
+        }
+
+        public boolean isAutoRegister() {
+            return autoRegister;
+        }
+
+        public void setAutoRegister(boolean autoRegister) {
+            this.autoRegister = autoRegister;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
     }
 
     /**
@@ -668,18 +703,53 @@ public class ProtocolAutoDiscoveryManager {
         }
 
         // getters and setters
-        public String getTaskId() { return taskId; }
-        public DiscoveryRequest getRequest() { return request; }
-        public DiscoveryStatus getStatus() { return status; }
-        public void setStatus(DiscoveryStatus status) { this.status = status; }
-        public LocalDateTime getStartTime() { return startTime; }
-        public void setStartTime(LocalDateTime startTime) { this.startTime = startTime; }
-        public LocalDateTime getEndTime() { return endTime; }
-        public void setEndTime(LocalDateTime endTime) { this.endTime = endTime; }
-        public DiscoveryResult getResult() { return result; }
-        public void setResult(DiscoveryResult result) { this.result = result; }
-        public String getErrorMessage() { return errorMessage; }
-        public void setErrorMessage(String errorMessage) { this.errorMessage = errorMessage; }
+        public String getTaskId() {
+            return taskId;
+        }
+
+        public DiscoveryRequest getRequest() {
+            return request;
+        }
+
+        public DiscoveryStatus getStatus() {
+            return status;
+        }
+
+        public void setStatus(DiscoveryStatus status) {
+            this.status = status;
+        }
+
+        public LocalDateTime getStartTime() {
+            return startTime;
+        }
+
+        public void setStartTime(LocalDateTime startTime) {
+            this.startTime = startTime;
+        }
+
+        public LocalDateTime getEndTime() {
+            return endTime;
+        }
+
+        public void setEndTime(LocalDateTime endTime) {
+            this.endTime = endTime;
+        }
+
+        public DiscoveryResult getResult() {
+            return result;
+        }
+
+        public void setResult(DiscoveryResult result) {
+            this.result = result;
+        }
+
+        public String getErrorMessage() {
+            return errorMessage;
+        }
+
+        public void setErrorMessage(String errorMessage) {
+            this.errorMessage = errorMessage;
+        }
     }
 
     /**
@@ -699,15 +769,41 @@ public class ProtocolAutoDiscoveryManager {
         }
 
         // getters and setters
-        public String getTaskId() { return taskId; }
-        public List<DiscoveredDevice> getDiscoveredDevices() { return discoveredDevices; }
-        public void setDiscoveredDevices(List<DiscoveredDevice> discoveredDevices) { this.discoveredDevices = discoveredDevices; }
-        public int getSuccessCount() { return successCount; }
-        public void setSuccessCount(int successCount) { this.successCount = successCount; }
-        public int getTotalCount() { return totalCount; }
-        public void setTotalCount(int totalCount) { this.totalCount = totalCount; }
-        public LocalDateTime getDiscoveryTime() { return discoveryTime; }
-        public void setDiscoveryTime(LocalDateTime discoveryTime) { this.discoveryTime = discoveryTime; }
+        public String getTaskId() {
+            return taskId;
+        }
+
+        public List<DiscoveredDevice> getDiscoveredDevices() {
+            return discoveredDevices;
+        }
+
+        public void setDiscoveredDevices(List<DiscoveredDevice> discoveredDevices) {
+            this.discoveredDevices = discoveredDevices;
+        }
+
+        public int getSuccessCount() {
+            return successCount;
+        }
+
+        public void setSuccessCount(int successCount) {
+            this.successCount = successCount;
+        }
+
+        public int getTotalCount() {
+            return totalCount;
+        }
+
+        public void setTotalCount(int totalCount) {
+            this.totalCount = totalCount;
+        }
+
+        public LocalDateTime getDiscoveryTime() {
+            return discoveryTime;
+        }
+
+        public void setDiscoveryTime(LocalDateTime discoveryTime) {
+            this.discoveryTime = discoveryTime;
+        }
     }
 
     /**
@@ -734,56 +830,141 @@ public class ProtocolAutoDiscoveryManager {
         private String errorMessage;
 
         // getters and setters
-        public String getIpAddress() { return ipAddress; }
-        public void setIpAddress(String ipAddress) { this.ipAddress = ipAddress; }
+        public String getIpAddress() {
+            return ipAddress;
+        }
 
-        public String getMacAddress() { return macAddress; }
-        public void setMacAddress(String macAddress) { this.macAddress = macAddress; }
+        public void setIpAddress(String ipAddress) {
+            this.ipAddress = ipAddress;
+        }
 
-        public String getVendor() { return vendor; }
-        public void setVendor(String vendor) { this.vendor = vendor; }
+        public String getMacAddress() {
+            return macAddress;
+        }
 
-        public String getDeviceName() { return deviceName; }
-        public void setDeviceName(String deviceName) { this.deviceName = deviceName; }
+        public void setMacAddress(String macAddress) {
+            this.macAddress = macAddress;
+        }
 
-        public String getDeviceModel() { return deviceModel; }
-        public void setDeviceModel(String deviceModel) { this.deviceModel = deviceModel; }
+        public String getVendor() {
+            return vendor;
+        }
 
-        public String getDeviceType() { return deviceType; }
-        public void setDeviceType(String deviceType) { this.deviceType = deviceType; }
+        public void setVendor(String vendor) {
+            this.vendor = vendor;
+        }
 
-        public String getProtocolType() { return protocolType; }
-        public void setProtocolType(String protocolType) { this.protocolType = protocolType; }
+        public String getDeviceName() {
+            return deviceName;
+        }
 
-        public String getProtocolVersion() { return protocolVersion; }
-        public void setProtocolVersion(String protocolVersion) { this.protocolVersion = protocolVersion; }
+        public void setDeviceName(String deviceName) {
+            this.deviceName = deviceName;
+        }
 
-        public String getFirmwareVersion() { return firmwareVersion; }
-        public void setFirmwareVersion(String firmwareVersion) { this.firmwareVersion = firmwareVersion; }
+        public String getDeviceModel() {
+            return deviceModel;
+        }
 
-        public String getSerialNumber() { return serialNumber; }
-        public void setSerialNumber(String serialNumber) { this.serialNumber = serialNumber; }
+        public void setDeviceModel(String deviceModel) {
+            this.deviceModel = deviceModel;
+        }
 
-        public Map<Integer, String> getOpenPorts() { return openPorts; }
-        public void setOpenPorts(Map<Integer, String> openPorts) { this.openPorts = openPorts; }
+        public String getDeviceType() {
+            return deviceType;
+        }
 
-        public String getConnectionStatus() { return connectionStatus; }
-        public void setConnectionStatus(String connectionStatus) { this.connectionStatus = connectionStatus; }
+        public void setDeviceType(String deviceType) {
+            this.deviceType = deviceType;
+        }
 
-        public boolean isIdentified() { return identified; }
-        public void setIdentified(boolean identified) { this.identified = identified; }
+        public String getProtocolType() {
+            return protocolType;
+        }
 
-        public boolean isRegistered() { return registered; }
-        public void setRegistered(boolean registered) { this.registered = registered; }
+        public void setProtocolType(String protocolType) {
+            this.protocolType = protocolType;
+        }
 
-        public LocalDateTime getDiscoveryTime() { return discoveryTime; }
-        public void setDiscoveryTime(LocalDateTime discoveryTime) { this.discoveryTime = discoveryTime; }
+        public String getProtocolVersion() {
+            return protocolVersion;
+        }
 
-        public LocalDateTime getRegisteredTime() { return registeredTime; }
-        public void setRegisteredTime(LocalDateTime registeredTime) { this.registeredTime = registeredTime; }
+        public void setProtocolVersion(String protocolVersion) {
+            this.protocolVersion = protocolVersion;
+        }
 
-        public String getErrorMessage() { return errorMessage; }
-        public void setErrorMessage(String errorMessage) { this.errorMessage = errorMessage; }
+        public String getFirmwareVersion() {
+            return firmwareVersion;
+        }
+
+        public void setFirmwareVersion(String firmwareVersion) {
+            this.firmwareVersion = firmwareVersion;
+        }
+
+        public String getSerialNumber() {
+            return serialNumber;
+        }
+
+        public void setSerialNumber(String serialNumber) {
+            this.serialNumber = serialNumber;
+        }
+
+        public Map<Integer, String> getOpenPorts() {
+            return openPorts;
+        }
+
+        public void setOpenPorts(Map<Integer, String> openPorts) {
+            this.openPorts = openPorts;
+        }
+
+        public String getConnectionStatus() {
+            return connectionStatus;
+        }
+
+        public void setConnectionStatus(String connectionStatus) {
+            this.connectionStatus = connectionStatus;
+        }
+
+        public boolean isIdentified() {
+            return identified;
+        }
+
+        public void setIdentified(boolean identified) {
+            this.identified = identified;
+        }
+
+        public boolean isRegistered() {
+            return registered;
+        }
+
+        public void setRegistered(boolean registered) {
+            this.registered = registered;
+        }
+
+        public LocalDateTime getDiscoveryTime() {
+            return discoveryTime;
+        }
+
+        public void setDiscoveryTime(LocalDateTime discoveryTime) {
+            this.discoveryTime = discoveryTime;
+        }
+
+        public LocalDateTime getRegisteredTime() {
+            return registeredTime;
+        }
+
+        public void setRegisteredTime(LocalDateTime registeredTime) {
+            this.registeredTime = registeredTime;
+        }
+
+        public String getErrorMessage() {
+            return errorMessage;
+        }
+
+        public void setErrorMessage(String errorMessage) {
+            this.errorMessage = errorMessage;
+        }
     }
 
     /**
@@ -806,23 +987,53 @@ public class ProtocolAutoDiscoveryManager {
         private LocalDateTime lastDiscoveryTime;
 
         // getters and setters
-        public int getTotalTasks() { return totalTasks; }
-        public void setTotalTasks(int totalTasks) { this.totalTasks = totalTasks; }
+        public int getTotalTasks() {
+            return totalTasks;
+        }
 
-        public int getSuccessfulTasks() { return successfulTasks; }
-        public void setSuccessfulTasks(int successfulTasks) { this.successfulTasks = successfulTasks; }
+        public void setTotalTasks(int totalTasks) {
+            this.totalTasks = totalTasks;
+        }
 
-        public int getFailedTasks() { return failedTasks; }
-        public void setFailedTasks(int failedTasks) { this.failedTasks = failedTasks; }
+        public int getSuccessfulTasks() {
+            return successfulTasks;
+        }
 
-        public int getRunningTasks() { return runningTasks; }
-        public void setRunningTasks(int runningTasks) { this.runningTasks = runningTasks; }
+        public void setSuccessfulTasks(int successfulTasks) {
+            this.successfulTasks = successfulTasks;
+        }
 
-        public double getSuccessRate() { return successRate; }
-        public void setSuccessRate(double successRate) { this.successRate = successRate; }
+        public int getFailedTasks() {
+            return failedTasks;
+        }
 
-        public LocalDateTime getLastDiscoveryTime() { return lastDiscoveryTime; }
-        public void setLastDiscoveryTime(LocalDateTime lastDiscoveryTime) { this.lastDiscoveryTime = lastDiscoveryTime; }
+        public void setFailedTasks(int failedTasks) {
+            this.failedTasks = failedTasks;
+        }
+
+        public int getRunningTasks() {
+            return runningTasks;
+        }
+
+        public void setRunningTasks(int runningTasks) {
+            this.runningTasks = runningTasks;
+        }
+
+        public double getSuccessRate() {
+            return successRate;
+        }
+
+        public void setSuccessRate(double successRate) {
+            this.successRate = successRate;
+        }
+
+        public LocalDateTime getLastDiscoveryTime() {
+            return lastDiscoveryTime;
+        }
+
+        public void setLastDiscoveryTime(LocalDateTime lastDiscoveryTime) {
+            this.lastDiscoveryTime = lastDiscoveryTime;
+        }
     }
 
     /**
@@ -841,31 +1052,76 @@ public class ProtocolAutoDiscoveryManager {
         private String modbusRegisters;
 
         // getters and setters
-        public String getProtocolType() { return protocolType; }
-        public void setProtocolType(String protocolType) { this.protocolType = protocolType; }
+        public String getProtocolType() {
+            return protocolType;
+        }
 
-        public String getVendor() { return vendor; }
-        public void setVendor(String vendor) { this.vendor = vendor; }
+        public void setProtocolType(String protocolType) {
+            this.protocolType = protocolType;
+        }
 
-        public String getVersion() { return version; }
-        public void setVersion(String version) { this.version = version; }
+        public String getVendor() {
+            return vendor;
+        }
 
-        public List<String> getHttpPaths() { return httpPaths; }
-        public void setHttpPaths(List<String> httpPaths) { this.httpPaths = httpPaths; }
+        public void setVendor(String vendor) {
+            this.vendor = vendor;
+        }
 
-        public List<String> getHttpHeaders() { return httpHeaders; }
-        public void setHttpHeaders(List<String> httpHeaders) { this.httpHeaders = httpHeaders; }
+        public String getVersion() {
+            return version;
+        }
 
-        public List<Integer> getPortPorts() { return portPorts; }
-        public void setPortPorts(List<Integer> portPorts) { this.portPorts = portPorts; }
+        public void setVersion(String version) {
+            this.version = version;
+        }
 
-        public List<String> getRtspPaths() { return rtspPaths; }
-        public void setRtspPaths(List<String> rtspPaths) { this.rtspPaths = rtspPaths; }
+        public List<String> getHttpPaths() {
+            return httpPaths;
+        }
 
-        public String getSnmpOid() { return snmpOid; }
-        public void setSnmpOid(String snmpOid) { this.snmpOid = snmpOid; }
+        public void setHttpPaths(List<String> httpPaths) {
+            this.httpPaths = httpPaths;
+        }
 
-        public String getModbusRegisters() { return modbusRegisters; }
-        public void setModbusRegisters(String modbusRegisters) { this.modbusRegisters = modbusRegisters; }
+        public List<String> getHttpHeaders() {
+            return httpHeaders;
+        }
+
+        public void setHttpHeaders(List<String> httpHeaders) {
+            this.httpHeaders = httpHeaders;
+        }
+
+        public List<Integer> getPortPorts() {
+            return portPorts;
+        }
+
+        public void setPortPorts(List<Integer> portPorts) {
+            this.portPorts = portPorts;
+        }
+
+        public List<String> getRtspPaths() {
+            return rtspPaths;
+        }
+
+        public void setRtspPaths(List<String> rtspPaths) {
+            this.rtspPaths = rtspPaths;
+        }
+
+        public String getSnmpOid() {
+            return snmpOid;
+        }
+
+        public void setSnmpOid(String snmpOid) {
+            this.snmpOid = snmpOid;
+        }
+
+        public String getModbusRegisters() {
+            return modbusRegisters;
+        }
+
+        public void setModbusRegisters(String modbusRegisters) {
+            this.modbusRegisters = modbusRegisters;
+        }
     }
 }

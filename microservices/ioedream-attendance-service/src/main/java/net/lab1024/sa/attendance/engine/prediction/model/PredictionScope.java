@@ -29,11 +29,11 @@ public class PredictionScope {
     private String departmentId;
     private String shiftType;
 
-    public LocalDateTime getStartTime() {
+    public LocalDateTime getWorkStartTime() {
         return startDate != null ? startDate.atStartOfDay() : null;
     }
 
-    public LocalDateTime getEndTime() {
+    public LocalDateTime getWorkEndTime() {
         return endDate != null ? endDate.atTime(23, 59, 59) : null;
     }
 }

@@ -1,0 +1,62 @@
+{
+  "mcpServers": {
+    "Memory": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-memory"
+      ],
+      "env": {
+        "MEMORY_FILE_PATH": "memory.json"
+      }
+    },
+    "MySQL": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@f4ww4z/mcp-mysql-server"
+      ],
+      "env": {
+        "MYSQL_HOST": "127.0.0.1",
+        "MYSQL_PORT": "3306",
+        "MYSQL_USER": "root",
+        "MYSQL_PASSWORD": "root1234",
+        "MYSQL_DATABASE": "smart_admin_v3"
+      }
+    },
+    "Chrome DevTools MCP": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "chrome-devtools-mcp@latest"
+      ],
+      "env": {}
+    },
+    "serena": {
+      "command": "python",
+      "args": [
+        "-m",
+        "uv",
+        "run",
+        "--directory",
+        "D:/tools/serena",
+        "serena-mcp-server",
+        "--project",
+        "D:/IOE-DREAM",
+        "--context",
+        "ide-assistant",
+        "--mode",
+        "interactive",
+        "--mode",
+        "editing"
+      ],
+      "env": {
+        "UV_INDEX_URL": "https://pypi.tuna.tsinghua.edu.cn/simple/",
+        "PYTHONPATH": "D:/tools/serena/src"
+      },
+      "timeout": 1200,
+      "restart": true,
+      "autostart": true
+    }
+  }
+}

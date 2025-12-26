@@ -2,7 +2,7 @@ package net.lab1024.sa.video.openapi.service;
 
 import net.lab1024.sa.video.openapi.domain.request.*;
 import net.lab1024.sa.video.openapi.domain.response.*;
-import net.lab1024.sa.common.openapi.domain.response.PageResult;
+import net.lab1024.sa.common.domain.PageResult;
 
 import java.util.List;
 

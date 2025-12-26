@@ -7,10 +7,7 @@ import lombok.Data;
 /**
  * 审批任务视图对象
  * <p>
- * 严格遵循CLAUDE.md规范：
- * - VO类用于数据传输，不包含业务逻辑
- * - 字段命名清晰，符合业务语义
- * - 完整的字段注释
+ * 严格遵循CLAUDE.md规范： - VO类用于数据传输，不包含业务逻辑 - 字段命名清晰，符合业务语义 - 完整的字段注释
  * </p>
  *
  * @author IOE-DREAM架构团队
@@ -145,13 +142,7 @@ public class ApprovalTaskVO {
      */
     private String initiatorName;
 
-    public String getTaskName() {
+    public String getTaskName () {
         return taskName;
     }
 }
-
-
-
-
-
-

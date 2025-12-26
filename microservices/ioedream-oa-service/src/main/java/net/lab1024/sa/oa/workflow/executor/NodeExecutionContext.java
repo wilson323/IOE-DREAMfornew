@@ -1,11 +1,12 @@
 package net.lab1024.sa.oa.workflow.executor;
 
-import lombok.Data;
-import lombok.experimental.Accessors;
-import org.springframework.lang.Nullable;
-
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.springframework.lang.Nullable;
+
+import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
  * 节点执行上下文
@@ -41,7 +42,7 @@ public class NodeExecutionContext {
         return this;
     }
 
-    @SuppressWarnings({"unchecked", "null"})
+    @SuppressWarnings({ "unchecked", "null" })
     @Nullable
     public <T> T getExecutionData(String key) {
         if (this.executionData == null) {
@@ -58,7 +59,7 @@ public class NodeExecutionContext {
         return this;
     }
 
-    @SuppressWarnings({"unchecked", "null"})
+    @SuppressWarnings({ "unchecked", "null" })
     @Nullable
     public <T> T getExtendedProperty(String key) {
         if (this.extendedProperties == null) {
@@ -80,7 +81,3 @@ public class NodeExecutionContext {
         return getExecutionDuration() > timeoutMs;
     }
 }
-
-
-
-

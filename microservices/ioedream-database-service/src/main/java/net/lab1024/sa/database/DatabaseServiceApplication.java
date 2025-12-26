@@ -1,6 +1,7 @@
 package net.lab1024.sa.database;
 
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
@@ -33,14 +34,15 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  * @version 1.0.1
  * @since 2025-12-08
  */
-@Slf4j
 @SpringBootApplication(scanBasePackages = {
-    "net.lab1024.sa.database",
-    "net.lab1024.sa.common"
+        "net.lab1024.sa.database",
+        "net.lab1024.sa.common"
 })
 @EnableDiscoveryClient
 @EnableScheduling
+@Slf4j
 public class DatabaseServiceApplication {
+
 
     public static void main(String[] args) {
         log.info("🚀 IOE-DREAM 数据库初始化管理服务启动中...");

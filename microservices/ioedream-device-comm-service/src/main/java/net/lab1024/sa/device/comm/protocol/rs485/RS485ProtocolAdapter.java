@@ -1,15 +1,26 @@
 package net.lab1024.sa.device.comm.protocol.rs485;
 
 import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.device.comm.protocol.ProtocolAdapter;
-import net.lab1024.sa.device.comm.protocol.domain.*;
-import net.lab1024.sa.device.comm.protocol.exception.ProtocolBuildException;
-import net.lab1024.sa.device.comm.protocol.exception.ProtocolParseException;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
+
+
+import net.lab1024.sa.device.comm.protocol.ProtocolAdapter;
+import net.lab1024.sa.device.comm.protocol.domain.ProtocolDeviceStatus;
+import net.lab1024.sa.device.comm.protocol.domain.ProtocolErrorInfo;
+import net.lab1024.sa.device.comm.protocol.domain.ProtocolErrorResponse;
+import net.lab1024.sa.device.comm.protocol.domain.ProtocolHeartbeatResult;
+import net.lab1024.sa.device.comm.protocol.domain.ProtocolInitResult;
+import net.lab1024.sa.device.comm.protocol.domain.ProtocolMessage;
+import net.lab1024.sa.device.comm.protocol.domain.ProtocolPermissionResult;
+import net.lab1024.sa.device.comm.protocol.domain.ProtocolProcessResult;
+import net.lab1024.sa.device.comm.protocol.domain.ProtocolRegistrationResult;
+import net.lab1024.sa.device.comm.protocol.domain.ProtocolValidationResult;
+import net.lab1024.sa.device.comm.protocol.exception.ProtocolBuildException;
+import net.lab1024.sa.device.comm.protocol.exception.ProtocolParseException;
 
 /**
  * RS485协议适配器
@@ -27,7 +38,7 @@ public class RS485ProtocolAdapter implements ProtocolAdapter {
     private static final String PROTOCOL_TYPE = "RS485_STANDARD_V1_0";
     private static final String MANUFACTURER = "通用RS485";
     private static final String VERSION = "V1.0";
-    private static final String[] SUPPORTED_MODELS = {"RS485-GENERIC"};
+    private static final String[] SUPPORTED_MODELS = { "RS485-GENERIC" };
 
     private String adapterStatus = "INITIALIZED";
 
@@ -82,15 +93,17 @@ public class RS485ProtocolAdapter implements ProtocolAdapter {
     }
 
     @Override
-    public byte[] buildDeviceResponse(String messageType, Map<String, Object> businessData, Long deviceId) throws ProtocolBuildException {
+    public byte[] buildDeviceResponse(String messageType, Map<String, Object> businessData, Long deviceId)
+            throws ProtocolBuildException {
         log.debug("[RS485协议] 构建设备响应, deviceId={}, messageType={}", deviceId, messageType);
 
         // 简单实现：返回确认响应
-        return new byte[]{0x06}; // ACK
+        return new byte[] { 0x06 }; // ACK
     }
 
     @Override
-    public String buildDeviceResponseHex(String messageType, Map<String, Object> businessData, Long deviceId) throws ProtocolBuildException {
+    public String buildDeviceResponseHex(String messageType, Map<String, Object> businessData, Long deviceId)
+            throws ProtocolBuildException {
         byte[] response = buildDeviceResponse(messageType, businessData, deviceId);
         return bytesToHex(response);
     }
@@ -111,8 +124,7 @@ public class RS485ProtocolAdapter implements ProtocolAdapter {
     @Override
     public Future<ProtocolInitResult> initializeDevice(Map<String, Object> deviceInfo, Map<String, Object> config) {
         return CompletableFuture.completedFuture(
-                ProtocolInitResult.success(null, "RS485_CONN_" + System.currentTimeMillis())
-        );
+                ProtocolInitResult.success(null, "RS485_CONN_" + System.currentTimeMillis()));
     }
 
     @Override
@@ -136,24 +148,24 @@ public class RS485ProtocolAdapter implements ProtocolAdapter {
     }
 
     @Override
-    public Future<ProtocolProcessResult> processAccessBusiness(String businessType, Map<String, Object> businessData, Long deviceId) {
+    public Future<ProtocolProcessResult> processAccessBusiness(String businessType, Map<String, Object> businessData,
+            Long deviceId) {
         return CompletableFuture.completedFuture(
-                ProtocolProcessResult.success(businessType, businessData)
-        );
+                ProtocolProcessResult.success(businessType, businessData));
     }
 
     @Override
-    public Future<ProtocolProcessResult> processAttendanceBusiness(String businessType, Map<String, Object> businessData, Long deviceId) {
+    public Future<ProtocolProcessResult> processAttendanceBusiness(String businessType,
+            Map<String, Object> businessData, Long deviceId) {
         return CompletableFuture.completedFuture(
-                ProtocolProcessResult.success(businessType, businessData)
-        );
+                ProtocolProcessResult.success(businessType, businessData));
     }
 
     @Override
-    public Future<ProtocolProcessResult> processConsumeBusiness(String businessType, Map<String, Object> businessData, Long deviceId) {
+    public Future<ProtocolProcessResult> processConsumeBusiness(String businessType, Map<String, Object> businessData,
+            Long deviceId) {
         return CompletableFuture.completedFuture(
-                ProtocolProcessResult.success(businessType, businessData)
-        );
+                ProtocolProcessResult.success(businessType, businessData));
     }
 
     @Override

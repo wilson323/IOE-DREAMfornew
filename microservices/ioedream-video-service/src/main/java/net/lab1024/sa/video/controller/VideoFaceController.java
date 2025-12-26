@@ -1,28 +1,37 @@
 package net.lab1024.sa.video.controller;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.extern.slf4j.Slf4j;
-import net.lab1024.sa.common.domain.PageParam;
-import net.lab1024.sa.common.openapi.domain.response.PageResult;
-import net.lab1024.sa.common.dto.ResponseDTO;
-import net.lab1024.sa.video.domain.form.VideoFaceAddForm;
-import net.lab1024.sa.video.domain.form.VideoFaceSearchForm;
-import net.lab1024.sa.video.domain.vo.VideoFaceVO;
-import net.lab1024.sa.video.service.VideoFaceService;
-import net.lab1024.sa.common.permission.annotation.PermissionCheck;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import jakarta.annotation.Resource;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.Resource;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import net.lab1024.sa.common.domain.PageParam;
+import net.lab1024.sa.common.domain.PageResult;
+import net.lab1024.sa.common.dto.ResponseDTO;
+import net.lab1024.sa.common.permission.annotation.PermissionCheck;
+import net.lab1024.sa.video.domain.form.VideoFaceAddForm;
+import net.lab1024.sa.video.domain.form.VideoFaceSearchForm;
+import net.lab1024.sa.video.domain.vo.VideoFaceVO;
+import net.lab1024.sa.video.service.VideoFaceService;
 
 /**
  * 人脸识别控制器
@@ -199,9 +208,9 @@ public class VideoFaceController {
     // ==================== 人脸搜索 ====================
 
     @Operation(summary = "人脸搜索", description = "上传人脸图片进行1:N人脸识别搜索")
-    @PostMapping("/search")
+    @GetMapping("/search")
     @PermissionCheck(value = "VIDEO_USE", description = "人脸识别操作")
-    public ResponseDTO<Map<String, Object>> faceSearch(@Valid @RequestBody VideoFaceSearchForm searchForm) {
+    public ResponseDTO<Map<String, Object>> faceSearch(@Valid @ModelAttribute VideoFaceSearchForm searchForm) {
         return videoFaceService.faceSearch(searchForm);
     }
 
@@ -216,7 +225,7 @@ public class VideoFaceController {
     }
 
     @Operation(summary = "以脸搜脸", description = "上传图片进行人脸搜索")
-    @PostMapping("/search-by-image")
+    @GetMapping("/search-by-image")
     @PermissionCheck(value = "VIDEO_USE", description = "人脸识别操作")
     public ResponseDTO<Map<String, Object>> searchByFaceImage(
             @Parameter(description = "人脸图片URL", required = true) @RequestParam String imageUrl,

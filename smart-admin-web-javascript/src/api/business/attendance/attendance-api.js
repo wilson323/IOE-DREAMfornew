@@ -16,14 +16,14 @@ export const attendanceApi = {
    * 分页查询考勤记录
    */
   queryAttendanceRecords: (params) => {
-    return postRequest('/attendance/record/query', params);
+    return postRequest('/api/v1/attendance/record/query', params);
   },
 
   /**
    * 获取考勤记录统计
    */
   getAttendanceRecordStatistics: (params) => {
-    return getRequest('/attendance/record/statistics', params);
+    return getRequest('/api/v1/attendance/record/statistics', params);
   },
 };
 

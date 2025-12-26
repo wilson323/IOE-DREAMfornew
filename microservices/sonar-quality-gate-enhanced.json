@@ -1,0 +1,273 @@
+{
+  "name": "IOE-DREAM 增强质量门禁",
+  "description": "企业级代码质量门禁标准，专注核心指标，避免过度配置",
+  "version": "2.0.0",
+  "created": "2025-12-20",
+  "projectKey": "ioedream-microservices",
+
+  "qualityGate": {
+    "conditions": [
+      {
+        "metric": "coverage",
+        "operator": "LT",
+        "threshold": "80",
+        "period": "DRIFT",
+        "status": "ERROR",
+        "description": "代码覆盖率必须≥80%",
+        "priority": "HIGH"
+      },
+      {
+        "metric": "duplicated_lines_density",
+        "operator": "GT",
+        "threshold": "3",
+        "period": "DRIFT",
+        "status": "ERROR",
+        "description": "重复代码密度必须≤3%",
+        "priority": "HIGH"
+      },
+      {
+        "metric": "new_coverage",
+        "operator": "LT",
+        "threshold": "85",
+        "period": "NEW",
+        "status": "ERROR",
+        "description": "新代码覆盖率必须≥85%",
+        "priority": "HIGH"
+      },
+      {
+        "metric": "maintainability_rating",
+        "operator": "GT",
+        "threshold": "B",
+        "period": "DRIFT",
+        "status": "ERROR",
+        "description": "可维护性评级必须≥B级",
+        "priority": "HIGH"
+      },
+      {
+        "metric": "reliability_rating",
+        "operator": "GT",
+        "threshold": "B",
+        "period": "DRIFT",
+        "status": "ERROR",
+        "description": "可靠性评级必须≥B级",
+        "priority": "HIGH"
+      },
+      {
+        "metric": "security_rating",
+        "operator": "GT",
+        "threshold": "B",
+        "period": "DRIFT",
+        "status": "ERROR",
+        "description": "安全评级必须≥B级",
+        "priority": "HIGH"
+      },
+      {
+        "metric": "bugs",
+        "operator": "GT",
+        "threshold": "5",
+        "period": "NEW",
+        "status": "ERROR",
+        "description": "新增Bug不超过5个",
+        "priority": "HIGH"
+      },
+      {
+        "metric": "vulnerabilities",
+        "operator": "GT",
+        "threshold": "0",
+        "period": "NEW",
+        "status": "ERROR",
+        "description": "新增安全漏洞为0",
+        "priority": "HIGH"
+      },
+      {
+        "metric": "code_smells",
+        "operator": "GT",
+        "threshold": "50",
+        "period": "NEW",
+        "status": "WARNING",
+        "description": "新增代码异味不超过50个",
+        "priority": "MEDIUM"
+      }
+    ]
+  },
+
+  "moduleSpecificThresholds": {
+    "microservices-common": {
+      "coverage": 90,
+      "description": "公共模块覆盖率要求90%"
+    },
+    "ioedream-common-service": {
+      "coverage": 85,
+      "description": "核心服务覆盖率要求85%"
+    },
+    "ioedream-access-service": {
+      "coverage": 85,
+      "vulnerabilities": 0,
+      "description": "门禁服务覆盖率85%，安全漏洞为0"
+    },
+    "ioedream-consume-service": {
+      "coverage": 85,
+      "reliability": "A",
+      "description": "消费服务覆盖率85%，可靠性A级"
+    },
+    "ioedream-attendance-service": {
+      "coverage": 85,
+      "description": "考勤服务覆盖率85%"
+    },
+    "ioedream-video-service": {
+      "coverage": 80,
+      "description": "视频服务覆盖率80%"
+    },
+    "ioedream-device-comm-service": {
+      "coverage": 80,
+      "description": "设备通讯服务覆盖率80%"
+    },
+    "ioedream-oa-service": {
+      "coverage": 80,
+      "description": "OA服务覆盖率80%"
+    }
+  },
+
+  "quickCheckConfig": {
+    "description": "快速检查模式，用于本地开发",
+    "conditions": [
+      {
+        "metric": "new_coverage",
+        "operator": "LT",
+        "threshold": "70",
+        "status": "WARNING",
+        "description": "本地开发覆盖率建议≥70%"
+      },
+      {
+        "metric": "new_duplicated_lines_density",
+        "operator": "GT",
+        "threshold": "5",
+        "status": "WARNING",
+        "description": "重复代码密度建议≤5%"
+      },
+      {
+        "metric": "new_vulnerabilities",
+        "operator": "GT",
+        "threshold": "0",
+        "status": "ERROR",
+        "description": "不允许新增安全漏洞"
+      }
+    ]
+  },
+
+  "complianceChecks": {
+    "architecture": {
+      "enabled": true,
+      "rules": [
+        {
+          "name": "四层架构合规",
+          "check": "controller → service → manager → dao",
+          "priority": "BLOCKER"
+        },
+        {
+          "name": "依赖注入规范",
+          "check": "使用@Resource，禁止@Autowired",
+          "priority": "BLOCKER"
+        },
+        {
+          "name": "DAO命名规范",
+          "check": "使用@Mapper和Dao后缀，禁止@Repository",
+          "priority": "BLOCKER"
+        }
+      ]
+    },
+    "security": {
+      "enabled": true,
+      "rules": [
+        {
+          "name": "密码安全",
+          "check": "禁止硬编码密码",
+          "priority": "BLOCKER"
+        },
+        {
+          "name": "SQL注入防护",
+          "check": "使用参数化查询",
+          "priority": "CRITICAL"
+        },
+        {
+          "name": "XSS防护",
+          "check": "输入输出过滤",
+          "priority": "CRITICAL"
+        }
+      ]
+    },
+    "performance": {
+      "enabled": true,
+      "rules": [
+        {
+          "name": "数据库查询优化",
+          "check": "避免全表扫描和N+1查询",
+          "priority": "CRITICAL"
+        },
+        {
+          "name": "缓存策略",
+          "check": "实施适当的多级缓存",
+          "priority": "MAJOR"
+        }
+      ]
+    }
+  },
+
+  "reporting": {
+    "summaryReport": {
+      "enabled": true,
+      "metrics": [
+        "coverage",
+        "duplicated_lines_density",
+        "maintainability_rating",
+        "reliability_rating",
+        "security_rating",
+        "bugs",
+        "vulnerabilities",
+        "code_smells"
+      ]
+    },
+    "trendAnalysis": {
+      "enabled": true,
+      "period": 30,
+      "metrics": [
+        "coverage",
+        "sqale_index",
+        "technical_debt"
+      ]
+    },
+    "hotspots": {
+      "enabled": true,
+      "categories": [
+        "security",
+        "maintainability",
+        "reliability"
+      ]
+    }
+  },
+
+  "notifications": {
+    "onFailure": {
+      "channels": ["email", "slack"],
+      "recipients": ["dev-team@ioedream.com"],
+      "template": "质量门禁失败报告"
+    },
+    "onWarning": {
+      "channels": ["slack"],
+      "template": "质量警告报告"
+    }
+  },
+
+  "automation": {
+    "prChecks": {
+      "enabled": true,
+      "autoComment": true,
+      "failBuild": true
+    },
+    "scheduledAnalysis": {
+      "enabled": true,
+      "frequency": "daily",
+      "time": "02:00"
+    }
+  }
+}

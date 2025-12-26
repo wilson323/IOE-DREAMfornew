@@ -1,0 +1,40 @@
+[0;34m========================================[0m
+[0;34m快速代码质量基线扫描[0m
+[0;34m========================================[0m
+[0;32m[INFO][0m 报告目录: D:/IOE-DREAM/microservices/quality-baseline-reports
+[0;32m[INFO][0m 时间戳: 20251225_204648
+
+[0;34m========================================[0m
+[0;34m步骤1: 清理构建缓存[0m
+[0;34m========================================[0m
+[0;32m[INFO][0m 清理完成
+
+[0;34m========================================[0m
+[0;34m步骤2: 编译项目（跳过测试）[0m
+[0;34m========================================[0m
+[0;32m[INFO][0m 编译中...
+[ERROR] COMPILATION ERROR : 
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-attendance-service/src/main/java/net/lab1024/sa/attendance/config/AttendanceManagerConfiguration.java:[3,41] 找不到符号
+  符号:   类 WorkflowApprovalManager
+  位置: 程序包 net.lab1024.sa.attendance.manager
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-attendance-service/src/main/java/net/lab1024/sa/attendance/config/AttendanceManagerConfiguration.java:[25,12] 找不到符号
+  符号:   类 WorkflowApprovalManager
+  位置: 类 net.lab1024.sa.attendance.config.AttendanceManagerConfiguration
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.13.0:compile (default-compile) on project ioedream-attendance-service: Compilation failure: Compilation failure: 
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-attendance-service/src/main/java/net/lab1024/sa/attendance/config/AttendanceManagerConfiguration.java:[3,41] 找不到符号
+[ERROR]   符号:   类 WorkflowApprovalManager
+[ERROR]   位置: 程序包 net.lab1024.sa.attendance.manager
+[ERROR] /D:/IOE-DREAM/microservices/ioedream-attendance-service/src/main/java/net/lab1024/sa/attendance/config/AttendanceManagerConfiguration.java:[25,12] 找不到符号
+[ERROR]   符号:   类 WorkflowApprovalManager
+[ERROR]   位置: 类 net.lab1024.sa.attendance.config.AttendanceManagerConfiguration
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
+[ERROR] 
+[ERROR] After correcting the problems, you can resume the build with the command
+[ERROR]   mvn <args> -rf :ioedream-attendance-service
+[0;31m[ERROR][0m ❌ 编译失败

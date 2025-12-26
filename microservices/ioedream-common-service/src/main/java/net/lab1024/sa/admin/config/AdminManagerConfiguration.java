@@ -65,10 +65,8 @@ public class AdminManagerConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean(AuthManager.class)
-    public AuthManager authManager(
-            UserSessionDao userSessionDao,
-            JwtTokenUtil jwtTokenUtil,
-            StringRedisTemplate redisTemplate) {
-        return new AuthManager(userSessionDao, jwtTokenUtil, redisTemplate);
+    public AuthManager authManager() {
+        // AuthManager已通过@Component注解自动注册，无需手动Bean配置
+        return null;
     }
 }

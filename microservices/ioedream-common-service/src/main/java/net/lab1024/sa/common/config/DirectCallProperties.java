@@ -52,4 +52,3 @@ public class DirectCallProperties {
      */
     private int nonceCacheMaxSize = 10_000;
 }
-
