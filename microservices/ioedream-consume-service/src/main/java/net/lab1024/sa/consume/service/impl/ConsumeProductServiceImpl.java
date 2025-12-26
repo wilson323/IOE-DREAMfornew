@@ -15,6 +15,9 @@ import org.springframework.util.StringUtils;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+
 import lombok.extern.slf4j.Slf4j;
 
 import net.lab1024.sa.common.domain.PageResult;
@@ -83,6 +86,7 @@ public class ConsumeProductServiceImpl implements ConsumeProductService {
 
     @Override
     @PermissionCheck("consume:product:query")
+    @Cacheable(value = "product", key = "#productId", unless = "#result == null")
     public ConsumeProductVO getById(Long productId) {
         try {
             log.info("[产品服务] [产品管理] 开始查询产品详情: productId={}", productId);
@@ -109,6 +113,7 @@ public class ConsumeProductServiceImpl implements ConsumeProductService {
 
     @Override
     @PermissionCheck("consume:product:add")
+    @CacheEvict(value = "product", allEntries = true)
     public ConsumeProductVO add(@Valid ConsumeProductAddForm addForm) {
         try {
             log.info("[产品服务] [产品管理] 开始添加产品: addForm={}", addForm);
@@ -145,6 +150,7 @@ public class ConsumeProductServiceImpl implements ConsumeProductService {
 
     @Override
     @PermissionCheck("consume:product:update")
+    @CacheEvict(value = "product", allEntries = true)
     public ConsumeProductVO update(@Valid ConsumeProductUpdateForm updateForm) {
         try {
             log.info("[产品服务] [产品管理] 开始更新产品: updateForm={}", updateForm);
@@ -189,6 +195,7 @@ public class ConsumeProductServiceImpl implements ConsumeProductService {
 
     @Override
     @PermissionCheck("consume:product:delete")
+    @CacheEvict(value = "product", allEntries = true)
     public void delete(Long productId) {
         try {
             log.info("[产品服务] [产品管理] 开始删除产品: productId={}", productId);
@@ -229,6 +236,7 @@ public class ConsumeProductServiceImpl implements ConsumeProductService {
 
     @Override
     @PermissionCheck("consume:product:delete")
+    @CacheEvict(value = "product", allEntries = true)
     public Integer batchDelete(List<Long> productIds) {
         try {
             log.info("[产品服务] [产品管理] 开始批量删除产品: productIds={}", productIds);
@@ -268,6 +276,7 @@ public class ConsumeProductServiceImpl implements ConsumeProductService {
 
     @Override
     @PermissionCheck("consume:product:query")
+    @Cacheable(value = "product", key = "'allOnSale'")
     public List<ConsumeProductVO> getAllOnSale() {
         try {
             log.info("[产品服务] [产品管理] 开始查询所有上架产品");
@@ -291,6 +300,7 @@ public class ConsumeProductServiceImpl implements ConsumeProductService {
 
     @Override
     @PermissionCheck("consume:product:query")
+    @Cacheable(value = "product", key = "'recommended:' + #limit")
     public List<ConsumeProductVO> getRecommendedProducts(Integer limit) {
         try {
             log.info("[产品服务] [产品管理] 开始查询推荐产品: limit={}", limit);
@@ -314,6 +324,7 @@ public class ConsumeProductServiceImpl implements ConsumeProductService {
 
     @Override
     @PermissionCheck("consume:product:query")
+    @Cacheable(value = "product", key = "'category:' + #categoryId")
     public List<ConsumeProductVO> getByCategoryId(Long categoryId) {
         try {
             log.info("[产品服务] [产品管理] 开始查询分类产品: categoryId={}", categoryId);
@@ -337,6 +348,7 @@ public class ConsumeProductServiceImpl implements ConsumeProductService {
 
     @Override
     @PermissionCheck("consume:product:query")
+    @Cacheable(value = "product", key = "'hotSales:' + #limit")
     public List<ConsumeProductVO> getHotSales(Integer limit) {
         try {
             log.info("[产品服务] [产品管理] 开始查询热销产品: limit={}", limit);
@@ -454,6 +466,7 @@ public class ConsumeProductServiceImpl implements ConsumeProductService {
 
     @Override
     @PermissionCheck("consume:product:update")
+    @CacheEvict(value = "product", allEntries = true)
     public void putOnSale(Long productId) {
         try {
             log.info("[产品服务] [产品管理] 开始上架产品: productId={}", productId);
@@ -487,6 +500,7 @@ public class ConsumeProductServiceImpl implements ConsumeProductService {
 
     @Override
     @PermissionCheck("consume:product:update")
+    @CacheEvict(value = "product", allEntries = true)
     public void putOffSale(Long productId) {
         try {
             log.info("[产品服务] [产品管理] 开始下架产品: productId={}", productId);
@@ -519,6 +533,7 @@ public class ConsumeProductServiceImpl implements ConsumeProductService {
 
     @Override
     @PermissionCheck("consume:product:update")
+    @CacheEvict(value = "product", allEntries = true)
     public Integer batchUpdateStatus(List<Long> productIds, Integer status) {
         try {
             log.info("[产品服务] [产品管理] 开始批量更新产品状态: productIds={}, status={}", productIds, status);
@@ -541,6 +556,7 @@ public class ConsumeProductServiceImpl implements ConsumeProductService {
 
       @Override
     @PermissionCheck("consume:product:update")
+    @CacheEvict(value = "product", allEntries = true)
     public void setRecommended(Long productId, Integer isRecommended, Integer recommendSort) {
         try {
             log.info("[产品服务] [产品管理] 开始设置推荐状态: productId={}, isRecommended={}, recommendSort={}",
@@ -574,6 +590,7 @@ public class ConsumeProductServiceImpl implements ConsumeProductService {
 
     @Override
     @PermissionCheck("consume:product:update")
+    @CacheEvict(value = "product", allEntries = true)
     public Boolean updateStock(Long productId, Integer quantity) {
         try {
             log.info("[产品服务] [产品管理] 开始更新库存: productId={}, quantity={}", productId, quantity);
@@ -598,6 +615,7 @@ public class ConsumeProductServiceImpl implements ConsumeProductService {
 
     @Override
     @PermissionCheck("consume:product:update")
+    @CacheEvict(value = "product", allEntries = true)
     public Map<String, Object> batchUpdateStock(List<Map<String, Object>> stockUpdates) {
         try {
             log.info("[产品服务] [产品管理] 开始批量更新库存: stockUpdates={}", stockUpdates);
