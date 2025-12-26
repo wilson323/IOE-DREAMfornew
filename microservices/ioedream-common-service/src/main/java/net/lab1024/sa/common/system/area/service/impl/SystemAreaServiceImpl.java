@@ -18,7 +18,7 @@ import jakarta.annotation.Resource;
 import net.lab1024.sa.common.domain.PageResult;
 import net.lab1024.sa.common.exception.ParamException;
 import net.lab1024.sa.common.system.area.dao.SystemAreaDao;
-import net.lab1024.sa.common.system.area.domain.entity.SystemAreaEntity;
+import net.lab1024.sa.common.entity.organization.SystemAreaEntity;
 import net.lab1024.sa.common.system.area.domain.form.SystemAreaAddForm;
 import net.lab1024.sa.common.system.area.domain.form.SystemAreaQueryForm;
 import net.lab1024.sa.common.system.area.domain.form.SystemAreaUpdateForm;

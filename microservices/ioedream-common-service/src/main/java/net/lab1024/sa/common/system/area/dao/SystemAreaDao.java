@@ -1,7 +1,7 @@
 package net.lab1024.sa.common.system.area.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import net.lab1024.sa.common.system.area.domain.entity.SystemAreaEntity;
+import net.lab1024.sa.common.entity.organization.SystemAreaEntity;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
