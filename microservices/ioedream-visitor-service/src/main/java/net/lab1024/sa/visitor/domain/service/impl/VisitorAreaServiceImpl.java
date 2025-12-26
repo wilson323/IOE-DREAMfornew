@@ -557,7 +557,6 @@ import java.util.stream.Collectors;
     }
 
     @Override
-    @Override
     public Map<String, String> getAreaOpenHours(Long areaId) {
         log.debug("[访客区域管理] 获取区域开放时间配置, areaId={}", areaId);
 
@@ -598,7 +597,6 @@ import java.util.stream.Collectors;
         }
     }
 
-    @Override
     @Override
     public boolean isAreaCurrentlyOpen(Long areaId) {
         log.debug("[访客区域管理] 检查区域当前是否开放, areaId={}", areaId);
