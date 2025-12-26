@@ -1,4 +1,4 @@
-﻿package net.lab1024.sa.visitor.strategy.impl;
+package net.lab1024.sa.visitor.strategy.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.common.entity.visitor.VisitorEntity;

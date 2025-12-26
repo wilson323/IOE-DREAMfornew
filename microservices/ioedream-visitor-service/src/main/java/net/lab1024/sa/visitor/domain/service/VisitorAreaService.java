@@ -1,4 +1,4 @@
-﻿package net.lab1024.sa.visitor.domain.service;
+package net.lab1024.sa.visitor.domain.service;
 
 import net.lab1024.sa.common.entity.visitor.VisitorAreaEntity;
 

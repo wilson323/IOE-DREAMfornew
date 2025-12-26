@@ -1,4 +1,4 @@
-﻿package net.lab1024.sa.visitor.dao;
+package net.lab1024.sa.visitor.dao;
 
 import org.apache.ibatis.annotations.Mapper;
 

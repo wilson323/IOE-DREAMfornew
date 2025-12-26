@@ -1,4 +1,4 @@
-﻿package net.lab1024.sa.visitor.domain.dao;
+package net.lab1024.sa.visitor.domain.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import net.lab1024.sa.common.entity.visitor.VisitorAreaEntity;

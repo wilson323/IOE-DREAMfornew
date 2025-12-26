@@ -1,4 +1,4 @@
-﻿package net.lab1024.sa.visitor.domain.service.impl;
+package net.lab1024.sa.visitor.domain.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import com.fasterxml.jackson.core.type.TypeReference;
