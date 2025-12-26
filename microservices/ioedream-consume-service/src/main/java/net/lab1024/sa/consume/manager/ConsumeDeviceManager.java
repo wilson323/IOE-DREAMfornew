@@ -569,9 +569,9 @@ public class ConsumeDeviceManager {
                 deviceReport.put("deviceName", device.getDeviceName());
                 deviceReport.put("deviceType", device.getDeviceType());
                 deviceReport.put("deviceStatus", device.getDeviceStatus());
-                deviceReport.put("deviceLocation", device.getDeviceLocation());
+                deviceReport.put("deviceLocation", getDeviceLocation(device));
                 deviceReport.put("lastCommunicationTime", device.getLastCommunicationTime());
-                deviceReport.put("healthStatus", device.getHealthStatus());
+                deviceReport.put("healthStatus", getHealthStatus(device));
                 deviceReport.put("reportType", reportType);
                 deviceReport.put("reportTime", LocalDateTime.now());
 
@@ -581,9 +581,9 @@ public class ConsumeDeviceManager {
                     deviceReport.put("deviceModel", device.getDeviceModel());
                     deviceReport.put("deviceManufacturer", device.getDeviceManufacturer());
                     deviceReport.put("firmwareVersion", device.getFirmwareVersion());
-                    deviceReport.put("supportsOffline", device.supportsOffline());
-                    deviceReport.put("businessAttributes", device.getBusinessAttributes());
-                    deviceReport.put("deviceDescription", device.getDeviceDescription());
+                    deviceReport.put("supportsOffline", supportsOffline(device));
+                    deviceReport.put("businessAttributes", getBusinessAttributes(device));
+                    deviceReport.put("deviceDescription", getDeviceDescription(device));
                     deviceReport.put("createTime", device.getCreateTime());
                     deviceReport.put("updateTime", device.getUpdateTime());
                 }
