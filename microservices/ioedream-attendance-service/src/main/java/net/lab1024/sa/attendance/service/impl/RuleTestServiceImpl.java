@@ -12,6 +12,7 @@ import net.lab1024.sa.attendance.domain.vo.RuleTestHistoryDetailVO;
 import net.lab1024.sa.attendance.engine.rule.AttendanceRuleEngine;
 import net.lab1024.sa.attendance.engine.model.RuleExecutionContext;
 import net.lab1024.sa.attendance.engine.model.RuleEvaluationResult;
+import net.lab1024.sa.attendance.engine.model.RuleTestContext;
 import net.lab1024.sa.attendance.service.RuleTestService;
 import net.lab1024.sa.attendance.service.RuleTestHistoryService;
 import net.lab1024.sa.common.exception.BusinessException;
@@ -320,16 +321,22 @@ public class RuleTestServiceImpl implements RuleTestService {
 
     /**
      * 构建规则执行上下文
+     * <p>
+     * 使用RuleTestContext构建类型安全的测试上下文，然后转换为RuleExecutionContext
+     * </p>
      */
     private RuleExecutionContext buildExecutionContext(RuleTestRequest testRequest) {
-        RuleExecutionContext.RuleExecutionContextBuilder builder = RuleExecutionContext.builder();
-
-        builder.executionId(UUID.randomUUID().toString())
-                .userId(testRequest.getUserId())
-                .userName(testRequest.getUserName())
+        // 使用RuleTestContext构建类型安全的测试上下文
+        RuleTestContext testContext = RuleTestContext.testBuilder()
+                // 基础字段
+                .employeeId(testRequest.getUserId())
+                .employeeName(testRequest.getUserName())
                 .departmentId(testRequest.getDepartmentId())
-                .departmentName(testRequest.getDepartmentName())
-                .attendanceDate(testRequest.getAttendanceDate() != null ? testRequest.getAttendanceDate() : LocalDate.now())
+                .scheduleDate(testRequest.getAttendanceDate() != null ? testRequest.getAttendanceDate() : LocalDate.now())
+                // 测试专用字段
+                .executionId(UUID.randomUUID().toString())
+                .executionTimestamp(LocalDateTime.now())
+                .executionMode("TEST")
                 .punchTime(testRequest.getPunchTime())
                 .punchType(testRequest.getPunchType())
                 .scheduleStartTime(testRequest.getScheduleStartTime())
@@ -337,26 +344,14 @@ public class RuleTestServiceImpl implements RuleTestService {
                 .workLocation(testRequest.getWorkLocation())
                 .deviceId(testRequest.getDeviceId())
                 .deviceName(testRequest.getDeviceName())
-                .executionTimestamp(LocalDateTime.now())
-                .executionMode("TEST");
+                // 测试属性
+                .userAttributes(testRequest.getUserAttributes() != null ? testRequest.getUserAttributes() : new HashMap<>())
+                .attendanceAttributes(testRequest.getAttendanceAttributes() != null ? testRequest.getAttendanceAttributes() : new HashMap<>())
+                .environmentParams(testRequest.getEnvironmentParams() != null ? testRequest.getEnvironmentParams() : new HashMap<>())
+                .build();
 
-        // 设置用户属性
-        if (testRequest.getUserAttributes() != null) {
-            builder.userAttributes(testRequest.getUserAttributes());
-        }
-
-        // 设置考勤属性
-        if (testRequest.getAttendanceAttributes() != null) {
-            Map<String, Object> attendanceAttributes = new HashMap<>(testRequest.getAttendanceAttributes());
-            builder.attendanceAttributes(attendanceAttributes);
-        }
-
-        // 设置环境参数
-        if (testRequest.getEnvironmentParams() != null) {
-            builder.environmentParams(testRequest.getEnvironmentParams());
-        }
-
-        return builder.build();
+        // 转换为RuleExecutionContext（测试字段合并到customVariables）
+        return testContext.toRuleExecutionContext();
     }
 
     /**

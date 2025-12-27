@@ -1,8 +1,12 @@
 package net.lab1024.sa.attendance.engine.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -21,6 +25,9 @@ import java.util.Map;
  * @since 2025-01-30
  */
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class RuleExecutionContext {
 
     /**
@@ -96,7 +103,18 @@ public class RuleExecutionContext {
     /**
      * 自定义变量（用于扩展）
      */
-    private Map<String, Object> customVariables;
+    @Builder.Default
+    private Map<String, Object> customVariables = new HashMap<>();
+
+    /**
+     * 执行ID（用于唯一标识规则执行实例）
+     */
+    private String executionId;
+
+    /**
+     * 会话ID（用于缓存关联）
+     */
+    private String sessionId;
 
     /**
      * 获取所有变量（用于传递给Aviator表达式）
@@ -143,73 +161,44 @@ public class RuleExecutionContext {
     }
 
     /**
-     * 创建构建器
+     * 获取用户ID（别名方法，兼容不同命名）
+     * <p>
+     * 返回employeeId字段值
+     * </p>
+     *
+     * @return 用户ID
      */
-    public static Builder builder() {
-        return new Builder();
+    public Long getUserId() {
+        return employeeId;
     }
 
     /**
-     * 构建器类
+     * 设置用户ID（别名方法，同时设置employeeId）
+     *
+     * @param userId 用户ID
      */
-    public static class Builder {
-        private final RuleExecutionContext context = new RuleExecutionContext();
+    public void setUserId(Long userId) {
+        this.employeeId = userId;
+    }
 
-        public Builder employeeId(Long employeeId) {
-            context.setEmployeeId(employeeId);
-            return this;
-        }
+    /**
+     * 获取考勤日期（别名方法，兼容不同命名）
+     * <p>
+     * 返回scheduleDate字段值
+     * </p>
+     *
+     * @return 考勤日期
+     */
+    public LocalDate getAttendanceDate() {
+        return scheduleDate;
+    }
 
-        public Builder employeeName(String employeeName) {
-            context.setEmployeeName(employeeName);
-            return this;
-        }
-
-        public Builder departmentId(Long departmentId) {
-            context.setDepartmentId(departmentId);
-            return this;
-        }
-
-        public Builder scheduleDate(LocalDate scheduleDate) {
-            context.setScheduleDate(scheduleDate);
-            return this;
-        }
-
-        public Builder shiftId(Long shiftId) {
-            context.setShiftId(shiftId);
-            return this;
-        }
-
-        public Builder shiftCode(String shiftCode) {
-            context.setShiftCode(shiftCode);
-            return this;
-        }
-
-        public Builder consecutiveWorkDays(Integer days) {
-            context.setConsecutiveWorkDays(days);
-            return this;
-        }
-
-        public Builder restDays(Integer days) {
-            context.setRestDays(days);
-            return this;
-        }
-
-        public Builder monthlyWorkDays(Integer days) {
-            context.setMonthlyWorkDays(days);
-            return this;
-        }
-
-        public Builder customVariable(String key, Object value) {
-            if (context.getCustomVariables() == null) {
-                context.setCustomVariables(new java.util.HashMap<>());
-            }
-            context.getCustomVariables().put(key, value);
-            return this;
-        }
-
-        public RuleExecutionContext build() {
-            return context;
-        }
+    /**
+     * 设置考勤日期（别名方法，同时设置scheduleDate）
+     *
+     * @param attendanceDate 考勤日期
+     */
+    public void setAttendanceDate(LocalDate attendanceDate) {
+        this.scheduleDate = attendanceDate;
     }
 }
